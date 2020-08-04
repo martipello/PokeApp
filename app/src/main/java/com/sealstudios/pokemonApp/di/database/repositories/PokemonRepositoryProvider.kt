@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.di.database.repositories;
 
 
+import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
 import dagger.Module
@@ -15,8 +16,8 @@ public class PokemonRepositoryProvider {
 
     @Singleton
     @Provides
-    fun providePokemonRepository(pokemonDao: PokemonDao): PokemonRepository {
-        return PokemonRepository(pokemonDao)
+    fun providePokemonRepository(pokemonDao: PokemonDao, pokemonService: PokemonService): PokemonRepository {
+        return PokemonRepository(pokemonDao, pokemonService)
     }
 
 }

@@ -1,12 +1,14 @@
 package com.sealstudios.pokemonApp.database.repository
 
 import androidx.lifecycle.LiveData
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
+import com.sealstudios.pokemonApp.api.PokemonService
+import com.sealstudios.pokemonApp.api.objects.PokemonResponse
 import com.sealstudios.pokemonApp.data.Pokemon
+import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import javax.inject.Inject
 
 
-class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao) {
+class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, private val pokemonService: PokemonService) {
 
     val allPokemon: LiveData<List<Pokemon>> = pokemonDao.getAllPokemon()
 
@@ -21,8 +23,8 @@ class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao) 
     suspend fun insertPokemon(pokemon: Pokemon) {
         pokemonDao.insertPokemon(pokemon)
     }
-    
-    
+
+    suspend fun getRemotePokemon() = pokemonService.getPokemon()
 
     fun updatePokemon(user: Pokemon) {
 //        updateUser(pokemonDao, user).execute()

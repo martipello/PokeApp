@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -45,6 +46,9 @@ class PokemonListFragment : Fragment(), ClickListener {
     private fun observePokemonList() {
         pokemonViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let { pokemonAdapter.submitList(it) }
+        })
+        pokemonViewModel.servicePokemon.observe(viewLifecycleOwner, Observer { callResponse ->
+            Log.d("POKE", "response count ${callResponse.count}")
         })
     }
 

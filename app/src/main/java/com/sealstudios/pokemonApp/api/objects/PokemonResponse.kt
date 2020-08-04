@@ -1,14 +1,10 @@
 package com.sealstudios.pokemonApp.api.objects
 
-data class PopularMovies(
-        val results: List<Result>
-)
+import com.sealstudios.pokemonApp.data.Pokemon
 
-data class Result(
-        val id: Int,    val overview: String,
-        val poster_path: String,
-        val release_date: String,
-        val title: String,
-        val vote_average: Double,
-        val vote_count: Int
+data class PokemonResponse(
+        val count: Int,
+        val next: String,
+        val previous: String,
+        val results: ArrayList<Pokemon>,
 )

@@ -11,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class PokemonAPIServiceProvider {
+class PokemonServiceProvider {
     @Provides
     @Singleton
     fun providePokemonService(): PokemonService {

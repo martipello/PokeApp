@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 import com.sealstudios.pokemonApp.ui.adapter.ClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.viewModels.PokemonViewModel
@@ -52,7 +52,7 @@ class PokemonListFragment : Fragment(), ClickListener {
         binding.pokemonListRecyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
         binding.fab.setOnClickListener {
-            pokemonViewModel.insert(Pokemon(id = 3, name = "farfetched"))
+            pokemonViewModel.insert(Pokemon(id = 3, name = "farfetched", url = ""))
         }
     }
 

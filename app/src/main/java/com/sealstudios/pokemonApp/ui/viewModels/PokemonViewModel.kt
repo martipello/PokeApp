@@ -4,7 +4,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

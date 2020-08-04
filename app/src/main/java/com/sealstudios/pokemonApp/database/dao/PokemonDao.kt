@@ -2,7 +2,7 @@ package com.sealstudios.pokemonApp.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 
 @Dao
 interface PokemonDao {

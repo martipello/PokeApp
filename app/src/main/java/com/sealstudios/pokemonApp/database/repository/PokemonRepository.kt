@@ -1,9 +1,8 @@
 package com.sealstudios.pokemonApp.database.repository
 
 import androidx.lifecycle.LiveData
-import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 import javax.inject.Inject
 
 

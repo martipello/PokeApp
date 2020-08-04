@@ -1,10 +1,7 @@
-package com.sealstudios.pokemonApp.hilt.database.repositories;
-
+package com.sealstudios.pokemonApp.di.database
 
 import android.app.Application
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.database.repository.PokemonRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,14 +10,15 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.GlobalScope
 import javax.inject.Singleton
 
+
 @Module
 @InstallIn(ApplicationComponent::class)
-public class PokemonRepositoryModule {
+public class PokemonDatabaseProvider {
 
     @Singleton
     @Provides
-    fun providePokemonRepository(pokemonDao: PokemonDao): PokemonRepository {
-        return PokemonRepository(pokemonDao)
+    fun providePokemonDatabase(@ApplicationContext application: Application): PokemonRoomDatabase {
+        return PokemonRoomDatabase.getDatabase(application, GlobalScope)
     }
 
 

@@ -4,7 +4,7 @@ import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 
 class PokemonViewHolder constructor(itemView: View,
                                     private val clickListener: ClickListener?) :

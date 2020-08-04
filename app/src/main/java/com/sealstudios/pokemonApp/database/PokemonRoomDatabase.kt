@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.DATABASE_VERSION
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -34,8 +34,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             pokemonDao.deleteAll()
 
             // TODO Remove sample pokemon.
-            pokemonDao.insertPokemon(Pokemon(id = 1, name = "Pikachu"))
-            pokemonDao.insertPokemon(Pokemon(id = 2, name = "Charizard"))
+            pokemonDao.insertPokemon(Pokemon(id = 1, name = "Pikachu", url = ""))
+            pokemonDao.insertPokemon(Pokemon(id = 2, name = "Charizard", url = ""))
         }
     }
 

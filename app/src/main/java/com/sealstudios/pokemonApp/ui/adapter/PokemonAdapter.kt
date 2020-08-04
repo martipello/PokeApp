@@ -6,22 +6,13 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.objects.Pokemon
+import com.sealstudios.pokemonApp.data.Pokemon
 
 class PokemonAdapter(private val clickListener: ClickListener? = null) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private val diffCallback = object : DiffUtil.ItemCallback<Pokemon>() {
+    private val diffCallback = diffCallback()
 
-        override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean {
-            return oldItem.id == newItem.id
-        }
-
-        override fun areContentsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean {
-            return oldItem.id == newItem.id // TODO add other items to this
-        }
-
-    }
     private val differ = AsyncListDiffer(this, diffCallback)
 
 
@@ -51,6 +42,24 @@ class PokemonAdapter(private val clickListener: ClickListener? = null) :
     fun submitList(list: List<Pokemon>) {
         differ.submitList(list)
     }
+
+
+    companion object {
+        private fun diffCallback(): DiffUtil.ItemCallback<Pokemon> {
+            return object : DiffUtil.ItemCallback<Pokemon>() {
+
+                override fun areItemsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean {
+                    return oldItem.id == newItem.id
+                }
+
+                override fun areContentsTheSame(oldItem: Pokemon, newItem: Pokemon): Boolean {
+                    return oldItem.id == newItem.id // TODO add other items to this
+                }
+
+            }
+        }
+    }
+
 
 }
 

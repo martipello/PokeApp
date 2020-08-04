@@ -7,24 +7,24 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.objects.Pokemon
-import com.sealstudios.pokemonApp.ui.adapter.PokemonListAdapter
+import com.sealstudios.pokemonApp.ui.adapter.ClickListener
+import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.viewModels.PokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment() {
+class PokemonListFragment : Fragment(), ClickListener {
 
     private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
     private val pokemonViewModel: PokemonViewModel by viewModels()
-    private lateinit var pokemonListAdapter: PokemonListAdapter
+    private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -37,21 +37,21 @@ class PokemonListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        pokemonListAdapter = PokemonListAdapter(context = view.context)
+        pokemonAdapter = PokemonAdapter(clickListener = this)
         setUpPokemonRecyclerView(view.context)
         observePokemonList()
     }
 
     private fun observePokemonList() {
         pokemonViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            pokemonList?.let { pokemonListAdapter.refreshPokemon(it) }
+            pokemonList?.let { pokemonAdapter.submitList(it) }
         })
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListRecyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
-        binding.pokemonListRecyclerView.adapter = pokemonListAdapter
-        binding.fab.setOnClickListener{
+        binding.pokemonListRecyclerView.adapter = pokemonAdapter
+        binding.fab.setOnClickListener {
             pokemonViewModel.insert(Pokemon(id = 3, name = "farfetched"))
         }
     }
@@ -73,9 +73,9 @@ class PokemonListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                 newText?.let {
-                     pokemonViewModel.setSearch("%$it%")
-                 }
+                newText?.let {
+                    pokemonViewModel.setSearch("%$it%")
+                }
                 return false
             }
         })
@@ -84,5 +84,9 @@ class PokemonListFragment : Fragment() {
     private fun navigateToDetailFragment() {
         NavHostFragment.findNavController(this@PokemonListFragment)
                 .navigate(R.id.action_FirstFragment_to_SecondFragment)
+    }
+
+    override fun onItemSelected(position: Int, item: Pokemon) {
+        navigateToDetailFragment()
     }
 }

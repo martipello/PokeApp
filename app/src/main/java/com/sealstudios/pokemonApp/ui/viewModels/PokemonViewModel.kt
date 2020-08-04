@@ -1,23 +1,26 @@
 package com.sealstudios.pokemonApp.ui.viewModels
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.viewModelScope
-import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
 import com.sealstudios.pokemonApp.objects.Pokemon
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class PokemonViewModel(application: Application) : AndroidViewModel(application) {
-    private val repository: PokemonRepository
-    val allPokemon: LiveData<List<Pokemon>>
+class PokemonViewModel @ViewModelInject constructor(
+        private val repository: PokemonRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
+    val searchPokemon: LiveData<List<Pokemon>>
+    private var search: MutableLiveData<String> = MutableLiveData("%%")
 
     init {
-        val pokemonDao = PokemonRoomDatabase.getDatabase(application, viewModelScope).pokemonDao()
-        repository = PokemonRepository(pokemonDao)
-        allPokemon = repository.allPokemon
+        searchPokemon = Transformations.switchMap(search) { repository.searchPokemon(it) }
+    }
+
+    fun setSearch(search: String) {
+        this.search.value = search
     }
 
     fun insert(pokemon: Pokemon) = viewModelScope.launch(Dispatchers.IO) {

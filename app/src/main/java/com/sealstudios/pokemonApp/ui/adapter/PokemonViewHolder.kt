@@ -1,23 +1,48 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
+import com.sealstudios.pokemonApp.ui.util.loadCircularImage
+import java.util.*
 
 class PokemonViewHolder constructor(itemView: View,
                                     private val clickListener: ClickListener?,
                                     private val requestManager: RequestManager?) :
         RecyclerView.ViewHolder(itemView) {
+
     private val binding = PokemonViewHolderBinding.bind(itemView)
 
-    fun bind(item: Pokemon) = with(binding) {
-        binding.pokemonNameTextView.text = item.name
+    fun bind(pokemon: Pokemon) = with(binding) {
+        binding.pokemonNameTextView.text = pokemon.name.capitalize(Locale.ROOT)
         binding.pokemonNameTextView.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, item)
+            clickListener?.onItemSelected(adapterPosition, pokemon)
         }
-        requestManager?.load(item.url)?.into(binding.pokemonImageView)
+        binding.pokemonImageView.loadCircularImage(model = pokemon.url, borderSize = 2.0f, borderColor = Color.BLUE, glide = requestManager, listener = ::requestListener)
+    }
+
+    private fun requestListener(): RequestListener<Bitmap?> {
+        return object : RequestListener<Bitmap?> {
+            override fun onLoadFailed(e: GlideException?, model: Any, target: Target<Bitmap?>, isFirstResource: Boolean): Boolean {
+                binding.pokemonImageProgressBar.visibility = View.GONE
+                return false
+            }
+
+            override fun onResourceReady(resource: Bitmap?, model: Any, target: Target<Bitmap?>, dataSource: DataSource, isFirstResource: Boolean): Boolean {
+                binding.pokemonImageProgressBar.visibility = View.GONE
+                return false
+            }
+        }
     }
 }
+
+
 

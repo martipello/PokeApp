@@ -30,15 +30,15 @@ class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, 
     }
 
     suspend fun getRemotePokemon(): Response<PokemonResponse> {
-        return pokemonService.getPokemon()
+        return pokemonService.getPokemon(offset = 0, limit = 1000)
     }
 
     suspend fun getRemotePokemonById(id: Int): Response<Pokemon> {
-        return pokemonService.getPokemonById(id)
+        return pokemonService.getPokemonById(id, offset = 0, limit = 1)
     }
 
     suspend fun getRemotePokemonByName(name: String): Response<Pokemon> {
-        return pokemonService.getPokemonByName(name)
+        return pokemonService.getPokemonByName(name, offset = 0, limit = 1)
     }
 
     suspend fun updatePokemon(pokemon: Pokemon) {

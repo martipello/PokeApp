@@ -55,9 +55,6 @@ class PokemonListFragment : Fragment(), ClickListener {
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListRecyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
-        binding.fab.setOnClickListener {
-            pokemonViewModel.insert(Pokemon(id = 3, name = "farfetched", url = ""))
-        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -12,12 +12,4 @@
         android:id="@+id/pokemon_list_recycler_view"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_margin="16dp"
-        android:id="@+id/fab"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

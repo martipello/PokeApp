@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,19 +9,24 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navGraphViewModels
+import androidx.navigation.ui.NavigationUI
+import com.sealstudios.pokemonApp.MainActivity
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import java.util.*
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment() {
 
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
-    private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
+    private var pokemon: Pokemon? = null
+    private val pokemonDetailViewModel: PokemonDetailViewModel by navGraphViewModels(R.id.nav_graph){defaultViewModelProviderFactory}
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -30,36 +36,29 @@ class PokemonDetailFragment : Fragment() {
         return binding.root
     }
 
-    private fun setActionBarTitle(title: String){
-        activity?.actionBar?.title = title
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        observePokemonList()
-        setSecondButton()
+        observePokemon()
+        pokemon?.name?.let { setActionBarTitle(it) }
     }
 
+    private fun setActionBarTitle(title: String){
+        activity?.actionBar?.title = title.capitalize(Locale.ROOT)
+        (activity as MainActivity).supportActionBar?.title = title.capitalize(Locale.ROOT)
+    }
 
-    private fun observePokemonList() {
-        pokemonDetailViewModel.localPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            pokemonList?.let { populateViews(it) }
+    private fun observePokemon() {
+        pokemonDetailViewModel.localPokemon.observe(viewLifecycleOwner, Observer { pokemon ->
+            this.pokemon = pokemon
+            pokemon?.let { populateViews() }
         })
     }
 
-    private fun populateViews(pokemon: Pokemon){
-        setActionBarTitle(pokemon.name)
-        binding.textviewSecond.text = pokemon.name
-    }
-
-    private fun setSecondButton() {
-        binding.buttonSecond.setOnClickListener {
-            navigateToFirstFragment()
+    private fun populateViews(){
+        pokemon?.let {
+            setActionBarTitle(it.name)
+            binding.textviewSecond.text = it.name
         }
-    }
-
-    private fun navigateToFirstFragment() {
-        NavHostFragment.findNavController(this@PokemonDetailFragment).popBackStack()
     }
 
     override fun onDestroyView() {

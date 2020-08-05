@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.database.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.api.`object`.PokemonResponse
@@ -18,6 +19,7 @@ class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, 
     }
 
     fun getSinglePokemonById(id: Int): LiveData<Pokemon> {
+        Log.d("DETAIL", "get pokemon at id $id")
         return pokemonDao.getSinglePokemonById(id)
     }
 

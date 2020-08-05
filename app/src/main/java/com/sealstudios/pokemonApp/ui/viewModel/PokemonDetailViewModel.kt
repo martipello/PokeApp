@@ -15,7 +15,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val tag: String = "POKE_VIEW_MODEL"
+    private val tag: String = "DETAIL"
     val localPokemon: LiveData<Pokemon>
     private var search: MutableLiveData<Int> = MutableLiveData(-1)
 

@@ -3,11 +3,14 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -26,13 +29,13 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(), ClickListener {
 
+    @Inject
+    lateinit var glide: RequestManager
     private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
+    private val pokemonDetailViewModel: PokemonDetailViewModel by navGraphViewModels(R.id.nav_graph){defaultViewModelProviderFactory}
     private lateinit var pokemonAdapter: PokemonAdapter
-    @Inject
-    lateinit var glide: RequestManager
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,

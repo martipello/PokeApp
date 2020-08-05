@@ -14,6 +14,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+    private val SEARCH_KEY: String = "search"
     private val tag: String = "POKE_VIEW_MODEL"
     val searchPokemon: LiveData<List<Pokemon>>
     private var search: MutableLiveData<String> = MutableLiveData("%%")
@@ -21,6 +22,14 @@ class PokemonListViewModel @ViewModelInject constructor(
     init {
         searchPokemon = Transformations.switchMap(search) { repository.searchPokemon(it) }
         getRemotePokemon()
+    }
+
+    fun saveCurrentSearch(search: String) {
+        savedStateHandle.set(SEARCH_KEY, search)
+    }
+
+    fun setCurrentSearch() {
+        setSearch(savedStateHandle.get(SEARCH_KEY)?: "")
     }
 
     private fun getRemotePokemon() {

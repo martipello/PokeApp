@@ -8,15 +8,18 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
+import com.sealstudios.pokemonApp.MainActivity
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.ClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -25,7 +28,8 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
-    private val pokemonViewModel: PokemonViewModel by viewModels()
+    private val pokemonListViewModel: PokemonListViewModel by viewModels()
+    private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
     @Inject
     lateinit var glide: RequestManager
@@ -41,13 +45,23 @@ class PokemonListFragment : Fragment(), ClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+        setUpActionBar()
+        setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         observePokemonList()
     }
 
+    private fun setUpActionBar() {
+        val navController = NavHostFragment.findNavController(this@PokemonListFragment)
+        NavigationUI.setupActionBarWithNavController(activity as MainActivity, navController)
+    }
+
+    private fun setUpPokemonAdapter() {
+        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+    }
+
     private fun observePokemonList() {
-        pokemonViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
+        pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let { pokemonAdapter.submitList(it) }
         })
     }
@@ -75,7 +89,7 @@ class PokemonListFragment : Fragment(), ClickListener {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    pokemonViewModel.setSearch("%$it%")
+                    pokemonListViewModel.setSearch("%$it%")
                 }
                 return false
             }
@@ -84,10 +98,11 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun navigateToDetailFragment() {
         NavHostFragment.findNavController(this@PokemonListFragment)
-                .navigate(R.id.action_FirstFragment_to_SecondFragment)
+                .navigate(R.id.action_PokemonListFragment_to_PokemonDetailFragment)
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {
+        pokemonDetailViewModel.setSearch(item.id)
         navigateToDetailFragment()
     }
 }

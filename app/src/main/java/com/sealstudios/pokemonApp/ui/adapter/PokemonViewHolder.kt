@@ -23,7 +23,7 @@ class PokemonViewHolder constructor(itemView: View,
 
     fun bind(pokemon: Pokemon) = with(binding) {
         binding.pokemonNameTextView.text = pokemon.name.capitalize(Locale.ROOT)
-        binding.pokemonNameTextView.setOnClickListener {
+        itemView.setOnClickListener {
             clickListener?.onItemSelected(adapterPosition, pokemon)
         }
         binding.pokemonImageView.loadCircularImage(model = pokemon.url, borderSize = 2.0f, borderColor = Color.BLUE, glide = requestManager, listener = ::requestListener)

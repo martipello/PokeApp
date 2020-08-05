@@ -6,11 +6,10 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
-class PokemonViewModel @ViewModelInject constructor(
+class PokemonListViewModel @ViewModelInject constructor(
         private val repository: PokemonRepository,
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -67,9 +66,5 @@ class PokemonViewModel @ViewModelInject constructor(
 
     fun setSearch(search: String) {
         this.search.value = search
-    }
-
-    fun insert(pokemon: Pokemon) = viewModelScope.launch(Dispatchers.IO) {
-        repository.insertPokemon(pokemon)
     }
 }

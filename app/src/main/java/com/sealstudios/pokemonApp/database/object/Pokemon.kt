@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.data
+package com.sealstudios.pokemonApp.database.`object`
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -11,13 +11,13 @@ data class Pokemon(
         @NotNull
         @PrimaryKey
         @ColumnInfo(name = POKEMON_ID)
-        val id: Int,
+        var id: Int,
 
         @ColumnInfo(name = POKEMON_NAME)
-        val name: String,
+        var name: String,
 
         @ColumnInfo(name = POKEMON_URL)
-        val url: String,
+        var url: String,
 ) {
     companion object {
         const val POKEMON_ID: String = "id"

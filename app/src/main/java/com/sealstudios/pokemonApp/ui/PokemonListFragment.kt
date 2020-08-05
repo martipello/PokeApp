@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -11,13 +10,15 @@ import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.data.Pokemon
 import com.sealstudios.pokemonApp.ui.adapter.ClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
-import com.sealstudios.pokemonApp.ui.viewModels.PokemonViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.PokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(), ClickListener {
@@ -26,6 +27,8 @@ class PokemonListFragment : Fragment(), ClickListener {
     private val binding get() = _binding!!
     private val pokemonViewModel: PokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
+    @Inject
+    lateinit var glide: RequestManager
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +41,7 @@ class PokemonListFragment : Fragment(), ClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        pokemonAdapter = PokemonAdapter(clickListener = this)
+        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
         setUpPokemonRecyclerView(view.context)
         observePokemonList()
     }
@@ -46,9 +49,6 @@ class PokemonListFragment : Fragment(), ClickListener {
     private fun observePokemonList() {
         pokemonViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let { pokemonAdapter.submitList(it) }
-        })
-        pokemonViewModel.servicePokemon.observe(viewLifecycleOwner, Observer { callResponse ->
-            Log.d("POKE", "response count ${callResponse.count}")
         })
     }
 

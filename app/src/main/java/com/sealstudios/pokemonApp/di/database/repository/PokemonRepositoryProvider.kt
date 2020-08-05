@@ -1,5 +1,4 @@
-package com.sealstudios.pokemonApp.di.database.repositories;
-
+package com.sealstudios.pokemonApp.di.database.repository
 
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
@@ -12,7 +11,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-public class PokemonRepositoryProvider {
+class PokemonRepositoryProvider {
 
     @Singleton
     @Provides

@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.DATABASE_VERSION
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.data.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 

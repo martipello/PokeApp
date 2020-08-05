@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.di.database.repositories;
+package com.sealstudios.pokemonApp.di.database.repository
 
 
 import android.app.Application
@@ -13,13 +13,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-public class PokemonDaoProvider {
+class PokemonDaoProvider {
 
     @Singleton
     @Provides
     fun providePokemonDao(application: Application): PokemonDao {
         return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonDao()
     }
-
-
 }

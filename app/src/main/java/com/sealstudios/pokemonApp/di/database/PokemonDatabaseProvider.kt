@@ -10,16 +10,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.GlobalScope
 import javax.inject.Singleton
 
-
 @Module
 @InstallIn(ApplicationComponent::class)
-public class PokemonDatabaseProvider {
+class PokemonDatabaseProvider {
 
     @Singleton
     @Provides
     fun providePokemonDatabase(@ApplicationContext application: Application): PokemonRoomDatabase {
         return PokemonRoomDatabase.getDatabase(application, GlobalScope)
     }
-
-
 }

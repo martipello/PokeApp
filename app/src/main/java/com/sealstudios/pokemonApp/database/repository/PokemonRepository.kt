@@ -2,9 +2,10 @@ package com.sealstudios.pokemonApp.database.repository
 
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.api.PokemonService
-import com.sealstudios.pokemonApp.api.objects.PokemonResponse
-import com.sealstudios.pokemonApp.data.Pokemon
+import com.sealstudios.pokemonApp.api.`object`.PokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
+import retrofit2.Response
 import javax.inject.Inject
 
 
@@ -24,16 +25,28 @@ class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, 
         pokemonDao.insertPokemon(pokemon)
     }
 
-    suspend fun getRemotePokemon() = pokemonService.getPokemon()
-
-    fun updatePokemon(user: Pokemon) {
-//        updateUser(pokemonDao, user).execute()
-        TODO("Not yet implemented")
+    suspend fun insertPokemon(pokemon: List<Pokemon>) {
+        pokemonDao.insertPokemon(pokemon)
     }
 
-    fun deletePokemon(user: Pokemon) {
-//        deleteUser(pokemonDao, user).execute()
-        TODO("Not yet implemented")
+    suspend fun getRemotePokemon(): Response<PokemonResponse> {
+        return pokemonService.getPokemon()
+    }
+
+    suspend fun getRemotePokemonById(id: Int): Response<Pokemon> {
+        return pokemonService.getPokemonById(id)
+    }
+
+    suspend fun getRemotePokemonByName(name: String): Response<Pokemon> {
+        return pokemonService.getPokemonByName(name)
+    }
+
+    suspend fun updatePokemon(pokemon: Pokemon) {
+        pokemonDao.updatePokemon(pokemon)
+    }
+
+    suspend fun deletePokemon(pokemon: Pokemon) {
+        pokemonDao.deletePokemon(pokemon)
     }
 
 }

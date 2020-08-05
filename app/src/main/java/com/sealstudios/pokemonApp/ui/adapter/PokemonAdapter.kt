@@ -5,16 +5,17 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.data.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import javax.inject.Inject
 
-class PokemonAdapter(private val clickListener: ClickListener? = null) :
+class PokemonAdapter(private val clickListener: ClickListener? = null, private val glide: RequestManager? = null) :
         RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val diffCallback = diffCallback()
 
     private val differ = AsyncListDiffer(this, diffCallback)
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PokemonViewHolder(
@@ -23,7 +24,8 @@ class PokemonAdapter(private val clickListener: ClickListener? = null) :
                         parent,
                         false
                 ),
-                clickListener
+                clickListener,
+                glide
         )
     }
 

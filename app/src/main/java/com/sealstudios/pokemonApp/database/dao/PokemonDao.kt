@@ -2,7 +2,7 @@ package com.sealstudios.pokemonApp.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.sealstudios.pokemonApp.data.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 
 @Dao
 interface PokemonDao {
@@ -10,10 +10,13 @@ interface PokemonDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPokemon(pokemon: Pokemon)
 
-    @Query("SELECT * FROM pokemon_table ORDER BY name ASC")
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPokemon(pokemon: List<Pokemon>)
+
+    @Query("SELECT * FROM pokemon_table ORDER BY id ASC")
     fun getAllPokemon(): LiveData<List<Pokemon>>
 
-    @Query("SELECT * FROM pokemon_table WHERE name LIKE :search ORDER BY name ASC")
+    @Query("SELECT * FROM pokemon_table WHERE name LIKE :search ORDER BY id ASC")
     fun searchAllPokemon(search: String?): LiveData<List<Pokemon>>
 
     @Query("SELECT * FROM pokemon_table WHERE name == :name")

@@ -1,33 +1,38 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 class PokemonDetailViewModel @ViewModelInject constructor(
-        private val repository: PokemonRepository,
-        @Assisted private val savedStateHandle: SavedStateHandle
+    private val repository: PokemonRepository,
+    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val tag: String = "DETAIL"
-    val localPokemon: LiveData<Pokemon>
+    val localPokemon: LiveData<dbPokemon>
     private var search: MutableLiveData<Int> = MutableLiveData(-1)
 
     init {
-        localPokemon = Transformations.switchMap(search) { repository.getSinglePokemonById(it) }
+        localPokemon = Transformations.distinctUntilChanged(Transformations.switchMap(search) {
+            repository.getSinglePokemonById(it)
+        })
     }
 
-    private fun getRemotePokemon(id: Int) {
+    fun getRemotePokemon(dbPokemon: dbPokemon) {
         viewModelScope.launch {
-            val pokemon = repository.getRemotePokemonById(id).body()
+            val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
             pokemon?.let {
-                repository.insertPokemon(it)
+                val pokemonToInsert = dbPokemon(
+                    id = dbPokemon.id,
+                    name = pokemon.name,
+                    height = pokemon.height,
+                    weight = pokemon.weight,
+                    url = dbPokemon.url
+                )
+                repository.insertPokemon(pokemonToInsert)
             }
         }
     }

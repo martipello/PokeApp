@@ -3,12 +3,10 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.NavigationUI
@@ -34,12 +32,12 @@ class PokemonListFragment : Fragment(), ClickListener {
     private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    private val pokemonDetailViewModel: PokemonDetailViewModel by navGraphViewModels(R.id.nav_graph){defaultViewModelProviderFactory}
+    private val pokemonDetailViewModel: PokemonDetailViewModel by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         return binding.root
@@ -65,12 +63,24 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            pokemonList?.let { pokemonAdapter.submitList(it) }
+            pokemonList?.let {
+                if (it.isNotEmpty()) {
+                    pokemonAdapter.submitList(it)
+                    binding.pokemonListLoading.visibility = View.GONE
+                } else {
+                    pokemonListViewModel.getRemotePokemon()
+                }
+            }
         })
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListRecyclerView.addItemDecoration(DividerItemDecoration(context, LinearLayoutManager.VERTICAL))
+        binding.pokemonListRecyclerView.addItemDecoration(
+            DividerItemDecoration(
+                context,
+                LinearLayoutManager.VERTICAL
+            )
+        )
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
     }
 
@@ -85,7 +95,8 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     private fun setQueryListener(searchView: androidx.appcompat.widget.SearchView) {
-        searchView.setOnQueryTextListener(object : androidx.appcompat.widget.SearchView.OnQueryTextListener {
+        searchView.setOnQueryTextListener(object :
+            androidx.appcompat.widget.SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -101,7 +112,7 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun navigateToDetailFragment() {
         NavHostFragment.findNavController(this@PokemonListFragment)
-                .navigate(R.id.action_PokemonListFragment_to_PokemonDetailFragment)
+            .navigate(R.id.action_PokemonListFragment_to_PokemonDetailFragment)
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {

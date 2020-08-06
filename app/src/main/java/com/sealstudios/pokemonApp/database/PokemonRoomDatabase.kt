@@ -32,10 +32,6 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
         suspend fun populateDatabase(pokemonDao: PokemonDao) {
             // Delete all content here.
             pokemonDao.deleteAll()
-
-            // TODO Remove sample pokemon.
-            pokemonDao.insertPokemon(Pokemon(id = 1, name = "Pikachu", url = ""))
-            pokemonDao.insertPokemon(Pokemon(id = 2, name = "Charizard", url = ""))
         }
     }
 

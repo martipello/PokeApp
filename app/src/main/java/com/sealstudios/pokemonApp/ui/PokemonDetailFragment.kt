@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,6 @@ import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.*
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment() {
@@ -38,9 +38,10 @@ class PokemonDetailFragment : Fragment() {
         pokemon?.name?.let { setActionBarTitle(it) }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun setActionBarTitle(title: String) {
-        activity?.actionBar?.title = title.capitalize(Locale.ROOT)
-        (activity as MainActivity).supportActionBar?.title = title.capitalize(Locale.ROOT)
+        activity?.actionBar?.title = title.capitalize()
+        (activity as MainActivity).supportActionBar?.title = title.capitalize()
     }
 
     private fun observePokemon() {
@@ -48,20 +49,19 @@ class PokemonDetailFragment : Fragment() {
             this.pokemon = pokemon
             pokemon?.let {
                 populateViews()
-                //TODO check something more meaningful to decide if we need to search the pokeapi for more information
-                if (pokemon.weight < 1) {
-                    pokemonDetailViewModel.getRemotePokemon(pokemon)
-                }
             }
         })
     }
 
     private fun populateViews() {
+
         pokemon?.let {
-            setActionBarTitle(it.name)
-            binding.nameTextView.text = it.name
-            binding.weightTextView.text = "${it.weight}"
-            binding.heightTextView.text = "${it.height}"
+            with(binding) {
+                setActionBarTitle(it.name)
+                nameTextView.text = it.name
+                weightTextView.text = "${it.weight}"
+                heightTextView.text = "${it.height}"
+            }
         }
     }
 

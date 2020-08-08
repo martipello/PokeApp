@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -32,7 +33,8 @@ class PokemonListFragment : Fragment(), ClickListener {
     private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    private val pokemonDetailViewModel: PokemonDetailViewModel by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
+    private val pokemonDetailViewModel: PokemonDetailViewModel
+            by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(
@@ -65,10 +67,9 @@ class PokemonListFragment : Fragment(), ClickListener {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let {
                 if (it.isNotEmpty()) {
+                    Log.d("LIST", "list size ${it.size}")
                     pokemonAdapter.submitList(it)
                     binding.pokemonListLoading.visibility = View.GONE
-                } else {
-                    pokemonListViewModel.getRemotePokemon()
                 }
             }
         })
@@ -119,4 +120,5 @@ class PokemonListFragment : Fragment(), ClickListener {
         pokemonDetailViewModel.setSearch(item.id)
         navigateToDetailFragment()
     }
+
 }

@@ -1,8 +1,7 @@
 package com.sealstudios.pokemonApp.di
 
 import android.content.Context
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestManager
+import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,11 +11,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class GlideProvider {
+class SharedPreferenceHelperProvider {
 
     @Singleton
     @Provides
-    fun provideGlide(@ApplicationContext context: Context): RequestManager {
-        return Glide.with(context)
+    fun provideSharedPreferencesHelper(@ApplicationContext context: Context): SharedPreferenceHelper {
+        return SharedPreferenceHelper(context)
     }
 }

@@ -1,17 +1,19 @@
 package com.sealstudios.pokemonApp.database.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
-import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import retrofit2.Response
 import javax.inject.Inject
+import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 
-class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, private val pokemonService: PokemonService) {
+class PokemonRepository @Inject constructor(
+    private val pokemonDao: PokemonDao,
+    private val pokemonService: PokemonService
+) {
 
     val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
@@ -20,7 +22,6 @@ class PokemonRepository @Inject constructor(private val pokemonDao: PokemonDao, 
     }
 
     fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
-        Log.d("DETAIL", "get pokemon at id $id")
         return pokemonDao.getSinglePokemonById(id)
     }
 

@@ -8,10 +8,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import javax.inject.Inject
 
-class PokemonAdapter(private val clickListener: ClickListener? = null, private val glide: RequestManager? = null) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class PokemonAdapter(
+    private val clickListener: ClickListener? = null,
+    private val glide: RequestManager? = null
+) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val diffCallback = diffCallback()
 
@@ -19,13 +21,13 @@ class PokemonAdapter(private val clickListener: ClickListener? = null, private v
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return PokemonViewHolder(
-                LayoutInflater.from(parent.context).inflate(
-                        R.layout.pokemon_view_holder,
-                        parent,
-                        false
-                ),
-                clickListener,
-                glide
+            LayoutInflater.from(parent.context).inflate(
+                R.layout.pokemon_view_holder,
+                parent,
+                false
+            ),
+            clickListener,
+            glide
         )
     }
 

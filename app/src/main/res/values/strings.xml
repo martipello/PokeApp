@@ -12,4 +12,6 @@
     <string name="search_hint">Search</string>
     <string name="pokemon">Pokemon</string>
     <string name="pokemon_image">Pokemon Image</string>
+    <string name="notification_title">PokemonApp</string>
+    <string name="cancel_download">Cancel</string>
 </resources>

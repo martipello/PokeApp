@@ -16,9 +16,9 @@ class PokemonServiceProvider {
     @Singleton
     fun providePokemonService(): PokemonService {
         return Retrofit.Builder()
-                .baseUrl("https://pokeapi.co/api/v2/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-                .create(PokemonService::class.java)
+            .baseUrl("https://pokeapi.co/api/v2/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+            .create(PokemonService::class.java)
     }
 }

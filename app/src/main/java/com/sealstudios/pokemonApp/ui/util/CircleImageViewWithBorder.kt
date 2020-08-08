@@ -1,12 +1,12 @@
 package com.sealstudios.pokemonApp.ui.util
 
 import android.graphics.*
-import android.graphics.drawable.Drawable
 import android.widget.ImageView
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.BitmapImageViewTarget
+import com.sealstudios.pokemonApp.R
 import kotlin.math.min
 
 
@@ -18,34 +18,35 @@ import kotlin.math.min
  * @param borderColor - The border color
  */
 fun <T> ImageView.loadCircularImage(
-        model: T,
-        borderSize: Float = 0F,
-        borderColor: Int = Color.WHITE,
-        glide: RequestManager?,
-        listener: () -> (RequestListener<Bitmap?>),
+    model: T,
+    borderSize: Float = 0F,
+    borderColor: Int = Color.WHITE,
+    glide: RequestManager?,
+    listener: () -> (RequestListener<Bitmap?>)
 ) {
     glide?.asBitmap()
-            ?.load(model)
-            ?.circleCrop()
-            ?.listener(listener())
-            ?.into(object : BitmapImageViewTarget(this) {
-                override fun setResource(resource: Bitmap?) {
-                    setImageDrawable(
-                            resource?.run {
-                                RoundedBitmapDrawableFactory.create(
-                                        resources,
-                                        if (borderSize > 0) {
-                                            createBitmapWithBorder(borderSize, borderColor)
-                                        } else {
-                                            this
-                                        }
-                                ).apply {
-                                    isCircular = true
-                                }
+        ?.load(model)
+        ?.circleCrop()
+        ?.placeholder(R.drawable.empty_pokemon)
+        ?.listener(listener())
+        ?.into(object : BitmapImageViewTarget(this) {
+            override fun setResource(resource: Bitmap?) {
+                setImageDrawable(
+                    resource?.run {
+                        RoundedBitmapDrawableFactory.create(
+                            resources,
+                            if (borderSize > 0) {
+                                createBitmapWithBorder(borderSize, borderColor)
+                            } else {
+                                this
                             }
-                    )
-                }
-            })
+                        ).apply {
+                            isCircular = true
+                        }
+                    }
+                )
+            }
+        })
 }
 
 
@@ -62,9 +63,9 @@ fun Bitmap.createBitmapWithBorder(borderSize: Float, borderColor: Int = Color.WH
     val halfHeight = height / 2
     val circleRadius = min(halfWidth, halfHeight).toFloat()
     val newBitmap = Bitmap.createBitmap(
-            width + borderOffset,
-            height + borderOffset,
-            Bitmap.Config.ARGB_8888
+        width + borderOffset,
+        height + borderOffset,
+        Bitmap.Config.ARGB_8888
     )
 
     // Center coordinates of the image

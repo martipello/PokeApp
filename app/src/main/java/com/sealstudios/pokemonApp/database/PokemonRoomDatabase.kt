@@ -6,8 +6,8 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.DATABASE_VERSION
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -16,8 +16,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
 
     abstract fun pokemonDao(): PokemonDao
 
-    private class PokemonRoomDatabaseCallback (
-            private val scope: CoroutineScope
+    private class PokemonRoomDatabaseCallback(
+        private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
         override fun onCreate(db: SupportSQLiteDatabase) {
@@ -38,20 +38,21 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
     companion object {
         const val DATABASE_VERSION: Int = 1
         const val TABLE_NAME: String = "pokemon_table"
+
         //Singleton
         @Volatile
         private var INSTANCE: PokemonRoomDatabase? = null
 
-        fun getDatabase(context: Context,  scope: CoroutineScope): PokemonRoomDatabase {
+        fun getDatabase(context: Context, scope: CoroutineScope): PokemonRoomDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
                 return tempInstance
             }
             synchronized(this) {
                 val instance = Room.databaseBuilder(
-                        context.applicationContext,
-                        PokemonRoomDatabase::class.java,
-                        TABLE_NAME
+                    context.applicationContext,
+                    PokemonRoomDatabase::class.java,
+                    TABLE_NAME
                 ).addCallback(PokemonRoomDatabaseCallback(scope)).build()
                 INSTANCE = instance
                 return instance

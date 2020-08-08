@@ -3,7 +3,9 @@ package com.sealstudios.pokemonApp.ui.viewModel
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapRemotePokemonToDatabasePokemon
 import com.sealstudios.pokemonApp.database.repository.PokemonRepository
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
@@ -21,23 +23,23 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         })
     }
 
-    fun getRemotePokemon(dbPokemon: dbPokemon) {
-        viewModelScope.launch {
-            val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
-            pokemon?.let {
-                val pokemonToInsert = dbPokemon(
-                    id = dbPokemon.id,
-                    name = pokemon.name,
-                    height = pokemon.height,
-                    weight = pokemon.weight,
-                    url = dbPokemon.url
-                )
-                repository.insertPokemon(pokemonToInsert)
-            }
-        }
-    }
-
     fun setSearch(search: Int) {
         this.search.value = search
     }
+
+    companion object {
+        fun getRemotePokemonDetail(
+            scope: CoroutineScope,
+            dbPokemon: dbPokemon,
+            repository: PokemonRepository
+        ) {
+            scope.launch {
+                val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
+                pokemon?.let {
+                    repository.insertPokemon(mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon))
+                }
+            }
+        }
+    }
 }
+

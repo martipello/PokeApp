@@ -4,17 +4,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/medium_margin_16dp"
+    android:padding="@dimen/medium_margin_16dp"
     tools:context="com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder">
 
-    <ImageView
+    <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/pokemon_image_view"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        app:civ_shadow="true"
+        app:civ_shadow_radius="4dp"
+        app:civ_shadow_color="#3f51b5"
+        app:civ_border_color="#3f51b5"
+        app:civ_border_width="4dp"
         android:contentDescription="@string/pokemon_image"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <TextView
         android:id="@+id/pokemon_name_text_view"
@@ -34,20 +38,30 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/medium_margin_16dp"
         android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
         app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
         app:layout_constraintTop_toBottomOf="@id/pokemon_name_text_view" />
 
-    <TextView
-        android:id="@+id/pokemon_types_text_view_label"
-        android:layout_width="wrap_content"
+    <com.google.android.flexbox.FlexboxLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/medium_margin_16dp"
-        android:textSize="14sp"
-        android:layout_marginEnd="@dimen/medium_margin_16dp"
-        app:layout_constraintBottom_toBottomOf="@id/pokemon_species_text_view_label"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:id="@+id/pokemon_types_chip_group_container"
+        android:gravity="end"
+        android:orientation="horizontal"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_end"
         app:layout_constraintHorizontal_bias="1"
-        app:layout_constraintStart_toEndOf="@id/pokemon_species_text_view_label" />
+        android:layout_marginStart="@dimen/medium_margin_16dp"
+        android:layout_marginEnd="@dimen/medium_margin_16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view">
 
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/pokemon_types_chip_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+
+    </com.google.android.flexbox.FlexboxLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

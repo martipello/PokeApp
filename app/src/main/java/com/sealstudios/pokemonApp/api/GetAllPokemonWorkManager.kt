@@ -65,7 +65,11 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                                     pokemonRequest.await().body()?.let { pokemon ->
                                         val dbPokemon =
                                             Pokemon.buildDbPokemonFromPokemonResponse(pokemon)
-                                        setForegroundAsync(worker, i + 1, pokemonResponseResult.size)
+                                        setForegroundAsync(
+                                            worker,
+                                            i + 1,
+                                            pokemonResponseResult.size
+                                        )
                                         PokemonDetailViewModel.getRemotePokemonDetail(
                                             coroutineScope,
                                             dbPokemon,
@@ -84,6 +88,15 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                     }
                 }
             }
+            worker.setForegroundAsync(
+                notificationHelper.sendOnGoingNotification(
+                    NOTIFICATION_ID,
+                    NOTIFICATION_NAME,
+                    "Finished downloading pokemon data",
+                    0,
+                    0
+                )
+            )
         }
     }
 

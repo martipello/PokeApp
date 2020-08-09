@@ -37,11 +37,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             scope.launch {
                 val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
                 pokemon?.let {
-//                    Log.d("PokemonDetailViewModel", pokemon.moves.toString())
-//                    Log.d("PokemonDetailViewModel", pokemon.abilities.toString())
-//                    Log.d("PokemonDetailViewModel", pokemon.species.toString())
-//                    Log.d("PokemonDetailViewModel", pokemon.stats.toString())
-//                    Log.d("PokemonDetailViewModel", pokemon.types.toString())
+                    Log.d("PokemonDetailViewModel", pokemon.types.toString())
                     repository.insertPokemon(mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon))
                 }
             }

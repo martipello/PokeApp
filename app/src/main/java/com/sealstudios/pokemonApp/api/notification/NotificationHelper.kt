@@ -14,8 +14,10 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.O
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationCompat.PRIORITY_MAX
+import androidx.core.app.NotificationCompat.PRIORITY_MIN
 import androidx.work.ForegroundInfo
 import com.sealstudios.pokemonApp.MainActivity
 import com.sealstudios.pokemonApp.R
@@ -45,10 +47,12 @@ class NotificationHelper constructor(
         val notification =
             buildNotificationBuilder(largeIcon, title, progressText, pendingIntent)
 
+        Log.d("NOTIFICATION", "progress is $progress max is $max")
+
         with(notification) {
             createChannels(this, notificationManager)
-            priority = PRIORITY_MAX
-            setOngoing(progress == max)
+            priority = if (progress != max) PRIORITY_MAX else PRIORITY_MIN
+            setOngoing(progress != max)
             setProgress(max, progress, false)
             setContentText(progressText)
             setContentTitle(title)

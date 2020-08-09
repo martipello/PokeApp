@@ -6,7 +6,7 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
-
+//TODO fix this not keeping the search state but does keep the list state
 class PokemonListViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
     @Assisted private val savedStateHandle: SavedStateHandle

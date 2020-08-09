@@ -67,7 +67,6 @@ class PokemonListFragment : Fragment(), ClickListener {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let {
                 if (it.isNotEmpty()) {
-                    Log.d("LIST", "list size ${it.size}")
                     pokemonAdapter.submitList(it)
                     binding.pokemonListLoading.visibility = View.GONE
                 }

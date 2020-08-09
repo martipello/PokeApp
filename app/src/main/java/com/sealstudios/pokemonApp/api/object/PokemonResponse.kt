@@ -119,7 +119,7 @@ data class Pokemon(
     val weight: Int,
     val species: NamedApiResource,
     val abilities: List<PokemonAbility>,
-    val forms: List<NamedApiResource>,
+    val forms: List<PokemonForm>,
     val gameIndices: List<VersionGameIndex>,
     val heldItems: List<PokemonHeldItem>,
     val moves: List<PokemonMove>,
@@ -199,7 +199,7 @@ data class PokemonForm(
     val isBattleOnly: Boolean,
     val isMega: Boolean,
     val formName: String,
-    val pokemon: NamedApiResource,
+    val pokemon: NamedApiResource?,
     val versionGroup: NamedApiResource,
     val sprites: PokemonFormSprites,
     val formNames: List<Name>

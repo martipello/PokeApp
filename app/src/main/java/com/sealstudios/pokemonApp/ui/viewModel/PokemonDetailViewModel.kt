@@ -36,9 +36,16 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         ) {
             scope.launch {
                 val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
+                val pokemonForms = repository.getRemotePokemonForms(dbPokemon.id).body()
                 pokemon?.let {
-                    Log.d("PokemonDetailViewModel", pokemon.types.toString())
-                    repository.insertPokemon(mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon))
+                    val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon)
+                    pokemonForms?.let {
+                        Log.d("PokemonDetailViewModel", "Adding form $it")
+                        mappedPokemon.apply {
+                            this.form = it.pokemon?.name ?: ""
+                        }
+                    }
+                    repository.insertPokemon(mappedPokemon)
                 }
             }
         }

@@ -27,8 +27,8 @@ data class Pokemon(
     @ColumnInfo(name = POKEMON_HEIGHT)
     val height: Int,
 
-    @ColumnInfo(name = POKEMON_SPECIES)
-    val species: String,
+    @ColumnInfo(name = POKEMON_FORM)
+    var form: String,
 
     @ColumnInfo(name = POKEMON_MOVES)
     val moves: List<String>,
@@ -46,7 +46,7 @@ data class Pokemon(
         const val POKEMON_WEIGHT: String = "weight"
         const val POKEMON_MOVES: String = "moves"
         const val POKEMON_TYPES: String = "types"
-        const val POKEMON_SPECIES: String = "species"
+        const val POKEMON_FORM: String = "form"
 
         fun mapRemotePokemonToDatabasePokemon(
             dbPokemon: Pokemon,
@@ -54,11 +54,11 @@ data class Pokemon(
         ): Pokemon {
             return Pokemon(
                 id = dbPokemon.id,
+                url = dbPokemon.url,
                 name = apiPokemon.name,
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
-                url = dbPokemon.url,
-                species = apiPokemon.species.name,
+                form = apiPokemon.forms.map { it.pokemon?.name }.first() ?: "",
                 moves = apiPokemon.moves.map { it.move.name },
                 types = apiPokemon.types.map { it.type.name }
             )
@@ -71,7 +71,7 @@ data class Pokemon(
                 url = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
                 weight = 0,
                 height = 0,
-                species = apiPokemon.species.name,
+                form = apiPokemon.forms.map { it.pokemon?.name }.first() ?: "",
                 moves = apiPokemon.moves.map { it.move.name },
                 types = apiPokemon.types.map { it.type.name }
             )

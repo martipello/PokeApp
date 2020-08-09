@@ -60,22 +60,15 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                             val pokemonId = Pokemon.getPokemonIdFromUrl(pokemonUrl)
                             when {
                                 pokemonId >= 0 -> {
-                                    val pokemonRequest =
-                                        async { repository.getRemotePokemonById(pokemonId) }
-                                    pokemonRequest.await().body()?.let { pokemon ->
-                                        val dbPokemon =
-                                            Pokemon.buildDbPokemonFromPokemonResponse(pokemon)
-                                        setForegroundAsync(
-                                            worker,
-                                            i + 1,
-                                            pokemonResponseResult.size
-                                        )
-                                        PokemonDetailViewModel.getRemotePokemonDetail(
-                                            coroutineScope,
-                                            dbPokemon,
-                                            repository = repository
-                                        )
-                                    }
+                                    getPokemonDetail(
+                                        this,
+                                        repository,
+                                        pokemonId,
+                                        worker,
+                                        i,
+                                        pokemonResponseResult,
+                                        coroutineScope
+                                    )
                                 }
                                 else -> {
                                 }
@@ -96,6 +89,33 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                     0,
                     0
                 )
+            )
+        }
+    }
+
+    private suspend fun getPokemonDetail(
+        getPokemonCoroutineScope: CoroutineScope,
+        repository: PokemonRepository,
+        pokemonId: Int,
+        worker: CoroutineWorker,
+        i: Int,
+        pokemonResponseResult: ArrayList<Pokemon?>,
+        coroutineScope: CoroutineScope
+    ) {
+        val pokemonRequest =
+            getPokemonCoroutineScope.async { repository.getRemotePokemonById(pokemonId) }
+        pokemonRequest.await().body()?.let { pokemon ->
+            val dbPokemon =
+                Pokemon.buildDbPokemonFromPokemonResponse(pokemon)
+            setForegroundAsync(
+                worker,
+                i + 1,
+                pokemonResponseResult.size
+            )
+            PokemonDetailViewModel.getRemotePokemonDetail(
+                coroutineScope,
+                dbPokemon,
+                repository = repository
             )
         }
     }

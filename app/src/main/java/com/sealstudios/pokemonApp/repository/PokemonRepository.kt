@@ -2,7 +2,9 @@ package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.api.PokemonService
+import com.sealstudios.pokemonApp.api.`object`.PokemonForm
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
+import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import retrofit2.Response
 import javax.inject.Inject
@@ -35,11 +37,15 @@ class PokemonRepository @Inject constructor(
 
     suspend fun getRemotePokemon(): Response<PokemonListResponse> {
         //TODO make this a 1000
-        return pokemonService.getPokemon(offset = 0, limit = 10)
+        return pokemonService.getPokemon(offset = 0, limit = 1000)
     }
 
     suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {
         return pokemonService.getPokemonById(id, offset = 0, limit = 1)
+    }
+
+    suspend fun getRemotePokemonForms(id: Int): Response<PokemonForm> {
+        return pokemonService.getPokemonForms(id, offset = 0, limit = 1)
     }
 
     suspend fun getRemotePokemonByName(name: String): Response<apiPokemon> {

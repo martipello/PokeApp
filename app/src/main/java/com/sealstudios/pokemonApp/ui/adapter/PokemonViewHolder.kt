@@ -36,7 +36,7 @@ class PokemonViewHolder constructor(
         val pokemonTypes = PokemonTypeHelper().getPokemonTypesForPokemon(pokemon)
 
         binding.pokemonNameTextView.text = pokemon.name.capitalize()
-        binding.pokemonSpeciesTextViewLabel.text = pokemon.species.capitalize()
+        binding.pokemonSpeciesTextViewLabel.text = pokemon.form.capitalize()
         binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(adapterPosition, pokemon)
@@ -80,6 +80,7 @@ class PokemonViewHolder constructor(
                         palette?.lightVibrantSwatch?.rgb?.let {
                             binding.pokemonImageView.apply {
                                 circleColor = it
+                                borderColor = it
                             }
                         }
                     }

@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.ui.viewModel
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 

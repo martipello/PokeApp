@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.TABLE_NAME
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
@@ -24,17 +25,28 @@ data class Pokemon(
     val weight: Int,
 
     @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int
+    val height: Int,
 
-    ) {
+    @ColumnInfo(name = POKEMON_SPECIES)
+    val species: String,
+
+    @ColumnInfo(name = POKEMON_MOVES)
+    val moves: List<String>,
+
+    @ColumnInfo(name = POKEMON_TYPES)
+    val types: List<String>
+
+) {
     companion object {
 
         const val POKEMON_ID: String = "id"
         const val POKEMON_NAME: String = "name"
         const val POKEMON_URL: String = "url"
         const val POKEMON_HEIGHT: String = "height"
-        const val MOVES: String = "moves"
         const val POKEMON_WEIGHT: String = "weight"
+        const val POKEMON_MOVES: String = "moves"
+        const val POKEMON_TYPES: String = "types"
+        const val POKEMON_SPECIES: String = "species"
 
         fun mapRemotePokemonToDatabasePokemon(
             dbPokemon: Pokemon,
@@ -45,17 +57,23 @@ data class Pokemon(
                 name = apiPokemon.name,
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
-                url = dbPokemon.url
+                url = dbPokemon.url,
+                species = apiPokemon.species.name,
+                moves = apiPokemon.moves.map { it.move.name },
+                types = apiPokemon.types.map { it.type.name }
             )
         }
 
-        fun buildDbPokemonFromPokemonResponse(pokemon: apiPokemon): Pokemon {
+        fun buildDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
             return Pokemon(
-                id = pokemon.id,
-                name = pokemon.name,
-                url = "https://pokeres.bastionbot.org/images/pokemon/${pokemon.id}.png",
+                id = apiPokemon.id,
+                name = apiPokemon.name,
+                url = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
                 weight = 0,
-                height = 0
+                height = 0,
+                species = apiPokemon.species.name,
+                moves = apiPokemon.moves.map { it.move.name },
+                types = apiPokemon.types.map { it.type.name }
             )
         }
 

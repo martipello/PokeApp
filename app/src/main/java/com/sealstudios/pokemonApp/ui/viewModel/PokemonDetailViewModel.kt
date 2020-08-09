@@ -1,10 +1,11 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapRemotePokemonToDatabasePokemon
-import com.sealstudios.pokemonApp.database.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
@@ -36,6 +37,11 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             scope.launch {
                 val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
                 pokemon?.let {
+//                    Log.d("PokemonDetailViewModel", pokemon.moves.toString())
+//                    Log.d("PokemonDetailViewModel", pokemon.abilities.toString())
+//                    Log.d("PokemonDetailViewModel", pokemon.species.toString())
+//                    Log.d("PokemonDetailViewModel", pokemon.stats.toString())
+//                    Log.d("PokemonDetailViewModel", pokemon.types.toString())
                     repository.insertPokemon(mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon))
                 }
             }

@@ -11,7 +11,7 @@ import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_ID
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_NAME
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import kotlinx.coroutines.*
 
@@ -65,7 +65,7 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                                     pokemonRequest.await().body()?.let { pokemon ->
                                         val dbPokemon =
                                             Pokemon.buildDbPokemonFromPokemonResponse(pokemon)
-                                        setForegroundAsync(worker, i, pokemonResponseResult.size)
+                                        setForegroundAsync(worker, i + 1, pokemonResponseResult.size)
                                         PokemonDetailViewModel.getRemotePokemonDetail(
                                             coroutineScope,
                                             dbPokemon,

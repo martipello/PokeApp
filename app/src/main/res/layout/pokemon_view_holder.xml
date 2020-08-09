@@ -1,29 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/medium_margin_16dp"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder">
 
     <ImageView
+        android:id="@+id/pokemon_image_view"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/pokemon_image_view"
-        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/pokemon_image"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:contentDescription="@string/pokemon_image" />
-
-    <ProgressBar
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:padding="@dimen/small_margin_8dp"
-        android:id="@+id/pokemon_image_progress_bar"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/pokemon_name_text_view"
@@ -32,7 +23,31 @@
         android:layout_marginStart="@dimen/medium_margin_16dp"
         android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/pokemon_species_text_view_label"
         app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/pokemon_species_text_view_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin_16dp"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
+        app:layout_constraintTop_toBottomOf="@id/pokemon_name_text_view" />
+
+    <TextView
+        android:id="@+id/pokemon_types_text_view_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/medium_margin_16dp"
+        android:textSize="14sp"
+        android:layout_marginEnd="@dimen/medium_margin_16dp"
+        app:layout_constraintBottom_toBottomOf="@id/pokemon_species_text_view_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1"
+        app:layout_constraintStart_toEndOf="@id/pokemon_species_text_view_label" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

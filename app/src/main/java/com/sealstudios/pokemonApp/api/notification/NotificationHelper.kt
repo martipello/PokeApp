@@ -48,7 +48,7 @@ class NotificationHelper constructor(
         with(notification) {
             createChannels(this, notificationManager)
             priority = PRIORITY_MAX
-            setOngoing(true)
+            setOngoing(progress == max)
             setProgress(max, progress, false)
             setContentText(progressText)
             setContentTitle(title)

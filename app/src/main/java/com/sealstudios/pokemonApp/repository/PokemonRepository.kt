@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.database.repository
+package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.api.PokemonService
@@ -34,7 +34,8 @@ class PokemonRepository @Inject constructor(
     }
 
     suspend fun getRemotePokemon(): Response<PokemonListResponse> {
-        return pokemonService.getPokemon(offset = 0, limit = 1000)
+        //TODO make this a 1000
+        return pokemonService.getPokemon(offset = 0, limit = 10)
     }
 
     suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {

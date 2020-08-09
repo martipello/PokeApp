@@ -21,15 +21,15 @@ fun <T> ImageView.loadCircularImage(
     model: T,
     borderSize: Float = 0F,
     borderColor: Int = Color.WHITE,
-    glide: RequestManager?,
-    listener: () -> (RequestListener<Bitmap?>)
+    glide: RequestManager,
+    listener: (() -> RequestListener<Bitmap?>?)?
 ) {
-    glide?.asBitmap()
-        ?.load(model)
-        ?.circleCrop()
-        ?.placeholder(R.drawable.empty_pokemon)
-        ?.listener(listener())
-        ?.into(object : BitmapImageViewTarget(this) {
+    glide.asBitmap()
+        .load(model)
+        .circleCrop()
+        .placeholder(R.drawable.empty_pokemon)
+        .listener(listener?.invoke())
+        .into(object : BitmapImageViewTarget(this) {
             override fun setResource(resource: Bitmap?) {
                 setImageDrawable(
                     resource?.run {

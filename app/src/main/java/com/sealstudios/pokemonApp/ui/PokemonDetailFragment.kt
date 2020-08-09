@@ -61,6 +61,7 @@ class PokemonDetailFragment : Fragment() {
                 nameTextView.text = it.name
                 weightTextView.text = "${it.weight}"
                 heightTextView.text = "${it.height}"
+                movesTextView.text = "${it.moves}"
             }
         }
     }

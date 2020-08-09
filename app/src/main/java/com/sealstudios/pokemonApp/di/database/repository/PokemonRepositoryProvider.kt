@@ -2,7 +2,7 @@ package com.sealstudios.pokemonApp.di.database.repository
 
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.database.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

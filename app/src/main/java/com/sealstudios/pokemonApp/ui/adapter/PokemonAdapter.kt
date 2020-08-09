@@ -10,8 +10,8 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 
 class PokemonAdapter(
-    private val clickListener: ClickListener? = null,
-    private val glide: RequestManager? = null
+    private val clickListener: ClickListener,
+    private val glide: RequestManager
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 

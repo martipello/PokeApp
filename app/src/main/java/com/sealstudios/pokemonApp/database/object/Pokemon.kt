@@ -58,7 +58,7 @@ data class Pokemon(
                 name = apiPokemon.name,
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
-                form = apiPokemon.forms.map { it.formName }.first(),
+                form = apiPokemon.forms.map { it.name }.first(),
                 moves = apiPokemon.moves.map { it.move.name },
                 types = apiPokemon.types.map { it.type.name }
             )
@@ -71,7 +71,7 @@ data class Pokemon(
                 url = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
                 weight = 0,
                 height = 0,
-                form = apiPokemon.forms.map { it.formName }.first(),
+                form = apiPokemon.forms.map { it.name }.first(),
                 moves = apiPokemon.moves.map { it.move.name },
                 types = apiPokemon.types.map { it.type.name }
             )

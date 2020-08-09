@@ -77,10 +77,14 @@ class PokemonViewHolder constructor(
                 resource?.let { bitmap ->
                     val builder = Palette.Builder(bitmap)
                     builder.generate { palette: Palette? ->
+                        palette?.dominantSwatch?.rgb?.let {
+                            binding.pokemonImageView.apply {
+                                borderColor = it
+                            }
+                        }
                         palette?.lightVibrantSwatch?.rgb?.let {
                             binding.pokemonImageView.apply {
                                 circleColor = it
-                                borderColor = it
                             }
                         }
                     }

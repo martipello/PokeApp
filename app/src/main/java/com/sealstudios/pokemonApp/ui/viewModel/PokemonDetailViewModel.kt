@@ -42,7 +42,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     pokemonForms?.let {
                         Log.d("PokemonDetailViewModel", "Adding form $it")
                         mappedPokemon.apply {
-                            this.form = it.formName
+                            this.form = it.name
                         }
                     }
                     repository.insertPokemon(mappedPokemon)

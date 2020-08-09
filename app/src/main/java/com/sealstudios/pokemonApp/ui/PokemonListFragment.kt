@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +21,7 @@ import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.ClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
+import com.sealstudios.pokemonApp.ui.util.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -75,12 +77,7 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListRecyclerView.addItemDecoration(
-            DividerItemDecoration(
-                context,
-                LinearLayoutManager.VERTICAL
-            )
-        )
+        binding.pokemonListRecyclerView.addItemDecoration(PokemonListDecoration(context.resources.getDimensionPixelSize(R.dimen.medium_margin_16dp)))
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
     }
 

@@ -199,7 +199,7 @@ data class PokemonForm(
     val isBattleOnly: Boolean,
     val isMega: Boolean,
     val formName: String,
-    val pokemon: NamedApiResource?,
+    val pokemon: NamedApiResource,
     val versionGroup: NamedApiResource,
     val sprites: PokemonFormSprites,
     val formNames: List<Name>

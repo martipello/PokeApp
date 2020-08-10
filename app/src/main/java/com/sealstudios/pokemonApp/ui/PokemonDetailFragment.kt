@@ -54,7 +54,6 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun populateViews() {
-
         pokemon?.let {
             with(binding) {
                 setActionBarTitle(it.name)

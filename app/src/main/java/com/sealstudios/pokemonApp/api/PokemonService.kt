@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.api
 import com.sealstudios.pokemonApp.api.`object`.Pokemon
 import com.sealstudios.pokemonApp.api.`object`.PokemonForm
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
+import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -31,11 +32,9 @@ interface PokemonService {
         @Query(value = "limit") limit: Int
     ): Response<Pokemon>
 
-    @GET("pokemon-form/{id}/")
-    suspend fun getPokemonForms(
+    @GET("pokemon-species/{id}/")
+    suspend fun getPokemonSpeciesForId(
         @Path(value = "id") pokemonId: Int,
-        @Query(value = "offset") offset: Int,
-        @Query(value = "limit") limit: Int
-    ): Response<PokemonForm>
+    ): Response<PokemonSpecies>
 
 }

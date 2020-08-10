@@ -37,15 +37,15 @@ class PokemonRepository @Inject constructor(
 
     suspend fun getRemotePokemon(): Response<PokemonListResponse> {
         //TODO make this a 1000
-        return pokemonService.getPokemon(offset = 0, limit = 1000)
+        return pokemonService.getPokemon(offset = 0, limit = 10)
     }
 
     suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {
         return pokemonService.getPokemonById(id, offset = 0, limit = 1)
     }
 
-    suspend fun getRemotePokemonForms(id: Int): Response<PokemonForm> {
-        return pokemonService.getPokemonForms(id, offset = 0, limit = 1)
+    suspend fun getRemotePokemonSpeciesForId(id: Int): Response<PokemonSpecies> {
+        return pokemonService.getPokemonSpeciesForId(id)
     }
 
     suspend fun getRemotePokemonByName(name: String): Response<apiPokemon> {

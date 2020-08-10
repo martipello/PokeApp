@@ -77,7 +77,7 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListRecyclerView.addItemDecoration(PokemonListDecoration(context.resources.getDimensionPixelSize(R.dimen.medium_margin_16dp)))
+        binding.pokemonListRecyclerView.addItemDecoration(PokemonListDecoration(context.resources.getDimensionPixelSize(R.dimen.small_margin_8dp)))
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
     }
 

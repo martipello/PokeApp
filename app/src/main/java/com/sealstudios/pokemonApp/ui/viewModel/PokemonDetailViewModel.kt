@@ -36,14 +36,18 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         ) {
             scope.launch {
                 val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
-                val pokemonForms = repository.getRemotePokemonForms(dbPokemon.id).body()
-                pokemon?.let {
-                    val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, pokemon)
-                    pokemonForms?.let {
-                        Log.d("PokemonDetailViewModel", "Adding form $it")
-                        mappedPokemon.apply {
-                            this.form = it.name
+                val pokemonSpeciesById = repository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
+                pokemon?.let {apiPokemon ->
+                    val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, apiPokemon)
+                    pokemonSpeciesById?.let {species ->
+                        for(genus in species.genera){
+                            if (genus.language.name == "en"){
+                                mappedPokemon.apply {
+                                    this.species = genus.genus
+                                }
+                            }
                         }
+
                     }
                     repository.insertPokemon(mappedPokemon)
                 }

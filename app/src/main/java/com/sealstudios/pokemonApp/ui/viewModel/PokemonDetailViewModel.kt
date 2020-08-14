@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -36,12 +35,13 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         ) {
             scope.launch {
                 val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
-                val pokemonSpeciesById = repository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
-                pokemon?.let {apiPokemon ->
+                val pokemonSpeciesById =
+                    repository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
+                pokemon?.let { apiPokemon ->
                     val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, apiPokemon)
-                    pokemonSpeciesById?.let {species ->
-                        for(genus in species.genera){
-                            if (genus.language.name == "en"){
+                    pokemonSpeciesById?.let { species ->
+                        for (genus in species.genera) {
+                            if (genus.language.name == "en") {
                                 mappedPokemon.apply {
                                     this.species = genus.genus
                                 }

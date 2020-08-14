@@ -3,19 +3,13 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navGraphViewModels
-import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.RequestManager
-import com.sealstudios.pokemonApp.MainActivity
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
@@ -50,15 +44,9 @@ class PokemonListFragment : Fragment(), ClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-        setUpActionBar()
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         observePokemonList()
-    }
-
-    private fun setUpActionBar() {
-        val navController = NavHostFragment.findNavController(this@PokemonListFragment)
-        NavigationUI.setupActionBarWithNavController(activity as MainActivity, navController)
     }
 
     private fun setUpPokemonAdapter() {
@@ -68,16 +56,31 @@ class PokemonListFragment : Fragment(), ClickListener {
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let {
-                if (it.isNotEmpty()) {
-                    pokemonAdapter.submitList(it)
-                    binding.pokemonListLoading.visibility = View.GONE
-                }
+                pokemonAdapter.submitList(it)
+                binding.pokemonListLoading.visibility = View.GONE
+                checkForEmptyLayout(it)
             }
         })
     }
 
+    private fun checkForEmptyLayout(it: List<Pokemon>) {
+        if (it.isNotEmpty()) {
+            binding.emptyResultsImage.visibility = View.GONE
+            binding.emptyResultsText.visibility = View.GONE
+        } else {
+            binding.emptyResultsImage.visibility = View.VISIBLE
+            binding.emptyResultsText.visibility = View.VISIBLE
+        }
+    }
+
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListRecyclerView.addItemDecoration(PokemonListDecoration(context.resources.getDimensionPixelSize(R.dimen.small_margin_8dp)))
+        binding.pokemonListRecyclerView.addItemDecoration(
+            PokemonListDecoration(
+                context.resources.getDimensionPixelSize(
+                    R.dimen.small_margin_8dp
+                )
+            )
+        )
         binding.pokemonListRecyclerView.adapter = pokemonAdapter
     }
 

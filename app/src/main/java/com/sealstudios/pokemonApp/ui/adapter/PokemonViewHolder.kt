@@ -38,6 +38,7 @@ class PokemonViewHolder constructor(
         binding.pokemonNameTextView.text = pokemon.name.capitalize()
         binding.pokemonSpeciesTextViewLabel.text = pokemon.species.capitalize()
         binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
+        binding.pokemonImageView.shadowColor = R.color.black
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(adapterPosition, pokemon)
         }
@@ -96,7 +97,7 @@ class PokemonViewHolder constructor(
 
     private fun createChip(pokemonType: PokemonType, context: Context): Chip? {
         val chipLayout = LayoutInflater.from(context).inflate(R.layout.chip, null) as Chip
-        chipLayout.text = pokemonType.name.capitalize()
+        chipLayout.text = pokemonType.name.capitalize(Locale.getDefault())
         chipLayout.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
         chipLayout.setChipBackgroundColorResource(pokemonType.color)
         return chipLayout

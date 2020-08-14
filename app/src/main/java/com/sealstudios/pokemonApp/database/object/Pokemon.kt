@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.TABLE_NAME
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon

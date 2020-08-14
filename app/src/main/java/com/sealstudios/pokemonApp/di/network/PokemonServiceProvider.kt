@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.di.network
 
+import com.sealstudios.pokemonApp.BuildConfig
 import com.sealstudios.pokemonApp.api.PokemonService
 import dagger.Module
 import dagger.Provides
@@ -16,7 +17,7 @@ class PokemonServiceProvider {
     @Singleton
     fun providePokemonService(): PokemonService {
         return Retrofit.Builder()
-            .baseUrl("https://pokeapi.co/api/v2/")
+            .baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(PokemonService::class.java)

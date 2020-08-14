@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.api
 
 import com.sealstudios.pokemonApp.api.`object`.Pokemon
-import com.sealstudios.pokemonApp.api.`object`.PokemonForm
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import retrofit2.Response
@@ -17,6 +16,12 @@ interface PokemonService {
         @Query(value = "offset") offset: Int,
         @Query(value = "limit") limit: Int
     ): Response<PokemonListResponse>
+
+//    @GET("pokemon/")
+//    suspend fun getPokemon(
+//        @Query(value = "offset") offset: Int,
+//        @Query(value = "limit") limit: Int
+//    ): Result<PokemonListResponse>
 
     @GET("pokemon/{id}/")
     suspend fun getPokemonById(

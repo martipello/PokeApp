@@ -27,7 +27,6 @@ class NotificationHelper constructor(
     private val applicationContext: Context
 ) {
 
-
     fun sendOnGoingNotification(
         id: Int,
         title: String,

@@ -18,15 +18,15 @@ class SharedPreferenceHelper constructor(context: Context) {
         editor.apply()
     }
 
-    fun getString(key: String): String? {
-        return sharedPreferences.getString(key, null)
-    }
-
-    fun setString(key: String, value: String) {
-        val editor = sharedPreferences.edit()
-        editor.putString(key, value)
-        editor.apply()
-    }
+//    fun getString(key: String): String? {
+//        return sharedPreferences.getString(key, null)
+//    }
+//
+//    fun setString(key: String, value: String) {
+//        val editor = sharedPreferences.edit()
+//        editor.putString(key, value)
+//        editor.apply()
+//    }
 
     companion object {
         const val prefsFileName = "com.sealstudios.pokemonApp.prefs"

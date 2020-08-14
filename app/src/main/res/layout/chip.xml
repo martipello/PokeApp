@@ -9,7 +9,7 @@
     app:chipIconEnabled="true"
     app:chipStartPadding="0dp"
     app:iconEndPadding="0dp"
-    app:iconStartPadding="2dp" />
+    app:iconStartPadding="4dp" />
 
 
 

@@ -1,13 +1,18 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.navGraphViewModels
+import androidx.navigation.ui.NavigationUI
 import com.sealstudios.pokemonApp.MainActivity
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
@@ -35,13 +40,23 @@ class PokemonDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         observePokemon()
-        pokemon?.name?.let { setActionBarTitle(it) }
+        pokemon?.name?.let { setActionBar(it) }
     }
 
     @SuppressLint("DefaultLocale")
     private fun setActionBarTitle(title: String) {
         activity?.actionBar?.title = title.capitalize()
         (activity as MainActivity).supportActionBar?.title = title.capitalize()
+    }
+
+    private fun setActionBar(title: String) {
+//        val toolbar = binding.toolbar
+        val mainActivity = (activity as AppCompatActivity)
+//        toolbar.title = title.capitalize()
+//        mainActivity.setSupportActionBar(toolbar)
+        NavigationUI.setupActionBarWithNavController(mainActivity,
+            NavHostFragment.findNavController(this@PokemonDetailFragment)
+        )
     }
 
     private fun observePokemon() {

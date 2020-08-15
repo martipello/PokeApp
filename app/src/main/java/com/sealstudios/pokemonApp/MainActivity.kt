@@ -36,20 +36,10 @@ class MainActivity : AppCompatActivity() {
     private val getAllPokemonViewModel: GetAllPokemonViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        makeStatusBarTransparent()
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         checkIsFirstTime()
-    }
-
-    private fun makeStatusBarTransparent() {
-        this.window.apply {
-            clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
-            addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-            statusBarColor = Color.TRANSPARENT
-        }
     }
 
     private fun checkIsFirstTime() {

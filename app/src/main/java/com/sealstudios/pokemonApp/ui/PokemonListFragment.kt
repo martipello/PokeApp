@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.app.SearchManager
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -41,6 +42,7 @@ class PokemonListFragment : Fragment(), ClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        makeStatusBarTransparent()
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -91,6 +93,13 @@ class PokemonListFragment : Fragment(), ClickListener {
             )
         )
         binding.pokemonListFragmentContent.pokemonListRecyclerView.adapter = pokemonAdapter
+    }
+
+    private fun makeStatusBarTransparent() {
+        val mainActivity = (activity as AppCompatActivity)
+        mainActivity.window?.apply {
+            statusBarColor = Color.TRANSPARENT
+        }
     }
 
     private fun setActionBar() {

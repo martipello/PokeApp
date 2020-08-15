@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment">
+    tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment"
+    android:theme="@style/AppTheme.AppBarOverlay">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"

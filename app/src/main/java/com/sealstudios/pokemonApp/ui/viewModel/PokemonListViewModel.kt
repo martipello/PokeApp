@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -14,9 +15,33 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     val searchPokemon: LiveData<List<dbPokemon>>
     private var search: MutableLiveData<String> = getCurrentSearchState()
+    private val filters: MutableLiveData<List<String>> = getCurrentFiltersState()
 
     init {
-        searchPokemon = Transformations.switchMap(search) { repository.searchPokemon(it) }
+        val combinedValues = MediatorLiveData<Pair<String?, List<String>?>?>().apply {
+            addSource(search) {
+                value = Pair(it, filters.value)
+            }
+            addSource(filters) {
+                value = Pair(search.value, it)
+            }
+        }
+
+        searchPokemon = Transformations.switchMap(combinedValues) { pair ->
+            val search = pair?.first
+            val filters = pair?.second
+            if (search != null && filters != null) {
+                repository.searchPokemonWithTypeFilters(search, filters)
+            } else null
+        }
+    }
+
+    fun setSearch(search: String) {
+        this.search.value = search
+    }
+
+    fun setFilters(filters: List<String>) {
+        this.filters.value = filters
     }
 
     fun saveCurrentSearchState(search: String?) {
@@ -28,12 +53,17 @@ class PokemonListViewModel @ViewModelInject constructor(
         return MutableLiveData("%$searchString%")
     }
 
-    fun setSearch(search: String) {
-        this.search.value = search
+    private fun getCurrentFiltersState(): MutableLiveData<List<String>> {
+        val filters = savedStateHandle.get<List<String>>(filtersKey) ?: emptyList()
+        return MutableLiveData(filters)
+    }
+
+    fun saveCurrentFilterState(filters: List<String>) {
+        this.filters.value = filters
     }
 
     companion object {
-
         private const val searchKey: String = "search"
+        private const val filtersKey: String = "filters"
     }
 }

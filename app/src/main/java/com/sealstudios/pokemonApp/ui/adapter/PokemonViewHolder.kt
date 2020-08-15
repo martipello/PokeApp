@@ -20,7 +20,6 @@ import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonTypeHelper
-import java.util.*
 
 class PokemonViewHolder constructor(
     itemView: View,
@@ -95,9 +94,11 @@ class PokemonViewHolder constructor(
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun createChip(pokemonType: PokemonType, context: Context): Chip? {
-        val chipLayout = LayoutInflater.from(context).inflate(R.layout.chip, null) as Chip
-        chipLayout.text = pokemonType.name.capitalize(Locale.getDefault())
+        val chipLayout =
+            LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
+        chipLayout.text = pokemonType.name.capitalize()
         chipLayout.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
         chipLayout.setChipBackgroundColorResource(pokemonType.color)
         return chipLayout

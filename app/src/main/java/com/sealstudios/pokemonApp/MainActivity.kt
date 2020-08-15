@@ -33,9 +33,6 @@ class MainActivity : AppCompatActivity() {
 
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-
-    @Inject
-    lateinit var notificationHelper: NotificationHelper
     private val getAllPokemonViewModel: GetAllPokemonViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,18 +40,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        setToolbar()
         checkIsFirstTime()
-        setActionBar()
-    }
-
-    private fun setToolbar() {
-        binding.toolbarLayout.setExpandedTitleColor(
-            ContextCompat.getColor(
-                this,
-                android.R.color.transparent
-            )
-        )
     }
 
     private fun makeStatusBarTransparent() {
@@ -81,12 +67,6 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         return navHostFragment.navController
-    }
-
-    private fun setActionBar() {
-        val toolbar = binding.toolbar
-        setSupportActionBar(toolbar)
-        NavigationUI.setupActionBarWithNavController(this, findNavController())
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

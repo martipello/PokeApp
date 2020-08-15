@@ -3,12 +3,16 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
@@ -42,6 +46,8 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setActionBar()
+        setToolbar(view.context)
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
@@ -55,33 +61,52 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
+            Log.d("LIST_FRAG", "searchPokemon")
             pokemonList?.let {
                 pokemonAdapter.submitList(it)
-                binding.pokemonListLoading.visibility = View.GONE
+                binding.pokemonListFragmentContent.pokemonListLoading.visibility = View.GONE
                 checkForEmptyLayout(it)
             }
         })
+//        pokemonListViewModel.setFilters(listOf("grass"))
     }
 
     private fun checkForEmptyLayout(it: List<Pokemon>) {
+        val content = binding.pokemonListFragmentContent
         if (it.isNotEmpty()) {
-            binding.emptyResultsImage.visibility = View.GONE
-            binding.emptyResultsText.visibility = View.GONE
+            content.emptyResultsImage.visibility = View.GONE
+            content.emptyResultsText.visibility = View.GONE
         } else {
-            binding.emptyResultsImage.visibility = View.VISIBLE
-            binding.emptyResultsText.visibility = View.VISIBLE
+            content.emptyResultsImage.visibility = View.VISIBLE
+            content.emptyResultsText.visibility = View.VISIBLE
         }
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListRecyclerView.addItemDecoration(
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.addItemDecoration(
             PokemonListDecoration(
                 context.resources.getDimensionPixelSize(
                     R.dimen.small_margin_8dp
                 )
             )
         )
-        binding.pokemonListRecyclerView.adapter = pokemonAdapter
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.adapter = pokemonAdapter
+    }
+
+    private fun setActionBar() {
+        val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
+        val mainActivity = (activity as AppCompatActivity)
+        mainActivity.setSupportActionBar(toolbar)
+        NavigationUI.setupActionBarWithNavController(mainActivity, findNavController(this@PokemonListFragment))
+    }
+
+    private fun setToolbar(context: Context) {
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setExpandedTitleColor(
+            ContextCompat.getColor(
+                context,
+                android.R.color.transparent
+            )
+        )
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -111,7 +136,7 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     private fun navigateToDetailFragment() {
-        NavHostFragment.findNavController(this@PokemonListFragment)
+        findNavController(this@PokemonListFragment)
             .navigate(R.id.action_PokemonListFragment_to_PokemonDetailFragment)
     }
 

@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:showIn="@layout/activity_main"
-    app:layout_behavior="@string/adaptive_appbar_scrolling_view_behavior">
+    tools:showIn="@layout/activity_main">
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host_fragment"

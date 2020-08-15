@@ -19,6 +19,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon_table WHERE name LIKE :search ORDER BY id ASC")
     fun searchAllPokemon(search: String?): LiveData<List<Pokemon>>
 
+    @Query("SELECT * FROM pokemon_table WHERE name LIKE :search ORDER BY id ASC")
+    fun searchPokemonWithTypeFilters(search: String?): LiveData<List<Pokemon>>
+
     @Query("SELECT * FROM pokemon_table WHERE name == :name")
     fun getSinglePokemonByName(name: String?): LiveData<Pokemon>
 

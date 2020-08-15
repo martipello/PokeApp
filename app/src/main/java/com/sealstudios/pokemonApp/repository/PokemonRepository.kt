@@ -22,6 +22,10 @@ class PokemonRepository @Inject constructor(
         return pokemonDao.searchAllPokemon(search)
     }
 
+    fun searchPokemonWithTypeFilters(search: String, types: List<String>): LiveData<List<dbPokemon>> {
+        return pokemonDao.searchPokemonWithTypeFilters(search)
+    }
+
     fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
         return pokemonDao.getSinglePokemonById(id)
     }

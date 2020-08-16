@@ -110,12 +110,14 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-core:$rootProject.coroutines"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
-
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.7.0'
+    implementation "com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2"
     implementation 'com.squareup.retrofit2:converter-gson:2.7.0'
     //http client
     implementation 'com.squareup.okhttp3:okhttp:4.3.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.0.1'
+
     //GSON
     implementation 'com.google.code.gson:gson:2.8.5'
     //Glide

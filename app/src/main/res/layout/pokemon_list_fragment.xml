@@ -14,4 +14,12 @@
     <include layout="@layout/pokemon_list_fragment_content"
         android:id="@+id/pokemon_list_fragment_content"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/filter_fab"
+        android:layout_margin="@dimen/medium_margin_16dp"
+        android:src="@drawable/ic_search_white_24dp"
+        android:layout_gravity="bottom|end"/>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

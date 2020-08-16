@@ -1,8 +1,8 @@
 package com.sealstudios.pokemonApp.di.database.repository
 
 import com.sealstudios.pokemonApp.api.PokemonService
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.repository.PokemonRepository
+import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
+import com.sealstudios.pokemonApp.repository.PokemonTypeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,14 +11,14 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class PokemonRepositoryProvider {
+class PokemonTypeRepositoryProvider {
 
     @Singleton
     @Provides
-    fun providePokemonRepository(
-        pokemonDao: PokemonDao
-    ): PokemonRepository {
-        return PokemonRepository(pokemonDao)
+    fun providePokemonTypeRepository(
+        pokemonTypeDao: PokemonTypeDao
+    ): PokemonTypeRepository {
+        return PokemonTypeRepository(pokemonTypeDao)
     }
 
 }

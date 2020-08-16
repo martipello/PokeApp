@@ -1,11 +1,10 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.repository.PokemonRepository
-import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 //TODO fix this not keeping the search state but does keep the list state
 class PokemonListViewModel @ViewModelInject constructor(
@@ -13,7 +12,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchPokemon: LiveData<List<dbPokemon>>
+    val searchPokemon: LiveData<List<PokemonWithTypes>>
     private var search: MutableLiveData<String> = getCurrentSearchState()
     private val filters: MutableLiveData<List<String>> = getCurrentFiltersState()
 

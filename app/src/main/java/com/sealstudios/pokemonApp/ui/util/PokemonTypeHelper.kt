@@ -1,8 +1,7 @@
 package com.sealstudios.pokemonApp.ui.util
 
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import java.util.*
+import com.sealstudios.pokemonApp.database.`object`.PokemonType as pokemonType
 
 enum class PokemonType(val color: Int, val icon: Int) {
     NORMAL(color = R.color.normal, icon = R.drawable.normal_type_icon),
@@ -22,21 +21,14 @@ enum class PokemonType(val color: Int, val icon: Int) {
     DARK(color = R.color.dark, icon = R.drawable.dark_type_icon),
     DRAGON(color = R.color.dragon, icon = R.drawable.dragon_type_icon),
     STEEL(color = R.color.steel, icon = R.drawable.steel_type_icon),
-    FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon)
+    FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon);
+
+    companion object {
+        fun getPokemonEnumTypesForPokemonTypes(types: List<pokemonType>): List<PokemonType> {
+            return types.map { valueOf(it.name.toUpperCase()) }
+        }
+    }
+
 }
 
-class PokemonTypeHelper {
-    public fun getPokemonTypesForPokemon(pokemon: Pokemon): List<PokemonType> {
-        val allPokemonTypes = PokemonType.values()
-        val pokemonTypeList = arrayListOf<PokemonType>()
-        for (pokemonType in allPokemonTypes) {
-            if (pokemon.types.toString().toLowerCase(Locale.getDefault())
-                    .contains(pokemonType.name.toLowerCase(Locale.getDefault()))
-            ) {
-                pokemonTypeList.add(pokemonType)
-            }
-        }
-        return pokemonTypeList
-    }
-}
 

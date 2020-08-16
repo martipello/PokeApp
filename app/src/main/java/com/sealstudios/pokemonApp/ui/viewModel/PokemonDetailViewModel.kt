@@ -5,6 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapRemotePokemonToDatabasePokemon
 import com.sealstudios.pokemonApp.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
@@ -28,15 +29,16 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     companion object {
+        //TODO have this return an object and save it somewhere else to remove localRepository: PokemonRepository
         fun getRemotePokemonDetail(
             scope: CoroutineScope,
             dbPokemon: dbPokemon,
-            repository: PokemonRepository
+            remoteRepository: RemotePokemonRepository,
+            localRepository: PokemonRepository
         ) {
             scope.launch {
-                val pokemon = repository.getRemotePokemonById(dbPokemon.id).body()
-                val pokemonSpeciesById =
-                    repository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
+                val pokemon = remoteRepository.getRemotePokemonById(dbPokemon.id).body()
+                val pokemonSpeciesById = remoteRepository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
                 pokemon?.let { apiPokemon ->
                     val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, apiPokemon)
                     pokemonSpeciesById?.let { species ->
@@ -49,7 +51,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         }
 
                     }
-                    repository.insertPokemon(mappedPokemon)
+                    localRepository.insertPokemon(mappedPokemon)
                 }
             }
         }

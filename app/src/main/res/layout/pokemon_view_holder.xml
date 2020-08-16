@@ -37,6 +37,7 @@
             app:layout_constraintBottom_toTopOf="@id/pokemon_species_text_view_label"
             app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/pokemon_id_text_view_label"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView
@@ -48,6 +49,17 @@
             app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
             app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
             app:layout_constraintTop_toBottomOf="@id/pokemon_name_text_view" />
+
+        <TextView
+            android:id="@+id/pokemon_id_text_view_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:textSize="12sp"
+            android:layout_marginEnd="@dimen/medium_margin_16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/pokemon_name_text_view"
+            app:layout_constraintBottom_toBottomOf="@id/pokemon_name_text_view"/>
 
         <com.google.android.flexbox.FlexboxLayout
             android:id="@+id/pokemon_types_chip_group_container"

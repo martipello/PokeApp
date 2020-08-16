@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -17,9 +18,10 @@ import com.bumptech.glide.request.target.Target
 import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.getTypesInOrder
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
-import com.sealstudios.pokemonApp.ui.util.PokemonTypeHelper
 
 class PokemonViewHolder constructor(
     itemView: View,
@@ -31,20 +33,20 @@ class PokemonViewHolder constructor(
     private val binding = PokemonViewHolderBinding.bind(itemView)
 
     @SuppressLint("DefaultLocale")
-    fun bind(pokemon: Pokemon) = with(binding) {
-        val pokemonTypes = PokemonTypeHelper().getPokemonTypesForPokemon(pokemon)
-
-        binding.pokemonNameTextView.text = pokemon.name.capitalize()
-        binding.pokemonSpeciesTextViewLabel.text = pokemon.species.capitalize()
+    fun bind(pokemonWithTypes: PokemonWithTypes) = with(binding) {
+        binding.pokemonNameTextView.text = pokemonWithTypes.pokemon.name.capitalize()
+        binding.pokemonIdTextViewLabel.text = itemView.context.getString(R.string.pokemonId, pokemonWithTypes.pokemon.id)
+        binding.pokemonSpeciesTextViewLabel.text = pokemonWithTypes.pokemon.species.capitalize()
         binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         binding.pokemonImageView.shadowColor = R.color.black
         binding.root.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, pokemon)
+            clickListener?.onItemSelected(adapterPosition, pokemonWithTypes.pokemon)
         }
-        buildPokemonImageView(pokemon)
+        buildPokemonImageView(pokemonWithTypes.pokemon)
         binding.pokemonTypesChipGroup.removeAllViews()
-        for (pokemonType in pokemonTypes) {
-            binding.pokemonTypesChipGroup.addView(createChip(pokemonType, itemView.context))
+        val types = PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypes.types))
+        for (type in types) {
+            binding.pokemonTypesChipGroup.addView(createChip(type, itemView.context))
         }
     }
 

@@ -4,7 +4,6 @@ import android.app.SearchManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -17,6 +16,7 @@ import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.ClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
@@ -63,17 +63,15 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            Log.d("LIST_FRAG", "searchPokemon")
             pokemonList?.let {
                 pokemonAdapter.submitList(it)
                 binding.pokemonListFragmentContent.pokemonListLoading.visibility = View.GONE
                 checkForEmptyLayout(it)
             }
         })
-//        pokemonListViewModel.setFilters(listOf("grass"))
     }
 
-    private fun checkForEmptyLayout(it: List<Pokemon>) {
+    private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {
         val content = binding.pokemonListFragmentContent
         if (it.isNotEmpty()) {
             content.emptyResultsImage.visibility = View.GONE
@@ -106,7 +104,10 @@ class PokemonListFragment : Fragment(), ClickListener {
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
-        NavigationUI.setupActionBarWithNavController(mainActivity, findNavController(this@PokemonListFragment))
+        NavigationUI.setupActionBarWithNavController(
+            mainActivity,
+            findNavController(this@PokemonListFragment)
+        )
     }
 
     private fun setToolbar(context: Context) {

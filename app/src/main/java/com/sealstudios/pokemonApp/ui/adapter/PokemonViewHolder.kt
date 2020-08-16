@@ -34,6 +34,7 @@ class PokemonViewHolder constructor(
 
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypes: PokemonWithTypes) = with(binding) {
+        Log.d("VH", pokemonWithTypes.toString())
         binding.pokemonNameTextView.text = pokemonWithTypes.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text = itemView.context.getString(R.string.pokemonId, pokemonWithTypes.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text = pokemonWithTypes.pokemon.species.capitalize()

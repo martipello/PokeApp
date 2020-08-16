@@ -42,9 +42,5 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
 
-//    @Query("SELECT * FROM User WHERE " +
-//            "addr_home_lat BETWEEN :lat1 AND :lat2" +
-//            " AND addr_home_lng BETWEEN :lng1 AND :lng2")
-
 }
 

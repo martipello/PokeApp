@@ -14,8 +14,13 @@
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:motionTarget="@id/filter_fab"
-                app:framePosition="25"
-                app:percentX="0.50"/>
+                app:framePosition="10"
+                app:percentX="0.30"/>
+            <KeyPosition
+                app:keyPositionType="deltaRelative"
+                app:motionTarget="@id/filter_fab"
+                app:framePosition="35"
+                app:percentX="0.65"/>
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:motionTarget="@id/filter_fab"

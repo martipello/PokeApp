@@ -35,9 +35,9 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/pokemon_species_text_view_label"
+            app:layout_constraintEnd_toStartOf="@id/pokemon_id_text_view_label"
             app:layout_constraintStart_toEndOf="@id/pokemon_image_view"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/pokemon_id_text_view_label"
             app:layout_constraintVertical_chainStyle="packed" />
 
         <TextView

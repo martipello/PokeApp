@@ -14,18 +14,26 @@
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:motionTarget="@id/filter_fab"
-                app:framePosition="10"
-                app:percentX="0.30"/>
+                app:framePosition="5"
+                app:percentX="0.10"
+                app:percentY="0.01"/>
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:motionTarget="@id/filter_fab"
-                app:framePosition="35"
-                app:percentX="0.65"/>
+                app:framePosition="25"
+                app:percentX="0.40"
+                app:percentY="0.1"/>
             <KeyPosition
                 app:keyPositionType="deltaRelative"
                 app:motionTarget="@id/filter_fab"
-                app:framePosition="70"
-                app:percentX="0.90"/>
+                app:framePosition="60"
+                app:percentX="0.8"
+                app:percentY="0.5"/>
+            <KeyPosition
+                app:keyPositionType="deltaRelative"
+                app:motionTarget="@id/filter_fab"
+                app:framePosition="85"
+                app:percentX="0.95"/>
         </KeyFrameSet>
     </Transition>
 

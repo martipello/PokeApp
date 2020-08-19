@@ -14,7 +14,4 @@
     <include layout="@layout/pokemon_list_fragment_content"
         android:id="@+id/pokemon_list_fragment_content"/>
 
-    <include layout="@layout/pokemon_list_filter"
-        android:id="@+id/pokemon_list_filter"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

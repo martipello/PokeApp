@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     app:motionDebug="SHOW_PATH"
     android:layout_width="match_parent"
@@ -8,13 +9,32 @@
 
     <com.sealstudios.pokemonApp.ui.customView.CircleCardView
         android:id="@+id/filter_fab"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
-        app:cardCornerRadius="@dimen/large_margin_32dp" >
-        <ImageView
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:src="@color/bug"/>
-    </com.sealstudios.pokemonApp.ui.customView.CircleCardView>
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        app:cardCornerRadius="36dp"
+        app:cardBackgroundColor="@color/bug"
+        app:cardElevation="@dimen/medium_margin_16dp"/>
+
+    <ImageView
+        android:id="@+id/filter_icon"
+        android:layout_width="72dp"
+        android:layout_height="72dp"
+        android:padding="@dimen/medium_margin_16dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_filter_list_white_24dp"
+        android:elevation="@dimen/large_margin_32dp"/>
+
+    <View
+        android:id="@+id/filter_sheet_placeholder"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        android:background="@color/bug"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="9:5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

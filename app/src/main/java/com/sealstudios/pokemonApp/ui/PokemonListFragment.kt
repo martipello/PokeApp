@@ -65,7 +65,7 @@ class PokemonListFragment : Fragment(), ClickListener {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let {
                 pokemonAdapter.submitList(it)
-                binding.pokemonListFragmentContent.pokemonListLoading.visibility = View.GONE
+                binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
                 checkForEmptyLayout(it)
             }
         })
@@ -74,11 +74,11 @@ class PokemonListFragment : Fragment(), ClickListener {
     private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {
         val content = binding.pokemonListFragmentContent
         if (it.isNotEmpty()) {
-            content.emptyResultsImage.visibility = View.GONE
-            content.emptyResultsText.visibility = View.GONE
+            content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+            content.emptyPokemonList.emptyResultsText.visibility = View.GONE
         } else {
-            content.emptyResultsImage.visibility = View.VISIBLE
-            content.emptyResultsText.visibility = View.VISIBLE
+            content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+            content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
         }
     }
 

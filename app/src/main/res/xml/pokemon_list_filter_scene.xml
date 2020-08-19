@@ -3,60 +3,59 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        app:constraintSetEnd="@+id/end"
-        app:constraintSetStart="@id/start"
+        app:constraintSetStart="@id/startingFilterFabConstraintSet"
+        app:constraintSetEnd="@+id/horizontalArcToCenterFilterFab"
         app:motionInterpolator="easeInOut"
         app:duration="500">
         <OnClick
             app:targetId="@id/filter_fab"
             app:clickAction="toggle" />
-        <KeyFrameSet>
-            <KeyPosition
-                app:keyPositionType="deltaRelative"
-                app:motionTarget="@id/filter_fab"
-                app:framePosition="5"
-                app:percentX="0.10"
-                app:percentY="0.01"/>
-            <KeyPosition
-                app:keyPositionType="deltaRelative"
-                app:motionTarget="@id/filter_fab"
-                app:framePosition="25"
-                app:percentX="0.40"
-                app:percentY="0.1"/>
-            <KeyPosition
-                app:keyPositionType="deltaRelative"
-                app:motionTarget="@id/filter_fab"
-                app:framePosition="60"
-                app:percentX="0.8"
-                app:percentY="0.5"/>
-            <KeyPosition
-                app:keyPositionType="deltaRelative"
-                app:motionTarget="@id/filter_fab"
-                app:framePosition="85"
-                app:percentX="0.95"/>
-        </KeyFrameSet>
     </Transition>
 
-    <ConstraintSet android:id="@+id/start">
-        <Constraint
-            android:id="@+id/filter_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
+    <ConstraintSet android:id="@+id/startingFilterFabConstraintSet">
+        <Constraint android:id="@+id/filter_fab"
+            app:pathMotionArc="startHorizontal">
+            <Layout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginBottom="16dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
+        </Constraint>
+
+        <Constraint android:id="@+id/filter_icon"
+            app:pathMotionArc="startHorizontal">
+            <Layout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:layout_constraintStart_toStartOf="@id/filter_fab"
+                app:layout_constraintEnd_toEndOf="@id/filter_fab"
+                app:layout_constraintBottom_toBottomOf="@id/filter_fab"/>
+        </Constraint>
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
-        <Constraint
-            android:id="@+id/filter_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintVertical_bias="0.8"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+    <ConstraintSet android:id="@+id/horizontalArcToCenterFilterFab">
+        <Constraint android:id="@+id/filter_fab" >
+            <Layout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                android:layout_marginEnd="0dp"
+                android:layout_marginBottom="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/filter_sheet_placeholder"
+                app:layout_constraintEnd_toEndOf="@id/filter_sheet_placeholder"
+                app:layout_constraintStart_toStartOf="@id/filter_sheet_placeholder"
+                app:layout_constraintTop_toTopOf="@id/filter_sheet_placeholder"/>
+        </Constraint>
+
+        <Constraint android:id="@+id/filter_icon">
+            <Layout
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:layout_constraintStart_toStartOf="@id/filter_fab"
+                app:layout_constraintEnd_toEndOf="@id/filter_fab"
+                app:layout_constraintBottom_toBottomOf="@id/filter_fab"/>
+        </Constraint>
     </ConstraintSet>
+
 </MotionScene>

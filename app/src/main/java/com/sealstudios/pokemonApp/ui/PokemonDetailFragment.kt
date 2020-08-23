@@ -72,10 +72,10 @@ class PokemonDetailFragment : Fragment() {
         pokemon?.let {
             with(binding) {
                 setActionBarTitle(it.name)
-                nameTextView.text = it.name
-                weightTextView.text = "${it.weight}"
-                heightTextView.text = "${it.height}"
-                movesTextView.text = "${it.moves}"
+//                nameTextView.text = it.name
+//                weightTextView.text = "${it.weight}"
+//                heightTextView.text = "${it.height}"
+//                movesTextView.text = "${it.moves}"
             }
         }
     }

@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -54,24 +55,24 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
-        setUpViews()
-        setUpFilterView()
         setUpPokemonRecyclerView(view.context)
+        observeFilters()
         observePokemonList()
+        setUpViews()
         addScrollAwarenessForFilterButton()
-    }
-
-    private fun setUpFilterView() {
-        val chipGroup = binding.pokemonListFilter.filterGroup.root
-        chipGroup.chipSpacingHorizontal = 96.dp
-        chipGroup.chipSpacingVertical = 8.dp
-        FilterGroupHelper(chipGroup = chipGroup, clickListener = this@PokemonListFragment).bindChips()
     }
 
     private fun setUpViews(){
         binding.pokemonListFilter.filterFab.setOnClickListener {
             animateFilterFab()
         }
+    }
+
+    private fun setUpFilterView(selections: MutableMap<String, Boolean>) {
+        val chipGroup = binding.pokemonListFilter.filterGroup.root
+        chipGroup.chipSpacingHorizontal = 96.dp
+        chipGroup.chipSpacingVertical = 8.dp
+        FilterGroupHelper(chipGroup = chipGroup, clickListener = this@PokemonListFragment, selections = selections).bindChips()
     }
 
     private fun animateFilterFab() {
@@ -91,13 +92,22 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     private fun observePokemonList() {
+        Log.d("VM", "observePokemonList")
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
+            Log.d("VM", "pokemonList $pokemonList")
             pokemonList?.let { pokemonListWithTypes ->
                 pokemonAdapter.submitList(pokemonListWithTypes)
                 checkForEmptyLayout(pokemonListWithTypes)
             }
         })
-//        pokemonListViewModel.setFilters(listOf("fire"))
+    }
+
+    private fun observeFilters() {
+        pokemonListViewModel.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
+            selectionsLiveData?.let { selections ->
+                setUpFilterView(selections)
+            }
+        })
     }
 
     private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {

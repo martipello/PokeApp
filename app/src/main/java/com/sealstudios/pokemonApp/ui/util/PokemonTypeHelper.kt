@@ -28,18 +28,18 @@ enum class PokemonType(val color: Int, val icon: Int) {
             return types.map { valueOf(it.name.toUpperCase()) }
         }
 
-        fun getAllPokemonTypesNames() : List<String>{
+        fun getAllPokemonTypesNames(): List<String> {
             return enumValues<PokemonType>().map { it.name.toLowerCase() }
         }
 
-        fun getAllPokemonTypes() : List<PokemonType>{
+        fun getAllPokemonTypes(): List<PokemonType> {
             return enumValues<PokemonType>().asList()
         }
 
         fun initializePokemonTypeFilters(): MutableMap<String, Boolean> {
             val keys = getAllPokemonTypes()
             val allFilters = mutableMapOf<String, Boolean>()
-            for (key in keys){
+            for (key in keys) {
                 allFilters[key.name] = false
             }
             return allFilters

@@ -15,7 +15,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     val searchPokemon: LiveData<List<PokemonWithTypes>>
     private var search: MutableLiveData<String> = getCurrentSearchState()
-    private val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
+    val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
 
     init {
         val combinedValues =
@@ -32,27 +32,39 @@ class PokemonListViewModel @ViewModelInject constructor(
             val search = pair?.first
             val filters = pair?.second
             if (search != null && filters != null) {
-                searchAndFilterList()
+                checkSelections()
             } else null
         }
     }
 
-    private fun searchAndFilterList(): LiveData<List<PokemonWithTypes>> {
+    private fun checkSelections(): LiveData<List<PokemonWithTypes>> {
+        val selections = filters.value?.filterValues { it }
+        if (selections.isNullOrEmpty()) {
+            return searchPokemon()
+        }
+        return searchAndFilterPokemon()
+    }
+
+    private fun searchPokemon(): LiveData<List<PokemonWithTypes>> {
+        return Transformations.switchMap(search) { searchName ->
+            repository.searchPokemon(searchName)
+        }
+    }
+
+    private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypes>> {
         return Transformations.switchMap(search) { searchName ->
             val allPokemon = repository.searchPokemon(searchName)
             allPokemon.switchMap { pokemonList ->
-                val filteredPokemon = MutableLiveData<List<PokemonWithTypes>>()
                 val filteredList = filters.value?.flatMap { filter ->
                     pokemonList.filter { pokemonWithTypes ->
                         pokemonWithTypes.types.any { pokemonType ->
-                            pokemonType.name == filter.key.toLowerCase()
+                            pokemonType.name == filter.key.toLowerCase() && filter.value
                         }
                     }
                 }
-                filteredPokemon.value = filteredList?.distinct()?.sortedBy { it.pokemon.id }
-                filteredPokemon
+                MutableLiveData<List<PokemonWithTypes>>(
+                    filteredList?.distinct()?.sortedBy { it.pokemon.id })
             }
-//            pokemon
         }
     }
 

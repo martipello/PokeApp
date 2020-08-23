@@ -1,20 +1,14 @@
 package com.sealstudios.pokemonApp
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.api.GetAllPokemonViewModel
-import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstTime

@@ -38,7 +38,8 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         ) {
             scope.launch {
                 val pokemon = remoteRepository.getRemotePokemonById(dbPokemon.id).body()
-                val pokemonSpeciesById = remoteRepository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
+                val pokemonSpeciesById =
+                    remoteRepository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
                 pokemon?.let { apiPokemon ->
                     val mappedPokemon = mapRemotePokemonToDatabasePokemon(dbPokemon, apiPokemon)
                     pokemonSpeciesById?.let { species ->

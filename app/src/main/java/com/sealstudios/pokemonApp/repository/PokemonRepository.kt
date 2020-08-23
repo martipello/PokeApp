@@ -13,14 +13,7 @@ class PokemonRepository @Inject constructor(
 
     val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
-    fun searchPokemon(search: String): LiveData<List<dbPokemon>> {
-        return pokemonDao.searchAllPokemon(search)
-    }
-
-    fun searchPokemonWithTypeFilters(
-        search: String,
-        types: List<String>
-    ): LiveData<List<PokemonWithTypes>> {
+    fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
         return pokemonDao.getPokemonWithTypes(search)
     }
 

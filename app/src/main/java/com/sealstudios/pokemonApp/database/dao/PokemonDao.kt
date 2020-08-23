@@ -39,7 +39,7 @@ interface PokemonDao {
     suspend fun deleteAll()
 
     @Transaction
-    @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id DESC")
     fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
 
 }

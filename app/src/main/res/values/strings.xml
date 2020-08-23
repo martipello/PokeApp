@@ -15,8 +15,8 @@
     <string name="notification_title">PokemonApp</string>
     <string name="cancel_download">Cancel</string>
 
-    <string name="adaptive_appbar_scrolling_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehavior</string>
     <string name="no_results">No Results...</string>
     <string name="app_toolbar_header">Header image</string>
     <string name="pokemonId">#%d</string>
+    <string name="filter">filter</string>
 </resources>

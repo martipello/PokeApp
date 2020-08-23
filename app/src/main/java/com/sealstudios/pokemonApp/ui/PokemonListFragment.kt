@@ -18,16 +18,17 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.ui.adapter.ClickListener
+import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
-import com.sealstudios.pokemonApp.ui.util.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.util.*
+import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment(), ClickListener {
+class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -53,8 +54,36 @@ class PokemonListFragment : Fragment(), ClickListener {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
+        setUpViews()
+        setUpFilterView()
         setUpPokemonRecyclerView(view.context)
         observePokemonList()
+        addScrollAwarenessForFilterButton()
+    }
+
+    private fun setUpFilterView() {
+        val chipGroup = binding.pokemonListFilter.filterGroup.root
+        chipGroup.chipSpacingHorizontal = 96.dp
+        chipGroup.chipSpacingVertical = 8.dp
+        FilterGroupHelper(chipGroup = chipGroup, clickListener = this@PokemonListFragment).bindChips()
+    }
+
+    private fun setUpViews(){
+        binding.pokemonListFilter.filterFab.setOnClickListener {
+            animateFilterFab()
+        }
+    }
+
+    private fun animateFilterFab() {
+
+    }
+
+    private fun addScrollAwarenessForFilterButton() {
+        ScrollAwareFilerFab(
+            circleCardView = binding.pokemonListFilter.filterFab,
+            recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView,
+            circleCardViewParent = binding.listFragmentContainer
+        ).start()
     }
 
     private fun setUpPokemonAdapter() {
@@ -63,16 +92,17 @@ class PokemonListFragment : Fragment(), ClickListener {
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            pokemonList?.let {
-                pokemonAdapter.submitList(it)
-                binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
-                checkForEmptyLayout(it)
+            pokemonList?.let { pokemonListWithTypes ->
+                pokemonAdapter.submitList(pokemonListWithTypes)
+                checkForEmptyLayout(pokemonListWithTypes)
             }
         })
+//        pokemonListViewModel.setFilters(listOf("fire"))
     }
 
     private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {
         val content = binding.pokemonListFragmentContent
+        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
         if (it.isNotEmpty()) {
             content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
             content.emptyPokemonList.emptyResultsText.visibility = View.GONE
@@ -83,14 +113,15 @@ class PokemonListFragment : Fragment(), ClickListener {
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        binding.pokemonListFragmentContent.pokemonListRecyclerView.addItemDecoration(
+        val recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView
+        recyclerView.addItemDecoration(
             PokemonListDecoration(
                 context.resources.getDimensionPixelSize(
                     R.dimen.small_margin_8dp
                 )
             )
         )
-        binding.pokemonListFragmentContent.pokemonListRecyclerView.adapter = pokemonAdapter
+        recyclerView.adapter = pokemonAdapter
     }
 
     private fun makeStatusBarTransparent() {
@@ -153,6 +184,10 @@ class PokemonListFragment : Fragment(), ClickListener {
     override fun onItemSelected(position: Int, item: Pokemon) {
         pokemonDetailViewModel.setSearch(item.id)
         navigateToDetailFragment()
+    }
+
+    override fun onFilterSelected(key: String, value: Boolean) {
+        pokemonListViewModel.setFilter(key, value)
     }
 
 }

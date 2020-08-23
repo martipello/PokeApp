@@ -1,15 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.chip.Chip xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/pokemon_type_chip"
+<com.google.android.material.chip.Chip android:id="@+id/pokemon_type_chip"
+    style="@style/Widget.MaterialComponents.Chip.Filter"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintBottom_toBottomOf="parent"
     android:textColor="@android:color/white"
     app:chipIcon="@drawable/normal_type_icon"
+    app:chipIconSize="@dimen/chip_image_size"
     app:chipIconEnabled="true"
     app:chipStartPadding="0dp"
     app:iconEndPadding="0dp"
-    app:iconStartPadding="4dp" />
+    app:iconStartPadding="2dp"
+    android:checkable="true"
+    android:clickable="true"
+    android:focusable="true"
+    app:checkedIcon="@drawable/ic_check_white_24dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" />
 
 
 

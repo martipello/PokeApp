@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
@@ -25,7 +24,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType
 
 class PokemonViewHolder constructor(
     itemView: View,
-    private val clickListener: ClickListener?,
+    private val clickListener: AdapterClickListener?,
     private val glide: RequestManager
 ) :
     RecyclerView.ViewHolder(itemView) {
@@ -34,9 +33,9 @@ class PokemonViewHolder constructor(
 
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypes: PokemonWithTypes) = with(binding) {
-        Log.d("VH", pokemonWithTypes.toString())
         binding.pokemonNameTextView.text = pokemonWithTypes.pokemon.name.capitalize()
-        binding.pokemonIdTextViewLabel.text = itemView.context.getString(R.string.pokemonId, pokemonWithTypes.pokemon.id)
+        binding.pokemonIdTextViewLabel.text =
+            itemView.context.getString(R.string.pokemonId, pokemonWithTypes.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text = pokemonWithTypes.pokemon.species.capitalize()
         binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         binding.pokemonImageView.shadowColor = R.color.black
@@ -45,7 +44,8 @@ class PokemonViewHolder constructor(
         }
         buildPokemonImageView(pokemonWithTypes.pokemon)
         binding.pokemonTypesChipGroup.removeAllViews()
-        val types = PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypes.types))
+        val types =
+            PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypes.types))
         for (type in types) {
             binding.pokemonTypesChipGroup.addView(createChip(type, itemView.context))
         }
@@ -99,12 +99,15 @@ class PokemonViewHolder constructor(
 
     @SuppressLint("DefaultLocale")
     private fun createChip(pokemonType: PokemonType, context: Context): Chip? {
-        val chipLayout =
+        val chip =
             LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
-        chipLayout.text = pokemonType.name.capitalize()
-        chipLayout.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
-        chipLayout.setChipBackgroundColorResource(pokemonType.color)
-        return chipLayout
+        chip.text = pokemonType.name.capitalize()
+        chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
+        chip.setChipBackgroundColorResource(pokemonType.color)
+        chip.isCheckable = false
+        chip.isClickable = false
+        chip.rippleColor = null
+        return chip
     }
 
 }

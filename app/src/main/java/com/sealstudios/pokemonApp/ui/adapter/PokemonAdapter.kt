@@ -10,7 +10,7 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 
 class PokemonAdapter(
-    private val clickListener: ClickListener,
+    private val clickListener: AdapterClickListener,
     private val glide: RequestManager
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -61,7 +61,7 @@ class PokemonAdapter(
                     oldItem: PokemonWithTypes,
                     newItem: PokemonWithTypes
                 ): Boolean {
-                    return oldItem.pokemon.id == newItem.pokemon.id // TODO add other items to this
+                    return oldItem.pokemon.id == newItem.pokemon.id
                 }
 
             }

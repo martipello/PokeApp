@@ -4,18 +4,20 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapRemotePokemonToDatabasePokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonWithTypesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 class PokemonDetailViewModel @ViewModelInject constructor(
-    private val repository: PokemonRepository,
+    private val repository: PokemonWithTypesRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val localPokemon: LiveData<dbPokemon>
+    val localPokemon: LiveData<PokemonWithTypes>
     private var search: MutableLiveData<Int> = MutableLiveData(-1)
 
     init {

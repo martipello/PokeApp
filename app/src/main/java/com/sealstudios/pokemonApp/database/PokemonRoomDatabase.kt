@@ -6,17 +6,13 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.DATABASE_VERSION
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
+import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.dao.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [Pokemon::class, PokemonType::class, PokemonTypesJoin::class],
+    entities = [Pokemon::class, PokemonType::class, PokemonMove::class, PokemonTypesJoin::class, PokemonMovesJoin::class],
     version = DATABASE_VERSION,
     exportSchema = false
 )
@@ -24,7 +20,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
 
     abstract fun pokemonDao(): PokemonDao
     abstract fun pokemonTypeDao(): PokemonTypeDao
+    abstract fun pokemonMoveDao(): PokemonMoveDao
     abstract fun pokemonTypeJoinDao(): PokemonTypeJoinDao
+    abstract fun pokemonMoveJoinDao(): PokemonMoveJoinDao
 
     private class PokemonRoomDatabaseCallback(
         private val scope: CoroutineScope
@@ -37,7 +35,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
                     populateDatabase(
                         database.pokemonDao(),
                         database.pokemonTypeDao(),
-                        database.pokemonTypeJoinDao()
+                        database.pokemonTypeJoinDao(),
+                        database.pokemonMoveDao(),
+                        database.pokemonMoveJoinDao()
                     )
                 }
             }
@@ -46,12 +46,16 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
         suspend fun populateDatabase(
             pokemonDao: PokemonDao,
             pokemonTypeDao: PokemonTypeDao,
-            pokemonTypeJoinDao: PokemonTypeJoinDao
+            pokemonTypeJoinDao: PokemonTypeJoinDao,
+            pokemonMoveDao: PokemonMoveDao,
+            pokemonMoveJoinDao: PokemonMoveJoinDao
         ) {
             // Delete all content here.
             pokemonDao.deleteAll()
             pokemonTypeDao.deleteAll()
             pokemonTypeJoinDao.deleteAll()
+            pokemonMoveDao.deleteAll()
+            pokemonMoveJoinDao.deleteAll()
         }
     }
 
@@ -60,7 +64,10 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
         private const val DATABASE_NAME: String = "DEX"
         const val POKEMON_TABLE_NAME: String = "pokemon_table"
         const val POKEMON_TYPE_TABLE_NAME: String = "pokemon_type_table"
+        const val POKEMON_MOVE_TABLE_NAME: String = "pokemon_move_table"
+        const val POKEMON_WITH_TYPES_TABLE_NAME: String = "pokemon_with_types_table"
         const val POKEMON_TYPES_JOIN_TABLE_NAME: String = "pokemon_types_join_table"
+        const val POKEMON_MOVES_JOIN_TABLE_NAME: String = "pokemon_moves_join_table"
 
         //Singleton
         @Volatile

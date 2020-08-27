@@ -21,6 +21,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.getTyp
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
+import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 
 class PokemonViewHolder constructor(
     itemView: View,
@@ -47,7 +48,7 @@ class PokemonViewHolder constructor(
         val types =
             PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypes.types))
         for (type in types) {
-            binding.pokemonTypesChipGroup.addView(createChip(type, itemView.context))
+            binding.pokemonTypesChipGroup.addView(createPokemonTypeChip(type, itemView.context))
         }
     }
 
@@ -95,19 +96,6 @@ class PokemonViewHolder constructor(
                 return false
             }
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun createChip(pokemonType: PokemonType, context: Context): Chip? {
-        val chip =
-            LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
-        chip.text = pokemonType.name.capitalize()
-        chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
-        chip.setChipBackgroundColorResource(pokemonType.color)
-        chip.isCheckable = false
-        chip.isClickable = false
-        chip.rippleColor = null
-        return chip
     }
 
 }

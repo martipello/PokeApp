@@ -21,10 +21,10 @@
     <string name="filter">filter</string>
     <string name="moves_label">Moves</string>
     <string name="pok_dex_entry">Pokédex Entry</string>
-    <string name="width">Width: %s</string>
-    <string name="height">Height: %s</string>
+    <string name="weight">Weight: %d</string>
+    <string name="height">Height: %d</string>
     <string name="generation">Generation %s</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
-    <string name="pokemon_image">Pokemon Image</string>
+    <string name="pokemon_name">pokemon_name</string>
 </resources>

@@ -2,12 +2,11 @@ package com.sealstudios.pokemonApp.ui
 
 import android.app.SearchManager
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -19,6 +18,7 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
+import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.util.*
@@ -26,6 +26,7 @@ import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation.Scroll
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dev.chrisbanes.insetter.applySystemWindowInsetsToMargin
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -33,25 +34,27 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     @Inject
     lateinit var glide: RequestManager
-    private var _binding: PokemonListFragmentBinding? = null
     private val binding get() = _binding!!
+    private lateinit var pokemonAdapter: PokemonAdapter
+    private var _binding: PokemonListFragmentBinding? = null
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
-    private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        makeStatusBarTransparent()
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = true)
+        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(bottom = true, right = true)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        makeStatusBarTransparent()
         setActionBar()
-        setToolbar(view.context)
+        setToolbarTitleColor(view.context)
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
@@ -62,7 +65,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         addScrollAwarenessForFilterButton()
     }
 
-    private fun setUpViews(){
+    private fun setUpViews() {
         binding.pokemonListFilter.filterFab.setOnClickListener {
             animateFilterFab()
         }
@@ -72,7 +75,11 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         val chipGroup = binding.pokemonListFilter.filterGroup.root
         chipGroup.chipSpacingHorizontal = 96.dp
         chipGroup.chipSpacingVertical = 8.dp
-        FilterGroupHelper(chipGroup = chipGroup, clickListener = this@PokemonListFragment, selections = selections).bindChips()
+        FilterGroupHelper(
+            chipGroup = chipGroup,
+            clickListener = this@PokemonListFragment,
+            selections = selections
+        ).bindChips()
     }
 
     private fun animateFilterFab() {
@@ -92,9 +99,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     private fun observePokemonList() {
-        Log.d("VM", "observePokemonList")
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            Log.d("VM", "pokemonList $pokemonList")
             pokemonList?.let { pokemonListWithTypes ->
                 pokemonAdapter.submitList(pokemonListWithTypes)
                 checkForEmptyLayout(pokemonListWithTypes)
@@ -112,7 +117,8 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {
         val content = binding.pokemonListFragmentContent
-        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility =
+            View.GONE
         if (it.isNotEmpty()) {
             content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
             content.emptyPokemonList.emptyResultsText.visibility = View.GONE
@@ -134,12 +140,12 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         recyclerView.adapter = pokemonAdapter
     }
 
-    private fun makeStatusBarTransparent() {
-        val mainActivity = (activity as AppCompatActivity)
-        mainActivity.window?.apply {
-            statusBarColor = Color.TRANSPARENT
-        }
-    }
+//    private fun makeStatusBarTransparent() {
+//        val mainActivity = (activity as AppCompatActivity)
+//        mainActivity.window?.apply {
+//            statusBarColor = Color.TRANSPARENT
+//        }
+//    }
 
     private fun setActionBar() {
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
@@ -151,7 +157,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         )
     }
 
-    private fun setToolbar(context: Context) {
+    private fun setToolbarTitleColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setExpandedTitleColor(
             ContextCompat.getColor(
                 context,
@@ -186,14 +192,14 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         })
     }
 
-    private fun navigateToDetailFragment() {
-        findNavController(this@PokemonListFragment)
-            .navigate(R.id.action_PokemonListFragment_to_PokemonDetailFragment)
+    private fun navigateToDetailFragment(name: String) {
+        val action = actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name)
+        findNavController(this@PokemonListFragment).navigate(action)
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {
         pokemonDetailViewModel.setSearch(item.id)
-        navigateToDetailFragment()
+        navigateToDetailFragment(item.name)
     }
 
     override fun onFilterSelected(key: String, value: Boolean) {

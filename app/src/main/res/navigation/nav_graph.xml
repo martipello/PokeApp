@@ -20,5 +20,10 @@
         android:id="@+id/PokemonDetailFragment"
         android:name="com.sealstudios.pokemonApp.ui.PokemonDetailFragment"
         android:label="@string/pokemon"
-        tools:layout="@layout/pokemon_detail_fragment"/>
+        tools:layout="@layout/pokemon_detail_fragment">
+        <argument
+            android:name="pokemon_name"
+            app:argType="string"
+            android:defaultValue="Pokemon" />
+    </fragment>
 </navigation>

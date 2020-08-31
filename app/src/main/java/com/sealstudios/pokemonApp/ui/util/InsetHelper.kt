@@ -14,6 +14,7 @@ fun View.addSystemWindowInsetToPadding(
         listOf(paddingLeft, paddingTop, paddingRight, paddingBottom)
 
     ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
+//        @deprecated Use {@link #getInsets(int)} with {@link Type#systemBars()} instead insets.getInsets(WindowInsetsCompat.Type.statusBars())
         view.updatePadding(
             left = initialLeft + (if (left) insets.systemWindowInsetLeft else 0),
             top = initialTop + (if (top) insets.systemWindowInsetTop else 0),
@@ -46,6 +47,16 @@ fun View.addSystemWindowInsetToMargin(
             }
         }
 
+        insets
+    }
+}
+
+
+fun View.alignBelowStatusBar() {
+    this.setOnApplyWindowInsetsListener { view, insets ->
+        val params = view.layoutParams as ViewGroup.MarginLayoutParams
+        params.topMargin = insets.systemWindowInsetTop
+        view.layoutParams = params
         insets
     }
 }

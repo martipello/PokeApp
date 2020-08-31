@@ -15,6 +15,7 @@ import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
@@ -45,10 +46,8 @@ class PokemonDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
-        binding.detailRoot.addSystemWindowInsetToPadding(top = true)
-        binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
-        val safeArgs: PokemonDetailFragmentArgs by navArgs()
-        pokemonName = safeArgs.pokemonName
+        setInsets()
+        getNavigationArguments()
         return binding.root
     }
 
@@ -56,6 +55,16 @@ class PokemonDetailFragment : Fragment() {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
         observePokemon()
+    }
+
+    private fun setInsets() {
+        binding.detailRoot.addSystemWindowInsetToPadding(top = true)
+        binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
+    }
+
+    private fun getNavigationArguments() {
+        val safeArgs: PokemonDetailFragmentArgs by navArgs()
+        pokemonName = safeArgs.pokemonName
     }
 
     @SuppressLint("DefaultLocale")
@@ -89,24 +98,33 @@ class PokemonDetailFragment : Fragment() {
                 val pokemon = it.pokemon
                 setPokemonImageView(it.pokemon.image)
                 setPokemonTypes(context, it.types)
-                title.text = pokemon.name.capitalize()
-                title.setOnClickListener {
-                    GlobalScope.launch {
-                        pokemonDetailViewModel.getRemotePokemonDetail(pokemon.id)
-                    }
-                }
-                subtitle.text = it.species.species.capitalize()
-                genTextView.text = context.getString(R.string.generation, it.species.generation)
-                idLabel.text = context.getString(R.string.pokemonId, pokemon.id)
-                heightTextView.text = context.getString(R.string.height, pokemon.height)
-                weightTextView.text = context.getString(R.string.weight, pokemon.weight)
-                pokedexSubtitle.text = context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
-                pokedexEntryText.text = it.species.pokedexEntry
-                shapeText.text = context.getString(R.string.shape_text, it.species.shape?.capitalize())
-                formDescriptionText.text = context.getString(R.string.form_text, it.species.formDescription)
-                habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
+                setPokemonFormData(pokemon, it, context)
             }
         }
+    }
+
+    private fun PokemonDetailFragmentBinding.setPokemonFormData(
+        pokemon: Pokemon,
+        it: PokemonWithTypesAndSpecies,
+        context: Context
+    ) {
+        title.text = pokemon.name.capitalize()
+        title.setOnClickListener {
+            GlobalScope.launch {
+                pokemonDetailViewModel.getRemotePokemonDetail(pokemon.id)
+            }
+        }
+        subtitle.text = it.species.species.capitalize()
+        genTextView.text = context.getString(R.string.generation, it.species.generation)
+        idLabel.text = context.getString(R.string.pokemonId, pokemon.id)
+        heightTextView.text = context.getString(R.string.height, pokemon.height)
+        weightTextView.text = context.getString(R.string.weight, pokemon.weight)
+        pokedexSubtitle.text =
+            context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
+        pokedexEntryText.text = it.species.pokedexEntry
+        shapeText.text = context.getString(R.string.shape_text, it.species.shape?.capitalize())
+        formDescriptionText.text = context.getString(R.string.form_text, it.species.formDescription)
+        habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
     private fun setPokemonImageView(imageName: String) {
@@ -123,16 +141,11 @@ class PokemonDetailFragment : Fragment() {
         pokemonTypesChipGroup.removeAllViews()
         val types =
             pokemonTypeEnum.getPokemonEnumTypesForPokemonTypes(
-                PokemonType.getTypesInOrder(
-                    types = pokemonTypes
-                )
+                PokemonType.getTypesInOrder(types = pokemonTypes)
             )
         for (type in types) {
             binding.pokemonTypesChipGroup.addView(
-                pokemonTypeEnum.createPokemonTypeChip(
-                    type,
-                    context
-                )
+                pokemonTypeEnum.createPokemonTypeChip(type, context)
             )
         }
     }

@@ -44,12 +44,16 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = true)
+        setInsets()
+        return binding.root
+    }
+
+    private fun setInsets() {
+        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
         binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
             bottom = true,
             right = true
         )
-        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

@@ -60,3 +60,16 @@ fun View.alignBelowStatusBar() {
         insets
     }
 }
+
+
+//fun View.setWindowInsets(){
+//    this.setOnApplyWindowInsetsListener { _, windowInsets ->
+//        val systemWindowInsets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+//        // It's also possible to use multiple types
+//        val insets = windowInsets.getInsets(
+//            WindowInsetsCompat.Type.ime() or
+//                    WindowInsetsCompat.Type.systemGestures()
+//        )
+//        windowInsets
+//    }
+//}

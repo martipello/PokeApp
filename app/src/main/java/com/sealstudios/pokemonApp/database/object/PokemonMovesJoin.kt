@@ -14,6 +14,6 @@ class PokemonMovesJoin(
 
     @NotNull
     @ColumnInfo(name = MOVE_ID, index = true)
-    val pokemon_movie_id: Int
+    val move_id: Int
 
 )

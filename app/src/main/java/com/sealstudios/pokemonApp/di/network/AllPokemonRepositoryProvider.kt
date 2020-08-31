@@ -16,19 +16,23 @@ class AllPokemonRepositoryProvider {
     @Provides
     fun provideAllPokemonRepository(
         remotePokemonRepository: RemotePokemonRepository,
-        localPokemonRepository: PokemonRepository,
-        localPokemonTypeRepository: PokemonTypeRepository,
+        pokemonRepository: PokemonRepository,
+        pokemonTypeRepository: PokemonTypeRepository,
         pokemonTypeJoinRepository: PokemonTypeJoinRepository,
-        localPokemonSpeciesRepository: PokemonSpeciesRepository,
-        pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
+        pokemonSpeciesRepository: PokemonSpeciesRepository,
+        pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
+        pokemonMoveRepository: PokemonMoveRepository,
+        pokemonMoveJoinRepository: PokemonMoveJoinRepository
     ): GetAllPokemonRepository {
         return GetAllPokemonRepository(
             remotePokemonRepository,
-            localPokemonRepository,
-            localPokemonTypeRepository,
+            pokemonRepository,
+            pokemonTypeRepository,
             pokemonTypeJoinRepository,
-            localPokemonSpeciesRepository,
-            pokemonSpeciesJoinRepository
+            pokemonSpeciesRepository,
+            pokemonSpeciesJoinRepository,
+            pokemonMoveRepository,
+            pokemonMoveJoinRepository
         )
     }
 

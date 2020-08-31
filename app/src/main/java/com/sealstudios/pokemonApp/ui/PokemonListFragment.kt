@@ -50,8 +50,9 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     private fun setInsets() {
         binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
-        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(false)
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(false)
+        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(bottom = true)
         binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
             bottom = true,
             right = true
@@ -197,7 +198,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {
-        pokemonDetailViewModel.setSearch(item.id)
+        pokemonDetailViewModel.setId(item.id)
         navigateToDetailFragment(item.name)
     }
 

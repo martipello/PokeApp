@@ -3,8 +3,8 @@ package com.sealstudios.pokemonApp.repository
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.api.`object`.PokemonMove
+import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
 import retrofit2.Response
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
@@ -15,18 +15,18 @@ class RemotePokemonRepository @Inject constructor(
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
-        return pokemonService.getPokemon(offset = 0, limit = 1050)
+        return pokemonService.getPokemon(offset = 0, limit = 20)
     }
 
-    suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {
+    suspend fun pokemonById(id: Int): Response<apiPokemon> {
         return pokemonService.getPokemonById(id, offset = 0, limit = 1)
     }
 
-    suspend fun getRemotePokemonSpeciesForId(id: Int): Response<PokemonSpecies> {
+    suspend fun speciesForId(id: Int): Response<PokemonSpecies> {
         return pokemonService.getPokemonSpeciesForId(id)
     }
 
-    suspend fun getRemotePokemonMovesForId(id: Int): Response<PokemonMove> {
+    suspend fun movesForId(id: Int): Response<PokemonMove> {
         return pokemonService.getPokemonMoveForId(id)
     }
 
@@ -37,16 +37,6 @@ class RemotePokemonRepository @Inject constructor(
     suspend fun getRemotePokemonEvolutionChainForId(id: Int): Response<PokemonSpecies> {
         return pokemonService.getPokemonSpeciesForId(id)
     }
-
-    suspend fun getRemotePokemonByName(name: String): Response<apiPokemon> {
-        return pokemonService.getPokemonByName(name, offset = 0, limit = 1)
-    }
-
-//    suspend fun fetchPokemonResult(): Result<PokemonListResponse> {
-//        return pokemonService.getPokemonResponse(offset = 0, limit = 10).awaitResult { pokemonResponse ->
-//            pokemonResponse;
-//        }
-//    }
 
 }
 //

@@ -3,9 +3,12 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
+@TypeConverters(RoomIntListConverter::class)
 @Entity
 data class Pokemon(
     @NotNull
@@ -26,7 +29,10 @@ data class Pokemon(
     val weight: Int,
 
     @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int
+    val height: Int,
+
+    @ColumnInfo(name = MOVE_IDS)
+    var move_ids: List<Int>
 
 ) {
     companion object {
@@ -37,6 +43,7 @@ data class Pokemon(
         const val POKEMON_HEIGHT: String = "pokemon_height"
         const val POKEMON_WEIGHT: String = "pokemon_weight"
         const val POKEMON_SPRITE: String = "pokemon_sprite"
+        const val MOVE_IDS: String = "pokemon_move_id"
 
         fun mapDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
             return Pokemon(
@@ -45,7 +52,8 @@ data class Pokemon(
                 image = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
-                sprite = apiPokemon.sprites.front_default
+                sprite = apiPokemon.sprites.front_default,
+                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl( it.move.url ) }
             )
         }
 

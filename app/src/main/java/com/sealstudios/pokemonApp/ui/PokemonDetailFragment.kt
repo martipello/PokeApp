@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,8 +19,10 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
+import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.GlobalScope
@@ -37,7 +40,7 @@ class PokemonDetailFragment : Fragment() {
     lateinit var glide: RequestManager
     private lateinit var pokemonName: String
     private val binding get() = _binding!!
-    private var pokemon: PokemonWithTypesAndSpecies? = null
+    private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
 
@@ -58,6 +61,9 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun setInsets() {
+        binding.appBarLayout.alignBelowStatusBar()
+        binding.toolbar.addSystemWindowInsetToPadding(false)
+        binding.toolbarLayout.addSystemWindowInsetToPadding(false)
         binding.detailRoot.addSystemWindowInsetToPadding(top = true)
         binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
     }
@@ -82,9 +88,10 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun observePokemon() {
-        pokemonDetailViewModel.localPokemon.observe(viewLifecycleOwner, Observer { pokemon ->
+        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             this.pokemon = pokemon
             pokemon?.let {
+                Log.d("MOVES", pokemon.moves.toString())
                 populateViews()
             }
         })
@@ -105,15 +112,10 @@ class PokemonDetailFragment : Fragment() {
 
     private fun PokemonDetailFragmentBinding.setPokemonFormData(
         pokemon: Pokemon,
-        it: PokemonWithTypesAndSpecies,
+        it: PokemonWithTypesAndSpeciesAndMoves,
         context: Context
     ) {
         title.text = pokemon.name.capitalize()
-        title.setOnClickListener {
-            GlobalScope.launch {
-                pokemonDetailViewModel.getRemotePokemonDetail(pokemon.id)
-            }
-        }
         subtitle.text = it.species.species.capitalize()
         genTextView.text = context.getString(R.string.generation, it.species.generation)
         idLabel.text = context.getString(R.string.pokemonId, pokemon.id)

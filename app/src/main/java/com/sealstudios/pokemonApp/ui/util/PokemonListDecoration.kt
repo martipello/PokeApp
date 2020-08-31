@@ -13,14 +13,14 @@ class PokemonListDecoration constructor(private val margin: Int) : RecyclerView.
         state: RecyclerView.State
     ) {
         super.getItemOffsets(outRect, view, parent, state)
-        val position = parent.getChildLayoutPosition(view)
+
+        if (parent.getChildAdapterPosition(view) == 0) {
+            outRect.top = margin
+        }
 
         outRect.left = margin
         outRect.right = margin
-        outRect.top = margin
-
-        if (position == state.itemCount - 1)
-            outRect.bottom = margin
+        outRect.bottom = margin
 
     }
 }

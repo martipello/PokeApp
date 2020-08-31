@@ -123,7 +123,7 @@ data class Pokemon(
     val forms: List<PokemonForm>,
     val gameIndices: List<VersionGameIndex>,
     val heldItems: List<PokemonHeldItem>,
-    val moves: List<PokemonMove>,
+    val moves: List<PokemonMoveResponse>,
     val stats: List<PokemonStat>,
     val types: List<PokemonType>,
     val sprites: PokemonSprites
@@ -158,6 +158,11 @@ data class PokemonHeldItem(
 data class PokemonHeldItemVersion(
     val version: NamedApiResource,
     val rarity: Int
+)
+
+data class PokemonMoveResponse(
+    val move: NamedApiResource,
+    val version_group_details: List<PokemonMoveVersion>
 )
 
 data class PokemonMove(
@@ -204,9 +209,9 @@ data class MoveLearnMethod(
 )
 
 data class PokemonMoveVersion(
-    val moveLearnMethod: NamedApiResource,
-    val versionGroup: NamedApiResource,
-    val levelLearnedAt: Int
+    val move_learn_method: NamedApiResource,
+    val version_group: NamedApiResource,
+    val level_learned_at: Int
 )
 
 data class PokemonStat(

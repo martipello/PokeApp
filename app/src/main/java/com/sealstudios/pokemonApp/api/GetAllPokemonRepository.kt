@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.api
 import android.util.Log
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.mapPartialRemotePokemonMoveToDatabasePokemonMove
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.coroutineScope
 import retrofit2.Response
@@ -10,11 +11,13 @@ import retrofit2.Response
 
 class GetAllPokemonRepository(
     private val remotePokemonRepository: RemotePokemonRepository,
-    private val localPokemonRepository: PokemonRepository,
-    private val localPokemonTypeRepository: PokemonTypeRepository,
+    private val pokemonRepository: PokemonRepository,
+    private val pokemonTypeRepository: PokemonTypeRepository,
     private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
-    private val localPokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
+    private val pokemonSpeciesRepository: PokemonSpeciesRepository,
+    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
+    private val pokemonMoveRepository: PokemonMoveRepository,
+    private val pokemonMoveJoinRepository: PokemonMoveJoinRepository
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
@@ -26,11 +29,13 @@ class GetAllPokemonRepository(
     ) {
         coroutineScope {
             val pokemonRequest =
-                remotePokemonRepository.getRemotePokemonById(remotePokemonId)
+                remotePokemonRepository.pokemonById(remotePokemonId)
             pokemonRequest.let { pokemonResponse ->
                 if (pokemonResponse.isSuccessful) {
                     pokemonResponse.body()?.let { pokemon ->
+                        Log.d("GETALL", "$pokemon")
                         insertPokemonTypes(pokemon)
+                        insertPartialPokemonMove(pokemon)
                         insertPokemon(
                             Pokemon.mapDbPokemonFromPokemonResponse(pokemon)
                         )
@@ -41,7 +46,7 @@ class GetAllPokemonRepository(
     }
 
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        localPokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
+        pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
         pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
             PokemonSpeciesJoin(
                 remotePokemonId,
@@ -51,13 +56,13 @@ class GetAllPokemonRepository(
     }
 
     private suspend fun insertPokemon(pokemon: Pokemon) {
-        localPokemonRepository.insertPokemon(pokemon)
+        pokemonRepository.insertPokemon(pokemon)
     }
 
     private suspend fun insertPokemonTypes(
         remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon) {
         for (type in remotePokemon.types) {
-            localPokemonTypeRepository.insertPokemonType(
+            pokemonTypeRepository.insertPokemonType(
                 PokemonType(
                     Pokemon.getPokemonIdFromUrl(type.type.url),
                     type.type.name,
@@ -73,12 +78,27 @@ class GetAllPokemonRepository(
         }
     }
 
+    private suspend fun insertPartialPokemonMove(
+        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon) {
+        for (move in remotePokemon.moves){
+            pokemonMoveRepository.insertPokemonMove(
+                mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
+            )
+            pokemonMoveJoinRepository.insertPokemonMovesJoin(
+                PokemonMovesJoin(
+                    remotePokemon.id,
+                    Pokemon.getPokemonIdFromUrl(move.move.url)
+                )
+            )
+        }
+    }
+
     suspend fun fetchSpeciesForId(
         remotePokemonId: Int
     ) {
         coroutineScope {
             val pokemonSpeciesRequest =
-                remotePokemonRepository.getRemotePokemonSpeciesForId(remotePokemonId)
+                remotePokemonRepository.speciesForId(remotePokemonId)
             pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
                 if (pokemonSpeciesResponse.isSuccessful) {
                     pokemonSpeciesResponse.body()?.let { species ->

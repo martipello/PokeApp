@@ -4,108 +4,82 @@ import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
-import com.sealstudios.pokemonApp.repository.PokemonRepository
-import com.sealstudios.pokemonApp.repository.PokemonWithTypesRepository
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove
+import com.sealstudios.pokemonApp.database.`object`.PokemonMovesJoin
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
+import com.sealstudios.pokemonApp.repository.PokemonMoveJoinRepository
+import com.sealstudios.pokemonApp.repository.PokemonMoveRepository
+import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesAndMovesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 class PokemonDetailViewModel @ViewModelInject constructor(
-    private val repository: PokemonWithTypesRepository,
-    private val remoteRepository: RemotePokemonRepository,
+    private val repository: PokemonWithTypesAndSpeciesAndMovesRepository,
+    private val moveRepository: PokemonMoveRepository,
+    private val moveJoinRepository: PokemonMoveJoinRepository,
+    private val remotePokemonRepository: RemotePokemonRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val localPokemon: LiveData<PokemonWithTypesAndSpecies>
-    private var search: MutableLiveData<Int> = MutableLiveData(-1)
+    val pokemon: LiveData<PokemonWithTypesAndSpeciesAndMoves>
+    private var id: MutableLiveData<Int> = MutableLiveData(-1)
 
     init {
-        localPokemon = Transformations.distinctUntilChanged(Transformations.switchMap(search) {
-            repository.getSinglePokemonWithTypeAndSpeciesById(it)
-        })
-    }
-
-    fun setSearch(search: Int) {
-        this.search.value = search
-    }
-
-    suspend fun getRemotePokemonDetail(id: Int) {
-        val pokemon = remoteRepository.getRemotePokemonSpeciesForId(id)
-        Log.d("PDV", "${pokemon.body()}")
-    }
-
-    companion object {
-        //TODO have this return an object and save it somewhere else to remove localRepository: PokemonRepository
-        fun getRemotePokemonDetail(
-            scope: CoroutineScope,
-            dbPokemon: dbPokemon,
-            remoteRepository: RemotePokemonRepository,
-            localRepository: PokemonRepository
-        ) {
-            scope.launch {
-                val pokemon = remoteRepository.getRemotePokemonById(dbPokemon.id).body()
-                val pokemonSpeciesById =
-                    remoteRepository.getRemotePokemonSpeciesForId(dbPokemon.id).body()
-                pokemon?.let { apiPokemon ->
-                    val mappedPokemon = mapDbPokemonFromPokemonResponse(apiPokemon)
-                    pokemonSpeciesById?.let { species ->
-                        for (genus in species.genera) {
-                            if (genus.language.name == "en") {
-                                mappedPokemon.apply {
-//                                    this.species = genus.genus
-                                }
-                            }
-                        }
-
-                    }
-                    localRepository.insertPokemon(mappedPokemon)
+        pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(id) { id ->
+            val pokemon = repository.getSinglePokemonById(id)
+            pokemon.map {
+                Log.d("PDVM", "mapping")
+                it.pokemon.move_ids.forEach { moveId ->
+                    Log.d("PDVM", "fetchMovesForId $moveId")
+                    fetchMovesForId(moveId = moveId, remotePokemonId = id)
                 }
             }
+            pokemon
+        })
+
+    }
+
+    fun setId(id: Int) {
+        this.id.value = id
+    }
+
+    private fun fetchMovesForId(
+        moveId: Int,
+        remotePokemonId: Int
+    ) {
+        viewModelScope.launch {
+            val pokemonMovesRequest =
+                remotePokemonRepository.movesForId(moveId)
+            pokemonMovesRequest.let { pokemonMovesResponse ->
+                if (pokemonMovesResponse.isSuccessful) {
+                    Log.d("PDVM", "pokemonMovesResponse ${pokemonMovesResponse.body()}")
+                    pokemonMovesResponse.body()?.let { move ->
+                        insertPokemonMove(
+                            remotePokemonId,
+                            PokemonMove.mapRemotePokemonMoveToDatabasePokemonMove(move)
+                        )
+                    }
+                }
+            }
+
         }
+    }
 
+    private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
+        moveRepository.insertPokemonMove(pokemonMove)
+        moveJoinRepository.insertPokemonMovesJoin(
+            PokemonMovesJoin(
+                remotePokemonId,
+                pokemonMove.id
+            )
+        )
+    }
 
-        //TODO remove this and put in the view model
-//        private suspend fun fetchMovesForId(
-//            remotePokemonId: Int
-//        ) {
-//            coroutineScope {
-//                val pokemonMovesRequest =
-//                    remotePokemonRepository.getRemotePokemonMovesForId(remotePokemonId)
-//                pokemonMovesRequest.let { pokemonMovesResponse ->
-//                    if (pokemonMovesResponse.isSuccessful) {
-//                        pokemonMovesResponse.body()?.let { move ->
-//                            insertPokemonMove(
-//                                remotePokemonId,
-//                                PokemonMove.mapRemotePokemonMoveToDatabasePokemonMove(move)
-//                            )
-//                        }
-//                    }
-//                }
-//
-//            }
-//        }
-//
-//        //TODO remove this and put in the view model
-//        private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
-//            localPokemonMoveRepository.insertPokemonMove(pokemonMove)
-//            pokemonMoveJoinRepository.insertPokemonMovesJoin(
-//                PokemonMovesJoin(
-//                    remotePokemonId,
-//                    pokemonMove.id
-//                )
-//            )
-//        }
-
-//    //TODO remove this and put in the view model
-//    private suspend fun fetchAbilitiesForId(
+//    private fun fetchAbilitiesForId(
 //        remoteRepository: RemotePokemonRepository,
 //        remotePokemonId: Int
 //    ) {
-//        coroutineScope {
+//        viewModelScope.launch {
 //            val pokemonAbilitiesRequest =
 //                remoteRepository.getRemotePokemonAbilitiesForId(remotePokemonId)
 //            pokemonAbilitiesRequest.let { pokemonAbilitiesResponse ->
@@ -119,8 +93,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 //        }
 //    }
 //
-//    //TODO remove this and put in the view model
-//    private suspend fun insertPokemonAbility(remotePokemonId: Int, pokemonSpecies: PokemonAbility) {
+//    private suspend fun insertPokemonAbility(remotePokemonId: Int, ability: PokemonAbility) {
 //        localPokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
 //        pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
 //            PokemonSpeciesJoin(
@@ -130,6 +103,5 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 //        )
 //    }
 
-    }
 }
 

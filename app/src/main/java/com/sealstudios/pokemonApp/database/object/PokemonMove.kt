@@ -4,10 +4,12 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
+import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import com.sealstudios.pokemonApp.util.RoomStringListConverter
 import org.jetbrains.annotations.NotNull
 
-@TypeConverters(RoomStringListConverter::class)
+@TypeConverters(RoomStringListConverter::class, RoomIntListConverter::class)
 @Entity
 data class PokemonMove(
     @NotNull
@@ -18,30 +20,39 @@ data class PokemonMove(
     @ColumnInfo(name = MOVE_NAME)
     var name: String,
 
+    @ColumnInfo(name = VERSIONS_LEARNT)
+    var versionsLearnt: List<String> = emptyList(),
+
+    @ColumnInfo(name = LEVELS_LEARNED_AT)
+    var levelsLearnedAt: List<Int> = emptyList(),
+
+    @ColumnInfo(name = LEARN_METHODS)
+    var learnMethods: List<String> = emptyList(),
+
     @ColumnInfo(name = MOVE_ACCURACY)
-    var accuracy: Int,
+    var accuracy: Int = 0,
 
     @ColumnInfo(name = MOVE_PP)
-    var pp: Int,
+    var pp: Int = 0,
 
     @ColumnInfo(name = MOVE_PRIORITY)
-    var priority: Int,
+    var priority: Int = 0,
 
     @ColumnInfo(name = MOVE_POWER)
-    var power: Int,
+    var power: Int = 0,
 
     @ColumnInfo(name = MOVE_DAMAGE_CLASS_NAME)
-    var damage_class: String,
+    var damage_class: String = "",
 
     @ColumnInfo(name = MOVE_DAMAGE_CLASS_EFFECT_CHANCE)
-    var damage_class_effect_chance: Int,
+    var damage_class_effect_chance: Int = 0,
 
     @ColumnInfo(name = MOVE_GENERATION)
-    var generation: String,
+    var generation: String = "",
 
     @ColumnInfo(name = MOVE_TYPE)
-    var type: List<String>
-//effect_chance
+    var type: List<String> = emptyList()
+
 ) {
     companion object {
 
@@ -55,6 +66,9 @@ data class PokemonMove(
         const val MOVE_DAMAGE_CLASS_EFFECT_CHANCE: String = "move_damage_class_effect_chance"
         const val MOVE_GENERATION: String = "move_generation"
         const val MOVE_TYPE: String = "move_type"
+        const val LEARN_METHODS: String = "learn_methods"
+        const val LEVELS_LEARNED_AT: String = "levels_learned_at"
+        const val VERSIONS_LEARNT: String = "versions_learnt"
 
         fun mapRemotePokemonMoveToDatabasePokemonMove(
             apiPokemonMove: com.sealstudios.pokemonApp.api.`object`.PokemonMove
@@ -73,5 +87,16 @@ data class PokemonMove(
             )
         }
 
+        fun mapPartialRemotePokemonMoveToDatabasePokemonMove(
+            apiPokemonMoveResponse: com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
+        ): PokemonMove {
+            return PokemonMove(
+                id = getPokemonIdFromUrl(apiPokemonMoveResponse.move.url),
+                name = apiPokemonMoveResponse.move.name,
+                levelsLearnedAt = apiPokemonMoveResponse.version_group_details.map { it.level_learned_at },
+                learnMethods = apiPokemonMoveResponse.version_group_details.map { it.move_learn_method.name },
+                versionsLearnt = apiPokemonMoveResponse.version_group_details.map { it.version_group.name }
+            )
+        }
     }
 }

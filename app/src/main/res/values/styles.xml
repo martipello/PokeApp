@@ -6,10 +6,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:navigationBarColor">
-            #B3FFFFFF
+            #4D000000
         </item>
         <item name="android:statusBarColor">
-            #B3000000
+            #000000
         </item>
     </style>
 

@@ -12,7 +12,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [Pokemon::class, PokemonType::class, PokemonMove::class, PokemonTypesJoin::class, PokemonMovesJoin::class],
+    entities = [Pokemon::class,
+        PokemonType::class,
+        PokemonTypesJoin::class,
+        PokemonMove::class,
+        PokemonMovesJoin::class,
+        PokemonSpecies::class,
+        PokemonSpeciesJoin::class],
     version = DATABASE_VERSION,
     exportSchema = false
 )
@@ -20,9 +26,11 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
 
     abstract fun pokemonDao(): PokemonDao
     abstract fun pokemonTypeDao(): PokemonTypeDao
-    abstract fun pokemonMoveDao(): PokemonMoveDao
     abstract fun pokemonTypeJoinDao(): PokemonTypeJoinDao
+    abstract fun pokemonMoveDao(): PokemonMoveDao
     abstract fun pokemonMoveJoinDao(): PokemonMoveJoinDao
+    abstract fun pokemonSpeciesDao(): PokemonSpeciesDao
+    abstract fun pokemonSpeciesJoinDao(): PokemonSpeciesJoinDao
 
     private class PokemonRoomDatabaseCallback(
         private val scope: CoroutineScope

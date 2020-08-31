@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 
 @Dao
 interface PokemonDao {
@@ -49,6 +50,22 @@ interface PokemonDao {
     @Transaction
     @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
+
+    /// ************************************************************************************* ///
+    ///                                 PokemonWithTypesAndSpecies                            ///
+    /// ************************************************************************************* ///
+
+    @Transaction
+    @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
+    fun getAllPokemonWithTypesAndSpecies(): LiveData<List<PokemonWithTypesAndSpecies>>
+
+    @Transaction
+    @Query("SELECT * FROM Pokemon WHERE pokemon_id == :id")
+    fun getSinglePokemonWithTypesAndSpeciesById(id: Int?): LiveData<PokemonWithTypesAndSpecies>
+
+    @Transaction
+    @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    fun searchAllPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
 
 }
 

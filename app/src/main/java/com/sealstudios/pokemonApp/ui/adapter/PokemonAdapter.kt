@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 
 class PokemonAdapter(
     private val clickListener: AdapterClickListener,
@@ -42,24 +43,24 @@ class PokemonAdapter(
         return differ.currentList.size
     }
 
-    fun submitList(list: List<PokemonWithTypes>) {
+    fun submitList(list: List<PokemonWithTypesAndSpecies>) {
         differ.submitList(list)
     }
 
     companion object {
-        private fun diffCallback(): DiffUtil.ItemCallback<PokemonWithTypes> {
-            return object : DiffUtil.ItemCallback<PokemonWithTypes>() {
+        private fun diffCallback(): DiffUtil.ItemCallback<PokemonWithTypesAndSpecies> {
+            return object : DiffUtil.ItemCallback<PokemonWithTypesAndSpecies>() {
 
                 override fun areItemsTheSame(
-                    oldItem: PokemonWithTypes,
-                    newItem: PokemonWithTypes
+                    oldItem: PokemonWithTypesAndSpecies,
+                    newItem: PokemonWithTypesAndSpecies
                 ): Boolean {
                     return oldItem.pokemon.id == newItem.pokemon.id
                 }
 
                 override fun areContentsTheSame(
-                    oldItem: PokemonWithTypes,
-                    newItem: PokemonWithTypes
+                    oldItem: PokemonWithTypesAndSpecies,
+                    newItem: PokemonWithTypesAndSpecies
                 ): Boolean {
                     return oldItem.pokemon.id == newItem.pokemon.id
                 }

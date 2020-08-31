@@ -29,10 +29,12 @@ enum class PokemonType(val color: Int, val icon: Int) {
     FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon);
 
     companion object {
+        @SuppressLint("DefaultLocale")
         fun getPokemonEnumTypesForPokemonTypes(types: List<pokemonType>): List<PokemonType> {
             return types.map { valueOf(it.name.toUpperCase()) }
         }
 
+        @SuppressLint("DefaultLocale")
         fun getAllPokemonTypesNames(): List<String> {
             return enumValues<PokemonType>().map { it.name.toLowerCase() }
         }

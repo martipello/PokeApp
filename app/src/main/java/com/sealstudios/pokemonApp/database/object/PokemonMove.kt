@@ -3,8 +3,11 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import androidx.room.TypeConverters
+import com.sealstudios.pokemonApp.util.RoomStringListConverter
 import org.jetbrains.annotations.NotNull
 
+@TypeConverters(RoomStringListConverter::class)
 @Entity
 data class PokemonMove(
     @NotNull
@@ -28,7 +31,7 @@ data class PokemonMove(
     var power: Int,
 
     @ColumnInfo(name = MOVE_DAMAGE_CLASS_NAME)
-    var damage_class: Int,
+    var damage_class: String,
 
     @ColumnInfo(name = MOVE_DAMAGE_CLASS_EFFECT_CHANCE)
     var damage_class_effect_chance: Int,
@@ -37,7 +40,7 @@ data class PokemonMove(
     var generation: String,
 
     @ColumnInfo(name = MOVE_TYPE)
-    var type: String
+    var type: List<String>
 //effect_chance
 ) {
     companion object {
@@ -52,6 +55,23 @@ data class PokemonMove(
         const val MOVE_DAMAGE_CLASS_EFFECT_CHANCE: String = "move_damage_class_effect_chance"
         const val MOVE_GENERATION: String = "move_generation"
         const val MOVE_TYPE: String = "move_type"
+
+        fun mapRemotePokemonMoveToDatabasePokemonMove(
+            apiPokemonMove: com.sealstudios.pokemonApp.api.`object`.PokemonMove
+        ): PokemonMove {
+            return PokemonMove(
+                id = apiPokemonMove.id,
+                name = apiPokemonMove.name,
+                accuracy = apiPokemonMove.accuracy,
+                pp = apiPokemonMove.pp,
+                priority = apiPokemonMove.priority,
+                power = apiPokemonMove.power,
+                generation = apiPokemonMove.generation.map { it.name }.first(),
+                damage_class = apiPokemonMove.damage_class.name,
+                type = apiPokemonMove.type.map { it.name },
+                damage_class_effect_chance = apiPokemonMove.effect_chance
+            )
+        }
 
     }
 }

@@ -10,11 +10,11 @@ data class PokemonWithTypes(
     @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonType::class,
-        entityColumn = PokemonType.POKEMON_TYPE_ID,
+        entityColumn = PokemonType.TYPE_ID,
         associateBy = Junction(
             value = PokemonTypesJoin::class,
-            parentColumn = PokemonTypesJoin.POKEMON_ID,
-            entityColumn = PokemonTypesJoin.POKEMON_TYPE_ID
+            parentColumn = Pokemon.POKEMON_ID,
+            entityColumn = PokemonType.TYPE_ID
         )
     )
     val types: List<PokemonType>

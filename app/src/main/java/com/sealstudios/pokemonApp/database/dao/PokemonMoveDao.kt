@@ -3,39 +3,34 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 
 @Dao
 interface PokemonMoveDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPokemonMove(pokemonMove: Pokemon)
+    suspend fun insertPokemonMove(pokemonMove: PokemonMove)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPokemonMoves(pokemonMove: List<Pokemon>)
+    suspend fun insertPokemonMoves(pokemonMove: List<PokemonMove>)
 
-    @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
-    fun getAllPokemon(): LiveData<List<Pokemon>>
+    @Query("SELECT * FROM PokemonMove ORDER BY move_id ASC")
+    fun getAllMoves(): LiveData<List<PokemonMove>>
 
-    @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-    fun searchAllPokemon(search: String?): LiveData<List<Pokemon>>
+    @Query("SELECT * FROM PokemonMove WHERE move_name == :name")
+    fun getSinglePokemonByName(name: String?): LiveData<PokemonMove>
 
-    @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-    fun searchPokemonWithTypeFilters(search: String?): LiveData<List<Pokemon>>
-
-    @Query("SELECT * FROM Pokemon WHERE pokemon_name == :name")
-    fun getSinglePokemonByName(name: String?): LiveData<Pokemon>
-
-    @Query("SELECT * FROM Pokemon WHERE pokemon_id == :id")
-    fun getSinglePokemonById(id: Int?): LiveData<Pokemon>
+    @Query("SELECT * FROM PokemonMove WHERE move_id == :id")
+    fun getSinglePokemonById(id: Int?): LiveData<PokemonMove>
 
     @Update
-    suspend fun updatePokemonMove(pokemonMove: Pokemon)
+    suspend fun updatePokemonMove(pokemonMove: PokemonMove)
 
     @Delete
-    suspend fun deletePokemonMove(pokemonMove: Pokemon)
+    suspend fun deletePokemonMove(pokemonMove: PokemonMove)
 
-    @Query("DELETE FROM Pokemon")
+    @Query("DELETE FROM PokemonMove")
     suspend fun deleteAll()
 
 //    @Transaction

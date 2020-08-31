@@ -4,25 +4,22 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.POKEMON_ID
-import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.POKEMON_TYPE_ID
-import com.sealstudios.pokemonApp.database.`object`.Pokemon as pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonType as pokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin as pokemonTypesJoin
+import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.TYPE_ID
 
 data class TypesWithPokemon(
     @Embedded()
-    val pokemonTypes: pokemonType,
+    val pokemonTypes: PokemonType,
     @Relation(
-        parentColumn = POKEMON_TYPE_ID,
+        parentColumn = TYPE_ID,
         entity = com.sealstudios.pokemonApp.database.`object`.Pokemon::class,
         entityColumn = POKEMON_ID,
         associateBy = Junction(
-            value = pokemonTypesJoin::class,
-            parentColumn = POKEMON_TYPE_ID,
+            value = PokemonTypesJoin::class,
+            parentColumn = TYPE_ID,
             entityColumn = POKEMON_ID
         )
     )
-    val pokemon: List<pokemon>
+    val pokemon: List<Pokemon>
 )
 
 

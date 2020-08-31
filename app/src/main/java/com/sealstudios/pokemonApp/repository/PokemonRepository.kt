@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
@@ -15,6 +16,10 @@ class PokemonRepository @Inject constructor(
 
     fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
         return pokemonDao.getPokemonWithTypes(search)
+    }
+
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>> {
+        return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
     }
 
     fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {

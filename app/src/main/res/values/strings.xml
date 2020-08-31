@@ -20,11 +20,17 @@
     <string name="pokemonId">#%d</string>
     <string name="filter">filter</string>
     <string name="moves_label">Moves</string>
+    <string name="pok_dex">Pokédex</string>
+    <string name="pok_dex_gen">Pokédex: %s</string>
     <string name="pok_dex_entry">Pokédex Entry</string>
-    <string name="weight">Weight: %d</string>
-    <string name="height">Height: %d</string>
-    <string name="generation">Generation %s</string>
+    <string name="weight">Weight : %d kg</string>
+    <string name="height">Height : %d\"</string>
+    <string name="generation">Generation : %s</string>
+    <string name="habitat">Habitat : %s</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
     <string name="pokemon_name">pokemon_name</string>
+    <string name="shape_text">Shape : %s</string>
+    <string name="about">About</string>
+    <string name="form_text">Form : %s</string>
 </resources>

@@ -1,8 +1,10 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.api.PokemonService
+import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.api.`object`.PokemonMove
 import retrofit2.Response
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
@@ -13,7 +15,7 @@ class RemotePokemonRepository @Inject constructor(
 ) {
 
     suspend fun fetchPokemon(): Response<PokemonListResponse> {
-        return pokemonService.getPokemon(offset = 0, limit = 1000)
+        return pokemonService.getPokemon(offset = 0, limit = 12)
     }
 
     suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {
@@ -21,6 +23,18 @@ class RemotePokemonRepository @Inject constructor(
     }
 
     suspend fun getRemotePokemonSpeciesForId(id: Int): Response<PokemonSpecies> {
+        return pokemonService.getPokemonSpeciesForId(id)
+    }
+
+    suspend fun getRemotePokemonMovesForId(id: Int): Response<PokemonMove> {
+        return pokemonService.getPokemonMoveForId(id)
+    }
+
+    suspend fun getRemotePokemonAbilitiesForId(id: Int): Response<PokemonAbility> {
+        return pokemonService.getPokemonAbilityForId(id)
+    }
+
+    suspend fun getRemotePokemonEvolutionChainForId(id: Int): Response<PokemonSpecies> {
         return pokemonService.getPokemonSpeciesForId(id)
     }
 

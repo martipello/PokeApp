@@ -16,6 +16,7 @@ data class Description(
 
 data class Effect(
     val effect: String,
+    val shortEffect: String,
     val language: NamedApiResource
 )
 

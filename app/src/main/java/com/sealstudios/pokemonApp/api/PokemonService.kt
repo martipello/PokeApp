@@ -1,8 +1,6 @@
 package com.sealstudios.pokemonApp.api
 
-import com.sealstudios.pokemonApp.api.`object`.Pokemon
-import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.api.`object`.*
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -39,7 +37,22 @@ interface PokemonService {
 
     @GET("pokemon-species/{id}/")
     suspend fun getPokemonSpeciesForId(
-        @Path(value = "id") pokemonId: Int
+        @Path(value = "id") speciesId: Int
     ): Response<PokemonSpecies>
+
+    @GET("ability/{id}/")
+    suspend fun getPokemonAbilityForId(
+        @Path(value = "id") abilityId: Int
+    ): Response<PokemonAbility>
+
+    @GET("move/{id}/")
+    suspend fun getPokemonMoveForId(
+        @Path(value = "id") moveId: Int
+    ): Response<PokemonMove>
+
+    @GET("evolution-chain/{id}/")
+    suspend fun getPokemonEvolutionsForId(
+        @Path(value = "id") moveId: Int
+    ): Response<EvolutionChain>
 
 }

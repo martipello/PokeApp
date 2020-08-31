@@ -4,12 +4,11 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="android:navigationBarColor">
-            @android:color/transparent
+            #4D000000
         </item>
         <item name="android:statusBarColor">
-            @android:color/transparent
+            #000000
         </item>
-        <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

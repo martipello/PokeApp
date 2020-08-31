@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -16,7 +15,7 @@ import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
@@ -26,7 +25,6 @@ import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation.Scroll
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import dev.chrisbanes.insetter.applySystemWindowInsetsToMargin
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -47,14 +45,16 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = true)
-        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(bottom = true, right = true)
+        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
+            bottom = true,
+            right = true
+        )
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-//        makeStatusBarTransparent()
         setActionBar()
-        setToolbarTitleColor(view.context)
+        setToolbarTitleExpandedColor(view.context)
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
@@ -100,9 +100,9 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            pokemonList?.let { pokemonListWithTypes ->
-                pokemonAdapter.submitList(pokemonListWithTypes)
-                checkForEmptyLayout(pokemonListWithTypes)
+            pokemonList?.let { pokemonListWithTypesAndSpecies ->
+                pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
+                checkForEmptyLayout(pokemonListWithTypesAndSpecies)
             }
         })
     }
@@ -115,7 +115,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         })
     }
 
-    private fun checkForEmptyLayout(it: List<PokemonWithTypes>) {
+    private fun checkForEmptyLayout(it: List<PokemonWithTypesAndSpecies>) {
         val content = binding.pokemonListFragmentContent
         binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility =
             View.GONE
@@ -140,13 +140,6 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         recyclerView.adapter = pokemonAdapter
     }
 
-//    private fun makeStatusBarTransparent() {
-//        val mainActivity = (activity as AppCompatActivity)
-//        mainActivity.window?.apply {
-//            statusBarColor = Color.TRANSPARENT
-//        }
-//    }
-
     private fun setActionBar() {
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
@@ -157,7 +150,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         )
     }
 
-    private fun setToolbarTitleColor(context: Context) {
+    private fun setToolbarTitleExpandedColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setExpandedTitleColor(
             ContextCompat.getColor(
                 context,

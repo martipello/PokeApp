@@ -1,9 +1,10 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.annotation.SuppressLint
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.initializePokemonTypeFilters
 
@@ -13,7 +14,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchPokemon: LiveData<List<PokemonWithTypes>>
+    val searchPokemon: LiveData<List<PokemonWithTypesAndSpecies>>
     private var search: MutableLiveData<String> = getCurrentSearchState()
     val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
 
@@ -37,7 +38,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun checkSelections(): LiveData<List<PokemonWithTypes>> {
+    private fun checkSelections(): LiveData<List<PokemonWithTypesAndSpecies>> {
         val selections = filters.value?.filterValues { it }
         if (selections.isNullOrEmpty()) {
             return searchPokemon()
@@ -45,24 +46,25 @@ class PokemonListViewModel @ViewModelInject constructor(
         return searchAndFilterPokemon()
     }
 
-    private fun searchPokemon(): LiveData<List<PokemonWithTypes>> {
+    private fun searchPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
         return Transformations.switchMap(search) { searchName ->
-            repository.searchPokemon(searchName)
+            repository.searchPokemonWithTypesAndSpecies(searchName)
         }
     }
 
-    private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypes>> {
+    @SuppressLint("DefaultLocale")
+    private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
         return Transformations.switchMap(search) { searchName ->
-            val allPokemon = repository.searchPokemon(searchName)
+            val allPokemon = repository.searchPokemonWithTypesAndSpecies(searchName)
             allPokemon.switchMap { pokemonList ->
                 val filteredList = filters.value?.flatMap { filter ->
-                    pokemonList.filter { pokemonWithTypes ->
-                        pokemonWithTypes.types.any { pokemonType ->
+                    pokemonList.filter { pokemonWithTypesAndSpecies ->
+                        pokemonWithTypesAndSpecies.types.any { pokemonType ->
                             pokemonType.name == filter.key.toLowerCase() && filter.value
                         }
                     }
                 }
-                MutableLiveData<List<PokemonWithTypes>>(
+                MutableLiveData<List<PokemonWithTypesAndSpecies>>(
                     filteredList?.distinct()?.sortedBy { it.pokemon.id })
             }
         }
@@ -78,7 +80,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         setFilters(x)
     }
 
-    fun setFilters(filters: MutableMap<String, Boolean>) {
+    private fun setFilters(filters: MutableMap<String, Boolean>) {
         this.filters.value = filters
     }
 

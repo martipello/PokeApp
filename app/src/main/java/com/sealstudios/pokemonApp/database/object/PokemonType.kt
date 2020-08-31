@@ -10,22 +10,22 @@ data class PokemonType (
 
     @NotNull
     @PrimaryKey
-    @ColumnInfo(name = POKEMON_TYPE_ID)
+    @ColumnInfo(name = TYPE_ID)
     var id: Int,
 
-    @ColumnInfo(name = POKEMON_TYPE_NAME)
+    @ColumnInfo(name = TYPE_NAME)
     var name: String,
 
-    @ColumnInfo(name = POKEMON_TYPE_SLOT)
+    @ColumnInfo(name = TYPE_SLOT)
     var slot: Int
 
 ) {
 
     companion object {
 
-        const val POKEMON_TYPE_ID: String = "type_id"
-        const val POKEMON_TYPE_NAME: String = "type_name"
-        const val POKEMON_TYPE_SLOT: String = "type_slot"
+        const val TYPE_ID: String = "type_id"
+        const val TYPE_NAME: String = "type_name"
+        const val TYPE_SLOT: String = "type_slot"
 
         fun getTypesInOrder(types: List<PokemonType>): List<PokemonType> {
             return types.sortedBy { it.slot }

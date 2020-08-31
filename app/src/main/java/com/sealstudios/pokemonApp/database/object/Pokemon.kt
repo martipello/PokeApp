@@ -3,13 +3,9 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
-import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.POKEMON_TABLE_NAME
-import com.sealstudios.pokemonApp.util.RoomStringListConverter
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
-@TypeConverters(RoomStringListConverter::class)
 @Entity
 data class Pokemon(
     @NotNull
@@ -20,56 +16,36 @@ data class Pokemon(
     @ColumnInfo(name = POKEMON_NAME)
     var name: String,
 
-    @ColumnInfo(name = POKEMON_URL)
-    var url: String,
+    @ColumnInfo(name = POKEMON_IMAGE)
+    var image: String,
+
+    @ColumnInfo(name = POKEMON_SPRITE)
+    var sprite: String?,
 
     @ColumnInfo(name = POKEMON_WEIGHT)
     val weight: Int,
 
     @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int,
-
-    @ColumnInfo(name = POKEMON_SPECIES)
-    var species: String,
-
-    @ColumnInfo(name = POKEMON_MOVES)
-    val moves: List<String>
+    val height: Int
 
 ) {
     companion object {
 
         const val POKEMON_ID: String = "pokemon_id"
         const val POKEMON_NAME: String = "pokemon_name"
-        const val POKEMON_URL: String = "pokemon_url"
+        const val POKEMON_IMAGE: String = "pokemon_image_url"
         const val POKEMON_HEIGHT: String = "pokemon_height"
         const val POKEMON_WEIGHT: String = "pokemon_weight"
-        const val POKEMON_MOVES: String = "pokemon_moves"
-        const val POKEMON_SPECIES: String = "pokemon_species"
+        const val POKEMON_SPRITE: String = "pokemon_sprite"
 
-        fun mapRemotePokemonToDatabasePokemon(
-            dbPokemon: Pokemon,
-            apiPokemon: apiPokemon
-        ): Pokemon {
-            return Pokemon(
-                id = dbPokemon.id,
-                url = dbPokemon.url,
-                name = apiPokemon.name,
-                height = apiPokemon.height,
-                weight = apiPokemon.weight,
-                species = "Species",
-                moves = apiPokemon.moves.map { it.move.name }
-            )
-        }
-
-        fun buildDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
+        fun mapDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
-                url = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
+                image = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
-                species = "Species",
-                moves = apiPokemon.moves.map { it.move.name }
+                sprite = apiPokemon.sprites.front_default
             )
         }
 

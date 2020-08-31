@@ -17,8 +17,8 @@ class GetAllPokemonRepository(
     private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
 ) {
 
-    suspend fun getPokemonResponse(): Response<PokemonListResponse> {
-        return remotePokemonRepository.fetchPokemon()
+    suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
+        return remotePokemonRepository.getAllPokemonResponse()
     }
 
     suspend fun fetchPokemonForId(

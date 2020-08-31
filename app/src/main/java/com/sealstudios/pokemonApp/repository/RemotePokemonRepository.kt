@@ -14,7 +14,7 @@ class RemotePokemonRepository @Inject constructor(
     private val pokemonService: PokemonService
 ) {
 
-    suspend fun fetchPokemon(): Response<PokemonListResponse> {
+    suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
         return pokemonService.getPokemon(offset = 0, limit = 12)
     }
 

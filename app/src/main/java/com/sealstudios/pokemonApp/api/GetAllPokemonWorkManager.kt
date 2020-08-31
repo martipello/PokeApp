@@ -45,7 +45,7 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
         coroutineScope: CoroutineScope
     ) {
         coroutineScope.launch {
-            val pokemonRefListResponse = allPokemonRepository.getPokemonResponse()
+            val pokemonRefListResponse = allPokemonRepository.getAllPokemonResponse()
             if (pokemonRefListResponse.isSuccessful) {
                 pokemonRefListResponse.body()?.results?.let { pokemonRefList ->
                     for (i in 0 until pokemonRefList.size) {

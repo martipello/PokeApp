@@ -10,6 +10,9 @@ interface PokemonMoveJoinDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonMoveJoin(pokemonMoveJoin: PokemonMovesJoin)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPokemonMoveJoin(pokemonMoveJoin: List<PokemonMovesJoin>)
+
     @Update
     suspend fun updatePokemonMoveJoin(pokemonMoveJoin: PokemonMovesJoin)
 

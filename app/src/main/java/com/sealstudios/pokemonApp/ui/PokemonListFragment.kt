@@ -206,4 +206,8 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         pokemonListViewModel.setFilter(key, value)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

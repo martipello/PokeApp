@@ -3,13 +3,9 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
-import com.sealstudios.pokemonApp.util.RoomIntListConverter
-import com.sealstudios.pokemonApp.util.RoomStringListConverter
 import org.jetbrains.annotations.NotNull
 
-@TypeConverters(RoomStringListConverter::class, RoomIntListConverter::class)
 @Entity
 data class PokemonMove(
     @NotNull
@@ -51,7 +47,7 @@ data class PokemonMove(
     var generation: String = "",
 
     @ColumnInfo(name = MOVE_TYPE)
-    var type: List<String> = emptyList()
+    var type: String = ""
 
 ) {
     companion object {
@@ -76,13 +72,13 @@ data class PokemonMove(
             return PokemonMove(
                 id = apiPokemonMove.id,
                 name = apiPokemonMove.name,
-                accuracy = apiPokemonMove.accuracy,
+                accuracy = apiPokemonMove.accuracy ?: 0,
                 pp = apiPokemonMove.pp,
                 priority = apiPokemonMove.priority,
-                power = apiPokemonMove.power,
-                generation = apiPokemonMove.generation.map { it.name }.first(),
+                power = apiPokemonMove.power ?: 0,
+                generation = apiPokemonMove.generation.name,
                 damage_class = apiPokemonMove.damage_class.name,
-                type = apiPokemonMove.type.map { it.name },
+                type = apiPokemonMove.type.name,
                 damage_class_effect_chance = apiPokemonMove.effect_chance
             )
         }

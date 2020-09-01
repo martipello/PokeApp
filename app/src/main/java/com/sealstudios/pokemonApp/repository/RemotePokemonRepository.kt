@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.repository
 
+import android.util.Log
 import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
@@ -26,7 +27,7 @@ class RemotePokemonRepository @Inject constructor(
         return pokemonService.getPokemonSpeciesForId(id)
     }
 
-    suspend fun movesForId(id: Int): Response<PokemonMove> {
+    suspend fun moveForId(id: Int): Response<PokemonMove> {
         return pokemonService.getPokemonMoveForId(id)
     }
 

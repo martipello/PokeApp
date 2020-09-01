@@ -13,6 +13,10 @@ class PokemonMoveJoinRepository @Inject constructor(
         pokemonMoveJoinDao.insertPokemonMoveJoin(pokemonMovesJoin)
     }
 
+    suspend fun insertPokemonMovesJoins(pokemonMovesJoin: List<PokemonMovesJoin>) {
+        pokemonMoveJoinDao.insertPokemonMoveJoin(pokemonMovesJoin)
+    }
+
     suspend fun updatePokemonMovesJoin(pokemonMovesJoin: PokemonMovesJoin) {
         pokemonMoveJoinDao.updatePokemonMoveJoin(pokemonMovesJoin)
     }

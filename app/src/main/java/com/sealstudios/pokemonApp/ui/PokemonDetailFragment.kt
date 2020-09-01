@@ -90,8 +90,8 @@ class PokemonDetailFragment : Fragment() {
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             this.pokemon = pokemon
+            Log.d("MOVES", pokemon.moves.toString())
             pokemon?.let {
-                Log.d("MOVES", pokemon.moves.toString())
                 populateViews()
             }
         })

@@ -168,16 +168,15 @@ data class PokemonMoveResponse(
 data class PokemonMove(
     val id: Int,
     val name: String,
-    val accuracy: Int,
+    val accuracy: Int?,
     val pp: Int,
-    val power: Int,
+    val power: Int?,
     val damage_class: NamedApiResource,
     val effect_chance: Int,
     val priority: Int,
     val shortEffect: String,
-    val generation: List<NamedApiResource>,
-    val category: List<NamedApiResource>,
-    val type: List<NamedApiResource>,
+    val generation: NamedApiResource,
+    val type: NamedApiResource,
     val flavorTextEntries: List<FlavorText>
 )
 

@@ -17,16 +17,14 @@ import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
 import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
@@ -110,6 +108,7 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    @SuppressLint("DefaultLocale")
     private fun PokemonDetailFragmentBinding.setPokemonFormData(
         pokemon: Pokemon,
         it: PokemonWithTypesAndSpeciesAndMoves,
@@ -146,9 +145,19 @@ class PokemonDetailFragment : Fragment() {
                 PokemonType.getTypesInOrder(types = pokemonTypes)
             )
         for (type in types) {
-            binding.pokemonTypesChipGroup.addView(
+            pokemonTypesChipGroup.addView(
                 pokemonTypeEnum.createPokemonTypeChip(type, context)
             )
+        }
+    }
+
+    private fun PokemonDetailFragmentBinding.setPokemonMoves(
+        context: Context,
+        pokemonMoves: List<PokemonMove>
+    ){
+        movesHolder.removeAllViews()
+        pokemonMoves.forEach {
+//            movesHolder.addView()
         }
     }
 

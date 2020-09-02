@@ -16,7 +16,7 @@ class RemotePokemonRepository @Inject constructor(
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
-        return pokemonService.getPokemon(offset = 0, limit = 20)
+        return pokemonService.getPokemon(offset = 0, limit = 200)
     }
 
     suspend fun pokemonById(id: Int): Response<apiPokemon> {

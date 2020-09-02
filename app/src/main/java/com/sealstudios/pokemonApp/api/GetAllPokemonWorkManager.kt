@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.api
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
@@ -10,16 +9,13 @@ import androidx.work.WorkerParameters
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_ID
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_NAME
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.repository.PokemonRepository
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import kotlinx.coroutines.*
-
 
 class GetAllPokemonWorkManager @WorkerInject constructor(
     @Assisted @NonNull context: Context,
     @Assisted @NonNull params: WorkerParameters,
-    private val pokemonRepository: PokemonRepository,
+    private val allPokemonRepository: GetAllPokemonRepository,
     private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(context, params) {
 
@@ -37,7 +33,6 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
             )
             getRemotePokemon(
                 worker = this@GetAllPokemonWorkManager,
-                repository = pokemonRepository,
                 coroutineScope = this
             )
         })
@@ -47,90 +42,39 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
 
     private fun getRemotePokemon(
         worker: CoroutineWorker,
-        repository: PokemonRepository,
         coroutineScope: CoroutineScope
     ) {
-        val tag = "getRemotePokemon"
         coroutineScope.launch {
-            val pokemonResponse = repository.getRemotePokemon().body()
-            pokemonResponse?.results?.let { pokemonResponseResult ->
-                for (i in 0 until pokemonResponseResult.size) {
-                    pokemonResponseResult[i]?.url?.let { pokemonUrl ->
-                        try {
-                            val pokemonId = Pokemon.getPokemonIdFromUrl(pokemonUrl)
-                            when {
-                                pokemonId >= 0 -> {
-                                    getPokemonDetail(
-                                        this,
-                                        repository,
-                                        pokemonId,
-                                        worker,
-                                        i,
-                                        pokemonResponseResult,
-                                        coroutineScope
-                                    )
-                                }
-                                else -> {
-                                }
-                            }
-                        } catch (exception: Exception) {
-                            exception.message?.let {
-                                Log.e(tag, it)
-                            }
+            val pokemonRefListResponse = allPokemonRepository.getAllPokemonResponse()
+            if (pokemonRefListResponse.isSuccessful) {
+                pokemonRefListResponse.body()?.results?.let { pokemonRefList ->
+                    for (i in 0 until pokemonRefList.size) {
+                        pokemonRefList[i]?.let { pokemonRef ->
+                            val id = getPokemonIdFromUrl(pokemonRef.url)
+                            allPokemonRepository.fetchSpeciesForId(id)
+                            allPokemonRepository.fetchPokemonForId(id)
+                            setForeGroundAsync(
+                                worker, "$i of ${pokemonRefList.size}", i + 1, pokemonRefList.size
+                            )
                         }
                     }
                 }
             }
-            worker.setForegroundAsync(
-                notificationHelper.sendOnGoingNotification(
-                    NOTIFICATION_ID,
-                    NOTIFICATION_NAME,
-                    "Finished downloading pokemon data",
-                    0,
-                    0
-                )
-            )
         }
     }
 
-    private suspend fun getPokemonDetail(
-        getPokemonCoroutineScope: CoroutineScope,
-        repository: PokemonRepository,
-        pokemonId: Int,
+    private fun setForeGroundAsync(
         worker: CoroutineWorker,
-        i: Int,
-        pokemonResponseResult: ArrayList<Pokemon?>,
-        coroutineScope: CoroutineScope
-    ) {
-        val pokemonRequest =
-            getPokemonCoroutineScope.async { repository.getRemotePokemonById(pokemonId) }
-        pokemonRequest.await().body()?.let { pokemon ->
-            val dbPokemon =
-                Pokemon.buildDbPokemonFromPokemonResponse(pokemon)
-            setForegroundAsync(
-                worker,
-                i + 1,
-                pokemonResponseResult.size
-            )
-            PokemonDetailViewModel.getRemotePokemonDetail(
-                coroutineScope,
-                dbPokemon,
-                repository = repository
-            )
-        }
-    }
-
-    private fun setForegroundAsync(
-        worker: CoroutineWorker,
-        i: Int,
+        progressText: String,
+        progress: Int,
         max: Int
     ) {
         worker.setForegroundAsync(
             notificationHelper.sendOnGoingNotification(
                 NOTIFICATION_ID,
                 NOTIFICATION_NAME,
-                "$i of $max",
-                i,
+                progressText,
+                progress,
                 max
             )
         )

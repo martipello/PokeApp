@@ -3,11 +3,13 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.TABLE_NAME
+import androidx.room.TypeConverters
+import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
-@Entity(tableName = TABLE_NAME)
+@TypeConverters(RoomIntListConverter::class)
+@Entity
 data class Pokemon(
     @NotNull
     @PrimaryKey
@@ -17,8 +19,11 @@ data class Pokemon(
     @ColumnInfo(name = POKEMON_NAME)
     var name: String,
 
-    @ColumnInfo(name = POKEMON_URL)
-    var url: String,
+    @ColumnInfo(name = POKEMON_IMAGE)
+    var image: String,
+
+    @ColumnInfo(name = POKEMON_SPRITE)
+    var sprite: String?,
 
     @ColumnInfo(name = POKEMON_WEIGHT)
     val weight: Int,
@@ -26,53 +31,29 @@ data class Pokemon(
     @ColumnInfo(name = POKEMON_HEIGHT)
     val height: Int,
 
-    @ColumnInfo(name = POKEMON_SPECIES)
-    var species: String,
-
-    @ColumnInfo(name = POKEMON_MOVES)
-    val moves: List<String>,
-
-    @ColumnInfo(name = POKEMON_TYPES)
-    val types: List<String>
+    @ColumnInfo(name = MOVE_IDS)
+    var move_ids: List<Int>
 
 ) {
     companion object {
 
-        const val POKEMON_ID: String = "id"
-        const val POKEMON_NAME: String = "name"
-        const val POKEMON_URL: String = "url"
-        const val POKEMON_HEIGHT: String = "height"
-        const val POKEMON_WEIGHT: String = "weight"
-        const val POKEMON_MOVES: String = "moves"
-        const val POKEMON_TYPES: String = "types"
-        const val POKEMON_SPECIES: String = "species"
+        const val POKEMON_ID: String = "pokemon_id"
+        const val POKEMON_NAME: String = "pokemon_name"
+        const val POKEMON_IMAGE: String = "pokemon_image_url"
+        const val POKEMON_HEIGHT: String = "pokemon_height"
+        const val POKEMON_WEIGHT: String = "pokemon_weight"
+        const val POKEMON_SPRITE: String = "pokemon_sprite"
+        const val MOVE_IDS: String = "pokemon_move_id"
 
-        fun mapRemotePokemonToDatabasePokemon(
-            dbPokemon: Pokemon,
-            apiPokemon: apiPokemon
-        ): Pokemon {
-            return Pokemon(
-                id = dbPokemon.id,
-                url = dbPokemon.url,
-                name = apiPokemon.name,
-                height = apiPokemon.height,
-                weight = apiPokemon.weight,
-                species = "Species",
-                moves = apiPokemon.moves.map { it.move.name },
-                types = apiPokemon.types.map { it.type.name }
-            )
-        }
-
-        fun buildDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
+        fun mapDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
-                url = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
-                weight = 0,
-                height = 0,
-                species = "Species",
-                moves = apiPokemon.moves.map { it.move.name },
-                types = apiPokemon.types.map { it.type.name }
+                image = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
+                height = apiPokemon.height,
+                weight = apiPokemon.weight,
+                sprite = apiPokemon.sprites.front_default,
+                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl( it.move.url ) }
             )
         }
 

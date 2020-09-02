@@ -1,8 +1,12 @@
 package com.sealstudios.pokemonApp.ui.util
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.view.LayoutInflater
+import androidx.core.content.ContextCompat
+import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import java.util.*
+import com.sealstudios.pokemonApp.database.`object`.PokemonType as pokemonType
 
 enum class PokemonType(val color: Int, val icon: Int) {
     NORMAL(color = R.color.normal, icon = R.drawable.normal_type_icon),
@@ -22,21 +26,47 @@ enum class PokemonType(val color: Int, val icon: Int) {
     DARK(color = R.color.dark, icon = R.drawable.dark_type_icon),
     DRAGON(color = R.color.dragon, icon = R.drawable.dragon_type_icon),
     STEEL(color = R.color.steel, icon = R.drawable.steel_type_icon),
-    FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon)
+    FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon);
+
+    companion object {
+        @SuppressLint("DefaultLocale")
+        fun getPokemonEnumTypesForPokemonTypes(types: List<pokemonType>): List<PokemonType> {
+            return types.map { valueOf(it.name.toUpperCase()) }
+        }
+
+        @SuppressLint("DefaultLocale")
+        fun getAllPokemonTypesNames(): List<String> {
+            return enumValues<PokemonType>().map { it.name.toLowerCase() }
+        }
+
+        fun getAllPokemonTypes(): List<PokemonType> {
+            return enumValues<PokemonType>().asList()
+        }
+
+        fun initializePokemonTypeFilters(): MutableMap<String, Boolean> {
+            val keys = getAllPokemonTypes()
+            val allFilters = mutableMapOf<String, Boolean>()
+            for (key in keys) {
+                allFilters[key.name] = false
+            }
+            return allFilters
+        }
+
+        @SuppressLint("DefaultLocale")
+        fun createPokemonTypeChip(pokemonType: PokemonType, context: Context): Chip? {
+            val chip =
+                LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
+            chip.text = pokemonType.name.capitalize()
+            chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
+            chip.setChipBackgroundColorResource(pokemonType.color)
+            chip.isCheckable = false
+            chip.isClickable = false
+            chip.rippleColor = null
+            return chip
+        }
+
+    }
+
 }
 
-class PokemonTypeHelper {
-    public fun getPokemonTypesForPokemon(pokemon: Pokemon): List<PokemonType> {
-        val allPokemonTypes = PokemonType.values()
-        val pokemonTypeList = arrayListOf<PokemonType>()
-        for (pokemonType in allPokemonTypes) {
-            if (pokemon.types.toString().toLowerCase(Locale.getDefault())
-                    .contains(pokemonType.name.toLowerCase(Locale.getDefault()))
-            ) {
-                pokemonTypeList.add(pokemonType)
-            }
-        }
-        return pokemonTypeList
-    }
-}
 

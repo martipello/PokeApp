@@ -111,6 +111,7 @@ data class NaturePokeathlonStatAffect(
 
 data class Pokemon(
     val id: Int,
+    val url: String,
     val name: String,
     val baseExperience: Int,
     val height: Int,
@@ -122,28 +123,31 @@ data class Pokemon(
     val forms: List<PokemonForm>,
     val gameIndices: List<VersionGameIndex>,
     val heldItems: List<PokemonHeldItem>,
-    val moves: List<PokemonMove>,
+    val moves: List<PokemonMoveResponse>,
     val stats: List<PokemonStat>,
     val types: List<PokemonType>,
     val sprites: PokemonSprites
 )
 
 data class PokemonSprites(
-    val backDefault: String?,
-    val backShiny: String?,
-    val frontDefault: String?,
-    val frontShiny: String?,
-    val backFemale: String?,
-    val backShinyFemale: String?,
-    val frontFemale: String?,
-    val frontShinyFemale: String?
+    val back_default: String?,
+    val back_shiny: String?,
+    val front_default: String?,
+    val front_shiny: String?,
+    val back_female: String?,
+    val back_shiny_female: String?,
+    val front_female: String?,
+    val front_shiny_female: String?
 
 )
 
 data class PokemonAbility(
+    val id: Int,
+    val name: String,
     val isHidden: Boolean,
     val slot: Int,
-    val ability: NamedApiResource
+    val generation: List<NamedApiResource>,
+    val effectEntries: List<Effect>
 )
 
 data class PokemonHeldItem(
@@ -156,15 +160,57 @@ data class PokemonHeldItemVersion(
     val rarity: Int
 )
 
-data class PokemonMove(
+data class PokemonMoveResponse(
     val move: NamedApiResource,
-    val versionGroupDetails: List<PokemonMoveVersion>
+    val version_group_details: List<PokemonMoveVersion>
+)
+
+data class PokemonMove(
+    val id: Int,
+    val name: String,
+    val accuracy: Int?,
+    val pp: Int,
+    val power: Int?,
+    val damage_class: NamedApiResource,
+    val effect_chance: Int,
+    val priority: Int,
+    val shortEffect: String,
+    val generation: NamedApiResource,
+    val type: NamedApiResource,
+    val flavorTextEntries: List<FlavorText>
+)
+
+data class EvolutionChain(
+    val id: Int,
+    val baby_trigger_item: String,
+    val chain: List<ChainLink>
+)
+
+data class ChainLink(
+    val isBaby: Boolean,
+    val species: NamedApiResource,
+    val evolution_details: String,
+    val evolves_to: List<ChainLink>
+)
+
+data class MoveLearnMethod(
+    val id: Int,
+    val name: String,
+    val accuracy: Int,
+    val pp: Int,
+    val power: Int,
+    val priority: Int,
+    val shortEffect: String,
+    val generation: List<NamedApiResource>,
+    val category: List<NamedApiResource>,
+    val type: List<NamedApiResource>,
+    val flavorTextEntries: List<FlavorText>
 )
 
 data class PokemonMoveVersion(
-    val moveLearnMethod: NamedApiResource,
-    val versionGroup: NamedApiResource,
-    val levelLearnedAt: Int
+    val move_learn_method: NamedApiResource,
+    val version_group: NamedApiResource,
+    val level_learned_at: Int
 )
 
 data class PokemonStat(
@@ -258,11 +304,11 @@ data class PokemonSpecies(
     val form_descriptions: List<Description>,
     val genera: List<Genus>,
     val varieties: List<PokemonSpeciesVariety>,
-    val flavor_text_entries: List<PokemonSpeciesFlavorText>
+    val flavor_text_entries: ArrayList<PokemonSpeciesFlavorText>
 )
 
 data class PokemonSpeciesFlavorText(
-    val flavorText: String,
+    val flavor_text: String,
     val language: NamedApiResource,
     val version: NamedApiResource
 )

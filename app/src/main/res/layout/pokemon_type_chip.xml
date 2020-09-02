@@ -9,7 +9,10 @@
     app:chipIconEnabled="true"
     app:chipStartPadding="0dp"
     app:iconEndPadding="0dp"
-    app:iconStartPadding="4dp" />
+    app:iconStartPadding="2dp"
+    app:chipIconSize="@dimen/chip_image_size"
+    android:checkable="false"
+    android:clickable="false"/>
 
 
 

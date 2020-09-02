@@ -16,10 +16,9 @@ class PokemonRepositoryProvider {
     @Singleton
     @Provides
     fun providePokemonRepository(
-        pokemonDao: PokemonDao,
-        pokemonService: PokemonService
+        pokemonDao: PokemonDao
     ): PokemonRepository {
-        return PokemonRepository(pokemonDao, pokemonService)
+        return PokemonRepository(pokemonDao)
     }
 
 }

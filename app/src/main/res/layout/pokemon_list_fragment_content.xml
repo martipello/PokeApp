@@ -3,63 +3,20 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/adaptive_appbar_scrolling_view_behavior">
-
-    <include
-        android:id="@+id/search_filter"
-        layout="@layout/pokemon_list_search_filter" />
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pokemon_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_filter" />
-
-    <ProgressBar
-        android:id="@+id/pokemon_list_loading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/empty_results_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_margin="@dimen/large_margin_32dp"
-        android:contentDescription="@string/no_results"
-        android:scaleType="centerInside"
-        android:src="@drawable/no_results_snorlax"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/empty_results_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/small_margin_8dp"
-        android:text="@string/no_results"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/empty_results_image" />
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/medium_margin_16dp"
-        android:src="@drawable/ic_search_white_24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+    <include
+        android:id="@+id/empty_pokemon_list"
+        layout="@layout/pokemon_list_empty" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

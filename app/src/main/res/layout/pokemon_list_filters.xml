@@ -1,0 +1,59 @@
+<com.google.android.material.chip.ChipGroup android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/normal_filter_chip" />
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/water_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/fire_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/grass_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/electric_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/ice_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/fighting_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/poison_filter_chip" />
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/ground_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/flying_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/psychic_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/bug_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/rock_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/ghost_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/dark_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/dragon_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/steel_filter_chip"/>
+
+    <include layout="@layout/filter_search_chip"
+        android:id="@+id/fairy_filter_chip"/>
+
+</com.google.android.material.chip.ChipGroup>

@@ -12,4 +12,5 @@ class GetAllPokemonViewModel @ViewModelInject constructor(
     fun getAllPokemon() {
         workManager.enqueue(OneTimeWorkRequest.from(GetAllPokemonWorkManager::class.java))
     }
+
 }

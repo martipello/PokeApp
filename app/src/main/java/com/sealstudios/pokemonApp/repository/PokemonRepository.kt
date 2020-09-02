@@ -1,29 +1,25 @@
 package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
-import com.sealstudios.pokemonApp.api.PokemonService
-import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
-import retrofit2.Response
 import javax.inject.Inject
-import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
 
 class PokemonRepository @Inject constructor(
-    private val pokemonDao: PokemonDao,
-    private val pokemonService: PokemonService
+    private val pokemonDao: PokemonDao
 ) {
 
     val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
-    fun searchPokemon(search: String): LiveData<List<dbPokemon>> {
-        return pokemonDao.searchAllPokemon(search)
+    fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
+        return pokemonDao.getPokemonWithTypes(search)
     }
 
-    fun searchPokemonWithTypeFilters(search: String, types: List<String>): LiveData<List<dbPokemon>> {
-        return pokemonDao.searchPokemonWithTypeFilters(search)
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>> {
+        return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
     }
 
     fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
@@ -36,26 +32,6 @@ class PokemonRepository @Inject constructor(
 
     suspend fun insertPokemon(pokemon: List<dbPokemon>) {
         pokemonDao.insertPokemon(pokemon)
-    }
-
-//    suspend fun getRemotePokemon(): Result<PokemonListResponse> {
-//        return pokemonService.getPokemon(offset = 0, limit = 10)
-//    }
-
-    suspend fun getRemotePokemon(): Response<PokemonListResponse> {
-        return pokemonService.getPokemon(offset = 0, limit = 10)
-    }
-
-    suspend fun getRemotePokemonById(id: Int): Response<apiPokemon> {
-        return pokemonService.getPokemonById(id, offset = 0, limit = 1)
-    }
-
-    suspend fun getRemotePokemonSpeciesForId(id: Int): Response<PokemonSpecies> {
-        return pokemonService.getPokemonSpeciesForId(id)
-    }
-
-    suspend fun getRemotePokemonByName(name: String): Response<apiPokemon> {
-        return pokemonService.getPokemonByName(name, offset = 0, limit = 1)
     }
 
     suspend fun updatePokemon(pokemon: dbPokemon) {

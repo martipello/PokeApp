@@ -1,12 +1,9 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
-import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -14,16 +11,16 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.getTypesInOrder
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
-import com.sealstudios.pokemonApp.ui.util.PokemonTypeHelper
+import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 
 class PokemonViewHolder constructor(
     itemView: View,
-    private val clickListener: ClickListener?,
+    private val clickListener: AdapterClickListener?,
     private val glide: RequestManager
 ) :
     RecyclerView.ViewHolder(itemView) {
@@ -31,26 +28,28 @@ class PokemonViewHolder constructor(
     private val binding = PokemonViewHolderBinding.bind(itemView)
 
     @SuppressLint("DefaultLocale")
-    fun bind(pokemon: Pokemon) = with(binding) {
-        val pokemonTypes = PokemonTypeHelper().getPokemonTypesForPokemon(pokemon)
-
-        binding.pokemonNameTextView.text = pokemon.name.capitalize()
-        binding.pokemonSpeciesTextViewLabel.text = pokemon.species.capitalize()
+    fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
+        binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
+        binding.pokemonIdTextViewLabel.text =
+            itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
+        binding.pokemonSpeciesTextViewLabel.text = pokemonWithTypesAndSpecies.species.species.capitalize()
         binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
         binding.pokemonImageView.shadowColor = R.color.black
         binding.root.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, pokemon)
+            clickListener?.onItemSelected(adapterPosition, pokemonWithTypesAndSpecies.pokemon)
         }
-        buildPokemonImageView(pokemon)
+        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.pokemonTypesChipGroup.removeAllViews()
-        for (pokemonType in pokemonTypes) {
-            binding.pokemonTypesChipGroup.addView(createChip(pokemonType, itemView.context))
+        val types =
+            PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypesAndSpecies.types))
+        for (type in types) {
+            binding.pokemonTypesChipGroup.addView(createPokemonTypeChip(type, itemView.context))
         }
     }
 
-    private fun buildPokemonImageView(pokemon: Pokemon) {
+    private fun setPokemonImageView(pokemonImage: String) {
         glide.asBitmap()
-            .load(pokemon.url)
+            .load(pokemonImage)
             .placeholder(R.drawable.empty_pokemon)
             .listener(requestListener())
             .into(binding.pokemonImageView)
@@ -92,16 +91,6 @@ class PokemonViewHolder constructor(
                 return false
             }
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun createChip(pokemonType: PokemonType, context: Context): Chip? {
-        val chipLayout =
-            LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
-        chipLayout.text = pokemonType.name.capitalize()
-        chipLayout.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
-        chipLayout.setChipBackgroundColorResource(pokemonType.color)
-        return chipLayout
     }
 
 }

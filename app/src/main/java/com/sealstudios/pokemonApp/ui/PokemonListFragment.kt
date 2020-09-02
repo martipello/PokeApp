@@ -52,6 +52,8 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
         binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
+//        binding.pokemonListFragmentContent.recyclerHolder.addSystemWindowInsetToPadding(bottom = false)
+//        binding.listFragmentContainer.addSystemWindowInsetToPadding(bottom = false)
         binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(bottom = true)
         binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
             bottom = true,

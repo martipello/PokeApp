@@ -62,7 +62,7 @@ class PokemonDetailFragment : Fragment() {
         binding.appBarLayout.alignBelowStatusBar()
         binding.toolbar.addSystemWindowInsetToPadding(false)
         binding.toolbarLayout.addSystemWindowInsetToPadding(false)
-        binding.detailRoot.addSystemWindowInsetToPadding(top = true)
+        binding.detailRoot.addSystemWindowInsetToPadding(top = false)
         binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
     }
 

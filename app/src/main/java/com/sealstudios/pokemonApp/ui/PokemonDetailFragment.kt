@@ -101,9 +101,11 @@ class PokemonDetailFragment : Fragment() {
         pokemon?.let {
             with(binding) {
                 val pokemon = it.pokemon
+                val moves = it.moves.getPokemonMoves()
                 setPokemonImageView(it.pokemon.image)
                 setPokemonTypes(context, it.types)
                 setPokemonFormData(pokemon, it, context)
+                setPokemonMoves(context = context, pokemonMoves = moves)
             }
         }
     }
@@ -153,12 +155,28 @@ class PokemonDetailFragment : Fragment() {
 
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         context: Context,
-        pokemonMoves: List<PokemonMove>
+        pokemonMoves: Map<String, List<PokemonMove>?>
     ){
         movesHolder.removeAllViews()
-        pokemonMoves.forEach {
-//            movesHolder.addView()
+        pokemonMoves.forEach {entry ->
+            Log.d("PDVM", "key ${entry.key}, value ${entry.value}")
         }
+    }
+
+    private fun List<PokemonMove>.getPokemonMoves() : Map<String, List<PokemonMove>?>{
+        val moveMap = mutableMapOf<String, MutableList<PokemonMove>?>()
+        this.forEach {
+            if (it.generation.isNotEmpty()){
+                if (moveMap.containsKey(it.generation)){
+                    val list = moveMap[it.generation]
+                    list?.add(it)
+                    moveMap[it.generation] = list
+                } else {
+                    moveMap[it.generation] = mutableListOf(it)
+                }
+            }
+        }
+        return moveMap
     }
 
     override fun onDestroyView() {
@@ -166,3 +184,4 @@ class PokemonDetailFragment : Fragment() {
         _binding = null
     }
 }
+

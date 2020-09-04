@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
@@ -27,14 +28,15 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
+
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickListener {
 
     @Inject
     lateinit var glide: RequestManager
     private val binding get() = _binding!!
-    private lateinit var pokemonAdapter: PokemonAdapter
     private var _binding: PokemonListFragmentBinding? = null
+    private lateinit var pokemonAdapter: PokemonAdapter
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
@@ -48,19 +50,6 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         return binding.root
     }
 
-    private fun setInsets() {
-        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
-        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
-//        binding.pokemonListFragmentContent.recyclerHolder.addSystemWindowInsetToPadding(bottom = false)
-//        binding.listFragmentContainer.addSystemWindowInsetToPadding(bottom = false)
-        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(bottom = true)
-        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
-            bottom = true,
-            right = true
-        )
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         setToolbarTitleExpandedColor(view.context)
@@ -72,6 +61,16 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         observePokemonList()
         setUpViews()
         addScrollAwarenessForFilterButton()
+    }
+
+    private fun setInsets() {
+        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
+        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
+            bottom = true,
+            right = true
+        )
     }
 
     private fun setUpViews() {
@@ -150,12 +149,17 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     private fun setActionBar() {
+        val topLevelDestinations: MutableSet<Int> = HashSet()
+        topLevelDestinations.add(R.id.PokemonListFragment)
+        val appBarConfiguration = AppBarConfiguration.Builder(topLevelDestinations)
+            .build()
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
         NavigationUI.setupActionBarWithNavController(
             mainActivity,
-            findNavController(this@PokemonListFragment)
+            findNavController(this@PokemonListFragment),
+            appBarConfiguration
         )
     }
 

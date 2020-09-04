@@ -1,24 +1,23 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:background">@color/colorPrimary</item>
+        <item name="android:windowAnimationStyle">@style/WindowAnimationStyle</item>
 
         <item name="android:navigationBarColor">
-            #4D000000
+            #B3000000
         </item>
         <item name="android:statusBarColor">
-            #000000
+            @color/colorPrimary
         </item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light"/>
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+    <style name="AppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="CustomCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_corners</item>
@@ -34,6 +33,10 @@
         <item name="elevation">@dimen/large_margin_32dp</item>
         <item name="cardElevation">@dimen/large_margin_32dp</item>
         <item name="android:elevation">@dimen/large_margin_32dp</item>
+    </style>
+
+    <style name="WindowAnimationStyle">
+        <item name="android:windowEnterAnimation">@android:anim/linear_interpolator</item>
     </style>
 
 </resources>

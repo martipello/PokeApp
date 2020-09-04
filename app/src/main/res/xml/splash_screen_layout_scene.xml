@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:autoTransition="animateToEnd"
+        motion:duration="1000">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="100"
+               android:scaleX="2" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="40"
+               android:translationY="-50dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="0"
+               android:scaleX="1" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="0"
+               android:scaleY="1" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="100"
+               android:scaleY="2" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="100"
+               android:translationY="150dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="70"
+               android:translationY="10dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/imageView"
+               motion:framePosition="100"
+               android:rotation="540" />
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+    </ConstraintSet>
+</MotionScene>

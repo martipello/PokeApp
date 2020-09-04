@@ -6,7 +6,6 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.WindowCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.bumptech.glide.RequestManager
@@ -17,7 +16,6 @@ import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstT
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
-
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
@@ -26,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     @Inject
     lateinit var glide: RequestManager
-
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
     private val getAllPokemonViewModel: GetAllPokemonViewModel by viewModels()
@@ -34,8 +31,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
-        WindowCompat.setDecorFitsSystemWindows(window, false)
         setContentView(binding.root)
+        binding.root.systemUiVisibility =
+            View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
+                    View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
         checkIsFirstTime()
     }
 

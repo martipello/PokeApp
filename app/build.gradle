@@ -57,15 +57,15 @@ android {
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.palette:palette:1.0.0'
-    implementation 'com.google.android.material:material:1.2.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.palette:palette-ktx:1.0.0'
+    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
 
     //Custom UI
     implementation 'com.google.android:flexbox:2.0.1'
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
 
     implementation "dev.chrisbanes:insetter:0.3.1"
@@ -97,11 +97,11 @@ dependencies {
     kapt "androidx.room:room-compiler:$rootProject.roomVersion"
 
     //Navigation
-    implementation "androidx.navigation:navigation-fragment:2.3.0"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
 
 
     // Navigation UI
-    implementation "androidx.navigation:navigation-ui:2.3.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.0"
 
     // Lifecycle components
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$rootProject.archLifecycleVersion"
@@ -134,12 +134,12 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:$rootProject.archLifecycleVersion"
 
 
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.archLifecycleVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.archLifecycleVersion"
+    implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
+    implementation "androidx.navigation:navigation-ui-ktx:2.3.0"
 
     testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 

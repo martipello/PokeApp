@@ -22,7 +22,7 @@ import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.act
 import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.util.*
-import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation.ScrollAwareFilerFab
+import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint

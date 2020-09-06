@@ -10,8 +10,22 @@
        <KeyFrameSet>
            <KeyAttribute
                motion:motionTarget="@+id/pokeball_open"
-               motion:framePosition="10"
+               motion:framePosition="20"
                android:alpha="1" />
+           <KeyAttribute
+               motion:motionTarget="@+id/pokeball_open"
+               motion:framePosition="80" >
+               <CustomAttribute
+                   motion:attributeName="radius"
+                   motion:customDimension="@dimen/fab_circle_corner_radius_full_screen" />
+           </KeyAttribute>
+           <KeyAttribute
+               motion:motionTarget="@+id/pokeball_open"
+               motion:framePosition="100" >
+               <CustomAttribute
+                   motion:attributeName="radius"
+                   motion:customDimension="@dimen/zero" />
+           </KeyAttribute>
        </KeyFrameSet>
     </Transition>
 
@@ -22,6 +36,7 @@
         <Constraint
             android:id="@id/pokeball_open"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent">
+        </Constraint>
     </ConstraintSet>
 </MotionScene>

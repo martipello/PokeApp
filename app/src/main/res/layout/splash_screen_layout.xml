@@ -9,7 +9,7 @@
     tools:context="com.sealstudios.pokemonApp.MainActivity">
 
 
-    <com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.CircleCardView
+    <com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
         android:id="@+id/pokeball_open"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
@@ -17,9 +17,11 @@
         app:cardCornerRadius="@dimen/fab_circle_corner_radius"
         app:cardElevation="@dimen/medium_margin_16dp"
         android:alpha="0"
+        app:layout_constraintVertical_bias="0.9"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"  />
 
 
     <ImageView

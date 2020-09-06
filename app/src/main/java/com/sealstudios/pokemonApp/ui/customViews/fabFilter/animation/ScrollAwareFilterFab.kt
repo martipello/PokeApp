@@ -1,7 +1,6 @@
-package com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation
+package com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation
 
 import android.os.Handler
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Slide
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
-import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.CircleCardView
+import com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
 
 class ScrollAwareFilerFab(
     private val recyclerView: RecyclerView,

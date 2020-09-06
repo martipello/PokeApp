@@ -8,4 +8,6 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="chip_image_size">28dp</dimen>
     <dimen name="fab_circle_corner_radius">28dp</dimen>
+    <dimen name="fab_circle_corner_radius_full_screen">100dp</dimen>
+    <dimen name="zero">0dp</dimen>
 </resources>

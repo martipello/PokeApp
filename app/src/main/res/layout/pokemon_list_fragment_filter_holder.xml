@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:id="@+id/filter_holder_backdrop">
 
-    <com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.CircleCardView
+    <com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
         android:id="@+id/filter_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
@@ -26,7 +26,7 @@
             android:contentDescription="@string/filter" />
 
 
-    </com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.CircleCardView>
+    </com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView>
 
 
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView

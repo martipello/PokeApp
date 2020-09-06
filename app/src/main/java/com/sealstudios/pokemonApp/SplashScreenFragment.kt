@@ -2,7 +2,6 @@ package com.sealstudios.pokemonApp
 
 import android.animation.Animator
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -30,7 +29,6 @@ class SplashScreenFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setMotionLayoutListener()
-
     }
 
     private fun setMotionLayoutListener() {
@@ -47,19 +45,27 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun createRevealAnimation() {
-        Log.d("SPLASH", "createRevealAnimation")
         val x: Int = binding.root.right / 2
-        val y: Int = binding.root.bottom
-
-        val startRadius = 0
+        val y: Int = binding.root.bottom - binding.root.bottom / 9
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
 
-        val anim: Animator = ViewAnimationUtils.createCircularReveal(
+        createCircleRevealAnimator(x, y, endRadius)?.let {
+            addCircleRevealAnimationListener(it)
+            binding.pokeballOpen.visibility = View.VISIBLE
+            it.start()
+        }
+
+    }
+
+    private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator? {
+        return ViewAnimationUtils.createCircularReveal(
             binding.pokeballOpen, x, y,
-            startRadius.toFloat(),
+            0f,
             endRadius.toFloat()
         )
+    }
 
+    private fun addCircleRevealAnimationListener(anim: Animator) {
         anim.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animator: Animator) {}
             override fun onAnimationEnd(animator: Animator) {
@@ -69,16 +75,11 @@ class SplashScreenFragment : Fragment() {
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })
-
-        binding.pokeballOpen.visibility = View.VISIBLE
-
-        anim.start()
     }
 
     private fun navigateToDetailFragment() {
         NavHostFragment.findNavController(this@SplashScreenFragment)
             .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
     }
-
 
 }

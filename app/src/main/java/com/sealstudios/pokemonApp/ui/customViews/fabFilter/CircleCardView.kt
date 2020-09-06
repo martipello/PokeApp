@@ -14,7 +14,6 @@ class CircleCardView @JvmOverloads constructor(
 ) : MaterialCardView(context, attrs, defStyleAttr) {
 
     override fun setRadius(radius: Float) {
-
         val r = if (radius > height / 2 || radius > width / 2) min(height, width) / 2f
         else radius
         super.setRadius(r)

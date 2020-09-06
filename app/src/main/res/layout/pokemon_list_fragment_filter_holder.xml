@@ -9,7 +9,7 @@
         android:id="@+id/filter_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
-        app:cardCornerRadius="28dp"
+        app:cardCornerRadius="@dimen/fab_circle_corner_radius"
         app:cardBackgroundColor="@color/colorAccent"
         app:cardElevation="@dimen/medium_margin_16dp"
         app:layout_constraintBottom_toBottomOf="parent"

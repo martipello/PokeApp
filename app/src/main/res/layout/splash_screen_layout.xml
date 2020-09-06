@@ -2,41 +2,27 @@
 <androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motion_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/motion_root"
     app:layoutDescription="@xml/splash_screen_layout_scene"
-    tools:context="com.sealstudios.pokemonApp.MainActivity">
-
-
-    <com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
-        android:id="@+id/pokeball_open"
-        android:layout_width="@dimen/fab_size"
-        android:layout_height="@dimen/fab_size"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardCornerRadius="@dimen/fab_circle_corner_radius"
-        app:cardElevation="@dimen/medium_margin_16dp"
-        android:alpha="0"
-        app:layout_constraintVertical_bias="0.9"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"  />
-
+    app:motionDebug="SHOW_PATH"
+    tools:context="com.sealstudios.pokemonApp.SplashScreenFragment">
 
     <ImageView
         android:id="@+id/pokeball_icon"
-        android:layout_height="100dp"
-        android:layout_width="100dp"
+        android:layout_width="@dimen/fab_size"
+        android:layout_height="@dimen/fab_size"
         android:scaleType="centerCrop"
-        android:src="@drawable/empty_pokemon"
         android:scaleX="1"
         android:scaleY="1"
-        app:layout_constraintVertical_bias="0.5"
+        android:src="@drawable/empty_pokemon"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        android:contentDescription="@string/intro_image" />
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

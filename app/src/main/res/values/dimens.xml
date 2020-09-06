@@ -7,4 +7,5 @@
     <dimen name="card_elevation_6dp">6dp</dimen>
     <dimen name="fab_size">56dp</dimen>
     <dimen name="chip_image_size">28dp</dimen>
+    <dimen name="fab_circle_corner_radius">28dp</dimen>
 </resources>

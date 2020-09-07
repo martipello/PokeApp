@@ -71,4 +71,9 @@ class MainActivity : AppCompatActivity() {
         return findNavController().navigateUp() ||
                 super.onSupportNavigateUp()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
 }

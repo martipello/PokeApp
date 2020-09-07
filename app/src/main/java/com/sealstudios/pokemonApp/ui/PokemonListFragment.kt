@@ -13,11 +13,13 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
+import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
@@ -52,7 +54,6 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
-        setToolbarTitleExpandedColor(view.context)
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
@@ -128,16 +129,32 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility =
             View.GONE
         if (it.isNotEmpty()) {
-            content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-            content.emptyPokemonList.emptyResultsText.visibility = View.GONE
+            hideRecyclerViewEmptyLayout(content)
         } else {
-            content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
-            content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+            showRecyclerViewEmptyLayout(content)
         }
+    }
+
+    private fun showRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
+        content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+        content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+    }
+
+    private fun hideRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
+        content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+        content.emptyPokemonList.emptyResultsText.visibility = View.GONE
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
         val recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView
+        addRecyclerViewDecoration(recyclerView, context)
+        recyclerView.adapter = pokemonAdapter
+    }
+
+    private fun addRecyclerViewDecoration(
+        recyclerView: RecyclerView,
+        context: Context
+    ) {
         recyclerView.addItemDecoration(
             PokemonListDecoration(
                 context.resources.getDimensionPixelSize(
@@ -145,7 +162,6 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
                 )
             )
         )
-        recyclerView.adapter = pokemonAdapter
     }
 
     private fun setActionBar() {
@@ -156,6 +172,14 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
+        setupActionBarWithNavController(mainActivity, appBarConfiguration)
+        setToolbarTitleExpandedColor(toolbar.context)
+    }
+
+    private fun setupActionBarWithNavController(
+        mainActivity: AppCompatActivity,
+        appBarConfiguration: AppBarConfiguration
+    ) {
         NavigationUI.setupActionBarWithNavController(
             mainActivity,
             findNavController(this@PokemonListFragment),

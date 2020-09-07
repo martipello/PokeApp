@@ -82,4 +82,8 @@ class SplashScreenFragment : Fragment() {
             .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

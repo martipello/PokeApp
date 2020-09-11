@@ -15,6 +15,7 @@
             android:id="@+id/action_PokemonListFragment_to_PokemonDetailFragment"
             app:destination="@id/PokemonDetailFragment"
             app:popUpTo="@id/PokemonListFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/PokemonDetailFragment"
@@ -33,6 +34,8 @@
         <action
             android:id="@+id/action_splashScreenFragment_to_PokemonListFragment"
             app:destination="@id/PokemonListFragment"
+            app:enterAnim="@anim/fade_in"
+            app:exitAnim="@anim/fade_out"
             app:launchSingleTop="true"
             app:popUpTo="@id/nav_graph"
             app:popUpToInclusive="true" />

@@ -54,6 +54,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
+        activity?.theme?.applyStyle(R.style.AppTheme, true)
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()

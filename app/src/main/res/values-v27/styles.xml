@@ -2,14 +2,13 @@
 <resources>
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@android:color/white</item>
         <item name="android:navigationBarColor">
             #B3000000
         </item>
         <item name="android:statusBarColor">
             @color/colorPrimary
         </item>
-        <item name="android:windowAnimationStyle">@style/WindowAnimationStyle</item>
         <item name="android:windowLightStatusBar">false</item>
     </style>
 

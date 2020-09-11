@@ -17,8 +17,8 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.9" />
             <Transform
-                android:scaleY="2"
-                android:scaleX="2"
+                android:scaleY="1.5"
+                android:scaleX="1.5"
                 android:rotation="720"/>
         </Constraint>
     </ConstraintSet>
@@ -31,8 +31,8 @@
         app:motionInterpolator="easeIn">
         <KeyFrameSet>
             <KeyAttribute
-                android:translationY="-150dp"
-                app:framePosition="30"
+                android:translationY="-200dp"
+                app:framePosition="40"
                 app:motionTarget="@id/pokeball_icon" />
         </KeyFrameSet>
     </Transition>

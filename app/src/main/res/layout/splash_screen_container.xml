@@ -4,14 +4,14 @@
     android:layout_height="match_parent"
     android:background="@color/colorAccent">
 
+    <include layout="@layout/splash_screen_layout"
+        android:id="@+id/splash_screen"/>
+
     <View
         android:id="@+id/pokeball_open"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/white"
         android:visibility="gone" />
-
-    <include layout="@layout/splash_screen_layout"
-        android:id="@+id/splash_screen"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

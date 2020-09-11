@@ -4,8 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
-        <item name="android:windowAnimationStyle">@style/WindowAnimationStyle</item>
+        <item name="android:windowBackground">@android:color/white</item>
 
         <item name="android:navigationBarColor">
             #B3000000
@@ -13,6 +12,10 @@
         <item name="android:statusBarColor">
             @color/colorPrimary
         </item>
+    </style>
+
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Light" />
@@ -23,7 +26,6 @@
         <item name="shapeAppearanceOverlay">@style/ShapeAppearanceOverlay_card_custom_corners</item>
     </style>
 
-
     <style name="ShapeAppearanceOverlay_card_custom_corners" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/medium_margin_16dp</item>
@@ -33,10 +35,6 @@
         <item name="elevation">@dimen/large_margin_32dp</item>
         <item name="cardElevation">@dimen/large_margin_32dp</item>
         <item name="android:elevation">@dimen/large_margin_32dp</item>
-    </style>
-
-    <style name="WindowAnimationStyle">
-        <item name="android:windowEnterAnimation">@android:anim/linear_interpolator</item>
     </style>
 
 </resources>

@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp
 
+import android.content.res.Resources
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -14,6 +15,7 @@ import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstTime
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -75,5 +77,11 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+    }
+
+    override fun getTheme(): Resources.Theme? {
+        val theme: Resources.Theme = super.getTheme()
+        theme.applyStyle(R.style.AppTheme, true)
+        return theme
     }
 }

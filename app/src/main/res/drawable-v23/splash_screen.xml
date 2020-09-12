@@ -5,10 +5,10 @@
         android:drawable="@color/colorAccent"/>
     <item>
         <bitmap
-            android:gravity="center"
-            android:src="@drawable/empty_pokemon"
+            android:src="@drawable/pokeball"
             android:height="@dimen/large_margin_32dp"
-            android:width="@dimen/large_margin_32dp"/>
+            android:width="@dimen/large_margin_32dp"
+            android:gravity="center"/>
     </item>
 
 </layer-list>

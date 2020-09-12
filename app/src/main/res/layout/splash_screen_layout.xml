@@ -15,7 +15,7 @@
         android:scaleType="centerCrop"
         android:scaleX="1"
         android:scaleY="1"
-        android:src="@drawable/empty_pokemon"
+        android:src="@drawable/pokeball"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

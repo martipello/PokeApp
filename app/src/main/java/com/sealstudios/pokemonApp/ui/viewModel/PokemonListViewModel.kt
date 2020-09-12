@@ -15,7 +15,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val searchPokemon: LiveData<List<PokemonWithTypesAndSpecies>>
-    private var search: MutableLiveData<String> = getCurrentSearchState()
+    var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
 
     init {
@@ -72,6 +72,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     fun setSearch(search: String) {
         this.search.value = search
+        savedStateHandle.set(searchKey, search)
     }
 
     fun setFilter(key: String, value: Boolean) {
@@ -84,11 +85,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         this.filters.value = filters
     }
 
-    fun saveCurrentSearchState(search: String?) {
-        savedStateHandle.set(searchKey, search)
-    }
-
-    private fun getCurrentSearchState(): MutableLiveData<String> {
+    private fun getSearchState(): MutableLiveData<String> {
         val searchString = savedStateHandle.get<String>(searchKey) ?: ""
         return MutableLiveData("%$searchString%")
     }

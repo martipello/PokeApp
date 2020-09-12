@@ -3,10 +3,11 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -40,6 +41,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     private val binding get() = _binding!!
     private var _binding: PokemonListFragmentBinding? = null
     private lateinit var pokemonAdapter: PokemonAdapter
+    private var search: String = ""
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
@@ -62,6 +64,7 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         setUpPokemonRecyclerView(view.context)
         observeFilters()
         observePokemonList()
+        observeSearch()
         setUpViews()
         addScrollAwarenessForFilterButton()
     }
@@ -70,6 +73,10 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
         binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(
+            right = true,
+            bottom = true
+        )
         binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
             bottom = true,
             right = true
@@ -114,6 +121,14 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
             pokemonList?.let { pokemonListWithTypesAndSpecies ->
                 pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
                 checkForEmptyLayout(pokemonListWithTypesAndSpecies)
+            }
+        })
+    }
+
+    private fun observeSearch() {
+        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                search = it.replace("%", "")
             }
         })
     }
@@ -201,16 +216,28 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
-        (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView).apply {
+        (menu.findItem(R.id.search).actionView as SearchView).apply {
             this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
+            maybeRestoreSearchUIState(menu)
             setQueryListener(searchView = this)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun setQueryListener(searchView: androidx.appcompat.widget.SearchView) {
+    private fun SearchView.maybeRestoreSearchUIState(menu: Menu) {
+        if (search.isNotEmpty()) {
+            this.isIconified = true
+            this.onActionViewExpanded()
+            this.setQuery(search, false)
+            this.isFocusable = true
+            val searchMenuItem = menu.findItem(R.id.search)
+            searchMenuItem.expandActionView()
+        }
+    }
+
+    private fun setQueryListener(searchView: SearchView) {
         searchView.setOnQueryTextListener(object :
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -225,8 +252,8 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     private fun navigateToDetailFragment(name: String) {
-        val action = actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name)
-        findNavController(this@PokemonListFragment).navigate(action)
+        findNavController(this@PokemonListFragment)
+            .navigate(actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name))
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {

@@ -28,11 +28,12 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(id) { id ->
             val pokemonLiveData = repository.getSinglePokemonById(id)
             Transformations.switchMap(pokemonLiveData) { pokemon ->
-                viewModelScope.launch { maybeGetPokemonMoveIds(pokemon) }
-                MutableLiveData(pokemon)
+                pokemon?.let {
+                    viewModelScope.launch { maybeGetPokemonMoveIds(pokemon) }
+                    MutableLiveData(pokemon)
+                }
             }
         })
-
     }
 
     private suspend fun maybeGetPokemonMoveIds(pokemon: PokemonWithTypesAndSpeciesAndMoves) {

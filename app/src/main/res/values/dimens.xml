@@ -4,7 +4,10 @@
     <dimen name="medium_margin_16dp">16dp</dimen>
     <dimen name="medium_margin_12dp">12dp</dimen>
     <dimen name="small_margin_8dp">8dp</dimen>
+    <dimen name="small_margin_4dp">4dp</dimen>
+    <dimen name="view_holder_image_border_width">6dp</dimen>
     <dimen name="card_elevation_6dp">6dp</dimen>
     <dimen name="fab_size">56dp</dimen>
     <dimen name="chip_image_size">28dp</dimen>
+    <dimen name="zero">0dp</dimen>
 </resources>

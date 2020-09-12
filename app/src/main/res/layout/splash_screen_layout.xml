@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/motion_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/splash_screen_layout_scene"
+    tools:context="com.sealstudios.pokemonApp.ui.SplashScreenFragment">
+
+    <ImageView
+        android:id="@+id/pokeball_icon"
+        android:layout_width="@dimen/large_margin_32dp"
+        android:layout_height="@dimen/large_margin_32dp"
+        android:scaleType="centerCrop"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:src="@drawable/pokeball"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        android:contentDescription="@string/intro_image" />
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

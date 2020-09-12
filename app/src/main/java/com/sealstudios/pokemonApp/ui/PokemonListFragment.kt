@@ -3,29 +3,35 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.navGraphViewModels
+import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
+import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
+import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
-import com.sealstudios.pokemonApp.ui.util.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickListener {
@@ -33,8 +39,9 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     @Inject
     lateinit var glide: RequestManager
     private val binding get() = _binding!!
-    private lateinit var pokemonAdapter: PokemonAdapter
     private var _binding: PokemonListFragmentBinding? = null
+    private lateinit var pokemonAdapter: PokemonAdapter
+    private var search: String = ""
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
@@ -44,32 +51,36 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
-        setInsets()
         return binding.root
-    }
-
-    private fun setInsets() {
-        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
-        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
-        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(bottom = true)
-        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
-            bottom = true,
-            right = true
-        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
-        setToolbarTitleExpandedColor(view.context)
+        activity?.theme?.applyStyle(R.style.AppTheme, true)
+        setInsets()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         observeFilters()
         observePokemonList()
+        observeSearch()
         setUpViews()
         addScrollAwarenessForFilterButton()
+    }
+
+    private fun setInsets() {
+        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
+        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(
+            right = true,
+            bottom = true
+        )
+        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
+            bottom = true,
+            right = true
+        )
     }
 
     private fun setUpViews() {
@@ -114,6 +125,14 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         })
     }
 
+    private fun observeSearch() {
+        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                search = it.replace("%", "")
+            }
+        })
+    }
+
     private fun observeFilters() {
         pokemonListViewModel.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
             selectionsLiveData?.let { selections ->
@@ -127,16 +146,32 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility =
             View.GONE
         if (it.isNotEmpty()) {
-            content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-            content.emptyPokemonList.emptyResultsText.visibility = View.GONE
+            hideRecyclerViewEmptyLayout(content)
         } else {
-            content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
-            content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+            showRecyclerViewEmptyLayout(content)
         }
+    }
+
+    private fun showRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
+        content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+        content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+    }
+
+    private fun hideRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
+        content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+        content.emptyPokemonList.emptyResultsText.visibility = View.GONE
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
         val recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView
+        addRecyclerViewDecoration(recyclerView, context)
+        recyclerView.adapter = pokemonAdapter
+    }
+
+    private fun addRecyclerViewDecoration(
+        recyclerView: RecyclerView,
+        context: Context
+    ) {
         recyclerView.addItemDecoration(
             PokemonListDecoration(
                 context.resources.getDimensionPixelSize(
@@ -144,16 +179,28 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
                 )
             )
         )
-        recyclerView.adapter = pokemonAdapter
     }
 
     private fun setActionBar() {
+        val topLevelDestinations: MutableSet<Int> = HashSet()
+        topLevelDestinations.add(R.id.PokemonListFragment)
+        val appBarConfiguration = AppBarConfiguration.Builder(topLevelDestinations)
+            .build()
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
+        setupActionBarWithNavController(mainActivity, appBarConfiguration)
+        setToolbarTitleExpandedColor(toolbar.context)
+    }
+
+    private fun setupActionBarWithNavController(
+        mainActivity: AppCompatActivity,
+        appBarConfiguration: AppBarConfiguration
+    ) {
         NavigationUI.setupActionBarWithNavController(
             mainActivity,
-            findNavController(this@PokemonListFragment)
+            findNavController(this@PokemonListFragment),
+            appBarConfiguration
         )
     }
 
@@ -169,16 +216,28 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
-        (menu.findItem(R.id.search).actionView as androidx.appcompat.widget.SearchView).apply {
+        (menu.findItem(R.id.search).actionView as SearchView).apply {
             this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
+            maybeRestoreSearchUIState(menu)
             setQueryListener(searchView = this)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    private fun setQueryListener(searchView: androidx.appcompat.widget.SearchView) {
+    private fun SearchView.maybeRestoreSearchUIState(menu: Menu) {
+        if (search.isNotEmpty()) {
+            this.isIconified = true
+            this.onActionViewExpanded()
+            this.setQuery(search, false)
+            this.isFocusable = true
+            val searchMenuItem = menu.findItem(R.id.search)
+            searchMenuItem.expandActionView()
+        }
+    }
+
+    private fun setQueryListener(searchView: SearchView) {
         searchView.setOnQueryTextListener(object :
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -193,8 +252,8 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
     }
 
     private fun navigateToDetailFragment(name: String) {
-        val action = actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name)
-        findNavController(this@PokemonListFragment).navigate(action)
+        findNavController(this@PokemonListFragment)
+            .navigate(actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name))
     }
 
     override fun onItemSelected(position: Int, item: Pokemon) {

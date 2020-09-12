@@ -32,16 +32,23 @@ class PokemonViewHolder constructor(
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
-        binding.pokemonSpeciesTextViewLabel.text = pokemonWithTypesAndSpecies.species.species.capitalize()
-        binding.pokemonImageView.scaleType = ImageView.ScaleType.CENTER_CROP
-        binding.pokemonImageView.shadowColor = R.color.black
+        binding.pokemonSpeciesTextViewLabel.text =
+            pokemonWithTypesAndSpecies.species.species.capitalize()
+        binding.pokemonImageView.apply {
+            scaleType = ImageView.ScaleType.CENTER_CROP
+            borderWidth = this.context.resources.getDimension(R.dimen.small_margin_4dp)
+        }
+        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(adapterPosition, pokemonWithTypesAndSpecies.pokemon)
         }
-        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.pokemonTypesChipGroup.removeAllViews()
         val types =
-            PokemonType.getPokemonEnumTypesForPokemonTypes(getTypesInOrder(pokemonWithTypesAndSpecies.types))
+            PokemonType.getPokemonEnumTypesForPokemonTypes(
+                getTypesInOrder(
+                    pokemonWithTypesAndSpecies.types
+                )
+            )
         for (type in types) {
             binding.pokemonTypesChipGroup.addView(createPokemonTypeChip(type, itemView.context))
         }

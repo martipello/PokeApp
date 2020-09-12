@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:drawable="@color/colorAccent"/>
+    <item>
+        <bitmap
+            android:gravity="center"
+            android:src="@drawable/empty_pokemon"
+            android:height="@dimen/large_margin_32dp"
+            android:width="@dimen/large_margin_32dp"/>
+    </item>
+
+</layer-list>

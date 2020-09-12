@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp
+package com.sealstudios.pokemonApp.ui
 
 import android.animation.Animator
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
+import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
 import kotlin.math.hypot
 
@@ -47,14 +48,11 @@ class SplashScreenFragment : Fragment() {
         val x: Int = binding.root.right / 2
         val y: Int = binding.root.bottom - binding.root.bottom / 9
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
-
-        navigateToDetailFragment()
         createCircleRevealAnimator(x, y, endRadius)?.let {
             addCircleRevealAnimationListener(it)
             binding.pokeballOpen.visibility = View.VISIBLE
             it.start()
         }
-
     }
 
     private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator? {
@@ -68,18 +66,16 @@ class SplashScreenFragment : Fragment() {
     private fun addCircleRevealAnimationListener(anim: Animator) {
         anim.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animator: Animator) {
-//                navigateToDetailFragment()
             }
             override fun onAnimationEnd(animator: Animator) {
-//                navigateToDetailFragment()
+                navigateToListFragment()
             }
-
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })
     }
 
-    private fun navigateToDetailFragment() {
+    private fun navigateToListFragment() {
         NavHostFragment.findNavController(this@SplashScreenFragment)
             .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
     }

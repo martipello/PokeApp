@@ -9,9 +9,9 @@
         android:id="@+id/filter_fab"
         android:layout_width="@dimen/fab_size"
         android:layout_height="@dimen/fab_size"
-        app:cardCornerRadius="@dimen/fab_circle_corner_radius"
-        app:cardBackgroundColor="@color/colorAccent"
-        app:cardElevation="@dimen/medium_margin_16dp"
+        app:cardCornerRadius="28dp"
+        style="@style/MyMaterialCardStyle"
+        app:cardElevation="@dimen/card_elevation_6dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="@dimen/medium_margin_16dp">
@@ -21,6 +21,7 @@
             android:layout_width="@dimen/fab_size"
             android:layout_height="@dimen/fab_size"
             android:scaleType="centerCrop"
+            android:background="@color/colorAccent"
             android:padding="@dimen/medium_margin_12dp"
             android:src="@drawable/ic_filter_list_white_24dp"
             android:contentDescription="@string/filter" />
@@ -28,17 +29,15 @@
 
     </com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView>
 
-
     <com.google.android.material.circularreveal.cardview.CircularRevealCardView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_percent="0.5"
-        app:cardBackgroundColor="@color/colorAccent"
-        style="@style/CustomCardViewStyle">
+        style="@style/MyMaterialCardStyle">
 
         <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"

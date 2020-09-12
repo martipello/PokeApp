@@ -36,6 +36,13 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MaterialComponents.MediumComponent</item>
     </style>
 
+    <style name="PokemonViewHolderMaterialCardStyle" parent="Widget.MaterialComponents.CardView">
+        <item name="cardBackgroundColor">@android:color/background_light</item>
+        <item name="colorSurface">@color/colorAccent</item>
+        <item name="colorOnSurface">@color/colorAccent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MaterialComponents.MediumComponent</item>
+    </style>
+
     <style name="ShapeAppearanceOverlay_card_custom_corners" parent="">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/medium_margin_16dp</item>

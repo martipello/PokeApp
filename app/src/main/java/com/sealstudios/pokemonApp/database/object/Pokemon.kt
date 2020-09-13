@@ -49,13 +49,16 @@ data class Pokemon(
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
-                image = "https://pokeres.bastionbot.org/images/pokemon/${apiPokemon.id}.png",
+                image = highResPokemonUrl(apiPokemon.id),
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
                 sprite = apiPokemon.sprites.front_default,
                 move_ids = apiPokemon.moves.map { getPokemonIdFromUrl( it.move.url ) }
             )
         }
+
+        fun highResPokemonUrl(pokemonId: Int) =
+            "https://pokeres.bastionbot.org/images/pokemon/${pokemonId}.png"
 
         fun getPokemonIdFromUrl(pokemonUrl: String): Int {
             val pokemonIndex = pokemonUrl.split("/".toRegex()).toTypedArray()

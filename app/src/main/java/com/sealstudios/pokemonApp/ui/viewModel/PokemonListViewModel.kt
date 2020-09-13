@@ -8,7 +8,6 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.initializePokemonTypeFilters
 
-//TODO fix this not keeping the search state but does keep the list state
 class PokemonListViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
     @Assisted private val savedStateHandle: SavedStateHandle

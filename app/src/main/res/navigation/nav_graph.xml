@@ -26,6 +26,9 @@
             android:name="pokemon_name"
             app:argType="string"
             android:defaultValue="Pokemon" />
+        <argument
+            android:name="transition_name"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

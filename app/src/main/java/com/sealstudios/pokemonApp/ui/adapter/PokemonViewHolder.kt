@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import android.widget.ImageView
@@ -20,7 +21,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTyp
 
 class PokemonViewHolder constructor(
     itemView: View,
-    private val clickListener: AdapterClickListener?,
+    private val clickListener: PokemonAdapterClickListener?,
     private val glide: RequestManager
 ) :
     RecyclerView.ViewHolder(itemView) {
@@ -35,12 +36,13 @@ class PokemonViewHolder constructor(
         binding.pokemonSpeciesTextViewLabel.text =
             pokemonWithTypesAndSpecies.species.species.capitalize()
         binding.pokemonImageView.apply {
+            transitionName = pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
             scaleType = ImageView.ScaleType.CENTER_CROP
             borderWidth = this.context.resources.getDimension(R.dimen.small_margin_4dp)
         }
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.root.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, pokemonWithTypesAndSpecies.pokemon)
+            clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageView)
         }
         binding.pokemonTypesChipGroup.removeAllViews()
         val types =
@@ -98,6 +100,13 @@ class PokemonViewHolder constructor(
                 return false
             }
         }
+    }
+
+    companion object {
+
+        fun pokemonIdFromTransitionName(transitionName: String) = transitionName.split('_')[1]
+        fun pokemonTransitionNameForId(id: Int, context: Context) = context.getString(R.string.transition_name, id)
+
     }
 
 }

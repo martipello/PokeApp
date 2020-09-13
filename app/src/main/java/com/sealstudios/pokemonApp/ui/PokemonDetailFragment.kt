@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -14,13 +15,22 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.NavigationUI
+import androidx.palette.graphics.Palette
+import androidx.transition.ChangeBounds
+import androidx.transition.TransitionInflater
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
+import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
 import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
@@ -33,7 +43,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 class PokemonDetailFragment : Fragment() {
 
     private var _binding: PokemonDetailFragmentBinding? = null
-
+    val args: PokemonDetailFragmentArgs by navArgs()
     @Inject
     lateinit var glide: RequestManager
     private lateinit var pokemonName: String
@@ -42,13 +52,20 @@ class PokemonDetailFragment : Fragment() {
     private val pokemonDetailViewModel: PokemonDetailViewModel
             by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
-        getNavigationArguments()
+        Log.d("DETAIL", args.transitionName)
+        pokemonName = args.pokemonName
+        binding.pokemonImageView.transitionName = args.transitionName
+
+        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element_transition)
+        postponeEnterTransition()
+        glide.asBitmap().load(highResPokemonUrl(PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt())).into(binding.pokemonImageView)
         return binding.root
     }
 
@@ -64,11 +81,6 @@ class PokemonDetailFragment : Fragment() {
         binding.toolbarLayout.addSystemWindowInsetToPadding(false)
         binding.detailRoot.addSystemWindowInsetToPadding(top = false)
         binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
-    }
-
-    private fun getNavigationArguments() {
-        val safeArgs: PokemonDetailFragmentArgs by navArgs()
-        pokemonName = safeArgs.pokemonName
     }
 
     @SuppressLint("DefaultLocale")
@@ -131,10 +143,37 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun setPokemonImageView(imageName: String) {
-        //TODO add a listener that on error tries to display the sprite
         glide.asBitmap()
             .load(imageName)
-            .into(binding.pokemonImageView)
+            .addListener(createRequestListener())
+            .into(binding.pokemonImageViewLarge)
+    }
+
+    private fun createRequestListener(): RequestListener<Bitmap?> {
+        return object : RequestListener<Bitmap?> {
+            override fun onLoadFailed(
+                e: GlideException?,
+                model: Any,
+                target: Target<Bitmap?>,
+                isFirstResource: Boolean
+            ): Boolean {
+                glide.asBitmap()
+                    .load(pokemon?.pokemon?.sprite)
+                    .into(binding.pokemonImageViewLarge)
+                return false
+            }
+
+            override fun onResourceReady(
+                resource: Bitmap?,
+                model: Any,
+                target: Target<Bitmap?>,
+                dataSource: DataSource,
+                isFirstResource: Boolean
+            ): Boolean {
+                startPostponedEnterTransition()
+                return false
+            }
+        }
     }
 
     private fun PokemonDetailFragmentBinding.setPokemonTypes(

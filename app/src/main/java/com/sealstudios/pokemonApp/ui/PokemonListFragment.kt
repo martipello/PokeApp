@@ -11,7 +11,11 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.FragmentNavigator
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -23,8 +27,8 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
-import com.sealstudios.pokemonApp.ui.adapter.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
+import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
@@ -34,7 +38,7 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickListener {
+class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -251,14 +255,26 @@ class PokemonListFragment : Fragment(), AdapterClickListener, FilterChipClickLis
         })
     }
 
-    private fun navigateToDetailFragment(name: String) {
-        findNavController(this@PokemonListFragment)
-            .navigate(actionPokemonListFragmentToPokemonDetailFragment(pokemonName = name))
+    private fun navigateToDetailFragment(name: String, view: View) {
+        val action = actionPokemonListFragmentToPokemonDetailFragment(
+            pokemonName = name,
+            transitionName = view.transitionName
+        )
+        Log.d("LIST", view.transitionName)
+        val extras = FragmentNavigatorExtras(
+            view to view.transitionName
+        )
+        navigate(action, extras)
     }
 
-    override fun onItemSelected(position: Int, item: Pokemon) {
-        pokemonDetailViewModel.setId(item.id)
-        navigateToDetailFragment(item.name)
+    private fun navigate(destination: NavDirections, extraInfo: FragmentNavigator.Extras) = with(findNavController()) {
+        currentDestination?.getAction(destination.actionId)
+            ?.let { navigate(destination, extraInfo) }
+    }
+
+    override fun onItemSelected(pokemon: Pokemon, view: View) {
+        pokemonDetailViewModel.setId(pokemon.id)
+        navigateToDetailFragment(pokemon.name, view)
     }
 
     override fun onFilterSelected(key: String, value: Boolean) {

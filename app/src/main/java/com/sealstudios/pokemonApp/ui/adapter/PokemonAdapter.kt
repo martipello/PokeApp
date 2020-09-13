@@ -7,11 +7,10 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 
 class PokemonAdapter(
-    private val clickListener: AdapterClickListener,
+    private val clickListener: PokemonAdapterClickListener,
     private val glide: RequestManager
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {

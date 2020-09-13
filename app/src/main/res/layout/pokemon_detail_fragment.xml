@@ -54,7 +54,7 @@
         android:clipToPadding="false">
 
     <ImageView
-        android:id="@+id/pokemon_image_view"
+        android:id="@+id/pokemon_image_view_large"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:elevation="@dimen/large_margin_32dp"
@@ -66,6 +66,17 @@
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintTop_toTopOf="parent"
         android:contentDescription="@string/pokemon_image" />
+
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:id="@+id/pokemon_image_view"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:contentDescription="@string/pokemon_image"
+            android:elevation="42dp"
+            app:layout_constraintEnd_toEndOf="@id/pokemon_image_view_large"
+            app:layout_constraintStart_toStartOf="@id/pokemon_image_view_large"
+            app:layout_constraintTop_toTopOf="@id/pokemon_image_view_large"
+            app:layout_constraintBottom_toBottomOf="@id/pokemon_image_view_large"/>
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/card_top_guide"
@@ -103,7 +114,7 @@
         android:paddingBottom="@dimen/medium_margin_16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pokemon_image_view"
+        app:layout_constraintTop_toBottomOf="@id/pokemon_image_view_large"
         app:layout_constraintWidth_max="500dp">
 
         <TextView
@@ -123,7 +134,7 @@
             android:id="@+id/id_label"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/pokemonId"
+            android:text="@string/pokemon_id_label"
             android:gravity="end"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
@@ -172,7 +183,7 @@
             android:id="@+id/gen_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/generation"
+            android:text="@string/generation_label"
             android:textSize="14sp"
             android:paddingTop="@dimen/small_margin_8dp"
             android:paddingBottom="@dimen/small_margin_8dp"
@@ -183,7 +194,7 @@
             android:id="@+id/height_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/height"
+            android:text="@string/height_label"
             android:textSize="14sp"
             android:textColor="@color/colorPrimary"
             android:paddingBottom="@dimen/medium_margin_16dp"
@@ -195,7 +206,7 @@
             android:id="@+id/weight_text_view"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="@string/weight"
+            android:text="@string/weight_label"
             android:textSize="14sp"
             android:textColor="@color/colorPrimary"
             android:paddingBottom="@dimen/medium_margin_16dp"
@@ -228,7 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/shape_text"
-            android:text="@string/shape_text"
+            android:text="@string/shape_label"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             android:paddingBottom="@dimen/small_margin_8dp"
@@ -238,7 +249,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/form_description_text"
-            android:text="@string/form_text"
+            android:text="@string/form_label"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             android:paddingBottom="@dimen/small_margin_8dp"
@@ -248,7 +259,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/habitat_text"
-            android:text="@string/habitat"
+            android:text="@string/habitat_label"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             android:paddingBottom="@dimen/medium_margin_16dp"
@@ -277,7 +288,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pokedex_subtitle"
-            android:text="@string/pok_dex_gen"
+            android:text="@string/pok_dex_gen_label"
             android:textColor="@color/colorPrimary"
             android:textSize="14sp"
             android:paddingBottom="@dimen/small_margin_8dp"

@@ -35,14 +35,12 @@ class PokemonViewHolder constructor(
             itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text =
             pokemonWithTypesAndSpecies.species.species.capitalize()
-        binding.pokemonImageView.apply {
+        binding.pokemonImageViewHolder.apply {
             transitionName = pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
-            scaleType = ImageView.ScaleType.CENTER_CROP
-            borderWidth = this.context.resources.getDimension(R.dimen.small_margin_4dp)
         }
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.root.setOnClickListener {
-            clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageView)
+            clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageViewHolder)
         }
         binding.pokemonTypesChipGroup.removeAllViews()
         val types =
@@ -86,13 +84,13 @@ class PokemonViewHolder constructor(
                     val builder = Palette.Builder(bitmap)
                     builder.generate { palette: Palette? ->
                         palette?.dominantSwatch?.rgb?.let {
-                            binding.pokemonImageView.apply {
-                                borderColor = it
+                            binding.pokemonImageViewHolder.apply {
+                                strokeColor = it
                             }
                         }
                         palette?.lightVibrantSwatch?.rgb?.let {
-                            binding.pokemonImageView.apply {
-                                circleColor = it
+                            binding.pokemonImageViewHolder.apply {
+                                setCardBackgroundColor(it)
                             }
                         }
                     }

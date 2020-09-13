@@ -167,9 +167,15 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
-        val recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView
-        addRecyclerViewDecoration(recyclerView, context)
-        recyclerView.adapter = pokemonAdapter
+        binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
+            addRecyclerViewDecoration(this, context)
+            adapter = pokemonAdapter
+            postponeEnterTransition()
+            viewTreeObserver.addOnPreDrawListener {
+                startPostponedEnterTransition()
+                true
+            }
+        }
     }
 
     private fun addRecyclerViewDecoration(
@@ -260,7 +266,6 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             pokemonName = name,
             transitionName = view.transitionName
         )
-        Log.d("LIST", view.transitionName)
         val extras = FragmentNavigatorExtras(
             view to view.transitionName
         )

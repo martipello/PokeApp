@@ -16,7 +16,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.NavigationUI
 import androidx.palette.graphics.Palette
-import androidx.transition.ChangeBounds
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
@@ -43,7 +42,8 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 class PokemonDetailFragment : Fragment() {
 
     private var _binding: PokemonDetailFragmentBinding? = null
-    val args: PokemonDetailFragmentArgs by navArgs()
+    private val args: PokemonDetailFragmentArgs by navArgs()
+
     @Inject
     lateinit var glide: RequestManager
     private lateinit var pokemonName: String
@@ -59,13 +59,15 @@ class PokemonDetailFragment : Fragment() {
     ): View? {
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
-        Log.d("DETAIL", args.transitionName)
         pokemonName = args.pokemonName
-        binding.pokemonImageView.transitionName = args.transitionName
-
-        sharedElementEnterTransition = TransitionInflater.from(context).inflateTransition(R.transition.shared_element_transition)
+        binding.pokemonImageViewHolder.transitionName = args.transitionName
+        sharedElementEnterTransition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.shared_element_transition)
         postponeEnterTransition()
-        glide.asBitmap().load(highResPokemonUrl(PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt())).into(binding.pokemonImageView)
+        val imageUrl = highResPokemonUrl(
+            PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
+        )
+        setPokemonImageView(imageUrl)
         return binding.root
     }
 
@@ -142,11 +144,11 @@ class PokemonDetailFragment : Fragment() {
         habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
-    private fun setPokemonImageView(imageName: String) {
+    private fun setPokemonImageView(imageUrl: String) {
         glide.asBitmap()
-            .load(imageName)
+            .load(imageUrl)
             .addListener(createRequestListener())
-            .into(binding.pokemonImageViewLarge)
+            .into(binding.pokemonImageView)
     }
 
     private fun createRequestListener(): RequestListener<Bitmap?> {
@@ -159,7 +161,8 @@ class PokemonDetailFragment : Fragment() {
             ): Boolean {
                 glide.asBitmap()
                     .load(pokemon?.pokemon?.sprite)
-                    .into(binding.pokemonImageViewLarge)
+                    .into(binding.pokemonImageView)
+                startPostponedEnterTransition()
                 return false
             }
 
@@ -170,6 +173,21 @@ class PokemonDetailFragment : Fragment() {
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
+//                resource?.let { bitmap ->
+//                    val builder = Palette.Builder(bitmap)
+//                    builder.generate { palette: Palette? ->
+//                        palette?.dominantSwatch?.rgb?.let {
+//                            binding.pokemonImageViewHolder.apply {
+//                                strokeColor = it
+//                            }
+//                        }
+//                        palette?.lightVibrantSwatch?.rgb?.let {
+//                            binding.pokemonImageViewHolder.apply {
+////                                setCardBackgroundColor(it)
+//                            }
+//                        }
+//                    }
+//                }
                 startPostponedEnterTransition()
                 return false
             }
@@ -195,18 +213,18 @@ class PokemonDetailFragment : Fragment() {
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         context: Context,
         pokemonMoves: Map<String, List<PokemonMove>?>
-    ){
+    ) {
         movesHolder.removeAllViews()
-        pokemonMoves.forEach {entry ->
+        pokemonMoves.forEach { entry ->
             Log.d("PDVM", "key ${entry.key}, value ${entry.value}")
         }
     }
 
-    private fun List<PokemonMove>.getPokemonMoves() : Map<String, List<PokemonMove>?>{
+    private fun List<PokemonMove>.getPokemonMoves(): Map<String, List<PokemonMove>?> {
         val moveMap = mutableMapOf<String, MutableList<PokemonMove>?>()
         this.forEach {
-            if (it.generation.isNotEmpty()){
-                if (moveMap.containsKey(it.generation)){
+            if (it.generation.isNotEmpty()) {
+                if (moveMap.containsKey(it.generation)) {
                     val list = moveMap[it.generation]
                     list?.add(it)
                     moveMap[it.generation] = list

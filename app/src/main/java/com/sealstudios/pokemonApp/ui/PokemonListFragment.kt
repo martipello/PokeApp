@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -16,7 +15,6 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +29,6 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -47,14 +44,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     private lateinit var pokemonAdapter: PokemonAdapter
     private var search: String = ""
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    private val pokemonDetailViewModel: PokemonDetailViewModel
-            by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
+        postponeEnterTransition()
         return binding.root
     }
 
@@ -170,7 +166,6 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
             adapter = pokemonAdapter
-            postponeEnterTransition()
             viewTreeObserver.addOnPreDrawListener {
                 startPostponedEnterTransition()
                 true
@@ -223,17 +218,6 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         )
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
-            maybeRestoreSearchUIState(menu)
-            setQueryListener(searchView = this)
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
     private fun SearchView.maybeRestoreSearchUIState(menu: Menu) {
         if (search.isNotEmpty()) {
             this.isIconified = true
@@ -272,18 +256,29 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         navigate(action, extras)
     }
 
-    private fun navigate(destination: NavDirections, extraInfo: FragmentNavigator.Extras) = with(findNavController()) {
-        currentDestination?.getAction(destination.actionId)
-            ?.let { navigate(destination, extraInfo) }
-    }
+    private fun navigate(destination: NavDirections, extraInfo: FragmentNavigator.Extras) =
+        with(findNavController()) {
+            currentDestination?.getAction(destination.actionId)
+                ?.let { navigate(destination, extraInfo) }
+        }
 
     override fun onItemSelected(pokemon: Pokemon, view: View) {
-        pokemonDetailViewModel.setId(pokemon.id)
         navigateToDetailFragment(pokemon.name, view)
     }
 
     override fun onFilterSelected(key: String, value: Boolean) {
         pokemonListViewModel.setFilter(key, value)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
+        (menu.findItem(R.id.search).actionView as SearchView).apply {
+            this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
+            maybeRestoreSearchUIState(menu)
+            setQueryListener(searchView = this)
+        }
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
     override fun onDestroyView() {

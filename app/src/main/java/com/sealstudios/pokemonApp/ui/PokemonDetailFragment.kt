@@ -1,21 +1,24 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.animation.Animator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.transition.addListener
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.NavHostFragment.findNavController
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.navGraphViewModels
-import androidx.navigation.ui.NavigationUI
-import androidx.palette.graphics.Palette
 import androidx.transition.TransitionInflater
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
@@ -23,11 +26,11 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
@@ -35,46 +38,39 @@ import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
+import kotlin.math.hypot
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment() {
 
-    private var _binding: PokemonDetailFragmentBinding? = null
-    private val args: PokemonDetailFragmentArgs by navArgs()
-
     @Inject
     lateinit var glide: RequestManager
     private lateinit var pokemonName: String
-    private val binding get() = _binding!!
-    private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
-    private val pokemonDetailViewModel: PokemonDetailViewModel
-            by navGraphViewModels(R.id.nav_graph) { defaultViewModelProviderFactory }
 
+    private val args: PokemonDetailFragmentArgs by navArgs()
+    private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
+
+    private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
+    private var _binding: PokemonDetailFragmentBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setAndPostponeEnterAnimation()
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
-        pokemonName = args.pokemonName
-        binding.pokemonImageViewHolder.transitionName = args.transitionName
-        sharedElementEnterTransition = TransitionInflater.from(context)
-            .inflateTransition(R.transition.shared_element_transition)
-        postponeEnterTransition()
-        val imageUrl = highResPokemonUrl(
-            PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
-        )
-        setPokemonImageView(imageUrl)
+        handleNavigationArgs()
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setActionBar()
-        super.onViewCreated(view, savedInstanceState)
-        observePokemon()
+    private fun setAndPostponeEnterAnimation() {
+        postponeEnterTransition()
+        sharedElementEnterTransition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.shared_element_transition)
     }
 
     private fun setInsets() {
@@ -85,24 +81,35 @@ class PokemonDetailFragment : Fragment() {
         binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
     }
 
+    private fun handleNavigationArgs() {
+        pokemonName = args.pokemonName
+        binding.pokemonImageViewHolder.transitionName = args.transitionName
+        val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
+        pokemonDetailViewModel.setId(pokemonId)
+        val imageUrl = highResPokemonUrl(pokemonId)
+        setPokemonImageView(imageUrl)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setActionBar()
+        super.onViewCreated(view, savedInstanceState)
+        observePokemon()
+    }
+
     @SuppressLint("DefaultLocale")
     private fun setActionBar() {
-        val toolbar = binding.toolbar
-        val mainActivity = (activity as AppCompatActivity)
-        toolbar.outlineProvider = null
+        binding.toolbar.outlineProvider = null
         binding.appBarLayout.outlineProvider = null
-        mainActivity.setSupportActionBar(toolbar)
-        NavigationUI.setupActionBarWithNavController(
-            mainActivity,
-            findNavController(this@PokemonDetailFragment)
-        )
-        toolbar.title = pokemonName.capitalize()
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).supportActionBar.apply {
+            this?.setHomeButtonEnabled(true)
+            this?.setDisplayHomeAsUpEnabled(true)
+        }
     }
 
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             this.pokemon = pokemon
-            Log.d("MOVES", pokemon.moves.toString())
             pokemon?.let {
                 populateViews()
             }
@@ -111,37 +118,14 @@ class PokemonDetailFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun populateViews() {
-        val context = binding.title.context
         pokemon?.let {
             with(binding) {
-                val pokemon = it.pokemon
-                val moves = it.moves.getPokemonMoves()
-                setPokemonImageView(it.pokemon.image)
-                setPokemonTypes(context, it.types)
-                setPokemonFormData(pokemon, it, context)
-                setPokemonMoves(context = context, pokemonMoves = moves)
+                setPokemonTypes(it.types)
+                setPokemonFormData(it)
+                setPokemonMoves(it.moves.getPokemonMoves())
+                createRevealAnimation()
             }
         }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun PokemonDetailFragmentBinding.setPokemonFormData(
-        pokemon: Pokemon,
-        it: PokemonWithTypesAndSpeciesAndMoves,
-        context: Context
-    ) {
-        title.text = pokemon.name.capitalize()
-        subtitle.text = it.species.species.capitalize()
-        genTextView.text = context.getString(R.string.generation, it.species.generation)
-        idLabel.text = context.getString(R.string.pokemonId, pokemon.id)
-        heightTextView.text = context.getString(R.string.height, pokemon.height)
-        weightTextView.text = context.getString(R.string.weight, pokemon.weight)
-        pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
-        pokedexEntryText.text = it.species.pokedexEntry
-        shapeText.text = context.getString(R.string.shape_text, it.species.shape?.capitalize())
-        formDescriptionText.text = context.getString(R.string.form_text, it.species.formDescription)
-        habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
     private fun setPokemonImageView(imageUrl: String) {
@@ -177,13 +161,13 @@ class PokemonDetailFragment : Fragment() {
 //                    val builder = Palette.Builder(bitmap)
 //                    builder.generate { palette: Palette? ->
 //                        palette?.dominantSwatch?.rgb?.let {
-//                            binding.pokemonImageViewHolder.apply {
-//                                strokeColor = it
-//                            }
+////                            binding.pokemonImageViewHolder.apply {
+////                                strokeColor = it
+////                            }
 //                        }
 //                        palette?.lightVibrantSwatch?.rgb?.let {
-//                            binding.pokemonImageViewHolder.apply {
-////                                setCardBackgroundColor(it)
+//                            binding.detailRoot.apply {
+////                                this.setBackground(it)
 //                            }
 //                        }
 //                    }
@@ -194,8 +178,54 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    private fun createRevealAnimation() {
+        val x: Int = binding.splash.right / 2
+        val y: Int = binding.splash.bottom / 2
+        val endRadius = hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
+        Log.d("DETAIL", "x $x , y $y, end $endRadius")
+        val anim = ViewAnimationUtils.createCircularReveal(
+            binding.splash, x, y,
+            0f,
+            endRadius.toFloat()
+        ).apply {
+            duration = 400
+        }
+        binding.splash.visibility = View.VISIBLE
+        anim.startDelay = 2000
+        anim.start()
+    }
+
+//    private fun createRevealAnimation() {
+//        val x: Int = binding.pokemonImageViewSizeHolder.right / 2
+//        val y: Int = binding.pokemonImageViewSizeHolder.bottom / 2
+//        val endRadius = kotlin.math.hypot(
+//            binding.pokemonImageViewSizeHolder.width.toDouble(),
+//            binding.pokemonImageViewSizeHolder.height.toDouble()
+//        ).toInt()
+//        createCircleRevealAnimator(x, y, endRadius)?.let {
+//            binding.pokemonImageViewSizeHolder.visibility = View.VISIBLE
+//            binding.pokemonImageViewSizeHolder.background = ContextCompat.getDrawable(binding.root.context, R.color.bug)
+//            it.startDelay = 4000
+//            it.start()
+//        }
+//    }
+//
+//    private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator? {
+//        return ViewAnimationUtils.createCircularReveal(
+//            binding.splash, x, y,
+//            0f,
+//            endRadius.toFloat()
+//        ).apply {
+//            duration = 4000
+//        }
+//    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
     private fun PokemonDetailFragmentBinding.setPokemonTypes(
-        context: Context,
         pokemonTypes: List<PokemonType>
     ) {
         pokemonTypesChipGroup.removeAllViews()
@@ -205,13 +235,31 @@ class PokemonDetailFragment : Fragment() {
             )
         for (type in types) {
             pokemonTypesChipGroup.addView(
-                pokemonTypeEnum.createPokemonTypeChip(type, context)
+                pokemonTypeEnum.createPokemonTypeChip(type, binding.root.context)
             )
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    private fun PokemonDetailFragmentBinding.setPokemonFormData(
+        it: PokemonWithTypesAndSpeciesAndMoves
+    ) {
+        val context = binding.root.context
+        title.text = it.pokemon.name.capitalize()
+        subtitle.text = it.species.species.capitalize()
+        genTextView.text = context.getString(R.string.generation, it.species.generation)
+        idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
+        heightTextView.text = context.getString(R.string.height, it.pokemon.height)
+        weightTextView.text = context.getString(R.string.weight, it.pokemon.weight)
+        pokedexSubtitle.text =
+            context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
+        pokedexEntryText.text = it.species.pokedexEntry
+        shapeText.text = context.getString(R.string.shape_text, it.species.shape?.capitalize())
+        formDescriptionText.text = context.getString(R.string.form_text, it.species.formDescription)
+        habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
+    }
+
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
-        context: Context,
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
         movesHolder.removeAllViews()
@@ -220,25 +268,5 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
-    private fun List<PokemonMove>.getPokemonMoves(): Map<String, List<PokemonMove>?> {
-        val moveMap = mutableMapOf<String, MutableList<PokemonMove>?>()
-        this.forEach {
-            if (it.generation.isNotEmpty()) {
-                if (moveMap.containsKey(it.generation)) {
-                    val list = moveMap[it.generation]
-                    list?.add(it)
-                    moveMap[it.generation] = list
-                } else {
-                    moveMap[it.generation] = mutableListOf(it)
-                }
-            }
-        }
-        return moveMap
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
 }
 

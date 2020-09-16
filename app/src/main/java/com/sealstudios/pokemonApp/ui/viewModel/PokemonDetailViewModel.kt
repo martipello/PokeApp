@@ -23,6 +23,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 
     val pokemon: LiveData<PokemonWithTypesAndSpeciesAndMoves>
     private var id: MutableLiveData<Int> = MutableLiveData(-1)
+    var revealAnimationExpanded: MutableLiveData<Boolean?> = getRevealAnimationExpandedState()
 
     init {
         pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(id) { id ->
@@ -84,6 +85,26 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         return null
     }
 
+    private suspend fun insertPokemonMoves(remotePokemonId: Int, pokemonMoves: List<PokemonMove>) {
+        moveRepository.insertPokemonMove(pokemonMoves)
+        val moveJoins = pokemonMoves.map { PokemonMovesJoin(remotePokemonId, it.id) }
+        moveJoinRepository.insertPokemonMovesJoins(moveJoins)
+    }
+
+    fun setRevealAnimationExpandedState(hasExpanded: Boolean) {
+        savedStateHandle.set(hasExpandedKey, hasExpanded)
+    }
+
+    private fun getRevealAnimationExpandedState(): MutableLiveData<Boolean?> {
+        val hasExpanded = savedStateHandle.get<Boolean>(hasExpandedKey)
+        return MutableLiveData(hasExpanded)
+    }
+
+
+    companion object {
+        private const val hasExpandedKey: String = "hasExpanded"
+    }
+
 //    private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
 //        moveRepository.insertPokemonMove(pokemonMove)
 //        moveJoinRepository.insertPokemonMovesJoin(
@@ -93,13 +114,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 //            )
 //        )
 //    }
-
-    private suspend fun insertPokemonMoves(remotePokemonId: Int, pokemonMoves: List<PokemonMove>) {
-        moveRepository.insertPokemonMove(pokemonMoves)
-        val moveJoins = pokemonMoves.map { PokemonMovesJoin(remotePokemonId, it.id) }
-        moveJoinRepository.insertPokemonMovesJoins(moveJoins)
-    }
-
+//
 //    private fun fetchAbilitiesForId(
 //        remoteRepository: RemotePokemonRepository,
 //        remotePokemonId: Int

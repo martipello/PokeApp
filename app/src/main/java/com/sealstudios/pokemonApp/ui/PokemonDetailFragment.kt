@@ -53,6 +53,7 @@ class PokemonDetailFragment : Fragment() {
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
     private var transitionListenerAdapter : TransitionListenerAdapter? = null
+    private var hasExpanded: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,11 +75,27 @@ class PokemonDetailFragment : Fragment() {
 
     private fun transitionListenerAdapter(): TransitionListenerAdapter {
         return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
+            override fun onTransitionStart(transition: Transition) {
+                super.onTransitionStart(transition)
+                Log.d("DETAIL", "onTransitionStart")
+                _binding?.let {
+                    Log.d("DETAIL", "binding not null")
+                    //TODO resize image view
+                    if (hasExpanded) {
+                        Log.d("DETAIL", "view is expanded")
+                        createHideAnimation()
+                    }
+                }
+            }
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
                 _binding?.let {
                     //TODO resize image view
-                    createRevealAnimation()
+                    if (!hasExpanded) {
+                        pokemonDetailViewModel.setRevealAnimationExpandedState(true)
+                        hasExpanded = true
+                        createRevealAnimation()
+                    }
                 }
             }
         }
@@ -108,6 +125,7 @@ class PokemonDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
+        observeHasExpandedState()
         observePokemon()
     }
 
@@ -127,6 +145,14 @@ class PokemonDetailFragment : Fragment() {
             this.pokemon = pokemon
             pokemon?.let {
                 populateViews()
+            }
+        })
+    }
+
+    private fun observeHasExpandedState() {
+        pokemonDetailViewModel.revealAnimationExpanded.observe(viewLifecycleOwner, Observer { hasExpanded ->
+            hasExpanded?.let {
+                this.hasExpanded = hasExpanded
             }
         })
     }
@@ -194,18 +220,30 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createRevealAnimation() {
         val x: Int = binding.splash.right / 2
-        val y: Int = binding.splash.bottom / 2
+        val y: Int = binding.splash.top + binding.splash.bottom / 10
         val endRadius =
             hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
             0f,
             endRadius.toFloat()
-        ).apply {
-            duration = 400
-        }
+        )
         binding.splash.visibility = View.VISIBLE
-        anim.startDelay = 2000
+        anim.start()
+    }
+
+    private fun createHideAnimation() {
+        val x: Int = binding.splash.right / 2
+        val y: Int = binding.splash.top + binding.splash.bottom / 10
+        val endRadius =
+            hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
+        val anim = ViewAnimationUtils.createCircularReveal(
+            binding.splash, x, y,
+            endRadius.toFloat(),
+            0f
+        )
+        binding.splash.visibility = View.INVISIBLE
+        anim.duration = 500
         anim.start()
     }
 

@@ -1,9 +1,7 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,15 +9,15 @@ import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.transition.addListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
+import androidx.transition.Transition
 import androidx.transition.TransitionInflater
+import androidx.transition.TransitionListenerAdapter
+import androidx.transition.TransitionSet
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
@@ -41,7 +39,6 @@ import javax.inject.Inject
 import kotlin.math.hypot
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
-
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment() {
 
@@ -55,6 +52,7 @@ class PokemonDetailFragment : Fragment() {
     private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
+    private var transitionListenerAdapter : TransitionListenerAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,6 +69,23 @@ class PokemonDetailFragment : Fragment() {
         postponeEnterTransition()
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.shared_element_transition)
+        (sharedElementEnterTransition as TransitionSet).addListener(transitionListenerAdapter())
+    }
+
+    private fun transitionListenerAdapter(): TransitionListenerAdapter {
+        return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
+            override fun onTransitionEnd(transition: Transition) {
+                super.onTransitionEnd(transition)
+                _binding?.let {
+                    //TODO resize image view
+                    createRevealAnimation()
+                }
+            }
+        }
+    }
+
+    private fun removeSharedElementListener() {
+        (sharedElementEnterTransition as TransitionSet).removeListener(transitionListenerAdapter())
     }
 
     private fun setInsets() {
@@ -123,7 +138,6 @@ class PokemonDetailFragment : Fragment() {
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
                 setPokemonMoves(it.moves.getPokemonMoves())
-                createRevealAnimation()
             }
         }
     }
@@ -157,21 +171,21 @@ class PokemonDetailFragment : Fragment() {
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-//                resource?.let { bitmap ->
-//                    val builder = Palette.Builder(bitmap)
-//                    builder.generate { palette: Palette? ->
-//                        palette?.dominantSwatch?.rgb?.let {
-////                            binding.pokemonImageViewHolder.apply {
-////                                strokeColor = it
-////                            }
-//                        }
-//                        palette?.lightVibrantSwatch?.rgb?.let {
-//                            binding.detailRoot.apply {
-////                                this.setBackground(it)
+                resource?.let { bitmap ->
+                    val builder = Palette.Builder(bitmap)
+                    builder.generate { palette: Palette? ->
+                        palette?.dominantSwatch?.rgb?.let {
+//                            binding.pokemonImageViewHolder.apply {
+//                                strokeColor = it
 //                            }
-//                        }
-//                    }
-//                }
+                        }
+                        palette?.lightVibrantSwatch?.rgb?.let {
+                            binding.detailRoot.apply {
+//                                this.setBackground(it)
+                            }
+                        }
+                    }
+                }
                 startPostponedEnterTransition()
                 return false
             }
@@ -181,8 +195,8 @@ class PokemonDetailFragment : Fragment() {
     private fun createRevealAnimation() {
         val x: Int = binding.splash.right / 2
         val y: Int = binding.splash.bottom / 2
-        val endRadius = hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
-        Log.d("DETAIL", "x $x , y $y, end $endRadius")
+        val endRadius =
+            hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
             0f,
@@ -195,33 +209,10 @@ class PokemonDetailFragment : Fragment() {
         anim.start()
     }
 
-//    private fun createRevealAnimation() {
-//        val x: Int = binding.pokemonImageViewSizeHolder.right / 2
-//        val y: Int = binding.pokemonImageViewSizeHolder.bottom / 2
-//        val endRadius = kotlin.math.hypot(
-//            binding.pokemonImageViewSizeHolder.width.toDouble(),
-//            binding.pokemonImageViewSizeHolder.height.toDouble()
-//        ).toInt()
-//        createCircleRevealAnimator(x, y, endRadius)?.let {
-//            binding.pokemonImageViewSizeHolder.visibility = View.VISIBLE
-//            binding.pokemonImageViewSizeHolder.background = ContextCompat.getDrawable(binding.root.context, R.color.bug)
-//            it.startDelay = 4000
-//            it.start()
-//        }
-//    }
-//
-//    private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator? {
-//        return ViewAnimationUtils.createCircularReveal(
-//            binding.splash, x, y,
-//            0f,
-//            endRadius.toFloat()
-//        ).apply {
-//            duration = 4000
-//        }
-//    }
-
     override fun onDestroyView() {
         super.onDestroyView()
+        removeSharedElementListener()
+        transitionListenerAdapter = null
         _binding = null
     }
 

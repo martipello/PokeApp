@@ -70,52 +70,16 @@
             android:paddingTop="24dp"
             android:paddingBottom="@dimen/medium_margin_16dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:elevation="@dimen/large_margin_32dp"
-                android:id="@+id/pokemon_image_view_size_holder"
-                app:layout_constraintHeight_percent="0.3"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/pokemon_image_view_holder"
-                    android:layout_width="90dp"
-                    android:layout_height="90dp"
-                    app:cardCornerRadius="45dp"
-                    android:clickable="false"
-                    android:focusable="false"
-                    app:cardElevation="@dimen/large_margin_32dp"
-                    android:background="@android:color/transparent"
-                    app:cardBackgroundColor="@android:color/transparent"
-                    android:outlineProvider="none"
-                    android:contentDescription="@string/pokemon_image"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                    <ImageView
-                        android:id="@+id/pokemon_image_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/no_results_snorlax"
-                        android:layout_gravity="center"
-                        android:scaleType="fitCenter" />
-
-                </com.google.android.material.card.MaterialCardView>
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <include layout="@layout/pokemon_detail_image_layout"
+                android:id="@+id/pokemonImageViewHolderLayout"/>
 
             <View
                 android:id="@+id/card_top_guide"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/medium_margin_12dp"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="@id/pokemon_image_view_size_holder"
-                app:layout_constraintTop_toTopOf="@id/pokemon_image_view_size_holder"/>
+                app:layout_constraintBottom_toBottomOf="@id/pokemonImageViewHolderLayout"
+                app:layout_constraintTop_toTopOf="@id/pokemonImageViewHolderLayout"/>
 
 
             <com.google.android.material.card.MaterialCardView
@@ -147,7 +111,7 @@
                 android:paddingBottom="@dimen/medium_margin_16dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/pokemon_image_view_size_holder"
+                app:layout_constraintTop_toBottomOf="@id/pokemonImageViewHolderLayout"
                 app:layout_constraintWidth_max="500dp">
 
                 <TextView

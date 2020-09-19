@@ -115,7 +115,7 @@ class PokemonDetailFragment : Fragment() {
 
     private fun handleNavigationArgs() {
         pokemonName = args.pokemonName
-        binding.pokemonImageViewHolder.transitionName = args.transitionName
+        binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName = args.transitionName
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonDetailViewModel.setId(pokemonId)
         val imageUrl = highResPokemonUrl(pokemonId)
@@ -172,7 +172,7 @@ class PokemonDetailFragment : Fragment() {
         glide.asBitmap()
             .load(imageUrl)
             .addListener(createRequestListener())
-            .into(binding.pokemonImageView)
+            .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
     }
 
     private fun createRequestListener(): RequestListener<Bitmap?> {
@@ -185,7 +185,7 @@ class PokemonDetailFragment : Fragment() {
             ): Boolean {
                 glide.asBitmap()
                     .load(pokemon?.pokemon?.sprite)
-                    .into(binding.pokemonImageView)
+                    .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
                 startPostponedEnterTransition()
                 return false
             }

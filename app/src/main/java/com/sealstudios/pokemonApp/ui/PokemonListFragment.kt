@@ -19,6 +19,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
@@ -246,9 +247,11 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     private fun navigateToDetailFragment(name: String, view: View) {
+        view as MaterialCardView
         val action = actionPokemonListFragmentToPokemonDetailFragment(
             pokemonName = name,
-            transitionName = view.transitionName
+            transitionName = view.transitionName,
+            paletteRgb = view.cardBackgroundColor.defaultColor
         )
         val extras = FragmentNavigatorExtras(
             view to view.transitionName

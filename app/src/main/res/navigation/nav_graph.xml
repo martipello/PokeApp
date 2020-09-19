@@ -33,6 +33,9 @@
         <argument
             android:name="transition_name"
             app:argType="string" />
+        <argument
+            android:name="palette_rgb"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

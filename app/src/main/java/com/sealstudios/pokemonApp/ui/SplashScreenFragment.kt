@@ -60,7 +60,7 @@ class SplashScreenFragment : Fragment() {
             binding.pokeballOpen, x, y,
             0f,
             endRadius.toFloat()
-        )
+        ).setDuration(200)
     }
 
     private fun addCircleRevealAnimationListener(anim: Animator) {

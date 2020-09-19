@@ -90,10 +90,10 @@ class PokemonDetailFragment : Fragment() {
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
                 _binding?.let {
-                    //TODO resize image view
                     if (!hasExpanded) {
                         pokemonDetailViewModel.setRevealAnimationExpandedState(true)
                         hasExpanded = true
+                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd();
                         createRevealAnimation()
                     }
                 }
@@ -116,6 +116,7 @@ class PokemonDetailFragment : Fragment() {
     private fun handleNavigationArgs() {
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName = args.transitionName
+        binding.splash.setBackgroundColor(args.paletteRgb)
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonDetailViewModel.setId(pokemonId)
         val imageUrl = highResPokemonUrl(pokemonId)
@@ -197,21 +198,6 @@ class PokemonDetailFragment : Fragment() {
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                resource?.let { bitmap ->
-                    val builder = Palette.Builder(bitmap)
-                    builder.generate { palette: Palette? ->
-                        palette?.dominantSwatch?.rgb?.let {
-//                            binding.pokemonImageViewHolder.apply {
-//                                strokeColor = it
-//                            }
-                        }
-                        palette?.lightVibrantSwatch?.rgb?.let {
-                            binding.detailRoot.apply {
-//                                this.setBackground(it)
-                            }
-                        }
-                    }
-                }
                 startPostponedEnterTransition()
                 return false
             }
@@ -220,7 +206,7 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createRevealAnimation() {
         val x: Int = binding.splash.right / 2
-        val y: Int = binding.splash.top + binding.splash.bottom / 10
+        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
         val endRadius =
             hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(

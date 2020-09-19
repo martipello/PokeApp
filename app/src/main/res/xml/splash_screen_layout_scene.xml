@@ -27,12 +27,12 @@
         app:autoTransition="animateToEnd"
         app:constraintSetStart="@id/pokeball_thrown"
         app:constraintSetEnd="@+id/pokeball_landed"
-        app:duration="1000"
-        app:motionInterpolator="easeIn">
+        app:duration="800"
+        app:motionInterpolator="easeOut">
         <KeyFrameSet>
             <KeyAttribute
                 android:translationY="-200dp"
-                app:framePosition="40"
+                app:framePosition="32"
                 app:motionTarget="@id/pokeball_icon" />
         </KeyFrameSet>
     </Transition>

@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/pokeball_icon"
-        android:layout_width="@dimen/large_margin_32dp"
-        android:layout_height="@dimen/large_margin_32dp"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:scaleType="centerCrop"
         android:scaleX="1"
         android:scaleY="1"

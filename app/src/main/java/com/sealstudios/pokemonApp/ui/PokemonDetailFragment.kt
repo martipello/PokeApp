@@ -5,11 +5,7 @@ import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewAnimationUtils
-import android.view.ViewGroup
-import android.view.animation.Animation
+import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
@@ -18,7 +14,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.palette.graphics.Palette
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionListenerAdapter
@@ -63,16 +58,21 @@ class PokemonDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
-            createHideAnimation()
+            startExitTransition()
             this.remove()
         }
+    }
+
+    private fun startExitTransition() {
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
+        createHideAnimation()
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true);
         setAndPostponeEnterAnimation()
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
@@ -154,7 +154,6 @@ class PokemonDetailFragment : Fragment() {
         binding.appBarLayout.outlineProvider = null
         (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
         (activity as AppCompatActivity).supportActionBar.apply {
-            this?.setHomeButtonEnabled(true)
             this?.setDisplayHomeAsUpEnabled(true)
         }
     }
@@ -256,10 +255,24 @@ class PokemonDetailFragment : Fragment() {
         return object : Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
+
                 findNavController().popBackStack()
             }
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {}
+        }
+    }
+
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        Log.d("DETAIL", "item id ${item.itemId}")
+        return when (item.itemId) {
+            android.R.id.home -> {
+                startExitTransition()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 

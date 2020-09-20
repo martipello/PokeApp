@@ -31,8 +31,8 @@
         app:motionInterpolator="easeOut">
         <KeyFrameSet>
             <KeyAttribute
-                android:translationY="-200dp"
-                app:framePosition="32"
+                android:translationY="-250dp"
+                app:framePosition="40"
                 app:motionTarget="@id/pokeball_icon" />
         </KeyFrameSet>
     </Transition>

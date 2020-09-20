@@ -16,7 +16,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
-    </ConstraintSet>
+
+    <Constraint android:id="@id/pokemon_background_circle_view">
+        <Layout
+            android:layout_width="9dp"
+            android:layout_height="9dp"/>
+    </Constraint>
+</ConstraintSet>
 
     <Transition
         app:constraintSetEnd="@+id/end"

@@ -12,10 +12,25 @@
     app:layout_constraintTop_toTopOf="parent">
 
     <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pokemon_background_circle_view"
+        android:layout_width="90dp"
+        android:layout_height="90dp"
+        android:clickable="false"
+        android:contentDescription="@string/pokemon_image"
+        android:focusable="false"
+        android:outlineProvider="none"
+        app:cardCornerRadius="45dp"
+        app:cardElevation="@dimen/large_margin_32dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/pokemon_image_view_holder"
         android:layout_width="90dp"
         android:layout_height="90dp"
-        android:background="@android:color/transparent"
         android:clickable="false"
         android:contentDescription="@string/pokemon_image"
         android:focusable="false"

@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
@@ -8,10 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
 import android.view.ViewGroup
+import android.view.animation.Animation
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.palette.graphics.Palette
 import androidx.transition.Transition
@@ -55,6 +60,15 @@ class PokemonDetailFragment : Fragment() {
     private var transitionListenerAdapter : TransitionListenerAdapter? = null
     private var hasExpanded: Boolean = false
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
+            createHideAnimation()
+            this.remove()
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -75,30 +89,31 @@ class PokemonDetailFragment : Fragment() {
 
     private fun transitionListenerAdapter(): TransitionListenerAdapter {
         return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
-            override fun onTransitionStart(transition: Transition) {
-                super.onTransitionStart(transition)
-                Log.d("DETAIL", "onTransitionStart")
-                _binding?.let {
-                    Log.d("DETAIL", "binding not null")
-                    //TODO resize image view
-                    if (hasExpanded) {
-                        Log.d("DETAIL", "view is expanded")
-                        createHideAnimation()
-                    }
-                }
-            }
             override fun onTransitionEnd(transition: Transition) {
                 super.onTransitionEnd(transition)
                 _binding?.let {
                     if (!hasExpanded) {
                         pokemonDetailViewModel.setRevealAnimationExpandedState(true)
-                        hasExpanded = true
                         it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd();
                         createRevealAnimation()
                     }
                 }
             }
         }
+    }
+
+    private fun setMotionLayoutListener() {
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.setTransitionListener(object :
+            MotionLayout.TransitionListener {
+            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                if (hasExpanded){
+                    findNavController().popBackStack()
+                }
+            }
+            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
+            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+        })
     }
 
     private fun removeSharedElementListener() {
@@ -117,6 +132,7 @@ class PokemonDetailFragment : Fragment() {
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName = args.transitionName
         binding.splash.setBackgroundColor(args.dominantSwatchRgb)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(args.dominantSwatchRgb)
         binding.squareangleMask.setColorFilter(args.lightVibrantSwatchRgb)
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonDetailViewModel.setId(pokemonId)
@@ -127,6 +143,7 @@ class PokemonDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
+        setMotionLayoutListener()
         observeHasExpandedState()
         observePokemon()
     }
@@ -221,17 +238,29 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createHideAnimation() {
         val x: Int = binding.splash.right / 2
-        val y: Int = binding.splash.top + binding.splash.bottom / 10
-        val endRadius =
+        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
+        val startRadius =
             hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
-            endRadius.toFloat(),
-            0f
+            startRadius.toFloat(),
+            300f
         )
         binding.splash.visibility = View.INVISIBLE
-        anim.duration = 500
+        anim.addListener(getHideRevealAnimatorListener())
+
         anim.start()
+    }
+
+    private fun getHideRevealAnimatorListener(): Animator.AnimatorListener {
+        return object : Animator.AnimatorListener {
+            override fun onAnimationRepeat(animation: Animator?) {}
+            override fun onAnimationEnd(animation: Animator?) {
+                findNavController().popBackStack()
+            }
+            override fun onAnimationCancel(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {}
+        }
     }
 
     override fun onDestroyView() {
@@ -283,6 +312,17 @@ class PokemonDetailFragment : Fragment() {
             Log.d("PDVM", "key ${entry.key}, value ${entry.value}")
         }
     }
+
+
+    /***
+     * driving this state are motion layout animation and animation utils createRevealAnimation
+     */
+    /***
+     * hasTransitionedIn - should tell the view if the image is large (motion layout)
+     * if the splash screen is visible (createRevealAnimation), the color of the splash screen,
+     * and the app bar tint
+     * TODO: create a view model for this state
+     * */
 
 }
 

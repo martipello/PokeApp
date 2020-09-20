@@ -88,7 +88,6 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:elevation="@dimen/medium_margin_16dp"
-                app:cardBackgroundColor="@android:color/white"
                 app:cardCornerRadius="@dimen/medium_margin_16dp"
                 app:cardElevation="@dimen/medium_margin_16dp"
                 app:layout_constraintBottom_toBottomOf="@id/content"

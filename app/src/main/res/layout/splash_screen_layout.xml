@@ -12,6 +12,7 @@
         android:id="@+id/pokeball_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        android:contentDescription="@string/intro_image"
         android:scaleType="centerCrop"
         android:scaleX="1"
         android:scaleY="1"
@@ -20,8 +21,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        android:contentDescription="@string/intro_image" />
+        app:layout_constraintVertical_bias="0.5" />
 
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

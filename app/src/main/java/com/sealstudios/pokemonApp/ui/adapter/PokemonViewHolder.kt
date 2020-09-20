@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.view.View
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
@@ -29,10 +28,6 @@ class PokemonViewHolder constructor(
     RecyclerView.ViewHolder(itemView) {
 
     private val binding = PokemonViewHolderBinding.bind(itemView)
-
-    private var pokemonImageBackgroundColor = ContextCompat.getColor(binding.root.context, R.color.white);
-    private var pokemonImageStrokeColor = ContextCompat.getColor(binding.root.context, R.color.white);
-
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
@@ -44,13 +39,13 @@ class PokemonViewHolder constructor(
             transitionName = pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
         }
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
-        binding.pokemonImageViewHolder.apply {
-            setCardBackgroundColor(pokemonImageBackgroundColor)
-            strokeColor = pokemonImageStrokeColor
-        }
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageViewHolder)
         }
+        buildPokemonTypes(pokemonWithTypesAndSpecies)
+    }
+
+    private fun buildPokemonTypes(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) {
         binding.pokemonTypesChipGroup.removeAllViews()
         val types =
             PokemonType.getPokemonEnumTypesForPokemonTypes(

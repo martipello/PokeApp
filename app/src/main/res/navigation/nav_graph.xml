@@ -14,6 +14,10 @@
         <action
             android:id="@+id/action_PokemonListFragment_to_PokemonDetailFragment"
             app:destination="@id/PokemonDetailFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:exitAnim="@anim/fragment_fade_exit"
+            app:popEnterAnim="@anim/fragment_fade_enter"
+            app:popExitAnim="@anim/fragment_fade_exit"
             app:popUpTo="@id/PokemonListFragment" />
 
     </fragment>
@@ -26,6 +30,15 @@
             android:name="pokemon_name"
             app:argType="string"
             android:defaultValue="Pokemon" />
+        <argument
+            android:name="transition_name"
+            app:argType="string" />
+        <argument
+            android:name="dominant_swatch_rgb"
+            app:argType="integer" />
+        <argument
+            android:name="light_vibrant_swatch_rgb"
+            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

@@ -40,4 +40,24 @@ data class PokemonWithTypesAndSpeciesAndMoves(
         )
     )
     val moves: List<PokemonMove>
-)
+){
+    companion object {
+
+        fun List<PokemonMove>.getPokemonMoves(): Map<String, List<PokemonMove>?> {
+            val moveMap = mutableMapOf<String, MutableList<PokemonMove>?>()
+            this.forEach {
+                if (it.generation.isNotEmpty()) {
+                    if (moveMap.containsKey(it.generation)) {
+                        val list = moveMap[it.generation]
+                        list?.add(it)
+                        moveMap[it.generation] = list
+                    } else {
+                        moveMap[it.generation] = mutableListOf(it)
+                    }
+                }
+            }
+            return moveMap
+        }
+
+    }
+}

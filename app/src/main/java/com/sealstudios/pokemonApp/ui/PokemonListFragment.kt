@@ -251,7 +251,8 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         val action = actionPokemonListFragmentToPokemonDetailFragment(
             pokemonName = name,
             transitionName = view.transitionName,
-            paletteRgb = view.cardBackgroundColor.defaultColor
+            dominantSwatchRgb = view.cardBackgroundColor.defaultColor,
+            lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor ?: ContextCompat.getColor(view.context, R.color.white)
         )
         val extras = FragmentNavigatorExtras(
             view to view.transitionName

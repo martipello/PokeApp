@@ -3,8 +3,10 @@ package com.sealstudios.pokemonApp.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.os.AsyncTask
 import android.view.View
 import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -28,6 +30,9 @@ class PokemonViewHolder constructor(
 
     private val binding = PokemonViewHolderBinding.bind(itemView)
 
+    private var pokemonImageBackgroundColor = ContextCompat.getColor(binding.root.context, R.color.white);
+    private var pokemonImageStrokeColor = ContextCompat.getColor(binding.root.context, R.color.white);
+
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
@@ -39,6 +44,10 @@ class PokemonViewHolder constructor(
             transitionName = pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
         }
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
+        binding.pokemonImageViewHolder.apply {
+            setCardBackgroundColor(pokemonImageBackgroundColor)
+            strokeColor = pokemonImageStrokeColor
+        }
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageViewHolder)
         }
@@ -81,21 +90,34 @@ class PokemonViewHolder constructor(
                 isFirstResource: Boolean
             ): Boolean {
                 resource?.let { bitmap ->
-                    val builder = Palette.Builder(bitmap)
-                    builder.generate { palette: Palette? ->
-                        palette?.dominantSwatch?.rgb?.let {
-                            binding.pokemonImageViewHolder.apply {
-                                strokeColor = it
-                            }
-                        }
-                        palette?.lightVibrantSwatch?.rgb?.let {
-                            binding.pokemonImageViewHolder.apply {
-                                setCardBackgroundColor(it)
-                            }
-                        }
-                    }
+                    setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap)
                 }
                 return false
+            }
+        }
+    }
+
+    private fun setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap: Bitmap): AsyncTask<Bitmap, Void, Palette> {
+        val builder = Palette.Builder(bitmap)
+        return builder.generate { palette: Palette? ->
+            with(binding.pokemonImageViewHolder) {
+                strokeColor = if (palette?.lightVibrantSwatch != null) {
+                    palette.lightVibrantSwatch!!.rgb
+                } else {
+                    palette?.dominantSwatch?.rgb ?: ContextCompat.getColor(
+                        this.context,
+                        R.color.white
+                    )
+                }
+                if (palette?.darkVibrantSwatch != null) {
+                    setCardBackgroundColor(palette.darkVibrantSwatch!!.rgb)
+                } else {
+                    val color = palette?.dominantSwatch?.rgb ?: ContextCompat.getColor(
+                        this.context,
+                        R.color.colorAccent
+                    )
+                    setCardBackgroundColor(color)
+                }
             }
         }
     }

@@ -116,7 +116,8 @@ class PokemonDetailFragment : Fragment() {
     private fun handleNavigationArgs() {
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName = args.transitionName
-        binding.splash.setBackgroundColor(args.paletteRgb)
+        binding.splash.setBackgroundColor(args.dominantSwatchRgb)
+        binding.squareangleMask.setColorFilter(args.lightVibrantSwatchRgb)
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonDetailViewModel.setId(pokemonId)
         val imageUrl = highResPokemonUrl(pokemonId)

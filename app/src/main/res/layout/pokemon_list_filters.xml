@@ -1,5 +1,10 @@
-<com.google.android.material.chip.ChipGroup android:layout_width="match_parent"
-    android:layout_height="match_parent"
+<com.google.android.material.chip.ChipGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/chip_group"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_margin="@dimen/medium_margin_16dp"
+    app:chipSpacingHorizontal="@dimen/medium_margin_16dp"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <include layout="@layout/filter_search_chip"

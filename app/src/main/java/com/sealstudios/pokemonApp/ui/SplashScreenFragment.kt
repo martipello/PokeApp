@@ -8,9 +8,11 @@ import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
+import kotlinx.coroutines.delay
 import kotlin.math.hypot
 
 
@@ -66,9 +68,9 @@ class SplashScreenFragment : Fragment() {
     private fun addCircleRevealAnimationListener(anim: Animator) {
         anim.addListener(object : Animator.AnimatorListener {
             override fun onAnimationStart(animator: Animator) {
+                navigateToListFragment()
             }
             override fun onAnimationEnd(animator: Animator) {
-                navigateToListFragment()
             }
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
@@ -76,8 +78,11 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun navigateToListFragment() {
-        NavHostFragment.findNavController(this@SplashScreenFragment)
-            .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+        lifecycleScope.launchWhenStarted {
+            delay(100)
+            NavHostFragment.findNavController(this@SplashScreenFragment)
+                .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+        }
     }
 
     override fun onDestroyView() {

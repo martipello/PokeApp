@@ -29,11 +29,12 @@
 
     </com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView>
 
-    <com.google.android.material.circularreveal.cardview.CircularRevealCardView
+    <com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
         android:id="@+id/filter_holder"
+        app:cardElevation="@dimen/card_elevation_6dp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -46,11 +47,11 @@
             <include layout="@layout/pokemon_list_filters"
                 android:id="@+id/filter_group_layout"
                 android:layout_margin="@dimen/medium_margin_16dp"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_width="match_parent" />
 
         </androidx.core.widget.NestedScrollView>
 
-    </com.google.android.material.circularreveal.cardview.CircularRevealCardView>
+    </com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

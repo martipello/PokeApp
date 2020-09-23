@@ -34,6 +34,7 @@ import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
 import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
+import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +93,7 @@ class PokemonDetailFragment : Fragment() {
 
     private fun startExitTransition() {
         binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
+        //TODO try to make the circle view appear after the hide reveal finishes
         createHideAnimation()
     }
 
@@ -258,7 +260,7 @@ class PokemonDetailFragment : Fragment() {
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
             startRadius.toFloat(),
-            0f
+            90.dp.toFloat()
         )
 
         anim.addListener(getHideRevealAnimatorListener())

@@ -1,35 +1,43 @@
 package com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation
 
 import android.os.Handler
-import android.view.Gravity
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Slide
-import androidx.transition.Transition
-import androidx.transition.TransitionManager
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
 
 class ScrollAwareFilerFab(
     private val recyclerView: RecyclerView,
     val circleCardView: CircleCardView,
-    val circleCardViewParent: ViewGroup
+    val circleCardViewParent: ViewGroup,
+    val scrollAwareFilterFabAnimationListener: FabFilterAnimationListener
 ) {
 
-    var scrolling : Boolean = false
+    var scrolling: Boolean = false
+    var isExpanded: Boolean = false
 
     fun start() {
+//        circleCardView.setOnClickListener {
+//            //perform arc animation
+//        }
+
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
                 when (newState) {
                     RecyclerView.SCROLL_STATE_IDLE -> {
-                        scrolling = false
-                        shouldShow()
+                        if (!isExpanded) {
+                            scrolling = false
+                            shouldShow()
+                        }
                     }
                     RecyclerView.SCROLL_STATE_DRAGGING -> {
-                        scrolling = true
-                        hide()
+                        if (!isExpanded) {
+                            scrolling = true
+                            circleCardView.slideToHide(
+                                circleCardViewParent,
+                                scrollAwareFilterFabAnimationListener
+                            )
+                        }
                     }
                     RecyclerView.SCROLL_STATE_SETTLING -> {
                     }
@@ -38,29 +46,13 @@ class ScrollAwareFilerFab(
         })
     }
 
-    fun hide() {
-        val transition: Transition = Slide(Gravity.BOTTOM)
-        transition.duration = 600
-        transition.addTarget(circleCardView)
-        TransitionManager.beginDelayedTransition(circleCardViewParent, transition)
-        circleCardView.visibility = View.GONE
-    }
-
-    private fun show() {
-        val transition: Transition = Slide(Gravity.BOTTOM)
-        transition.duration = 600
-        transition.addTarget(circleCardView)
-        TransitionManager.beginDelayedTransition(circleCardViewParent, transition)
-        circleCardView.visibility = View.VISIBLE
-    }
-
     fun shouldShow() {
         val handler = Handler()
         handler.postDelayed({
             if (!scrolling) {
                 scrolling = false
-                show()
+                circleCardView.slideToShow(circleCardView, scrollAwareFilterFabAnimationListener)
             }
-        }, 1)
+        }, 3)
     }
 }

@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -29,6 +30,7 @@ import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterClickListener
+import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
@@ -40,7 +42,7 @@ import kotlin.math.hypot
 
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener {
+class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener, FabFilterAnimationListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -87,15 +89,17 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             bottom = true,
             right = true
         )
+        binding.pokemonListFilter.filterGroupLayout.chipGroup.addSystemWindowInsetToMargin(
+            bottom = true
+        )
     }
 
     private fun setUpViews() {
         binding.pokemonListFilter.filterFab.setOnClickListener {
             if (filterIsExpanded){
-                createHideAnimation()
-                //animateFilterFab()
+                binding.pokemonListFilter.filterHolder.circleHide(this)
             } else {
-                createRevealAnimation()
+                binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(binding.pokemonListFilter.filterHolder, this)
             }
             filterIsExpanded = !filterIsExpanded
         }
@@ -112,78 +116,12 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         ).bindChips()
     }
 
-    private fun createRevealAnimation() {
-        val y = binding.pokemonListFilter.filterHolder.right / 2
-        val x = binding.pokemonListFilter.filterHolder.top / 2
-
-        val endRadius =
-            hypot(binding.pokemonListFilter.filterHolder.width.toDouble(),
-                binding.pokemonListFilter.filterHolder.height.toDouble()).toInt()
-
-        val anim = ViewAnimationUtils.createCircularReveal(
-            binding.pokemonListFilter.filterHolder, x, y,
-            0f,
-            endRadius.toFloat()
-        )
-
-        binding.pokemonListFilter.filterHolder.visibility = View.VISIBLE
-        anim.start()
-    }
-
-    private fun createHideAnimation() {
-        val x = binding.pokemonListFilter.filterHolder.right / 2
-        val y = binding.pokemonListFilter.filterHolder.top / 2
-
-        val startRadius =
-            hypot(binding.pokemonListFilter.filterHolder.width.toDouble(),
-                binding.pokemonListFilter.filterHolder.height.toDouble()).toInt()
-
-        val anim = ViewAnimationUtils.createCircularReveal(
-            binding.pokemonListFilter.filterHolder, x, y,
-            startRadius.toFloat(),
-            0f
-        )
-
-        anim.addListener(getHideRevealAnimatorListener())
-        anim.start()
-    }
-
-    private fun getHideRevealAnimatorListener(): Animator.AnimatorListener {
-        return object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationEnd(animation: Animator?) {
-                binding.pokemonListFilter.filterHolder.visibility = View.INVISIBLE}
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
-        }
-    }
-
-    private fun animateFilterFab() {
-
-        val endX = binding.pokemonListFilter.filterGroupLayout.chipGroup.width / 2
-        val endY = binding.pokemonListFilter.filterGroupLayout.chipGroup.height / 2
-        //set up clipView and coordinates where clipView will move
-        ArcAnimator.createArcAnimator(
-            binding.pokemonListFilter.filterFab,
-            endX.toFloat(),
-            endY.toFloat(),
-            50f,
-            Side.RIGHT
-        )
-            .setDuration(500)
-            .start();
-
-//        //or specify nestView for clipView. Animator will take center x,y coordinates of nestView
-//        ArcAnimator.createArcAnimator(clipView, nestView, DEGREE, SIDE)
-//            .setDuration(500)
-//            .start();
-    }
-
     private fun addScrollAwarenessForFilterButton() {
         ScrollAwareFilerFab(
             circleCardView = binding.pokemonListFilter.filterFab,
             recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView,
-            circleCardViewParent = binding.listFragmentContainer
+            circleCardViewParent = binding.listFragmentContainer,
+            scrollAwareFilterFabAnimationListener = this
         ).start()
     }
 
@@ -364,4 +302,40 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         super.onDestroyView()
         _binding = null
     }
+
+    override fun onSlideHideAnimationStarted() {
+        Log.d("LIST_FRAGMENT","onSlideHideAnimationStarted")
+    }
+
+    override fun onSlideHideAnimationFinished() {
+        Log.d("LIST_FRAGMENT","onSlideHideAnimationFinished")
+    }
+
+    override fun onCircleRevealAnimationStarted() {
+        Log.d("LIST_FRAGMENT","onCircleRevealAnimationStarted")
+    }
+
+    override fun onCircleRevealAnimationFinished() {
+        Log.d("LIST_FRAGMENT","onCircleRevealAnimationFinished")
+    }
+
+    override fun onCircleHideAnimationStarted() {
+        Log.d("LIST_FRAGMENT","onCircleHideAnimationStarted")
+    }
+
+    override fun onCircleHideAnimationFinished() {
+        Log.d("LIST_FRAGMENT","onCircleHideAnimationFinished")
+        if (filterIsExpanded){
+            binding.pokemonListFilter.filterFab.arcAnimateFilterFabOut(this)
+        }
+    }
+
+    override fun onArcAnimationStarted() {
+        Log.d("LIST_FRAGMENT","onArcAnimationStarted")
+    }
+
+    override fun onArcAnimationFinished() {
+        Log.d("LIST_FRAGMENT","onArcAnimationFinished")
+    }
+
 }

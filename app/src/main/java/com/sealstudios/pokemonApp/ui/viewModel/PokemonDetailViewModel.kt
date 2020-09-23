@@ -14,6 +14,7 @@ import kotlinx.coroutines.Dispatchers
 import com.sealstudios.pokemonApp.api.`object`.PokemonMove as apiPokemonMove
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.lang.Exception
 
 class PokemonDetailViewModel @ViewModelInject constructor(
     private val repository: PokemonWithTypesAndSpeciesAndMovesRepository,
@@ -40,16 +41,22 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun maybeGetPokemonMoveIds(pokemon: PokemonWithTypesAndSpeciesAndMoves) {
-        val moves = mutableListOf<PokemonMove>()
-        pokemon.moves.forEach { pokemonMove ->
-            if (pokemonMove.id > 0 && pokemonMove.generation.isEmpty()) {
-                val move = fetchMovesForId(pokemonMove)
-                move?.let {
-                    moves.add(move)
+        withContext(Dispatchers.IO) {
+            val moves = mutableListOf<PokemonMove>()
+            pokemon.moves.forEach { pokemonMove ->
+                if (pokemonMove.id > 0 && pokemonMove.generation.isEmpty()) {
+                    try {
+                        val move = fetchMovesForId(pokemonMove)
+                        move?.let {
+                            moves.add(move)
+                        }
+                    } catch (e: Exception){
+                        e.printStackTrace()
+                    }
                 }
             }
+            savePokemonMoves(pokemon.pokemon.id, moves)
         }
-        savePokemonMoves(pokemon.pokemon.id, moves)
     }
 
     private fun savePokemonMoves(

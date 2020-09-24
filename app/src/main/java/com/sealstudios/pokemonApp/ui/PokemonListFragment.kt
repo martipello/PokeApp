@@ -101,16 +101,20 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
 
     private fun tryHideFiltersAnimation() {
         if (!filterIsExpanding) {
-            binding.pokemonListFilter.filterHolder.circleHide(this)
+            if (filterIsExpanded){
+                binding.pokemonListFilter.filterHolder.circleHide(this)
+            }
         }
     }
 
     private fun tryShowFiltersAnimation() {
         if (!filterIsExpanding) {
-            binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(
-                binding.pokemonListFilter.filterHolder,
-                this
-            )
+            if (!filterIsExpanded){
+                binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(
+                    binding.pokemonListFilter.filterHolder,
+                    this
+                )
+            }
         }
     }
 
@@ -302,6 +306,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         val extras = FragmentNavigatorExtras(
             view to view.transitionName
         )
+        tryHideFiltersAnimation()
         navigate(action, extras)
     }
 

@@ -16,10 +16,6 @@ class ScrollAwareFilerFab(
     var isExpanded: Boolean = false
 
     fun start() {
-//        circleCardView.setOnClickListener {
-//            //perform arc animation
-//        }
-
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)

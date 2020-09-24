@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui.customViews.fabFilter
 import android.animation.Animator
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -74,8 +73,8 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     fun circleReveal(listener: FabFilterAnimationListener?) {
-        val y = right / 2
-        val x = top / 2
+        val y = width / 2
+        val x = height / 2
 
         val endRadius =
             hypot(
@@ -97,8 +96,8 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     fun circleHide(listener: FabFilterAnimationListener?) {
-        val x = right / 2
-        val y = top / 2
+        val x = width / 2
+        val y = height / 2
 
         val startRadius =
             hypot(
@@ -120,7 +119,7 @@ class CircleCardView @JvmOverloads constructor(
         val arcAnimator = ArcAnimator.createArcAnimator(
             this,
             nestView,
-            90f,
+            70f,
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))
@@ -134,7 +133,7 @@ class CircleCardView @JvmOverloads constructor(
             this,
             circleViewStartX,
             circleViewStartY,
-            90f,
+            70f,
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))

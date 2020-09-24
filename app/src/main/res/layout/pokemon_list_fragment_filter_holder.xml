@@ -49,6 +49,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/filter_pokemon_label"
                 android:textColor="@color/white"
+                android:focusable="true"
+                android:clickable="true"
                 android:textSize="24sp"
                 android:id="@+id/filter_pokemon_label"
                 android:layout_marginTop="@dimen/medium_margin_16dp"

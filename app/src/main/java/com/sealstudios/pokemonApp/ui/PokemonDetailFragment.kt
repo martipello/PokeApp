@@ -37,15 +37,10 @@ import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.hypot
-import kotlin.time.Duration
-import kotlin.time.ExperimentalTime
-import kotlin.time.seconds
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
 @AndroidEntryPoint
@@ -61,7 +56,7 @@ class PokemonDetailFragment : Fragment() {
     private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
-    private var transitionListenerAdapter : TransitionListenerAdapter? = null
+    private var transitionListenerAdapter: TransitionListenerAdapter? = null
     private var hasExpanded: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +71,7 @@ class PokemonDetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        setHasOptionsMenu(true);
+        setHasOptionsMenu(true)
         setAndPostponeEnterAnimation()
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
@@ -92,7 +87,7 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun startExitTransition() {
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
         //TODO try to make the circle view appear after the hide reveal finishes
         createHideAnimation()
     }
@@ -104,7 +99,7 @@ class PokemonDetailFragment : Fragment() {
                 _binding?.let {
                     if (!hasExpanded) {
                         pokemonDetailViewModel.setRevealAnimationExpandedState(true)
-                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd();
+                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
                         createRevealAnimation()
                     }
                 }
@@ -116,10 +111,11 @@ class PokemonDetailFragment : Fragment() {
         binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.setTransitionListener(object :
             MotionLayout.TransitionListener {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                if (hasExpanded){
+                if (hasExpanded) {
                     findNavController().popBackStack()
                 }
             }
+
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
@@ -140,7 +136,8 @@ class PokemonDetailFragment : Fragment() {
 
     private fun handleNavigationArgs() {
         pokemonName = args.pokemonName
-        binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName = args.transitionName
+        binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName =
+            args.transitionName
         binding.splash.setBackgroundColor(args.dominantSwatchRgb)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(args.dominantSwatchRgb)
         binding.squareangleMask.setColorFilter(args.lightVibrantSwatchRgb)
@@ -178,11 +175,13 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun observeHasExpandedState() {
-        pokemonDetailViewModel.revealAnimationExpanded.observe(viewLifecycleOwner, Observer { hasExpanded ->
-            hasExpanded?.let {
-                this.hasExpanded = hasExpanded
-            }
-        })
+        pokemonDetailViewModel.revealAnimationExpanded.observe(
+            viewLifecycleOwner,
+            Observer { hasExpanded ->
+                hasExpanded?.let {
+                    this.hasExpanded = hasExpanded
+                }
+            })
     }
 
     @SuppressLint("DefaultLocale")
@@ -236,8 +235,10 @@ class PokemonDetailFragment : Fragment() {
         val y = binding.splash.top + (binding.splash.bottom / 10) * 3
 
         val endRadius =
-            hypot(binding.splash.width.toDouble(),
-                binding.splash.height.toDouble()).toInt()
+            hypot(
+                binding.splash.width.toDouble(),
+                binding.splash.height.toDouble()
+            ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
@@ -254,8 +255,10 @@ class PokemonDetailFragment : Fragment() {
         val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
 
         val startRadius =
-            hypot(binding.splash.width.toDouble(),
-                binding.splash.height.toDouble()).toInt()
+            hypot(
+                binding.splash.width.toDouble(),
+                binding.splash.height.toDouble()
+            ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
@@ -273,6 +276,7 @@ class PokemonDetailFragment : Fragment() {
             override fun onAnimationEnd(animation: Animator?) {
                 binding.splash.visibility = View.INVISIBLE
             }
+
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
                 popDelayed()

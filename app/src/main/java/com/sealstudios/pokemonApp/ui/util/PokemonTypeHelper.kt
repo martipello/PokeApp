@@ -52,7 +52,7 @@ enum class PokemonType(val color: Int, val icon: Int) {
             return allFilters
         }
 
-        @SuppressLint("DefaultLocale")
+        @SuppressLint("DefaultLocale", "InflateParams")
         fun createPokemonTypeChip(pokemonType: PokemonType, context: Context): Chip? {
             val chip =
                 LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip

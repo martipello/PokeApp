@@ -11,10 +11,8 @@ import com.sealstudios.pokemonApp.repository.PokemonMoveRepository
 import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesAndMovesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
-import com.sealstudios.pokemonApp.api.`object`.PokemonMove as apiPokemonMove
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.lang.Exception
 
 class PokemonDetailViewModel @ViewModelInject constructor(
     private val repository: PokemonWithTypesAndSpeciesAndMovesRepository,
@@ -50,7 +48,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         move?.let {
                             moves.add(move)
                         }
-                    } catch (e: Exception){
+                    } catch (e: Exception) {
                         e.printStackTrace()
                     }
                 }
@@ -85,7 +83,8 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         generation = move.generation.name,
                         damage_class = move.damage_class.name,
                         type = move.type.name,
-                        damage_class_effect_chance = move.effect_chance)
+                        damage_class_effect_chance = move.effect_chance
+                    )
                 }
             } else {
                 return null
@@ -95,7 +94,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun insertPokemonMoves(remotePokemonId: Int, pokemonMoves: List<PokemonMove>) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             moveRepository.insertPokemonMove(pokemonMoves)
             val moveJoins = pokemonMoves.map { PokemonMovesJoin(remotePokemonId, it.id) }
             moveJoinRepository.insertPokemonMovesJoins(moveJoins)

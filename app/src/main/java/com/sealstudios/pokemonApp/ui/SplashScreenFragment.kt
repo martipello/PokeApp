@@ -40,6 +40,7 @@ class SplashScreenFragment : Fragment() {
             override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
                 createRevealAnimation()
             }
+
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
@@ -70,8 +71,10 @@ class SplashScreenFragment : Fragment() {
             override fun onAnimationStart(animator: Animator) {
                 navigateToListFragment()
             }
+
             override fun onAnimationEnd(animator: Animator) {
             }
+
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })

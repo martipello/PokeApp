@@ -260,8 +260,10 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createRevealAnimation() {
         val x = binding.splash.right / 2
-//        val y = binding.splash.top + (binding.splash.bottom / 10) * 3
-        val y = binding.cardTopGuide.top
+        val location = IntArray(2)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(location)
+        val y = location[1].toFloat() + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+
         val endRadius =
             hypot(
                 binding.splash.width.toDouble(),
@@ -269,7 +271,7 @@ class PokemonDetailFragment : Fragment() {
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            binding.splash, x, y,
+            binding.splash, x, y.toInt(),
             0f,
             endRadius.toFloat()
         )
@@ -280,8 +282,10 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createHideAnimation() {
         val x: Int = binding.splash.right / 2
-//        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
-        val y = binding.cardTopGuide.top
+        val location = IntArray(2)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(location)
+        val y = location[1].toFloat() + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+
 
         val startRadius =
             hypot(
@@ -290,7 +294,7 @@ class PokemonDetailFragment : Fragment() {
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            binding.splash, x, y,
+            binding.splash, x, y.toInt(),
             startRadius.toFloat(),
             90.dp.toFloat()
         )

@@ -72,6 +72,8 @@ class PokemonDetailFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
+        observeLightVibrantColor()
+        observeDominantColor()
         setAndPostponeEnterAnimation()
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         setInsets()
@@ -87,9 +89,9 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun startExitTransition() {
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
         //TODO try to make the circle view appear after the hide reveal finishes
         createHideAnimation()
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
     }
 
     private fun transitionListenerAdapter(): TransitionListenerAdapter {
@@ -115,7 +117,6 @@ class PokemonDetailFragment : Fragment() {
                     findNavController().popBackStack()
                 }
             }
-
             override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
             override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
             override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
@@ -138,11 +139,10 @@ class PokemonDetailFragment : Fragment() {
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName =
             args.transitionName
-        binding.splash.setBackgroundColor(args.dominantSwatchRgb)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(args.dominantSwatchRgb)
-        binding.squareangleMask.setColorFilter(args.lightVibrantSwatchRgb)
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonDetailViewModel.setId(pokemonId)
+        pokemonDetailViewModel.setLightVibrantColor(args.lightVibrantSwatchRgb)
+        pokemonDetailViewModel.setDominantColor(args.dominantSwatchRgb)
         val imageUrl = highResPokemonUrl(pokemonId)
         setPokemonImageView(imageUrl)
     }
@@ -178,10 +178,38 @@ class PokemonDetailFragment : Fragment() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
             viewLifecycleOwner,
             Observer { hasExpanded ->
-                hasExpanded?.let {
-                    this.hasExpanded = hasExpanded
+//                hasExpanded?.let {
+//                    this.hasExpanded = hasExpanded
+//                }
+            })
+    }
+
+    private fun observeLightVibrantColor() {
+        pokemonDetailViewModel.lightVibrantColorInt.observe(
+            viewLifecycleOwner,
+            Observer { lightVibrantColor ->
+                if (lightVibrantColor != 0) {
+                    binding.squareangleMask.setColorFilter(lightVibrantColor)
                 }
             })
+    }
+
+    private fun observeDominantColor() {
+        pokemonDetailViewModel.dominantColorInt.observe(
+            viewLifecycleOwner,
+            Observer { dominantColor ->
+                if (dominantColor != 0) {
+                    setDominantColorElements(dominantColor)
+                }
+            })
+    }
+
+    private fun setDominantColorElements(dominantColor: Int) {
+//        binding.splash.visibility = View.VISIBLE
+        binding.splash.setBackgroundColor(dominantColor)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
+            dominantColor
+        )
     }
 
     @SuppressLint("DefaultLocale")
@@ -232,8 +260,8 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createRevealAnimation() {
         val x = binding.splash.right / 2
-        val y = binding.splash.top + (binding.splash.bottom / 10) * 3
-
+//        val y = binding.splash.top + (binding.splash.bottom / 10) * 3
+        val y = binding.cardTopGuide.top
         val endRadius =
             hypot(
                 binding.splash.width.toDouble(),
@@ -252,7 +280,8 @@ class PokemonDetailFragment : Fragment() {
 
     private fun createHideAnimation() {
         val x: Int = binding.splash.right / 2
-        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
+//        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
+        val y = binding.cardTopGuide.top
 
         val startRadius =
             hypot(

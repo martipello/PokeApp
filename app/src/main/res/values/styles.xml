@@ -62,4 +62,70 @@
         <item name="android:elevation">@dimen/large_margin_32dp</item>
     </style>
 
+    <style name="ThemeOverlay.MyTitleText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTitleTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyBodyText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyBodyTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyCaptionText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyCaptionTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteTitleText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteTitleTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteBodyText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteBodyTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteCaptionText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteCaptionTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/white</item>
+    </style>
+
 </resources>

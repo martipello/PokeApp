@@ -4,6 +4,7 @@ import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
 import android.view.*
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -49,6 +50,18 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     private var filterIsExpanded = false
     private var filterIsExpanding = false
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            if (filterIsExpanded) {
+                tryHideFiltersAnimation()
+            } else {
+                this.remove()
+                requireActivity().finish()
+            }
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -225,7 +238,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         recyclerView.addItemDecoration(
             PokemonListDecoration(
                 context.resources.getDimensionPixelSize(
-                    R.dimen.small_margin_8dp
+                    R.dimen.qualified_small_margin_8dp
                 )
             )
         )

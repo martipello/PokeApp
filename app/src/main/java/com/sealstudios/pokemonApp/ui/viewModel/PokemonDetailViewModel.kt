@@ -24,7 +24,9 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 
     val pokemon: LiveData<PokemonWithTypesAndSpeciesAndMoves>
     private var id: MutableLiveData<Int> = MutableLiveData(-1)
-    var revealAnimationExpanded: MutableLiveData<Boolean?> = getRevealAnimationExpandedState()
+    var lightVibrantColorInt: MutableLiveData<Int> = getLightVibrantColor()
+    var dominantColorInt: MutableLiveData<Int> = getDominantColor()
+    var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
     init {
         pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(id) { id ->
@@ -102,17 +104,39 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     fun setRevealAnimationExpandedState(hasExpanded: Boolean) {
+        revealAnimationExpanded.value = hasExpanded
         savedStateHandle.set(hasExpandedKey, hasExpanded)
     }
 
-    private fun getRevealAnimationExpandedState(): MutableLiveData<Boolean?> {
-        val hasExpanded = savedStateHandle.get<Boolean>(hasExpandedKey)
+    fun setLightVibrantColor(lightVibrantColor: Int) {
+        lightVibrantColorInt.value = lightVibrantColor
+            savedStateHandle.set(lightVibrantColorKey, lightVibrantColor)
+    }
+
+    fun setDominantColor(dominantColor: Int) {
+        dominantColorInt.value = dominantColor
+        savedStateHandle.set(dominantColorKey, dominantColor)
+    }
+
+    private fun getRevealAnimationExpandedState(): MutableLiveData<Boolean> {
+        val hasExpanded = savedStateHandle.get<Boolean>(hasExpandedKey) ?: false
         return MutableLiveData(hasExpanded)
     }
 
+    private fun getLightVibrantColor(): MutableLiveData<Int> {
+        val lightVibrantColor = savedStateHandle.get<Int>(lightVibrantColorKey) ?: 0
+        return MutableLiveData(lightVibrantColor)
+    }
+
+    private fun getDominantColor(): MutableLiveData<Int> {
+        val dominantColor = savedStateHandle.get<Int>(dominantColorKey) ?: 0
+        return MutableLiveData(dominantColor)
+    }
 
     companion object {
         private const val hasExpandedKey: String = "hasExpanded"
+        private const val lightVibrantColorKey: String = "lightVibrantColor"
+        private const val dominantColorKey: String = "dominantColor"
     }
 
 //    private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {

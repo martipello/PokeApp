@@ -1,11 +1,12 @@
 package com.sealstudios.pokemonApp.api
 
-import android.util.Log
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.mapPartialRemotePokemonMoveToDatabasePokemonMove
 import com.sealstudios.pokemonApp.repository.*
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 import retrofit2.Response
 
 
@@ -21,7 +22,9 @@ class GetAllPokemonRepository(
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
-        return remotePokemonRepository.getAllPokemonResponse()
+        return withContext(Dispatchers.IO) {
+            return@withContext remotePokemonRepository.getAllPokemonResponse()
+        }
     }
 
     suspend fun fetchPokemonForId(
@@ -33,7 +36,6 @@ class GetAllPokemonRepository(
             pokemonRequest.let { pokemonResponse ->
                 if (pokemonResponse.isSuccessful) {
                     pokemonResponse.body()?.let { pokemon ->
-                        Log.d("GETALL", "$pokemon")
                         insertPokemonTypes(pokemon)
                         insertPartialPokemonMove(pokemon)
                         insertPokemon(
@@ -46,50 +48,60 @@ class GetAllPokemonRepository(
     }
 
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-        pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
-            PokemonSpeciesJoin(
-                remotePokemonId,
-                pokemonSpecies.id
-            )
-        )
-    }
-
-    private suspend fun insertPokemon(pokemon: Pokemon) {
-        pokemonRepository.insertPokemon(pokemon)
-    }
-
-    private suspend fun insertPokemonTypes(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon) {
-        for (type in remotePokemon.types) {
-            pokemonTypeRepository.insertPokemonType(
-                PokemonType(
-                    Pokemon.getPokemonIdFromUrl(type.type.url),
-                    type.type.name,
-                    type.slot
-                )
-            )
-            pokemonTypeJoinRepository.insertPokemonTypeJoin(
-                PokemonTypesJoin(
-                    remotePokemon.id,
-                    Pokemon.getPokemonIdFromUrl(type.type.url)
+        withContext(Dispatchers.IO) {
+            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
+            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
+                PokemonSpeciesJoin(
+                    remotePokemonId,
+                    pokemonSpecies.id
                 )
             )
         }
     }
 
-    private suspend fun insertPartialPokemonMove(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon) {
-        for (move in remotePokemon.moves){
-            pokemonMoveRepository.insertPokemonMove(
-                mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
-            )
-            pokemonMoveJoinRepository.insertPokemonMovesJoin(
-                PokemonMovesJoin(
-                    remotePokemon.id,
-                    Pokemon.getPokemonIdFromUrl(move.move.url)
+    private suspend fun insertPokemon(pokemon: Pokemon) {
+        withContext(Dispatchers.IO) {
+            pokemonRepository.insertPokemon(pokemon)
+        }
+    }
+
+    private suspend fun insertPokemonTypes(
+        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+    ) {
+        withContext(Dispatchers.IO) {
+            for (type in remotePokemon.types) {
+                pokemonTypeRepository.insertPokemonType(
+                    PokemonType(
+                        Pokemon.getPokemonIdFromUrl(type.type.url),
+                        type.type.name,
+                        type.slot
+                    )
                 )
-            )
+                pokemonTypeJoinRepository.insertPokemonTypeJoin(
+                    PokemonTypesJoin(
+                        remotePokemon.id,
+                        Pokemon.getPokemonIdFromUrl(type.type.url)
+                    )
+                )
+            }
+        }
+    }
+
+    private suspend fun insertPartialPokemonMove(
+        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+    ) {
+        withContext(Dispatchers.IO) {
+            for (move in remotePokemon.moves) {
+                pokemonMoveRepository.insertPokemonMove(
+                    mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
+                )
+                pokemonMoveJoinRepository.insertPokemonMovesJoin(
+                    PokemonMovesJoin(
+                        remotePokemon.id,
+                        Pokemon.getPokemonIdFromUrl(move.move.url)
+                    )
+                )
+            }
         }
     }
 

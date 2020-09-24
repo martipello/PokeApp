@@ -69,7 +69,7 @@
             android:clipToPadding="false"
             android:layout_marginTop="@dimen/small_margin_8dp"
             android:paddingTop="24dp"
-            android:paddingBottom="@dimen/medium_margin_16dp">
+            android:paddingBottom="24dp">
 
             <include layout="@layout/pokemon_detail_image_layout"
                 android:id="@+id/pokemonImageViewHolderLayout"/>

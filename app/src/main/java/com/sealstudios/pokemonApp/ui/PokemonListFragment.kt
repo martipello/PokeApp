@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -28,6 +29,7 @@ import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterClickListener
+import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
@@ -36,7 +38,8 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener {
+class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener,
+    FabFilterAnimationListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -44,6 +47,8 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     private var _binding: PokemonListFragmentBinding? = null
     private lateinit var pokemonAdapter: PokemonAdapter
     private var search: String = ""
+    private var filterIsExpanded = false
+    private var filterIsExpanding = false
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
 
     override fun onCreateView(
@@ -56,9 +61,10 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setActionBar()
         activity?.theme?.applyStyle(R.style.AppTheme, true)
+        setActionBar()
         setInsets()
+        observeAnimationState()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
@@ -67,7 +73,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         observePokemonList()
         observeSearch()
         setUpViews()
-        addScrollAwarenessForFilterButton()
+        addScrollAwarenessForFilterFab()
     }
 
     private fun setInsets() {
@@ -82,16 +88,41 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             bottom = true,
             right = true
         )
+        binding.pokemonListFilter.filterGroupLayout.chipGroup.addSystemWindowInsetToMargin(
+            bottom = true
+        )
     }
 
     private fun setUpViews() {
         binding.pokemonListFilter.filterFab.setOnClickListener {
-            animateFilterFab()
+            tryShowFiltersAnimation()
+        }
+    }
+
+    private fun tryHideFiltersAnimation() {
+        if (!filterIsExpanding) {
+            if (filterIsExpanded){
+                binding.pokemonListFilter.filterHolder.circleHide(this)
+            }
+        }
+    }
+
+    private fun tryShowFiltersAnimation() {
+        if (!filterIsExpanding) {
+            if (!filterIsExpanded){
+                binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(
+                    binding.pokemonListFilter.filterHolder,
+                    this
+                )
+            }
         }
     }
 
     private fun setUpFilterView(selections: MutableMap<String, Boolean>) {
-        val chipGroup = binding.pokemonListFilter.filterGroup.root
+        binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
+            tryHideFiltersAnimation()
+        }
+        val chipGroup = binding.pokemonListFilter.filterGroupLayout.root
         chipGroup.chipSpacingHorizontal = 96.dp
         chipGroup.chipSpacingVertical = 8.dp
         FilterGroupHelper(
@@ -101,15 +132,12 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         ).bindChips()
     }
 
-    private fun animateFilterFab() {
-
-    }
-
-    private fun addScrollAwarenessForFilterButton() {
+    private fun addScrollAwarenessForFilterFab() {
         ScrollAwareFilerFab(
             circleCardView = binding.pokemonListFilter.filterFab,
             recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView,
-            circleCardViewParent = binding.listFragmentContainer
+            circleCardViewParent = binding.listFragmentContainer,
+            scrollAwareFilterFabAnimationListener = this
         ).start()
     }
 
@@ -140,6 +168,20 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
                 setUpFilterView(selections)
             }
         })
+    }
+
+    private fun observeAnimationState() {
+        pokemonListViewModel.isFiltersLayoutExpanded.observe(
+            viewLifecycleOwner,
+            Observer { filterIsExpanded ->
+                if (filterIsExpanded && this.filterIsExpanded){
+                    binding.root.post {
+                        binding.pokemonListFilter.filterHolder.circleReveal(null)
+                        binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(binding.pokemonListFilter.filterHolder, null)
+                    }
+                }
+                this.filterIsExpanded = filterIsExpanded
+            })
     }
 
     private fun checkForEmptyLayout(it: List<PokemonWithTypesAndSpecies>) {
@@ -219,7 +261,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         )
     }
 
-    private fun SearchView.maybeRestoreSearchUIState(menu: Menu) {
+//    private fun maybeRestoreAnimationUIState() {
+//        if (restoreFilterAnimationState){
+//
+//        }
+//    }
+
+    private fun SearchView.restoreSearchUIState(menu: Menu) {
         if (search.isNotEmpty()) {
             this.isIconified = true
             this.onActionViewExpanded()
@@ -252,11 +300,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             pokemonName = name,
             transitionName = view.transitionName,
             dominantSwatchRgb = view.cardBackgroundColor.defaultColor,
-            lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor ?: ContextCompat.getColor(view.context, R.color.white)
+            lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor
+                ?: ContextCompat.getColor(view.context, R.color.white)
         )
         val extras = FragmentNavigatorExtras(
             view to view.transitionName
         )
+        tryHideFiltersAnimation()
         navigate(action, extras)
     }
 
@@ -279,14 +329,64 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
         (menu.findItem(R.id.search).actionView as SearchView).apply {
             this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
-            maybeRestoreSearchUIState(menu)
+            restoreSearchUIState(menu)
             setQueryListener(searchView = this)
         }
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        if (savedInstanceState != null){
+            filterIsExpanded = savedInstanceState.getBoolean(isFiltersLayoutExpandedKey)
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putBoolean(isFiltersLayoutExpandedKey, filterIsExpanded)
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCircleRevealAnimationFinished() {
+        Log.d("LIST_FRAGMENT", "onCircleRevealAnimationFinished $filterIsExpanded")
+//        Last animation called when opening the filters view
+        if (!filterIsExpanded) {
+            pokemonListViewModel.setFiltersLayoutExpanded(true)
+        }
+    }
+
+    override fun onCircleHideAnimationFinished() {
+        Log.d("LIST_FRAGMENT", "onCircleHideAnimationFinished $filterIsExpanded")
+//        Used to orchestrate closing filters view animation
+        if (filterIsExpanded) {
+            binding.pokemonListFilter.filterFab.arcAnimateFilterFabOut(this)
+        }
+    }
+
+    override fun onArcAnimationFinished() {
+        Log.d("LIST_FRAGMENT", "onArcAnimationFinished $filterIsExpanded")
+//        Last animation called when closing the filters view
+//        else used to orchestrate opening filters view animation
+        if (!filterIsExpanded) {
+            binding.pokemonListFilter.filterHolder.circleReveal(this)
+        } else {
+            pokemonListViewModel.setFiltersLayoutExpanded(false)
+        }
+    }
+
+    //Unused animation callbacks
+    override fun onSlideHideAnimationStarted() {}
+    override fun onSlideHideAnimationFinished() {}
+    override fun onCircleRevealAnimationStarted() {}
+    override fun onCircleHideAnimationStarted() {}
+    override fun onArcAnimationStarted() {}
+
+    companion object {
+        private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
     }
 }

@@ -12,6 +12,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.transition.Transition
@@ -33,10 +34,18 @@ import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
 import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
+import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.hypot
+import kotlin.time.Duration
+import kotlin.time.ExperimentalTime
+import kotlin.time.seconds
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
 @AndroidEntryPoint
@@ -63,11 +72,6 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
-    private fun startExitTransition() {
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
-        createHideAnimation()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,6 +89,12 @@ class PokemonDetailFragment : Fragment() {
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.shared_element_transition)
         (sharedElementEnterTransition as TransitionSet).addListener(transitionListenerAdapter())
+    }
+
+    private fun startExitTransition() {
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart();
+        //TODO try to make the circle view appear after the hide reveal finishes
+        createHideAnimation()
     }
 
     private fun transitionListenerAdapter(): TransitionListenerAdapter {
@@ -222,15 +232,19 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun createRevealAnimation() {
-        val x: Int = binding.splash.right / 2
-        val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
+        val x = binding.splash.right / 2
+        val y = binding.splash.top + (binding.splash.bottom / 10) * 3
+
         val endRadius =
-            hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
+            hypot(binding.splash.width.toDouble(),
+                binding.splash.height.toDouble()).toInt()
+
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
             0f,
             endRadius.toFloat()
         )
+
         binding.splash.visibility = View.VISIBLE
         anim.start()
     }
@@ -238,16 +252,18 @@ class PokemonDetailFragment : Fragment() {
     private fun createHideAnimation() {
         val x: Int = binding.splash.right / 2
         val y: Int = binding.splash.top + (binding.splash.bottom / 10) * 3
+
         val startRadius =
-            hypot(binding.splash.width.toDouble(), binding.splash.height.toDouble()).toInt()
+            hypot(binding.splash.width.toDouble(),
+                binding.splash.height.toDouble()).toInt()
+
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y,
             startRadius.toFloat(),
-            300f
+            90.dp.toFloat()
         )
-        binding.splash.visibility = View.INVISIBLE
-        anim.addListener(getHideRevealAnimatorListener())
 
+        anim.addListener(getHideRevealAnimatorListener())
         anim.start()
     }
 
@@ -255,18 +271,23 @@ class PokemonDetailFragment : Fragment() {
         return object : Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
-
-                findNavController().popBackStack()
+                binding.splash.visibility = View.INVISIBLE
             }
             override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {
+                popDelayed()
+            }
         }
     }
 
-
+    private fun popDelayed() {
+        lifecycleScope.launch {
+            delay(100)
+            findNavController().popBackStack()
+        }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        Log.d("DETAIL", "item id ${item.itemId}")
         return when (item.itemId) {
             android.R.id.home -> {
                 startExitTransition()
@@ -325,7 +346,6 @@ class PokemonDetailFragment : Fragment() {
             Log.d("PDVM", "key ${entry.key}, value ${entry.value}")
         }
     }
-
 
     /***
      * driving this state are motion layout animation and animation utils createRevealAnimation

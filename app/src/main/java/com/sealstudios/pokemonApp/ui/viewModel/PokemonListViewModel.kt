@@ -16,6 +16,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     val searchPokemon: LiveData<List<PokemonWithTypesAndSpecies>>
     var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
+    val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
     init {
         val combinedValues =
@@ -82,6 +83,12 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     private fun setFilters(filters: MutableMap<String, Boolean>) {
         this.filters.value = filters
+        savedStateHandle.set(filtersKey, filters)
+    }
+
+    fun setFiltersLayoutExpanded(isFiltersLayoutExpanded: Boolean) {
+        this.isFiltersLayoutExpanded.value = isFiltersLayoutExpanded
+        savedStateHandle.set(isFiltersLayoutExpandedKey, isFiltersLayoutExpanded)
     }
 
     private fun getSearchState(): MutableLiveData<String> {
@@ -95,12 +102,14 @@ class PokemonListViewModel @ViewModelInject constructor(
         return MutableLiveData(filters)
     }
 
-    fun saveCurrentFilterState(filters: MutableMap<String, Boolean>) {
-        this.filters.value = filters
+    private fun getFiltersLayoutExpanded(): MutableLiveData<Boolean> {
+        val isExpanded = savedStateHandle.get<Boolean>(isFiltersLayoutExpandedKey) ?: false
+        return MutableLiveData(isExpanded)
     }
 
     companion object {
         private const val searchKey: String = "search"
         private const val filtersKey: String = "filters"
+        private const val isFiltersLayoutExpandedKey: String = "filtersExpanded"
     }
 }

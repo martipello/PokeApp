@@ -43,4 +43,5 @@
     <string name="about">About</string>
     <string name="intro_image">Intro image</string>
     <string name="transition_name">pokemon_%d_image</string>
+    <string name="filter_pokemon_label">Filter Pokemon</string>
 </resources>

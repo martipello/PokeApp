@@ -72,13 +72,19 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    private fun startExitTransition() {
+        //TODO try to make the circle view appear after the hide reveal finishes
+        createHideAnimation()
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        setAndPostponeEnterAnimation()
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
+        setAndPostponeEnterAnimation()
         setInsets()
         handleNavigationArgs()
         observeHasExpandedState()
@@ -86,11 +92,18 @@ class PokemonDetailFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        setActionBar()
+        super.onViewCreated(view, savedInstanceState)
+        observePokemon()
+    }
+
     private fun setAndPostponeEnterAnimation() {
         postponeEnterTransition()
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.shared_element_transition)
-        (sharedElementEnterTransition as TransitionSet).addListener(transitionListenerAdapter())
+         (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
+
     }
 
     private fun setInsets() {
@@ -111,60 +124,12 @@ class PokemonDetailFragment : Fragment() {
         setPokemonImageView(imageUrl)
     }
 
-    private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
-        binding.splash.setBackgroundColor(dominantColor)
-        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
-            dominantColor
-        )
-    }
-
     private fun setViewModelProperties(pokemonId: Int) {
         pokemonDetailViewModel.setId(pokemonId)
         pokemonDetailViewModel.setViewColors(
             args.dominantSwatchRgb,
             args.lightVibrantSwatchRgb
         )
-    }
-
-    private fun startExitTransition() {
-        //TODO try to make the circle view appear after the hide reveal finishes
-        createHideAnimation()
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-    }
-
-    private fun transitionListenerAdapter(): TransitionListenerAdapter {
-        return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
-            override fun onTransitionEnd(transition: Transition) {
-                super.onTransitionEnd(transition)
-                _binding?.let {
-                    if (!hasExpanded) {
-                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
-                        createRevealAnimation()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun removeSharedElementListener() {
-        (sharedElementEnterTransition as TransitionSet).removeListener(transitionListenerAdapter())
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        setActionBar()
-        super.onViewCreated(view, savedInstanceState)
-        observePokemon()
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun setActionBar() {
-        binding.toolbar.outlineProvider = null
-        binding.appBarLayout.outlineProvider = null
-        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
-        (activity as AppCompatActivity).supportActionBar.apply {
-            this?.setDisplayHomeAsUpEnabled(true)
-        }
     }
 
     private fun observePokemon() {
@@ -180,16 +145,15 @@ class PokemonDetailFragment : Fragment() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
             viewLifecycleOwner,
             Observer { hasExpanded ->
-                Log.d("DETAIL", "hasExpanded $hasExpanded")
                 this.hasExpanded = hasExpanded
-            })
+            }
+        )
     }
 
     private fun observeUIColor() {
         pokemonDetailViewModel.dominantAndLightVibrantColors.observe(
             viewLifecycleOwner,
             Observer { viewColors ->
-                Log.d("DETAIL", "viewColors $viewColors")
                 setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
@@ -200,11 +164,29 @@ class PokemonDetailFragment : Fragment() {
             })
     }
 
+    private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
+        binding.splash.setBackgroundColor(dominantColor)
+        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
+            dominantColor
+        )
+    }
+
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
         binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
         binding.root.post {
             createRevealAnimation()
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun setActionBar() {
+        binding.toolbar.outlineProvider = null
+        binding.appBarLayout.outlineProvider = null
+        (activity as AppCompatActivity).setSupportActionBar(binding.toolbar)
+        (activity as AppCompatActivity).supportActionBar.apply {
+            this?.setDisplayHomeAsUpEnabled(true)
         }
     }
 
@@ -254,6 +236,8 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    // ------------ Animations ------------ //
+
     private fun createRevealAnimation() {
         val x = binding.splash.right / 2
         val location = IntArray(2)
@@ -276,7 +260,7 @@ class PokemonDetailFragment : Fragment() {
         )
 
         binding.splash.visibility = View.VISIBLE
-        anim.addListener(getRevealAnimatorListener())
+        anim.addListener(getRevealSplashListener())
         anim.start()
     }
 
@@ -302,11 +286,33 @@ class PokemonDetailFragment : Fragment() {
             90.dp.toFloat()
         )
 
-        anim.addListener(getHideAnimatorListener())
+        anim.addListener(getHideSplashListener())
         anim.start()
     }
 
-    private fun getHideAnimatorListener(): Animator.AnimatorListener {
+    // ------------ Animations ------------ //
+
+    // ------------ Animation Listeners ------------ //
+
+    private fun sharedElementListener(): TransitionListenerAdapter {
+        return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
+            override fun onTransitionEnd(transition: Transition) {
+                super.onTransitionEnd(transition)
+                _binding?.let {
+                    if (!hasExpanded) {
+                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
+                        createRevealAnimation()
+                    }
+                }
+            }
+        }
+    }
+
+    private fun removeSharedElementListener() {
+        (sharedElementEnterTransition as TransitionSet).removeListener(sharedElementListener())
+    }
+
+    private fun getHideSplashListener(): Animator.AnimatorListener {
         return object : Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
@@ -320,7 +326,7 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
-    private fun getRevealAnimatorListener(): Animator.AnimatorListener {
+    private fun getRevealSplashListener(): Animator.AnimatorListener {
         return object : Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {}
             override fun onAnimationEnd(animation: Animator?) {
@@ -331,6 +337,8 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    // ------------ Animation Listeners ------------ //
+
     private fun popDelayed() {
         lifecycleScope.launch {
             delay(100)
@@ -338,22 +346,7 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                startExitTransition()
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        removeSharedElementListener()
-        transitionListenerAdapter = null
-        _binding = null
-    }
+    // ------------ populate Pokemon data views ------------ //
 
     private fun PokemonDetailFragmentBinding.setPokemonTypes(
         pokemonTypes: List<PokemonType>
@@ -398,15 +391,24 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
-    /***
-     * driving this state are motion layout animation and animation utils createRevealAnimation
-     */
-    /***
-     * hasTransitionedIn - should tell the view if the image is large (motion layout)
-     * if the splash screen is visible (createRevealAnimation), the color of the splash screen,
-     * and the app bar tint
-     * TODO: create a view model for this state
-     * */
+    // ------------ populate Pokemon data views ------------ //
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            android.R.id.home -> {
+                startExitTransition()
+                return true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        removeSharedElementListener()
+        transitionListenerAdapter = null
+        _binding = null
+    }
 
 }
 

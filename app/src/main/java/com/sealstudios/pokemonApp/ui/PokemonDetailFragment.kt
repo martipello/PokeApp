@@ -38,8 +38,10 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.hypot
 import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
@@ -319,8 +321,11 @@ class PokemonDetailFragment : Fragment() {
 
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
-                binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-                popDelayed()
+                lifecycleScope.launch {
+                    delay(100)
+                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
+                    popDelayed()
+                }
             }
         }
     }
@@ -338,8 +343,8 @@ class PokemonDetailFragment : Fragment() {
 
     // ------------ Animation Listeners ------------ //
 
-    private fun popDelayed() {
-        lifecycleScope.launch {
+    private suspend fun popDelayed() {
+        withContext(Dispatchers.Main) {
             delay(100)
             findNavController().popBackStack()
         }

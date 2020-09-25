@@ -73,9 +73,7 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun startExitTransition() {
-        //TODO try to make the circle view appear after the hide reveal finishes
         createHideAnimation()
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
     }
 
     override fun onCreateView(
@@ -321,6 +319,7 @@ class PokemonDetailFragment : Fragment() {
 
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
+                binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
                 popDelayed()
             }
         }

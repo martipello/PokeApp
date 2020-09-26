@@ -35,7 +35,7 @@ class PokemonViewHolder constructor(
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
-        binding.typeChip1.pokemonTypeChip.visibility = View.GONE
+        binding.typeChip1.pokemonTypeChip.visibility = View.INVISIBLE
         binding.typeChip2.pokemonTypeChip.visibility = View.GONE
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =

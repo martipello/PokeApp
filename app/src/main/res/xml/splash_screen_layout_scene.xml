@@ -24,7 +24,6 @@
     </ConstraintSet>
 
     <Transition
-        app:autoTransition="animateToEnd"
         app:constraintSetStart="@id/pokeball_thrown"
         app:constraintSetEnd="@+id/pokeball_landed"
         app:duration="800">

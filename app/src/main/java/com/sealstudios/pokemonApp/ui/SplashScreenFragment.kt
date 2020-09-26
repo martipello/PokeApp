@@ -27,9 +27,12 @@ class SplashScreenFragment : Fragment() {
         return binding.root
     }
 
+    //TODO allowEnterTransitionOverlap
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setMotionLayoutListener()
+        binding.splashScreen.motionRoot.transitionToState(R.id.pokeball_landed)
     }
 
     private fun setMotionLayoutListener() {
@@ -51,7 +54,7 @@ class SplashScreenFragment : Fragment() {
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
         val anim = createCircleRevealAnimator(x, y, endRadius)
         addCircleRevealAnimationListener(anim)
-        anim.duration = 200
+        anim.duration = 250
         binding.pokeballOpen.visibility = View.VISIBLE
         anim.start()
     }
@@ -70,17 +73,15 @@ class SplashScreenFragment : Fragment() {
                 navigateToListFragment()
             }
 
-            override fun onAnimationEnd(animator: Animator) {}
+            override fun onAnimationEnd(animator: Animator) {
+            }
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })
     }
 
     private fun navigateToListFragment() {
-        findNavController().navigate(R.id.PokemonListFragment)
-//        if (findNavController().currentDestination?.id == R.id.splashScreenFragment) {
-//            findNavController().navigate(R.id.PokemonListFragment)
-//        }
+        findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
     }
 
     override fun onDestroyView() {

@@ -10,4 +10,18 @@
     <dimen name="fab_size">56dp</dimen>
     <dimen name="chip_image_size">28dp</dimen>
     <dimen name="zero">0dp</dimen>
+
+    <dimen name="qualified_view_holder_image">90dp</dimen>
+    <dimen name="qualified_view_holder_image_corner_radius">45dp</dimen>
+    <dimen name="qualified_large_margin_32dp">32dp</dimen>
+    <dimen name="qualified_medium_margin_16dp">16dp</dimen>
+    <dimen name="qualified_medium_margin_12dp">12dp</dimen>
+    <dimen name="qualified_small_margin_8dp">8dp</dimen>
+    <dimen name="qualified_small_margin_4dp">4dp</dimen>
+    <dimen name="qualified_small_margin_2dp">2dp</dimen>
+
+    <dimen name="qualified_text_size_caption">12sp</dimen>
+    <dimen name="qualified_text_size_body">16sp</dimen>
+    <dimen name="qualified_text_size_title">20sp</dimen>
+
 </resources>

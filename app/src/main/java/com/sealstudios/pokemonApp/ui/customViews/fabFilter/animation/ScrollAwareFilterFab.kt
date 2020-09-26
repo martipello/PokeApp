@@ -49,6 +49,6 @@ class ScrollAwareFilerFab(
                 scrolling = false
                 circleCardView.slideToShow(circleCardView, scrollAwareFilterFabAnimationListener)
             }
-        }, 3)
+        }, 1000)
     }
 }

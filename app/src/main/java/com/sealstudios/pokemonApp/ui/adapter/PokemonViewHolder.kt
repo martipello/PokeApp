@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
-import android.os.AsyncTask
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
@@ -18,50 +17,66 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.getTyp
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
-import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
+import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.setPokemonTypeChip
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class PokemonViewHolder constructor(
-    itemView: View,
+    private val binding: PokemonViewHolderBinding,
     private val clickListener: PokemonAdapterClickListener?,
     private val glide: RequestManager
-) :
-    RecyclerView.ViewHolder(itemView) {
+) : RecyclerView.ViewHolder(binding.root) {
 
-    private val binding = PokemonViewHolderBinding.bind(itemView)
+//    private val binding = PokemonViewHolderBinding.bind(itemView)
+
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
+
+        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+        binding.pokemonImageViewHolder.strokeColor = white
+        binding.pokemonImageViewHolder.setCardBackgroundColor(white)
+        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text =
             pokemonWithTypesAndSpecies.species.species.capitalize()
         binding.pokemonImageViewHolder.apply {
-            transitionName = pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
+            transitionName =
+                pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
         }
-        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
         binding.root.setOnClickListener {
-            clickListener?.onItemSelected(pokemonWithTypesAndSpecies.pokemon, binding.pokemonImageViewHolder)
+            clickListener?.onItemSelected(
+                pokemonWithTypesAndSpecies.pokemon,
+                binding.pokemonImageViewHolder
+            )
         }
-        buildPokemonTypes(pokemonWithTypesAndSpecies)
+//        buildPokemonTypes(pokemonWithTypesAndSpecies, binding.root.context)
     }
 
-    private fun buildPokemonTypes(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) {
+    private fun buildPokemonTypes(pokemon: PokemonWithTypesAndSpecies, context: Context) {
         binding.pokemonTypesChipGroup.removeAllViews()
-        val types =
-            PokemonType.getPokemonEnumTypesForPokemonTypes(
+        CoroutineScope(Dispatchers.Default).launch {
+            val types = PokemonType.getPokemonEnumTypesForPokemonTypes(
                 getTypesInOrder(
-                    pokemonWithTypesAndSpecies.types
+                    pokemon.types
                 )
             )
-        for (type in types) {
-            binding.pokemonTypesChipGroup.addView(createPokemonTypeChip(type, itemView.context))
+            if (types.isNotEmpty()){
+                setPokemonTypeChip(types.first(), context, binding.type1.pokemonTypeChip)
+                if (types.size > 1){
+                    setPokemonTypeChip(types[1], context, binding.type2.pokemonTypeChip)
+                }
+            }
         }
     }
 
     private fun setPokemonImageView(pokemonImage: String) {
         glide.asBitmap()
             .load(pokemonImage)
-            .placeholder(R.drawable.empty_pokemon)
+            .placeholder(R.drawable.pokeball_vector)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }
@@ -92,27 +107,17 @@ class PokemonViewHolder constructor(
         }
     }
 
-    private fun setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap: Bitmap): AsyncTask<Bitmap, Void, Palette> {
-        val builder = Palette.Builder(bitmap)
-        return builder.generate { palette: Palette? ->
-            with(binding.pokemonImageViewHolder) {
-                strokeColor = if (palette?.lightVibrantSwatch != null) {
-                    palette.lightVibrantSwatch!!.rgb
-                } else {
-                    palette?.dominantSwatch?.rgb ?: ContextCompat.getColor(
-                        this.context,
-                        R.color.white
-                    )
-                }
-                if (palette?.darkVibrantSwatch != null) {
-                    setCardBackgroundColor(palette.darkVibrantSwatch!!.rgb)
-                } else {
-                    val color = palette?.dominantSwatch?.rgb ?: ContextCompat.getColor(
-                        this.context,
-                        R.color.colorAccent
-                    )
-                    setCardBackgroundColor(color)
-                }
+    private fun setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap: Bitmap) {
+        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+        CoroutineScope(Dispatchers.Default).launch {
+            Palette.Builder(bitmap).generate {
+                val lightVibrantColor =
+                    it?.lightVibrantSwatch?.rgb ?: it?.dominantSwatch?.rgb ?: white
+                val darkVibrantColor =
+                    it?.darkVibrantSwatch?.rgb ?: it?.dominantSwatch?.rgb ?: white
+
+                binding.pokemonImageViewHolder.strokeColor = lightVibrantColor
+                binding.pokemonImageViewHolder.setCardBackgroundColor(darkVibrantColor)
             }
         }
     }
@@ -120,7 +125,8 @@ class PokemonViewHolder constructor(
     companion object {
 
         fun pokemonIdFromTransitionName(transitionName: String) = transitionName.split('_')[1]
-        fun pokemonTransitionNameForId(id: Int, context: Context) = context.getString(R.string.transition_name, id)
+        fun pokemonTransitionNameForId(id: Int, context: Context) =
+            context.getString(R.string.transition_name, id)
 
     }
 

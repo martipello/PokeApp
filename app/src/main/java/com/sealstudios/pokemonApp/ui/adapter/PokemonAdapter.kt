@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
+import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 
 class PokemonAdapter(
     private val clickListener: PokemonAdapterClickListener,
@@ -19,12 +21,9 @@ class PokemonAdapter(
     private val differ = AsyncListDiffer(this, diffCallback)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        val binding = PokemonViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PokemonViewHolder(
-            LayoutInflater.from(parent.context).inflate(
-                R.layout.pokemon_view_holder,
-                parent,
-                false
-            ),
+            binding,
             clickListener,
             glide
         )

@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
@@ -52,7 +53,7 @@ enum class PokemonType(val color: Int, val icon: Int) {
             return allFilters
         }
 
-        @SuppressLint("DefaultLocale", "InflateParams")
+        @SuppressLint("DefaultLocale")
         fun createPokemonTypeChip(pokemonType: PokemonType, context: Context): Chip? {
             val chip =
                 LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
@@ -63,6 +64,19 @@ enum class PokemonType(val color: Int, val icon: Int) {
             chip.isClickable = false
             chip.rippleColor = null
             return chip
+        }
+
+        @SuppressLint("DefaultLocale", "InflateParams")
+        fun setPokemonTypeChip(pokemonType: PokemonType, context: Context, chip: Chip) {
+//            val chip = LayoutInflater.from(context)
+//                .inflate(R.layout.pokemon_type_chip, null) as Chip
+            chip.text = pokemonType.name.capitalize()
+            chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
+            chip.setChipBackgroundColorResource(pokemonType.color)
+            chip.isCheckable = false
+            chip.isClickable = false
+            chip.rippleColor = null
+            chip.visibility = View.VISIBLE
         }
 
     }

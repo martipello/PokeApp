@@ -83,7 +83,7 @@ class NotificationHelper constructor(
     private fun getLargeNotificationIcon(): Bitmap? {
         return BitmapFactory.decodeResource(
             applicationContext.resources,
-            R.drawable.empty_pokemon
+            R.drawable.pokeball_vector
         )
     }
 
@@ -95,7 +95,7 @@ class NotificationHelper constructor(
     ): NotificationCompat.Builder {
         return NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL)
             .setLargeIcon(bitmap)
-            .setSmallIcon(R.drawable.empty_pokemon)
+            .setSmallIcon(R.drawable.pokeball_vector)
             .setContentTitle(title)
             .setContentText(subtitle)
             .setNotificationSilent()

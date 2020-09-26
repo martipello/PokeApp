@@ -10,6 +10,7 @@ import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
 import kotlinx.coroutines.delay
@@ -83,8 +84,7 @@ class SplashScreenFragment : Fragment() {
     private fun navigateToListFragment() {
         lifecycleScope.launchWhenStarted {
             delay(100)
-            NavHostFragment.findNavController(this@SplashScreenFragment)
-                .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+            findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
         }
     }
 

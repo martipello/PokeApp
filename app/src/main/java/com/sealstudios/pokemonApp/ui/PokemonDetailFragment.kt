@@ -174,7 +174,7 @@ class PokemonDetailFragment : Fragment() {
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(R.id.large_image)
         binding.root.post {
             createRevealAnimation()
         }
@@ -300,7 +300,7 @@ class PokemonDetailFragment : Fragment() {
                 super.onTransitionEnd(transition)
                 _binding?.let {
                     if (!hasExpanded) {
-                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
+                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(R.id.large_image)
                         createRevealAnimation()
                     }
                 }

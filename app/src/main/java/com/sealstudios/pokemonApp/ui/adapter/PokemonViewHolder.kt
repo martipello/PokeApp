@@ -13,11 +13,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.getTypesInOrder
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PokemonType
-import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.setPokemonTypeChip
+import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,8 +28,6 @@ class PokemonViewHolder constructor(
     private val glide: RequestManager
 ) : RecyclerView.ViewHolder(binding.root) {
 
-//    private val binding = PokemonViewHolderBinding.bind(itemView)
-
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
 
@@ -38,6 +35,8 @@ class PokemonViewHolder constructor(
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
+        binding.typeChip1.pokemonTypeChip.visibility = View.GONE
+        binding.typeChip2.pokemonTypeChip.visibility = View.GONE
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
@@ -53,22 +52,16 @@ class PokemonViewHolder constructor(
                 binding.pokemonImageViewHolder
             )
         }
-//        buildPokemonTypes(pokemonWithTypesAndSpecies, binding.root.context)
+        buildPokemonTypes(pokemonWithTypesAndSpecies, binding)
     }
 
-    private fun buildPokemonTypes(pokemon: PokemonWithTypesAndSpecies, context: Context) {
-        binding.pokemonTypesChipGroup.removeAllViews()
+    private fun buildPokemonTypes(pokemon: PokemonWithTypesAndSpecies, binding: PokemonViewHolderBinding) {
         CoroutineScope(Dispatchers.Default).launch {
             val types = PokemonType.getPokemonEnumTypesForPokemonTypes(
-                getTypesInOrder(
                     pokemon.types
-                )
             )
-            if (types.isNotEmpty()){
-                setPokemonTypeChip(types.first(), context, binding.type1.pokemonTypeChip)
-                if (types.size > 1){
-                    setPokemonTypeChip(types[1], context, binding.type2.pokemonTypeChip)
-                }
+            withContext(Dispatchers.Main){
+                TypesGroupHelper(binding.pokemonTypesChipGroup, types).bindChips()
             }
         }
     }
@@ -127,7 +120,6 @@ class PokemonViewHolder constructor(
         fun pokemonIdFromTransitionName(transitionName: String) = transitionName.split('_')[1]
         fun pokemonTransitionNameForId(id: Int, context: Context) =
             context.getString(R.string.transition_name, id)
-
     }
 
 }

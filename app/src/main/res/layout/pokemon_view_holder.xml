@@ -93,12 +93,14 @@
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp" >
 
                 <include
-                    android:id="@+id/type_1"
-                    android:visibility="gone"
+                    android:id="@+id/type_chip_1"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     layout="@layout/pokemon_type_chip"/>
                 <include
-                    android:id="@+id/type_2"
-                    android:visibility="gone"
+                    android:id="@+id/type_chip_2"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
                     layout="@layout/pokemon_type_chip"/>
 
             </com.google.android.material.chip.ChipGroup>

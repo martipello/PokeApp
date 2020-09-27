@@ -68,14 +68,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
+        setInsets()
         postponeEnterTransition()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        activity?.theme?.applyStyle(R.style.AppTheme, true)
         setActionBar()
-        setInsets()
         observeAnimationState()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)

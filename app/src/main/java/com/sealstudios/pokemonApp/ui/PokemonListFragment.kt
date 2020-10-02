@@ -98,10 +98,10 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             view.layoutParams = marginLayoutParams
         }
 
-        appBarLayout.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+        appBarLayout.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
             view.updatePadding(
-                left = windowInsets.systemWindowInsetLeft,
-                right = windowInsets.systemWindowInsetRight
+                left = windowInsets.systemWindowInsetLeft + initialPadding.left,
+                right = windowInsets.systemWindowInsetRight + initialPadding.right
             )
         }
 

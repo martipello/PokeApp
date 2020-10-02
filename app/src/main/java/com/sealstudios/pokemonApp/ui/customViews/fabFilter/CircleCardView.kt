@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui.customViews.fabFilter
 import android.animation.Animator
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -73,8 +74,8 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     fun circleReveal(listener: FabFilterAnimationListener?) {
-        val y = width / 2
-        val x = height / 2
+        val y = height / 2
+        val x = width / 2
 
         val endRadius =
             hypot(

@@ -127,7 +127,8 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
 
         filterLayout.filterPokemonLabel.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
             view.updatePadding(
-                left = resources.getDimension(R.dimen.qualified_medium_margin_16dp).toInt() + windowInsets.systemWindowInsetLeft
+                left = resources.getDimension(R.dimen.qualified_medium_margin_16dp)
+                    .toInt() + windowInsets.systemWindowInsetLeft
             )
         }
 
@@ -312,12 +313,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     private fun setToolbarTitleExpandedColor(context: Context) {
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setExpandedTitleColor(
-            ContextCompat.getColor(
-                context,
-                android.R.color.transparent
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
+            .setExpandedTitleColor(
+                ContextCompat.getColor(
+                    context,
+                    android.R.color.transparent
+                )
             )
-        )
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {

@@ -8,6 +8,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -68,13 +69,13 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         savedInstanceState: Bundle?
     ): View? {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
-        setInsets()
         postponeEnterTransition()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
+        setInsets()
         observeAnimationState()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
@@ -88,20 +89,64 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     private fun setInsets() {
-        binding.pokemonListFragmentCollapsingAppBar.appBarLayout.alignBelowStatusBar()
-        binding.pokemonListFragmentCollapsingAppBar.toolbar.addSystemWindowInsetToPadding(top = false)
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.addSystemWindowInsetToPadding(top = false)
-        binding.pokemonListFragmentContent.pokemonListRecyclerView.addSystemWindowInsetToPadding(
-            right = true,
-            bottom = true
-        )
-        binding.pokemonListFilter.filterFab.addSystemWindowInsetToMargin(
-            bottom = true,
-            right = true
-        )
-        binding.pokemonListFilter.filterGroupLayout.chipGroup.addSystemWindowInsetToMargin(
-            bottom = true
-        )
+        val appBarLayout = binding.pokemonListFragmentCollapsingAppBar
+        val filterLayout = binding.pokemonListFilter
+        val listLayout = binding.pokemonListFragmentContent
+
+        appBarLayout.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            view.layoutParams = marginLayoutParams
+        }
+
+        appBarLayout.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+            view.updatePadding(
+                left = windowInsets.systemWindowInsetLeft,
+                right = windowInsets.systemWindowInsetRight
+            )
+        }
+
+        appBarLayout.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->
+            //required or the views below do not get there padding updated
+        }
+
+        listLayout.pokemonListRecyclerView.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+            view.updatePadding(
+                right = windowInsets.systemWindowInsetRight,
+                left = windowInsets.systemWindowInsetLeft,
+                bottom = windowInsets.systemWindowInsetBottom
+            )
+        }
+
+        filterLayout.filterGroupLayout.chipGroup.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+            view.updatePadding(
+                bottom = windowInsets.systemWindowInsetBottom,
+                right = windowInsets.systemWindowInsetRight,
+                left = windowInsets.systemWindowInsetLeft
+            )
+        }
+
+        filterLayout.filterPokemonLabel.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+            view.updatePadding(
+                left = resources.getDimension(R.dimen.qualified_medium_margin_16dp).toInt() + windowInsets.systemWindowInsetLeft
+            )
+        }
+
+        filterLayout.closeFiltersButton.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+            view.updatePadding(
+                right = windowInsets.systemWindowInsetRight
+            )
+        }
+
+        filterLayout.filterFab.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.bottomMargin =
+                resources.getDimension(R.dimen.qualified_medium_margin_16dp)
+                    .toInt() + windowInsets.systemWindowInsetBottom
+            marginLayoutParams.rightMargin =
+                resources.getDimension(R.dimen.qualified_medium_margin_16dp)
+                    .toInt() + windowInsets.systemWindowInsetRight
+            view.layoutParams = marginLayoutParams
+        }
+
     }
 
     private fun setUpViews() {

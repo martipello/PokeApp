@@ -3,10 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <ConstraintSet android:id="@+id/start">
+    <ConstraintSet android:id="@+id/small_image">
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/large_image">
         <Constraint android:id="@id/pokemon_image_view_holder">
             <Layout
                 android:layout_width="0dp"
@@ -29,8 +29,8 @@
 </ConstraintSet>
 
     <Transition
-        app:constraintSetEnd="@+id/end"
-        app:constraintSetStart="@id/start"
+        app:constraintSetEnd="@+id/large_image"
+        app:constraintSetStart="@id/small_image"
         app:duration="100">
     </Transition>
 

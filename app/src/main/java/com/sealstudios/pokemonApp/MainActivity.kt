@@ -7,10 +7,12 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.sealstudios.pokemonApp.api.GetAllPokemonViewModel
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstTime
 import dagger.hilt.android.AndroidEntryPoint

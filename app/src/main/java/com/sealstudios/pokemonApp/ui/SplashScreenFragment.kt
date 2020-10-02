@@ -8,11 +8,9 @@ import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.fragment.findNavController
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
-import kotlinx.coroutines.delay
 import kotlin.math.hypot
 
 
@@ -29,9 +27,12 @@ class SplashScreenFragment : Fragment() {
         return binding.root
     }
 
+    //TODO allowEnterTransitionOverlap
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setMotionLayoutListener()
+        binding.splashScreen.motionRoot.transitionToState(R.id.pokeball_landed)
     }
 
     private fun setMotionLayoutListener() {
@@ -51,19 +52,19 @@ class SplashScreenFragment : Fragment() {
         val x: Int = binding.root.right / 2
         val y: Int = binding.root.bottom - binding.root.bottom / 9
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
-        createCircleRevealAnimator(x, y, endRadius)?.let {
-            addCircleRevealAnimationListener(it)
-            binding.pokeballOpen.visibility = View.VISIBLE
-            it.start()
-        }
+        val anim = createCircleRevealAnimator(x, y, endRadius)
+        addCircleRevealAnimationListener(anim)
+        anim.duration = 250
+        binding.pokeballOpen.visibility = View.VISIBLE
+        anim.start()
     }
 
-    private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator? {
+    private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator {
         return ViewAnimationUtils.createCircularReveal(
             binding.pokeballOpen, x, y,
             0f,
             endRadius.toFloat()
-        ).setDuration(200)
+        )
     }
 
     private fun addCircleRevealAnimationListener(anim: Animator) {
@@ -74,18 +75,13 @@ class SplashScreenFragment : Fragment() {
 
             override fun onAnimationEnd(animator: Animator) {
             }
-
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })
     }
 
     private fun navigateToListFragment() {
-        lifecycleScope.launchWhenStarted {
-            delay(100)
-            NavHostFragment.findNavController(this@SplashScreenFragment)
-                .navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
-        }
+        findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
     }
 
     override fun onDestroyView() {

@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -31,9 +32,9 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAn
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
-import com.sealstudios.pokemonApp.ui.util.addSystemWindowInsetToPadding
-import com.sealstudios.pokemonApp.ui.util.alignBelowStatusBar
-import com.sealstudios.pokemonApp.ui.util.dp
+import com.sealstudios.pokemonApp.ui.util.*
+import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
+import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
@@ -44,7 +45,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.hypot
-import com.sealstudios.pokemonApp.ui.util.PokemonType as pokemonTypeEnum
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment() {
@@ -102,16 +102,38 @@ class PokemonDetailFragment : Fragment() {
         postponeEnterTransition()
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.shared_element_transition)
-         (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
+        (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
 
     }
 
     private fun setInsets() {
-        binding.appBarLayout.alignBelowStatusBar()
-        binding.toolbar.addSystemWindowInsetToPadding(false)
-        binding.toolbarLayout.addSystemWindowInsetToPadding(false)
-        binding.detailRoot.addSystemWindowInsetToPadding(top = false)
-        binding.scrollView.addSystemWindowInsetToPadding(bottom = true)
+
+        binding.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            view.layoutParams = marginLayoutParams
+        }
+
+        binding.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+            view.updatePadding(
+                left = windowInsets.systemWindowInsetLeft + initialPadding.left,
+                right = windowInsets.systemWindowInsetRight + initialPadding.right
+            )
+        }
+
+        binding.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->
+            //required or the views below do not get there padding updated
+        }
+
+        binding.detailRoot.doOnApplyWindowInsetPadding { _, _, _ ->
+            //required or the views below do not get there padding updated
+        }
+
+        binding.scrollView.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+            view.updatePadding(
+                bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
+            )
+        }
+
     }
 
     private fun handleNavigationArgs() {
@@ -158,7 +180,7 @@ class PokemonDetailFragment : Fragment() {
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
                 )
-                if (hasExpanded){
+                if (hasExpanded) {
                     restoreUIState()
                 }
             })
@@ -174,7 +196,7 @@ class PokemonDetailFragment : Fragment() {
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(R.id.large_image)
         binding.root.post {
             createRevealAnimation()
         }
@@ -300,7 +322,9 @@ class PokemonDetailFragment : Fragment() {
                 super.onTransitionEnd(transition)
                 _binding?.let {
                     if (!hasExpanded) {
-                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToEnd()
+                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+                            R.id.large_image
+                        )
                         createRevealAnimation()
                     }
                 }
@@ -336,6 +360,7 @@ class PokemonDetailFragment : Fragment() {
             override fun onAnimationEnd(animation: Animator?) {
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
             }
+
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {}
         }
@@ -356,13 +381,13 @@ class PokemonDetailFragment : Fragment() {
         pokemonTypes: List<PokemonType>
     ) {
         pokemonTypesChipGroup.removeAllViews()
-        val types =
-            pokemonTypeEnum.getPokemonEnumTypesForPokemonTypes(
-                PokemonType.getTypesInOrder(types = pokemonTypes)
-            )
+        val types = getPokemonEnumTypesForPokemonTypes(
+            PokemonType.getTypesInOrder(types = pokemonTypes)
+        )
+
         for (type in types) {
             pokemonTypesChipGroup.addView(
-                pokemonTypeEnum.createPokemonTypeChip(type, binding.root.context)
+                createPokemonTypeChip(type, binding.root.context)
             )
         }
     }

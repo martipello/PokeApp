@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -48,17 +49,52 @@ class PokemonListViewModel @ViewModelInject constructor(
                     else -> {
                         Transformations.switchMap(allPokemon) { pokemonList ->
                             val filteredList = pokemonList.filter { pokemon ->
-                                pokemon.types.any { type ->
-                                    filters.any { filter ->
-                                        type.name.toLowerCase() == filter.toLowerCase()
-                                    }
+                                if (filters.size > 1) {
+                                    filterMultipleTypes(pokemon, filters)
+                                } else {
+                                    filterSingleTypes(pokemon, filters)
                                 }
                             }
-                            MutableLiveData(filteredList)
+                            maybeSortList(filters, filteredList)
                         }
                     }
                 }
                 pokemon
+            }
+        }
+    }
+
+    private fun maybeSortList(
+        filters: MutableSet<String>,
+        filteredList: List<PokemonWithTypesAndSpecies>
+    ): MutableLiveData<List<PokemonWithTypesAndSpecies>> {
+        return if (filters.size > 1)
+            MutableLiveData(filteredList.sortedByDescending { it.types.size })
+        else MutableLiveData(filteredList)
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun filterSingleTypes(
+        pokemon: PokemonWithTypesAndSpecies,
+        filters: MutableSet<String>
+    ): Boolean {
+        return pokemon.types.any { type ->
+            Log.d("VM", type.name)
+            filters.any { filter ->
+                Log.d("VM", filter)
+                type.name.toLowerCase() == filter.toLowerCase()
+            }
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun filterMultipleTypes(
+        pokemon: PokemonWithTypesAndSpecies,
+        filters: MutableSet<String>
+    ): Boolean {
+        return pokemon.types.all { type ->
+            filters.any { filter ->
+                type.name.toLowerCase() == filter.toLowerCase()
             }
         }
     }

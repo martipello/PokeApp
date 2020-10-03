@@ -6,7 +6,6 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.repository.PokemonRepository
-import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.initializePokemonTypeFilters
 
 class PokemonListViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
@@ -15,12 +14,13 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     val searchPokemon: LiveData<List<PokemonWithTypesAndSpecies>>
     var search: MutableLiveData<String> = getSearchState()
-    val filters: MutableLiveData<MutableMap<String, Boolean>> = getCurrentFiltersState()
+    val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
+
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
     init {
         val combinedValues =
-            MediatorLiveData<Pair<String?, MutableMap<String, Boolean>?>?>().apply {
+            MediatorLiveData<Pair<String?, MutableSet<String>?>?>().apply {
                 addSource(search) {
                     value = Pair(it, filters.value)
                 }
@@ -33,39 +33,32 @@ class PokemonListViewModel @ViewModelInject constructor(
             val search = pair?.first
             val filters = pair?.second
             if (search != null && filters != null) {
-                checkSelections()
+                searchAndFilterPokemon()
             } else null
-        }
-    }
-
-    private fun checkSelections(): LiveData<List<PokemonWithTypesAndSpecies>> {
-        val selections = filters.value?.filterValues { it }
-        if (selections.isNullOrEmpty()) {
-            return searchPokemon()
-        }
-        return searchAndFilterPokemon()
-    }
-
-    private fun searchPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
-        return Transformations.switchMap(search) { searchName ->
-            repository.searchPokemonWithTypesAndSpecies(searchName)
         }
     }
 
     @SuppressLint("DefaultLocale")
     private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
-        return Transformations.switchMap(search) { searchName ->
-            val allPokemon = repository.searchPokemonWithTypesAndSpecies(searchName)
-            allPokemon.switchMap { pokemonList ->
-                val filteredList = filters.value?.flatMap { filter ->
-                    pokemonList.filter { pokemonWithTypesAndSpecies ->
-                        pokemonWithTypesAndSpecies.types.any { pokemonType ->
-                            pokemonType.name == filter.key.toLowerCase() && filter.value
+        return Transformations.switchMap(search) { search ->
+            val allPokemon = repository.searchPokemonWithTypesAndSpecies(search)
+            Transformations.switchMap(filters) { filters ->
+                val pokemon = when {
+                    filters.isNullOrEmpty() -> allPokemon
+                    else -> {
+                        Transformations.switchMap(allPokemon) { pokemonList ->
+                            val filteredList = pokemonList.filter { pokemon ->
+                                pokemon.types.any { type ->
+                                    filters.any { filter ->
+                                        type.name.toLowerCase() == filter.toLowerCase()
+                                    }
+                                }
+                            }
+                            MutableLiveData(filteredList)
                         }
                     }
                 }
-                MutableLiveData<List<PokemonWithTypesAndSpecies>>(
-                    filteredList?.distinct()?.sortedBy { it.pokemon.id })
+                pokemon
             }
         }
     }
@@ -75,15 +68,20 @@ class PokemonListViewModel @ViewModelInject constructor(
         savedStateHandle.set(searchKey, search)
     }
 
-    fun setFilter(key: String, value: Boolean) {
-        val x = filters.value
-        x!![key] = value
-        setFilters(x)
+    fun addFilter(filter: String) {
+        filters.value?.let {
+            it.add(filter)
+            this.filters.value = it
+        }
     }
 
-    private fun setFilters(filters: MutableMap<String, Boolean>) {
-        this.filters.value = filters
-        savedStateHandle.set(filtersKey, filters)
+    fun removeFilter(filter: String) {
+        filters.value?.let {
+            it.removeAll {
+                filters.value?.contains(filter) ?: false
+            }
+            this.filters.value = it
+        }
     }
 
     fun setFiltersLayoutExpanded(isFiltersLayoutExpanded: Boolean) {
@@ -96,9 +94,9 @@ class PokemonListViewModel @ViewModelInject constructor(
         return MutableLiveData("%$searchString%")
     }
 
-    private fun getCurrentFiltersState(): MutableLiveData<MutableMap<String, Boolean>> {
-        val filters = savedStateHandle.get<MutableMap<String, Boolean>>(filtersKey)
-            ?: initializePokemonTypeFilters()
+    private fun getCurrentFiltersState(): MutableLiveData<MutableSet<String>> {
+        val filters = savedStateHandle.get<MutableSet<String>>(filtersKey)
+            ?: mutableSetOf()
         return MutableLiveData(filters)
     }
 

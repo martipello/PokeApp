@@ -175,7 +175,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         }
     }
 
-    private fun setUpFilterView(selections: MutableMap<String, Boolean>) {
+    private fun setUpFilterView(selections: MutableSet<String>) {
         binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
             tryHideFiltersAnimation()
         }
@@ -376,7 +376,11 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     override fun onFilterSelected(key: String, value: Boolean) {
-        pokemonListViewModel.setFilter(key, value)
+        if (value){
+            pokemonListViewModel.addFilter(key)
+        } else {
+            pokemonListViewModel.removeFilter(key)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -1,10 +1,11 @@
 package com.sealstudios.pokemonApp.ui
 
+//import androidx.compose.foundation.Text
+//import androidx.compose.material.MaterialTheme
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -32,9 +33,11 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAn
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
-import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
+import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
@@ -84,6 +87,13 @@ class PokemonDetailFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
+//            .apply {
+//            this.movesContainer.setContent {
+//                MaterialTheme {
+//                    Text(text = "MOVES GO HERE")
+//                }
+//            }
+//        }
         setAndPostponeEnterAnimation()
         setInsets()
         handleNavigationArgs()
@@ -414,10 +424,7 @@ class PokemonDetailFragment : Fragment() {
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
-        movesHolder.removeAllViews()
-        pokemonMoves.forEach { entry ->
-            Log.d("PDVM", "key ${entry.key}, value ${entry.value}")
-        }
+
     }
 
     // ------------ populate Pokemon data views ------------ //

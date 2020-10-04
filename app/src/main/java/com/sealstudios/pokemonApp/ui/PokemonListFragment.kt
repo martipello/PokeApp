@@ -68,6 +68,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
         return binding.root
@@ -86,6 +87,12 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
+    }
+
+    private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
+        if (savedInstanceState != null) {
+            filterIsExpanded = savedInstanceState.getBoolean(isFiltersLayoutExpandedKey)
+        }
     }
 
     private fun setInsets() {
@@ -175,7 +182,7 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
         }
     }
 
-    private fun setUpFilterView(selections: MutableMap<String, Boolean>) {
+    private fun setUpFilterView(selections: MutableSet<String>) {
         binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
             tryHideFiltersAnimation()
         }
@@ -376,7 +383,11 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
     }
 
     override fun onFilterSelected(key: String, value: Boolean) {
-        pokemonListViewModel.setFilter(key, value)
+        if (value) {
+            pokemonListViewModel.addFilter(key)
+        } else {
+            pokemonListViewModel.removeFilter(key)
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -388,13 +399,6 @@ class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipC
             setQueryListener(searchView = this)
         }
         super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        if (savedInstanceState != null) {
-            filterIsExpanded = savedInstanceState.getBoolean(isFiltersLayoutExpandedKey)
-        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

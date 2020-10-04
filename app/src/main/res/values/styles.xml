@@ -66,14 +66,36 @@
         <item name="android:elevation">@dimen/large_margin_32dp</item>
     </style>
 
-    <style name="ThemeOverlay.MyTitleText" parent="AppTheme">
+    <style name="ThemeOverlay.MyLargeTitleText" parent="AppTheme">
         <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyLargeTitleTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_large_title</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTitleText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_large_title</item>
         <item name="android:textColorPrimary">@color/black</item>
     </style>
 
     <style name="ThemeOverlay.MyTitleTextBold" parent="AppTheme">
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MySubTitleText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_subtitle</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MySubTitleTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_subtitle</item>
         <item name="android:textColorPrimary">@color/black</item>
     </style>
 

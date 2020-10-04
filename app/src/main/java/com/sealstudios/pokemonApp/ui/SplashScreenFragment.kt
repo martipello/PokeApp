@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.get
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
 import kotlin.math.hypot
@@ -75,13 +76,19 @@ class SplashScreenFragment : Fragment() {
 
             override fun onAnimationEnd(animator: Animator) {
             }
+
             override fun onAnimationCancel(animator: Animator) {}
             override fun onAnimationRepeat(animator: Animator) {}
         })
     }
 
     private fun navigateToListFragment() {
-        findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+        val canNavigate = with(findNavController()) {
+            currentDestination == graph[R.id.splashScreenFragment]
+        }
+        if (canNavigate) {
+            findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+        }
     }
 
     override fun onDestroyView() {

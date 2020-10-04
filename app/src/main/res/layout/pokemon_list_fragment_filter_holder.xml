@@ -20,10 +20,9 @@
             android:id="@+id/filter_icon"
             android:layout_width="@dimen/fab_size"
             android:layout_height="@dimen/fab_size"
-            android:scaleType="centerCrop"
+            android:scaleType="fitXY"
             android:background="@color/colorAccent"
-            android:padding="@dimen/medium_margin_12dp"
-            android:src="@drawable/ic_filter_list_white_24dp"
+            android:src="@drawable/ic_poke_filter"
             android:contentDescription="@string/filter" />
 
 

@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui.adapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette
@@ -11,6 +12,7 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
@@ -30,7 +32,6 @@ class PokemonViewHolder constructor(
 
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
-
         val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
@@ -67,9 +68,10 @@ class PokemonViewHolder constructor(
     }
 
     private fun setPokemonImageView(pokemonImage: String) {
+        val requestOptions = RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
         glide.asBitmap()
             .load(pokemonImage)
-            .placeholder(R.drawable.pokeball_vector)
+            .apply(requestOptions)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }

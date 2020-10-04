@@ -98,7 +98,7 @@ class NotificationHelper constructor(
             .setSmallIcon(R.drawable.pokeball_vector)
             .setContentTitle(title)
             .setContentText(subtitle)
-            .setNotificationSilent()
+            .setSilent(true)
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
     }

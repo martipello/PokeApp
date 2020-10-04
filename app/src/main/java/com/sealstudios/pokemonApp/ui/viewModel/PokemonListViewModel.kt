@@ -49,11 +49,9 @@ class PokemonListViewModel @ViewModelInject constructor(
                     else -> {
                         Transformations.switchMap(allPokemon) { pokemonList ->
                             val filteredList = pokemonList.filter { pokemon ->
-                                if (filters.size > 1) {
-                                    filterMultipleTypes(pokemon, filters)
-                                } else {
-                                    filterSingleTypes(pokemon, filters)
-                                }
+                                pokemon.matches = 0
+                                val filter = filterTypes(pokemon, filters)
+                                filter
                             }
                             maybeSortList(filters, filteredList)
                         }
@@ -64,39 +62,36 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
+    @SuppressLint("DefaultLocale")
+    private fun filterTypes(
+        pokemon: PokemonWithTypesAndSpecies,
+        filters: MutableSet<String>
+    ): Boolean {
+        var match = false
+        for (filter in filters) {
+            for (type in pokemon.types) {
+                if (type.name.toLowerCase() == filter.toLowerCase()) {
+                    val matches = pokemon.matches?.plus(1)
+                    pokemon.apply {
+                        this.matches = matches
+                    }
+                    match = true
+                }
+            }
+        }
+        return match
+    }
+
     private fun maybeSortList(
         filters: MutableSet<String>,
         filteredList: List<PokemonWithTypesAndSpecies>
     ): MutableLiveData<List<PokemonWithTypesAndSpecies>> {
         return if (filters.size > 1)
-            MutableLiveData(filteredList.sortedByDescending { it.types.size })
+            MutableLiveData(filteredList.sortedByDescending {
+                Log.d("VM", "SORTING ${it.pokemon.name} ${it.matches}")
+                it.matches
+            })
         else MutableLiveData(filteredList)
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun filterSingleTypes(
-        pokemon: PokemonWithTypesAndSpecies,
-        filters: MutableSet<String>
-    ): Boolean {
-        return pokemon.types.any { type ->
-            Log.d("VM", type.name)
-            filters.any { filter ->
-                Log.d("VM", filter)
-                type.name.toLowerCase() == filter.toLowerCase()
-            }
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun filterMultipleTypes(
-        pokemon: PokemonWithTypesAndSpecies,
-        filters: MutableSet<String>
-    ): Boolean {
-        return pokemon.types.all { type ->
-            filters.any { filter ->
-                type.name.toLowerCase() == filter.toLowerCase()
-            }
-        }
     }
 
     fun setSearch(search: String) {
@@ -113,9 +108,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     fun removeFilter(filter: String) {
         filters.value?.let {
-            it.removeAll {
-                filters.value?.contains(filter) ?: false
-            }
+            it.remove(filter)
             this.filters.value = it
         }
     }

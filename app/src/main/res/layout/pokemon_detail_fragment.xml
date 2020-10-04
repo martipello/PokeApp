@@ -120,24 +120,21 @@
                     android:id="@+id/title"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/small_margin_8dp"
                     android:text="@string/title"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="24sp"
-                    android:textStyle="bold"
+                    style="@style/ThemeOverlay.MyLargeTitleTextBold"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     app:layout_constraintEnd_toStartOf="@id/id_label"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toTopOf="@id/subtitle"/>
 
                 <TextView
                     android:id="@+id/id_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="end"
-                    android:paddingBottom="@dimen/small_margin_8dp"
                     android:text="@string/pokemon_id_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
+                    style="@style/ThemeOverlay.MyCaptionText"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -145,12 +142,12 @@
                     android:id="@+id/subtitle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/small_margin_8dp"
                     android:text="@string/subtitle"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
+                    style="@style/ThemeOverlay.MySubTitleText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     app:layout_constraintStart_toStartOf="@id/title"
-                    app:layout_constraintTop_toBottomOf="@id/title" />
+                    app:layout_constraintTop_toBottomOf="@id/title"
+                    app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"/>
 
                 <com.google.android.flexbox.FlexboxLayout
                     android:id="@+id/pokemon_types_chip_group_container"
@@ -167,7 +164,7 @@
                     <com.google.android.material.chip.ChipGroup
                         android:id="@+id/pokemon_types_chip_group"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"/>
 
                 </com.google.android.flexbox.FlexboxLayout>
 
@@ -182,22 +179,18 @@
                     android:id="@+id/gen_text_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/small_margin_8dp"
-                    android:paddingBottom="@dimen/small_margin_8dp"
                     android:text="@string/generation_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     app:layout_constraintTop_toBottomOf="@id/types_barrier" />
 
                 <TextView
                     android:id="@+id/height_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/medium_margin_16dp"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/height_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/info_divider"
+                    style="@style/ThemeOverlay.MyBodyText"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
 
@@ -205,69 +198,64 @@
                     android:id="@+id/weight_text_view"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/medium_margin_16dp"
-                    android:paddingEnd="@dimen/medium_margin_16dp"
-                    android:paddingBottom="@dimen/medium_margin_16dp"
                     android:text="@string/weight_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toTopOf="@id/info_divider"
+                    android:paddingStart="@dimen/qualified_small_margin_8dp"
+                    android:paddingEnd="@dimen/qualified_small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    style="@style/ThemeOverlay.MyBodyText"
                     app:layout_constraintStart_toEndOf="@id/height_text_view"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"/>
 
                 <View
                     android:id="@+id/info_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:background="@color/light_grey"
+                    app:layout_constraintBottom_toTopOf="@id/pokemon_about_label"
                     app:layout_constraintTop_toBottomOf="@id/weight_text_view" />
 
                 <TextView
                     android:id="@+id/pokemon_about_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/medium_margin_16dp"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:text="@string/about"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintTop_toBottomOf="@id/height_text_view" />
+                    style="@style/ThemeOverlay.MySubTitleTextBold"
+                    app:layout_constraintTop_toBottomOf="@id/info_divider" />
 
                 <TextView
                     android:id="@+id/shape_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/shape_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
+                    style="@style/ThemeOverlay.MyBodyText"
                     app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
 
                 <TextView
                     android:id="@+id/form_description_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/form_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/shape_text" />
 
                 <TextView
                     android:id="@+id/habitat_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/medium_margin_16dp"
                     android:text="@string/habitat_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     app:layout_constraintTop_toBottomOf="@id/form_description_text" />
 
                 <View
                     android:id="@+id/pokedex_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:background="@color/light_grey"
                     app:layout_constraintTop_toBottomOf="@id/habitat_text" />
 
@@ -275,38 +263,34 @@
                     android:id="@+id/pokedex_entry_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/medium_margin_16dp"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:text="@string/pok_dex"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    style="@style/ThemeOverlay.MySubTitleTextBold"
                     app:layout_constraintTop_toBottomOf="@id/pokedex_divider" />
 
                 <TextView
                     android:id="@+id/pokedex_subtitle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/pok_dex_gen_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/pokedex_entry_label" />
 
                 <TextView
                     android:id="@+id/pokedex_entry_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingBottom="@dimen/medium_margin_16dp"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/pok_dex_entry"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="14sp"
                     app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />
 
                 <View
                     android:id="@+id/moves_divider"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:background="@color/light_grey"
                     app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
 
@@ -314,28 +298,17 @@
                     android:id="@+id/moves_label"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="@dimen/medium_margin_16dp"
-                    android:paddingBottom="@dimen/small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     android:text="@string/moves_label"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
+                    style="@style/ThemeOverlay.MySubTitleTextBold"
                     app:layout_constraintTop_toBottomOf="@id/moves_divider" />
 
-                <LinearLayout
-                    android:id="@+id/moves_holder"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingBottom="@dimen/small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/moves_label">
+<!--                <androidx.compose.ui.platform.ComposeView-->
+<!--                    android:id="@+id/moves_container"-->
+<!--                    android:layout_width="match_parent"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintTop_toBottomOf="@id/moves_label"/>-->
 
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:src="@drawable/no_results_snorlax"
-                        tools:ignore="ContentDescription" />
-                </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

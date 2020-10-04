@@ -22,6 +22,8 @@
 
     <dimen name="qualified_text_size_caption">12sp</dimen>
     <dimen name="qualified_text_size_body">16sp</dimen>
+    <dimen name="qualified_text_size_subtitle">18sp</dimen>
     <dimen name="qualified_text_size_title">20sp</dimen>
+    <dimen name="qualified_text_size_large_title">24sp</dimen>
 
 </resources>

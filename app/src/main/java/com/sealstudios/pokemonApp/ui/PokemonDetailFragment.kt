@@ -6,6 +6,7 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +17,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.Transition
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionListenerAdapter
@@ -32,7 +35,10 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
+import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
+import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.util.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
@@ -50,7 +56,7 @@ import javax.inject.Inject
 import kotlin.math.hypot
 
 @AndroidEntryPoint
-class PokemonDetailFragment : Fragment() {
+class PokemonDetailFragment : Fragment(), PokemonMoveAdapterClickListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -58,8 +64,7 @@ class PokemonDetailFragment : Fragment() {
 
     private val args: PokemonDetailFragmentArgs by navArgs()
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
-
-    private var pokemon: PokemonWithTypesAndSpeciesAndMoves? = null
+    private lateinit var pokemonMoveAdapter: PokemonMoveAdapter
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
     private var transitionListenerAdapter: TransitionListenerAdapter? = null
@@ -87,13 +92,6 @@ class PokemonDetailFragment : Fragment() {
     ): View? {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
-//            .apply {
-//            this.movesContainer.setContent {
-//                MaterialTheme {
-//                    Text(text = "MOVES GO HERE")
-//                }
-//            }
-//        }
         setAndPostponeEnterAnimation()
         setInsets()
         handleNavigationArgs()
@@ -105,6 +103,8 @@ class PokemonDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
+        setUpPokemonAdapter()
+        setUpPokemonRecyclerView()
         observePokemon()
     }
 
@@ -117,33 +117,27 @@ class PokemonDetailFragment : Fragment() {
     }
 
     private fun setInsets() {
-
         binding.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
             marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
             view.layoutParams = marginLayoutParams
         }
-
         binding.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
             view.updatePadding(
                 left = windowInsets.systemWindowInsetLeft + initialPadding.left,
                 right = windowInsets.systemWindowInsetRight + initialPadding.right
             )
         }
-
         binding.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->
             //required or the views below do not get there padding updated
         }
-
         binding.detailRoot.doOnApplyWindowInsetPadding { _, _, _ ->
             //required or the views below do not get there padding updated
         }
-
         binding.scrollView.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
             view.updatePadding(
                 bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
             )
         }
-
     }
 
     private fun handleNavigationArgs() {
@@ -166,9 +160,8 @@ class PokemonDetailFragment : Fragment() {
 
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
-            this.pokemon = pokemon
             pokemon?.let {
-                populateViews()
+                populateViews(it)
             }
         })
     }
@@ -222,8 +215,12 @@ class PokemonDetailFragment : Fragment() {
         }
     }
 
+    private fun setUpPokemonAdapter() {
+        pokemonMoveAdapter = PokemonMoveAdapter(clickListener = this)
+    }
+
     @SuppressLint("DefaultLocale")
-    private fun populateViews() {
+    private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) {
         pokemon?.let {
             with(binding) {
                 setPokemonTypes(it.types)
@@ -249,7 +246,7 @@ class PokemonDetailFragment : Fragment() {
                 isFirstResource: Boolean
             ): Boolean {
                 glide.asBitmap()
-                    .load(pokemon?.pokemon?.sprite)
+                    .load(R.drawable.pokeball_vector)
                     .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
                 startPostponedEnterTransition()
                 return false
@@ -424,7 +421,45 @@ class PokemonDetailFragment : Fragment() {
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
+        val pokemonMoveList = mutableListOf<PokemonMove>()
 
+        for (moveEntry in pokemonMoves.entries) {
+            Log.d("DETAIL", "move key ${moveEntry.key}")
+            if (!moveEntry.value.isNullOrEmpty()){
+                pokemonMoveList.addAll(moveEntry.value!!)
+            }
+            moveEntry.value?.forEach { move ->
+                Log.d("DETAIL", "move key $move")
+            }
+        }
+        pokemonMovesLoading.visibility = View.GONE
+
+        if (pokemonMoveList.isEmpty()){
+            pokemonMovesEmptyText.visibility = View.VISIBLE
+        } else {
+            pokemonMovesEmptyText.visibility = View.GONE
+            pokemonMoveAdapter.submitList(pokemonMoveList)
+        }
+    }
+
+    private fun setUpPokemonRecyclerView() {
+        binding.pokemonMoveRecyclerView.apply {
+            addRecyclerViewDecoration(this)
+            adapter = pokemonMoveAdapter
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        }
+    }
+
+    private fun addRecyclerViewDecoration(
+        recyclerView: RecyclerView
+    ) {
+        recyclerView.addItemDecoration(
+            PokemonListDecoration(
+                recyclerView.context.resources.getDimensionPixelSize(
+                    R.dimen.qualified_small_margin_8dp
+                )
+            )
+        )
     }
 
     // ------------ populate Pokemon data views ------------ //
@@ -444,6 +479,10 @@ class PokemonDetailFragment : Fragment() {
         removeSharedElementListener()
         transitionListenerAdapter = null
         _binding = null
+    }
+
+    override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
+        TODO("Not yet implemented")
     }
 
 }

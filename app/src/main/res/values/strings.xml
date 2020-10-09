@@ -15,7 +15,7 @@
     <string name="notification_title">PokemonApp</string>
     <string name="cancel_download">Cancel</string>
 
-    <string name="no_results">No Results...</string>
+    <string name="no_results">No Results…</string>
     <string name="app_toolbar_header">Header image</string>
     <string name="pokemonId">%d</string>
     <string name="pokemon_id_label">#</string>
@@ -45,4 +45,5 @@
     <string name="transition_name">pokemon_%d_image</string>
     <string name="filter_pokemon_label">Filter Pokemon</string>
     <string name="species">Species</string>
+    <string name="accuracy_percentage">%d\%</string>
 </resources>

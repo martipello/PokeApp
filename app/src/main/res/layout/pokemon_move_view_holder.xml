@@ -10,10 +10,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.constraintlayout.motion.widget.MotionLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/qualified_medium_margin_16dp">
+            android:layout_margin="@dimen/qualified_medium_margin_16dp"
+            app:layoutDescription="@xml/pokemon_move_view_holder_layout_scene">
 
             <TextView
                 android:id="@+id/pokemon_move_name_text_view"
@@ -74,111 +76,112 @@
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 android:background="@color/colorAccent"
-                app:layout_constraintTop_toBottomOf="@id/expanded_content_barrier"/>
+                app:layout_constraintTop_toBottomOf="@id/expanded_content_barrier" />
 
             <TextView
+                android:id="@+id/power_label"
+                style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/power_label"
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 android:text="Power : "
-                style="@style/ThemeOverlay.MyBodyTextBold"
-                app:layout_constraintTop_toBottomOf="@id/divider"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider" />
 
             <TextView
+                android:id="@+id/power_text"
+                style="@style/ThemeOverlay.MyBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/power_text"
-                android:text="70"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                style="@style/ThemeOverlay.MyBodyText"
-                app:layout_constraintTop_toTopOf="@id/power_label"
+                android:text="70"
+                app:layout_constraintEnd_toStartOf="@id/generation_label"
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"
-                app:layout_constraintEnd_toStartOf="@id/generation_label"/>
+                app:layout_constraintTop_toTopOf="@id/power_label" />
 
             <TextView
+                android:id="@+id/accuracy_label"
+                style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/accuracy_label"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                 android:text="Accuracy : "
-                style="@style/ThemeOverlay.MyBodyTextBold"
-                app:layout_constraintTop_toBottomOf="@id/power_label"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/power_label" />
 
             <TextView
+                android:id="@+id/accuracy_text"
+                style="@style/ThemeOverlay.MyBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/accuracy_text"
-                android:text="100%"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                style="@style/ThemeOverlay.MyBodyText"
+                android:text="100%"
                 app:layout_constraintEnd_toStartOf="@id/dual_type_chip_layout"
-                app:layout_constraintTop_toTopOf="@id/accuracy_label"
-                app:layout_constraintStart_toEndOf="@id/barrier_vertical"/>
+                app:layout_constraintStart_toEndOf="@id/barrier_vertical"
+                app:layout_constraintTop_toTopOf="@id/accuracy_label" />
 
             <TextView
+                android:id="@+id/pp_label"
+                style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/pp_label"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                 android:text="PP : "
-                style="@style/ThemeOverlay.MyBodyTextBold"
-                app:layout_constraintTop_toBottomOf="@id/accuracy_label"
-                app:layout_constraintStart_toStartOf="parent"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/accuracy_label" />
 
             <TextView
+                android:id="@+id/pp_text"
+                style="@style/ThemeOverlay.MyBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:id="@+id/pp_text"
-                android:text="20"
-                style="@style/ThemeOverlay.MyBodyText"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+                android:text="20"
                 app:layout_constraintEnd_toStartOf="@id/dual_type_chip_layout"
-                app:layout_constraintTop_toTopOf="@id/pp_label"
-                app:layout_constraintStart_toEndOf="@id/barrier_vertical"/>
+                app:layout_constraintStart_toEndOf="@id/barrier_vertical"
+                app:layout_constraintTop_toTopOf="@id/pp_label" />
 
             <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/barrier_vertical"
                 android:layout_width="1dp"
                 android:layout_height="match_parent"
-                android:id="@+id/barrier_vertical"
-                app:constraint_referenced_ids="accuracy_label,power_label,pp_label"
-                app:barrierDirection="end"/>
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="accuracy_label,power_label,pp_label" />
 
             <TextView
+                android:id="@+id/generation_label"
+                style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/generation_label"
-                android:text="Generation : "
-                style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
                 android:gravity="end"
-                app:layout_constraintTop_toTopOf="@id/power_label"
-                app:layout_constraintEnd_toStartOf="@id/generation_text"/>
+                android:text="Generation : "
+                app:layout_constraintEnd_toStartOf="@id/generation_text"
+                app:layout_constraintTop_toTopOf="@id/power_label" />
 
             <TextView
+                android:id="@+id/generation_text"
+                style="@style/ThemeOverlay.MyBodyText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/generation_text"
-                android:text="VIII"
-                style="@style/ThemeOverlay.MyBodyText"
                 android:gravity="end"
-                app:layout_constraintTop_toTopOf="@id/power_label"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:text="VIII"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/power_label" />
 
-            <include layout="@layout/dual_type_chip_layout"
+            <include
                 android:id="@+id/dual_type_chip_layout"
+                layout="@layout/dual_type_chip_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_small_margin_4dp"
-                app:layout_constraintTop_toBottomOf="@id/generation_label"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintVertical_bias="1"/>
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/generation_label"
+                app:layout_constraintVertical_bias="1" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.motion.widget.MotionLayout>
 
     </com.google.android.material.card.MaterialCardView>
 

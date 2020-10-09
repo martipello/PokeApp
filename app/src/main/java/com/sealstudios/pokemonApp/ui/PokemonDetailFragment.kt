@@ -421,7 +421,7 @@ class PokemonDetailFragment : Fragment(),
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
         CoroutineScope(Dispatchers.Default).launch {
-
+//          TODO investigate running this after the animation
             val pokemonMoveList = mutableListOf<PokemonMove>()
 
             for (moveEntry in pokemonMoves.entries) {

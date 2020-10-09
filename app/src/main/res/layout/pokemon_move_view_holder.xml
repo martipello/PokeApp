@@ -140,7 +140,7 @@
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"/>
 
             <androidx.constraintlayout.widget.Barrier
-                android:layout_width="1ddp"
+                android:layout_width="1dp"
                 android:layout_height="match_parent"
                 android:id="@+id/barrier_vertical"
                 app:constraint_referenced_ids="accuracy_label,power_label,pp_label"

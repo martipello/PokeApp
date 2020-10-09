@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
@@ -7,6 +8,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.databinding.PokemonMoveViewHolderBinding
+import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
+import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonMoveViewHolder
 
 class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListener? = null) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -36,6 +39,8 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
     }
 
     fun submitList(list: List<PokemonMove>) {
+        Log.d("MOVE_ADAPTER", "submitList")
+        Log.d("MOVE_ADAPTER", "$list")
         differ.submitList(list)
     }
 

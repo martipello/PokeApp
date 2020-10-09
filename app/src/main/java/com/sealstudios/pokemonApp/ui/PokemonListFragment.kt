@@ -29,7 +29,7 @@ import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
-import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterClickListener
+import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.util.*
@@ -39,7 +39,8 @@ import javax.inject.Inject
 
 
 @AndroidEntryPoint
-class PokemonListFragment : Fragment(), PokemonAdapterClickListener, FilterChipClickListener,
+class PokemonListFragment : Fragment(),
+    PokemonAdapterClickListener, FilterChipClickListener,
     FabFilterAnimationListener {
 
     @Inject

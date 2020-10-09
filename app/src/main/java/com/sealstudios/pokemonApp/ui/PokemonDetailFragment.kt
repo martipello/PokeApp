@@ -1,9 +1,8 @@
 package com.sealstudios.pokemonApp.ui
 
-//import androidx.compose.foundation.Text
-//import androidx.compose.material.MaterialTheme
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -27,6 +26,7 @@ import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
@@ -36,27 +36,23 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAn
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
-import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapterClickListener
-import com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder
-import com.sealstudios.pokemonApp.ui.util.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
+import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
+import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
-import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
-import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
-import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.math.hypot
 
 @AndroidEntryPoint
-class PokemonDetailFragment : Fragment(), PokemonMoveAdapterClickListener {
+class PokemonDetailFragment : Fragment(),
+    PokemonMoveAdapterClickListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -231,8 +227,11 @@ class PokemonDetailFragment : Fragment(), PokemonMoveAdapterClickListener {
     }
 
     private fun setPokemonImageView(imageUrl: String) {
+        val requestOptions = RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
         glide.asBitmap()
             .load(imageUrl)
+            .apply(requestOptions)
+            .dontTransform()
             .addListener(createRequestListener())
             .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
     }
@@ -421,32 +420,38 @@ class PokemonDetailFragment : Fragment(), PokemonMoveAdapterClickListener {
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
-        val pokemonMoveList = mutableListOf<PokemonMove>()
+        CoroutineScope(Dispatchers.Default).launch {
 
-        for (moveEntry in pokemonMoves.entries) {
-            Log.d("DETAIL", "move key ${moveEntry.key}")
-            if (!moveEntry.value.isNullOrEmpty()){
-                pokemonMoveList.addAll(moveEntry.value!!)
-            }
-            moveEntry.value?.forEach { move ->
-                Log.d("DETAIL", "move key $move")
-            }
-        }
-        pokemonMovesLoading.visibility = View.GONE
+            val pokemonMoveList = mutableListOf<PokemonMove>()
 
-        if (pokemonMoveList.isEmpty()){
-            pokemonMovesEmptyText.visibility = View.VISIBLE
-        } else {
-            pokemonMovesEmptyText.visibility = View.GONE
-            pokemonMoveAdapter.submitList(pokemonMoveList)
+            for (moveEntry in pokemonMoves.entries) {
+                Log.d("DETAIL", "move key ${moveEntry.key}")
+                if (!moveEntry.value.isNullOrEmpty()){
+                    pokemonMoveList.addAll(moveEntry.value!!)
+                }
+                moveEntry.value?.forEach { move ->
+                    Log.d("DETAIL", "move key $move")
+                }
+            }
+
+            withContext(Dispatchers.Main){
+                pokemonMovesLoading.visibility = View.GONE
+
+                if (pokemonMoveList.isEmpty()){
+                    pokemonMovesEmptyText.visibility = View.VISIBLE
+                } else {
+                    pokemonMovesEmptyText.visibility = View.GONE
+                    pokemonMoveAdapter.submitList(pokemonMoveList)
+                }
+            }
         }
     }
 
     private fun setUpPokemonRecyclerView() {
         binding.pokemonMoveRecyclerView.apply {
-            addRecyclerViewDecoration(this)
             adapter = pokemonMoveAdapter
-            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            addRecyclerViewDecoration(this)
+            layoutManager = NoScrollLayoutManager(this.context)
         }
     }
 
@@ -456,7 +461,7 @@ class PokemonDetailFragment : Fragment(), PokemonMoveAdapterClickListener {
         recyclerView.addItemDecoration(
             PokemonListDecoration(
                 recyclerView.context.resources.getDimensionPixelSize(
-                    R.dimen.qualified_small_margin_8dp
+                    R.dimen.zero
                 )
             )
         )

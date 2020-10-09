@@ -61,12 +61,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:fillViewport="true"
         android:paddingTop="?attr/actionBarSize">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
             android:clipToPadding="false"
             android:paddingTop="24dp"
@@ -122,20 +121,31 @@
                     android:layout_height="wrap_content"
                     android:text="@string/title"
                     style="@style/ThemeOverlay.MyLargeTitleTextBold"
-                    android:layout_marginTop="@dimen/qualified_large_margin_32dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                     app:layout_constraintEnd_toStartOf="@id/id_label"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toTopOf="@id/subtitle"/>
 
                 <TextView
+                    android:id="@+id/id_hash_label"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pokemon_id_label"
+                    android:paddingEnd="1dp"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                    style="@style/ThemeOverlay.MyCaptionTextBold"
+                    app:layout_constraintEnd_toStartOf="@id/id_label"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
                     android:id="@+id/id_label"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:gravity="end"
                     android:text="@string/pokemon_id_label"
-                    android:layout_marginTop="@dimen/qualified_large_margin_32dp"
-                    style="@style/ThemeOverlay.MyCaptionText"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                    style="@style/ThemeOverlay.MyBodyText"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -178,13 +188,37 @@
                     app:constraint_referenced_ids="subtitle,pokemon_types_chip_group_container" />
 
                 <TextView
+                    android:id="@+id/gen_text_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/generation_label"
+                    style="@style/ThemeOverlay.MyBodyTextBold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    app:layout_constraintTop_toBottomOf="@id/types_barrier" />
+
+                <TextView
                     android:id="@+id/gen_text_view"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/generation_label"
                     style="@style/ThemeOverlay.MyBodyText"
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/types_barrier" />
+                    app:layout_constraintTop_toBottomOf="@id/types_barrier"
+                    app:layout_constraintStart_toEndOf="@id/gen_text_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:paddingStart="@dimen/qualified_small_margin_8dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/height_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    android:text="@string/height_label"
+                    style="@style/ThemeOverlay.MyBodyTextBold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
 
                 <TextView
                     android:id="@+id/height_text_view"
@@ -193,8 +227,22 @@
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/height_label"
                     style="@style/ThemeOverlay.MyBodyText"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+                    app:layout_constraintStart_toEndOf="@id/height_label"
+                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                    android:paddingStart="@dimen/qualified_small_margin_8dp"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/weight_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/weight_label"
+                    android:paddingStart="@dimen/qualified_small_margin_8dp"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    style="@style/ThemeOverlay.MyBodyTextBold"
+                    app:layout_constraintStart_toEndOf="@id/height_text_view"
+                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                    tools:ignore="RtlSymmetry"/>
 
                 <TextView
                     android:id="@+id/weight_text_view"
@@ -204,8 +252,9 @@
                     android:paddingStart="@dimen/qualified_small_margin_8dp"
                     android:paddingEnd="@dimen/qualified_small_margin_8dp"
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
                     style="@style/ThemeOverlay.MyBodyText"
-                    app:layout_constraintStart_toEndOf="@id/height_text_view"
+                    app:layout_constraintStart_toEndOf="@id/weight_label"
                     app:layout_constraintTop_toBottomOf="@id/gen_text_view"/>
 
                 <View
@@ -222,7 +271,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:text="@string/about"
+                    android:text="@string/species"
                     style="@style/ThemeOverlay.MySubTitleTextBold"
                     app:layout_constraintTop_toBottomOf="@id/info_divider" />
 
@@ -232,7 +281,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/shape_label"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
                     style="@style/ThemeOverlay.MyBodyTextBold"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/shape_text"
@@ -253,7 +301,6 @@
                     android:id="@+id/form_description_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
                     style="@style/ThemeOverlay.MyBodyTextBold"
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:text="@string/form_label"
@@ -274,7 +321,6 @@
                     android:id="@+id/habitat_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
                     android:text="@string/habitat_label"
                     style="@style/ThemeOverlay.MyBodyTextBold"
                     android:layout_marginTop="@dimen/qualified_small_margin_8dp"
@@ -354,7 +400,8 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/pokemon_moves_loading_holder"
                     android:layout_margin="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/moves_label">
+                    app:layout_constraintTop_toBottomOf="@id/moves_label"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
                     <ProgressBar
                         android:layout_width="wrap_content"

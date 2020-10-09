@@ -7,8 +7,8 @@
     android:elevation="@dimen/large_margin_32dp"
     app:layoutDescription="@xml/pokemon_detail_image_layout_scene"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHeight_percent="0.3"
     app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintDimensionRatio="16:9"
     app:layout_constraintTop_toTopOf="parent">
 
     <com.google.android.material.card.MaterialCardView

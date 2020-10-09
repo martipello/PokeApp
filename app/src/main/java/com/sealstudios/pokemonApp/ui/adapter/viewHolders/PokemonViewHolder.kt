@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.ui.adapter
+package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -16,6 +16,7 @@ import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
+import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +45,10 @@ class PokemonViewHolder constructor(
             pokemonWithTypesAndSpecies.species.species.capitalize()
         binding.pokemonImageViewHolder.apply {
             transitionName =
-                pokemonTransitionNameForId(pokemonWithTypesAndSpecies.pokemon.id, this.context)
+                pokemonTransitionNameForId(
+                    pokemonWithTypesAndSpecies.pokemon.id,
+                    this.context
+                )
         }
         binding.root.setOnClickListener {
             clickListener?.onItemSelected(
@@ -71,6 +75,8 @@ class PokemonViewHolder constructor(
         glide.asBitmap()
             .load(pokemonImage)
             .apply(requestOptions)
+            .dontTransform()
+            .placeholder(R.drawable.pokeball_vector)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }

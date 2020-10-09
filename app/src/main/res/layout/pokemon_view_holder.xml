@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     app:cardCornerRadius="@dimen/small_margin_8dp"
     app:cardElevation="@dimen/card_elevation_6dp"
-    tools:context="com.sealstudios.pokemonApp.ui.adapter.PokemonViewHolder">
+    tools:context="com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

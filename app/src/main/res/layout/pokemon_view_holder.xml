@@ -58,7 +58,7 @@
             style="@style/ThemeOverlay.MyBodyText"
             android:layout_marginTop="@dimen/qualified_small_margin_2dp"
             android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
-            app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
+            app:layout_constraintBottom_toTopOf="@id/dual_type_chip_layout"
             app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
             app:layout_constraintTop_toBottomOf="@id/pokemon_name_text_view" />
 
@@ -73,40 +73,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/pokemon_name_text_view" />
 
-        <com.google.android.flexbox.FlexboxLayout
-            android:id="@+id/pokemon_types_chip_group_container"
-            android:layout_width="0dp"
+        <include layout="@layout/dual_type_chip_layout"
+            android:id="@+id/dual_type_chip_layout"
             android:layout_height="wrap_content"
-            android:gravity="end"
-            android:orientation="horizontal"
-            app:flexWrap="wrap"
-            app:justifyContent="flex_end"
+            android:layout_width="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder">
+            app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"/>
 
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/pokemon_types_chip_group"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/qualified_medium_margin_16dp" >
-
-                <include
-                    android:id="@+id/type_chip_1"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    layout="@layout/pokemon_type_chip"/>
-                <include
-                    android:id="@+id/type_chip_2"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    layout="@layout/pokemon_type_chip"/>
-
-            </com.google.android.material.chip.ChipGroup>
-
-
-        </com.google.android.flexbox.FlexboxLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

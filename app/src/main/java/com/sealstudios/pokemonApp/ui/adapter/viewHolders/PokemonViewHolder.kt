@@ -36,8 +36,8 @@ class PokemonViewHolder constructor(
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
-        binding.typeChip1.pokemonTypeChip.visibility = View.INVISIBLE
-        binding.typeChip2.pokemonTypeChip.visibility = View.GONE
+        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.INVISIBLE
+        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
@@ -65,7 +65,7 @@ class PokemonViewHolder constructor(
                     pokemon.types
             )
             withContext(Dispatchers.Main){
-                TypesGroupHelper(binding.pokemonTypesChipGroup, types).bindChips()
+                TypesGroupHelper(binding.dualTypeChipLayout.pokemonTypesChipGroup, types).bindChips()
             }
         }
     }

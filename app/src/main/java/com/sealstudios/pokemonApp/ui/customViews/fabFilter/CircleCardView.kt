@@ -73,9 +73,7 @@ class CircleCardView @JvmOverloads constructor(
         return transition
     }
 
-    fun circleReveal(listener: FabFilterAnimationListener?) {
-        val y = height / 2
-        val x = width / 2
+    fun circleReveal(listener: FabFilterAnimationListener?, startAtX: Int = width / 2, startAtY: Int = height / 2) {
 
         val endRadius =
             hypot(
@@ -84,7 +82,7 @@ class CircleCardView @JvmOverloads constructor(
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            this, x, y,
+            this, startAtX, startAtY,
             0f,
             endRadius.toFloat()
         )
@@ -96,9 +94,7 @@ class CircleCardView @JvmOverloads constructor(
         anim.start()
     }
 
-    fun circleHide(listener: FabFilterAnimationListener?) {
-        val x = width / 2
-        val y = height / 2
+    fun circleHide(listener: FabFilterAnimationListener?, endAtX: Int = width / 2, endAtY: Int = height / 2) {
 
         val startRadius =
             hypot(
@@ -107,7 +103,7 @@ class CircleCardView @JvmOverloads constructor(
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            this, x, y,
+            this, endAtX, endAtY,
             startRadius.toFloat(),
             0f
         )

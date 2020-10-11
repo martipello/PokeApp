@@ -8,11 +8,13 @@
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment">
 
-    <View
+    <com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
         android:id="@+id/splash"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
+        android:elevation="@dimen/zero"
+        app:cardElevation="@dimen/zero"
         android:visibility="invisible" />
 
 

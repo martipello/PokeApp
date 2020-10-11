@@ -1,11 +1,13 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -51,7 +53,6 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
-import kotlin.math.hypot
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment(),
@@ -260,7 +261,8 @@ class PokemonDetailFragment : Fragment(),
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
             location
         )
-        val y = location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+        val y =
+            location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
         binding.splash.circleReveal(this, startAtX = x, startAtY = y)
     }
 

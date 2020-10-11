@@ -39,8 +39,6 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
     }
 
     fun submitList(list: List<PokemonMove>) {
-        Log.d("MOVE_ADAPTER", "submitList")
-        Log.d("MOVE_ADAPTER", "$list")
         differ.submitList(list)
     }
 

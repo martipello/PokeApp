@@ -31,7 +31,7 @@ constructor(
 //        levelLearnedAtTextView.text = pokemonMove.
         ppText.text = pokemonMove.pp.toString()
         generationText.text = pokemonMove.generation
-        powerText.text = pokemonMove.power.toString()
+        powerText.text = if (pokemonMove.power.toString().isNotEmpty()) pokemonMove.power.toString() else "n/a"
 //        accuracyText.text = root.context.getString(R.string.accuracy_percentage, pokemonMove.accuracy)
         showMoreLessToggleButton.setOnClickListener {
             // animate

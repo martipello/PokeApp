@@ -43,29 +43,27 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun maybeGetPokemonMoveIds(pokemon: PokemonWithTypesAndSpeciesAndMoves) {
-        withContext(Dispatchers.IO) {
-            val moves = mutableListOf<PokemonMove>()
-            pokemon.moves.forEach { pokemonMove ->
-                if (pokemonMove.id > 0 && pokemonMove.generation.isEmpty()) {
-                    try {
-                        val move = fetchMovesForId(pokemonMove)
-                        move?.let {
-                            moves.add(move)
-                        }
-                    } catch (e: Exception) {
-                        e.printStackTrace()
+        val moves = mutableListOf<PokemonMove>()
+        pokemon.moves.forEach { pokemonMove ->
+            if (pokemonMove.id > 0 && pokemonMove.generation.isEmpty()) {
+                try {
+                    val move = fetchMovesForId(pokemonMove)
+                    move?.let {
+                        moves.add(move)
                     }
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
             }
-            savePokemonMoves(pokemon.pokemon.id, moves)
         }
+        savePokemonMoves(pokemon.pokemon.id, moves)
     }
 
-    private fun savePokemonMoves(
+    private suspend fun savePokemonMoves(
         pokemonId: Int,
         moves: MutableList<PokemonMove>
     ) {
-        viewModelScope.launch { insertPokemonMoves(pokemonId, moves) }
+        insertPokemonMoves(pokemonId, moves)
     }
 
     fun setId(id: Int) {

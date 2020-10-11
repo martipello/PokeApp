@@ -2,13 +2,14 @@ package com.sealstudios.pokemonApp.ui
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -42,6 +43,8 @@ import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
+import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
@@ -91,6 +94,8 @@ class PokemonDetailFragment : Fragment(),
         setAndPostponeEnterAnimation()
         setInsets()
         handleNavigationArgs()
+        setUpPokemonAdapter()
+        setUpPokemonMovesRecyclerView()
         observeHasExpandedState()
         observeUIColor()
         return binding.root
@@ -99,8 +104,7 @@ class PokemonDetailFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
-        setUpPokemonAdapter()
-        setUpPokemonRecyclerView()
+        Log.d("DETAIL", "onViewCreated")
         observePokemon()
     }
 
@@ -109,7 +113,11 @@ class PokemonDetailFragment : Fragment(),
         sharedElementEnterTransition = TransitionInflater.from(context)
             .inflateTransition(R.transition.shared_element_transition)
         (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
+    }
 
+    private fun startPostponedEnterAnimation() {
+        Log.d("DETAIL", "startPostponedEnterAnimation")
+        startPostponedEnterTransition()
     }
 
     private fun setInsets() {
@@ -138,8 +146,9 @@ class PokemonDetailFragment : Fragment(),
 
     private fun handleNavigationArgs() {
         pokemonName = args.pokemonName
-        binding.pokemonImageViewHolderLayout.pokemonImageViewHolder.transitionName =
+        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.transitionName =
             args.transitionName
+        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(args.dominantSwatchRgb)
         val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         setViewModelProperties(pokemonId)
         val imageUrl = highResPokemonUrl(pokemonId)
@@ -155,7 +164,9 @@ class PokemonDetailFragment : Fragment(),
     }
 
     private fun observePokemon() {
+        Log.d("DETAIL", "observePokemon")
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
+            Log.d("DETAIL", "pokemon.observe")
             pokemon?.let {
                 populateViews(it)
             }
@@ -195,7 +206,7 @@ class PokemonDetailFragment : Fragment(),
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
-        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(R.id.large_image)
+        transitionPokemonImageFromSmallToLarge(binding)
         binding.root.post {
             createRevealAnimation()
         }
@@ -217,6 +228,7 @@ class PokemonDetailFragment : Fragment(),
 
     @SuppressLint("DefaultLocale")
     private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) {
+        Log.d("DETAIL", "populateViews")
         pokemon?.let {
             with(binding) {
                 setPokemonTypes(it.types)
@@ -227,7 +239,8 @@ class PokemonDetailFragment : Fragment(),
     }
 
     private fun setPokemonImageView(imageUrl: String) {
-        val requestOptions = RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
+        val requestOptions =
+            RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
         glide.asBitmap()
             .load(imageUrl)
             .apply(requestOptions)
@@ -247,7 +260,7 @@ class PokemonDetailFragment : Fragment(),
                 glide.asBitmap()
                     .load(R.drawable.pokeball_vector)
                     .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-                startPostponedEnterTransition()
+                startPostponedEnterAnimation()
                 return false
             }
 
@@ -258,7 +271,7 @@ class PokemonDetailFragment : Fragment(),
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                startPostponedEnterTransition()
+                startPostponedEnterAnimation()
                 return false
             }
         }
@@ -311,7 +324,7 @@ class PokemonDetailFragment : Fragment(),
         val anim = ViewAnimationUtils.createCircularReveal(
             binding.splash, x, y.toInt(),
             startRadius.toFloat(),
-            90.dp.toFloat()
+            0f
         )
 
         anim.addListener(getHideSplashListener())
@@ -328,14 +341,18 @@ class PokemonDetailFragment : Fragment(),
                 super.onTransitionEnd(transition)
                 _binding?.let {
                     if (!hasExpanded) {
-                        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-                            R.id.large_image
-                        )
+                        transitionPokemonImageFromSmallToLarge(it)
                         createRevealAnimation()
                     }
                 }
             }
         }
+    }
+
+    private fun transitionPokemonImageFromSmallToLarge(it: PokemonDetailFragmentBinding) {
+        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+            R.id.large_image
+        )
     }
 
     private fun removeSharedElementListener() {
@@ -352,7 +369,7 @@ class PokemonDetailFragment : Fragment(),
             override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
                 lifecycleScope.launch {
-                    delay(100)
+                    delay(150)
                     binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
                     popDelayed()
                 }
@@ -368,7 +385,12 @@ class PokemonDetailFragment : Fragment(),
             }
 
             override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {}
+            override fun onAnimationStart(animation: Animator?) {
+                binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
+                    .setCardBackgroundColor(
+                        ContextCompat.getColor(binding.root.context, android.R.color.transparent)
+                    )
+            }
         }
     }
 
@@ -420,48 +442,47 @@ class PokemonDetailFragment : Fragment(),
     private fun PokemonDetailFragmentBinding.setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
-        CoroutineScope(Dispatchers.Default).launch {
 //          TODO investigate running this after the animation
-            val pokemonMoveList = mutableListOf<PokemonMove>()
+        val pokemonMoveList = mutableListOf<PokemonMove>()
 
-            for (moveEntry in pokemonMoves.entries) {
-                Log.d("DETAIL", "move key ${moveEntry.key}")
-                if (!moveEntry.value.isNullOrEmpty()){
-                    pokemonMoveList.addAll(moveEntry.value!!)
-                }
-                moveEntry.value?.forEach { move ->
-                    Log.d("DETAIL", "move key $move")
-                }
+        for (moveEntry in pokemonMoves.entries) {
+            if (!moveEntry.value.isNullOrEmpty()) {
+                pokemonMoveList.addAll(moveEntry.value!!)
             }
-
-            withContext(Dispatchers.Main){
-                pokemonMovesLoading.visibility = View.GONE
-
-                if (pokemonMoveList.isEmpty()){
-                    pokemonMovesEmptyText.visibility = View.VISIBLE
-                } else {
-                    pokemonMovesEmptyText.visibility = View.GONE
-                    pokemonMoveAdapter.submitList(pokemonMoveList)
-                }
-            }
+//            moveEntry.value?.forEach { move ->
+//                Log.d("DETAIL", "move key $move")
+//            }
         }
+
+//        CoroutineScope(Dispatchers.IO).launch {
+//            pokemonMoveAdapter.submitList(pokemonMoveList)
+//        }
+
+        pokemonMovesLoading.visibility = View.GONE
+
+        if (pokemonMoveList.isEmpty()) {
+            pokemonMovesEmptyText.visibility = View.VISIBLE
+        } else {
+            pokemonMovesEmptyText.visibility = View.GONE
+        }
+
     }
 
-    private fun setUpPokemonRecyclerView() {
+    private fun setUpPokemonMovesRecyclerView() {
         binding.pokemonMoveRecyclerView.apply {
             adapter = pokemonMoveAdapter
-            addRecyclerViewDecoration(this)
-            layoutManager = NoScrollLayoutManager(this.context)
+            addPokemonMovesRecyclerViewDecoration(this)
+            layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
         }
     }
 
-    private fun addRecyclerViewDecoration(
+    private fun addPokemonMovesRecyclerViewDecoration(
         recyclerView: RecyclerView
     ) {
         recyclerView.addItemDecoration(
             PokemonListDecoration(
                 recyclerView.context.resources.getDimensionPixelSize(
-                    R.dimen.zero
+                    R.dimen.qualified_small_margin_8dp
                 )
             )
         )

@@ -8,7 +8,6 @@ import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.updatePadding
 import androidx.fragment.app.Fragment
@@ -38,18 +37,20 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAn
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
-import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
-import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
-import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import kotlin.math.hypot
 
@@ -240,11 +241,10 @@ class PokemonDetailFragment : Fragment(),
 
     private fun setPokemonImageView(imageUrl: String) {
         val requestOptions =
-            RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
+            RequestOptions.noTransformation()
         glide.asBitmap()
             .load(imageUrl)
             .apply(requestOptions)
-            .dontTransform()
             .addListener(createRequestListener())
             .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
     }

@@ -75,8 +75,6 @@ class PokemonViewHolder constructor(
         glide.asBitmap()
             .load(pokemonImage)
             .apply(requestOptions)
-            .dontTransform()
-            .placeholder(R.drawable.pokeball_vector)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }

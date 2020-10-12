@@ -32,7 +32,7 @@ constructor(
         ppText.text = pokemonMove.pp.toString()
         generationText.text = pokemonMove.generation
         powerText.text = if (pokemonMove.power.toString().isNotEmpty()) pokemonMove.power.toString() else "n/a"
-//        accuracyText.text = root.context.getString(R.string.accuracy_percentage, pokemonMove.accuracy)
+        accuracyText.text = if (pokemonMove.accuracy.toString().isNotEmpty()) pokemonMove.accuracy.toString() + "%" else "n/a"
         showMoreLessToggleButton.setOnClickListener {
             // animate
         }

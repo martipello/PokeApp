@@ -48,10 +48,7 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -122,16 +119,15 @@ class PokemonDetailFragment : Fragment(),
     }
 
     private fun handleNavigationArgs() {
+        val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.transitionName =
             args.transitionName
+        setPokemonImageView(highResPokemonUrl(pokemonId))
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
             args.dominantSwatchRgb
         )
-        val pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         setViewModelProperties(pokemonId)
-        val imageUrl = highResPokemonUrl(pokemonId)
-        setPokemonImageView(imageUrl)
     }
 
     private fun setViewModelProperties(pokemonId: Int) {
@@ -212,6 +208,9 @@ class PokemonDetailFragment : Fragment(),
             with(binding) {
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
+            }
+
+            CoroutineScope(Dispatchers.Default).launch {
                 setPokemonMoves(it.moves.getPokemonMoves())
             }
         }
@@ -294,9 +293,11 @@ class PokemonDetailFragment : Fragment(),
     }
 
     private fun transitionPokemonImageFromSmallToLarge(it: PokemonDetailFragmentBinding) {
-        it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-            R.id.large_image
-        )
+        viewLifecycleOwner.lifecycleScope.launch {
+            it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+                R.id.large_image
+            )
+        }
     }
 
     private fun removeSharedElementListener() {
@@ -348,33 +349,34 @@ class PokemonDetailFragment : Fragment(),
         habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
-    private fun PokemonDetailFragmentBinding.setPokemonMoves(
+    private suspend fun setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
-//          TODO investigate running this after the animation
+        val scope = CoroutineScope(Dispatchers.Main)
         val pokemonMoveList = mutableListOf<PokemonMove>()
 
-        for (moveEntry in pokemonMoves.entries) {
-            if (!moveEntry.value.isNullOrEmpty()) {
-                pokemonMoveList.addAll(moveEntry.value!!)
+        scope.launch {
+            withContext(Dispatchers.Default) {
+                Log.d("DETAIL", "setPokemonMoves $pokemonMoves")
+                for (moveEntry in pokemonMoves.entries) {
+                    if (!moveEntry.value.isNullOrEmpty()) {
+                        pokemonMoveList.addAll(moveEntry.value!!)
+                    }
+//                    moveEntry.value?.forEach { move ->
+//                        Log.d("DETAIL", "move key $move")
+//                    }
+                }
+                pokemonMoveAdapter.submitList(pokemonMoveList)
             }
-//            moveEntry.value?.forEach { move ->
-//                Log.d("DETAIL", "move key $move")
-//            }
+
+            binding.pokemonMovesLoading.visibility = View.GONE
+
+            if (pokemonMoveList.isEmpty()) {
+                binding.pokemonMovesEmptyText.visibility = View.VISIBLE
+            } else {
+                binding.pokemonMovesEmptyText.visibility = View.GONE
+            }
         }
-
-//        CoroutineScope(Dispatchers.IO).launch {
-//            pokemonMoveAdapter.submitList(pokemonMoveList)
-//        }
-
-        pokemonMovesLoading.visibility = View.GONE
-
-        if (pokemonMoveList.isEmpty()) {
-            pokemonMovesEmptyText.visibility = View.VISIBLE
-        } else {
-            pokemonMovesEmptyText.visibility = View.GONE
-        }
-
     }
 
     private fun setUpPokemonMovesRecyclerView() {

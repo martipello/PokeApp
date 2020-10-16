@@ -7,6 +7,7 @@ import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -108,7 +109,10 @@ class PokemonListFragment : Fragment(),
     private fun tryHideFiltersAnimation() {
         if (!filterIsExpanding) {
             if (filterIsExpanded) {
-                binding.pokemonListFilter.filterHolder.circleHide(this)
+                binding.pokemonListFilter.filterHolder.circleHide(this).apply {
+                    doOnEnd { binding.pokemonListFilter.filterHolder.visibility = View.INVISIBLE }
+                    start()
+                }
             }
         }
     }
@@ -182,7 +186,7 @@ class PokemonListFragment : Fragment(),
             Observer { filterIsExpanded ->
                 if (filterIsExpanded && this.filterIsExpanded) {
                     binding.root.post {
-                        binding.pokemonListFilter.filterHolder.circleReveal(null)
+                        binding.pokemonListFilter.filterHolder.circleReveal(null).start()
                         binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(
                             binding.pokemonListFilter.filterHolder,
                             null
@@ -371,7 +375,7 @@ class PokemonListFragment : Fragment(),
 //        Last animation called when closing the filters view
 //        else used to orchestrate opening filters view animation
         if (!filterIsExpanded) {
-            binding.pokemonListFilter.filterHolder.circleReveal(this)
+            binding.pokemonListFilter.filterHolder.circleReveal(this).start()
         } else {
             pokemonListViewModel.setFiltersLayoutExpanded(false)
         }

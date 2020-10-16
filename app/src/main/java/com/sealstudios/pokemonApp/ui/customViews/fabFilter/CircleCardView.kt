@@ -1,8 +1,10 @@
 package com.sealstudios.pokemonApp.ui.customViews.fabFilter
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.AttributeSet
+import android.util.Log
 import android.view.*
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -11,6 +13,8 @@ import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import io.codetail.animation.arcanimator.ArcAnimator
 import io.codetail.animation.arcanimator.Side
+import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlin.coroutines.resume
 import kotlin.math.hypot
 import kotlin.math.min
 
@@ -76,7 +80,7 @@ class CircleCardView @JvmOverloads constructor(
         listener: FabFilterAnimationListener?,
         startAtX: Int = width / 2,
         startAtY: Int = height / 2
-    ) {
+    ): Animator {
 
         val endRadius =
             hypot(
@@ -94,14 +98,14 @@ class CircleCardView @JvmOverloads constructor(
         listener?.let {
             anim.addListener(getCircleRevealAnimatorListener(it))
         }
-        anim.start()
+        return anim
     }
 
     fun circleHide(
         listener: FabFilterAnimationListener?,
         endAtX: Int = width / 2,
         endAtY: Int = height / 2
-    ) {
+    ): Animator {
 
         val startRadius =
             hypot(
@@ -114,9 +118,12 @@ class CircleCardView @JvmOverloads constructor(
             startRadius.toFloat(),
             0f
         )
-        // Always add this listener as it completes the animation
-        anim.addListener(getCircleHideAnimatorListener(listener))
-        anim.start()
+        listener?.let {
+            // If this listener is null make view invisible on ending animation
+            // visibility = View.INVISIBLE
+            anim.addListener(getCircleHideAnimatorListener(listener))
+        }
+        return anim
     }
 
     fun arcAnimateFilterFabIn(nestView: View, listener: FabFilterAnimationListener?) {
@@ -170,14 +177,12 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     private fun getCircleHideAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
-        return object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
+        return object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 visibility = View.INVISIBLE
                 listener?.onCircleHideAnimationFinished()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
                 listener?.onCircleHideAnimationStarted()
             }
@@ -185,17 +190,29 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     private fun getCircleRevealAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
-        return object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
+        return object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
                 listener?.onCircleRevealAnimationFinished()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
+                super.onAnimationStart(animation)
                 listener?.onCircleRevealAnimationStarted()
             }
         }
+    }
+
+    suspend fun Animator.started() = suspendCancellableCoroutine<Unit> { continuation ->
+
+        continuation.invokeOnCancellation { cancel() }
+
+        addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationStart(animation: Animator?) {
+                continuation.resume(Unit)
+            }
+        })
+
     }
 
     private fun getSlideTransitionListener(listener: FabFilterAnimationListener?): Transition.TransitionListener {

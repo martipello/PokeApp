@@ -45,6 +45,9 @@ import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.animationListeners.awaitEnd
+import com.sealstudios.pokemonApp.ui.animationListeners.awaitTransitionEnd
+import com.sealstudios.pokemonApp.ui.animationListeners.startAndWait
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
@@ -67,7 +70,6 @@ class PokemonDetailFragment : Fragment(),
     lateinit var glide: RequestManager
     private lateinit var pokemonName: String
     private var pokemonId: Int = -1
-
     private val args: PokemonDetailFragmentArgs by navArgs()
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private lateinit var pokemonMoveAdapter: PokemonMoveAdapter
@@ -79,46 +81,6 @@ class PokemonDetailFragment : Fragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addBackButtonCallback()
-    }
-
-    private fun addBackButtonCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            handleExitTransition()
-            this.remove()
-        }
-    }
-
-    private fun handleExitTransition() {
-        viewLifecycleOwner.lifecycleScope.launch {
-
-            val circleHideAnimationAsync = async {
-
-                val x: Int = binding.splash.right / 2
-                val location = IntArray(2)
-                binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-                    location
-                )
-                val y =
-                    location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
-                binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
-                    startAndWait()
-                    delay(150)
-                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-                    popDelayed()
-                    awaitEnd()
-                    binding.splash.visibility = View.INVISIBLE
-                }
-            }
-            circleHideAnimationAsync.await()
-
-        }
-    }
-
-    private suspend fun popDelayed() {
-        withContext(Dispatchers.Main) {
-            delay(100)
-            findNavController().popBackStack()
-        }
     }
 
     override fun onCreateView(
@@ -159,7 +121,6 @@ class PokemonDetailFragment : Fragment(),
 
     private suspend fun handleEnterAnimation() {
         viewLifecycleOwner.lifecycleScope.launch {
-
             val sharedElementEnterTransitionAsync = async {
                 sharedElementEnterTransition = TransitionInflater.from(context)
                     .inflateTransition(R.transition.shared_element_transition)
@@ -170,11 +131,9 @@ class PokemonDetailFragment : Fragment(),
                 }
             }
             sharedElementEnterTransitionAsync.await()
-
             binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
                 R.id.large_image
             )
-
             val x = binding.splash.right / 2
             val location = IntArray(2)
             binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
@@ -195,9 +154,44 @@ class PokemonDetailFragment : Fragment(),
                 }
             }
             splashRevealAnimator.await()
-
             pokemonDetailViewModel.setRevealAnimationExpandedState(true)
+        }
+    }
 
+    private fun handleExitAnimation() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val circleHideAnimationAsync = async {
+                val x: Int = binding.splash.right / 2
+                val location = IntArray(2)
+                binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
+                    location
+                )
+                val y =
+                    location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+                binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
+                    startAndWait()
+                    delay(150)
+                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
+                    popDelayed()
+                    awaitEnd()
+                    binding.splash.visibility = View.INVISIBLE
+                }
+            }
+            circleHideAnimationAsync.await()
+        }
+    }
+
+    private fun addBackButtonCallback() {
+        requireActivity().onBackPressedDispatcher.addCallback(this) {
+            handleExitAnimation()
+            this.remove()
+        }
+    }
+
+    private suspend fun popDelayed() {
+        withContext(Dispatchers.Main) {
+            delay(100)
+            findNavController().popBackStack()
         }
     }
 
@@ -321,35 +315,6 @@ class PokemonDetailFragment : Fragment(),
                 })
         }
 
-
-    private fun createRequestListener(): RequestListener<Bitmap?> {
-        return object : RequestListener<Bitmap?> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any,
-                target: Target<Bitmap?>,
-                isFirstResource: Boolean
-            ): Boolean {
-                glide.asBitmap()
-                    .load(R.drawable.pokeball_vector)
-                    .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-                startPostponedEnterTransition()
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: Bitmap?,
-                model: Any,
-                target: Target<Bitmap?>,
-                dataSource: DataSource,
-                isFirstResource: Boolean
-            ): Boolean {
-                startPostponedEnterTransition()
-                return false
-            }
-        }
-    }
-
     // ------------ populate Pokemon data views ------------ //
 
     private fun setPokemonTypes(
@@ -435,12 +400,14 @@ class PokemonDetailFragment : Fragment(),
         )
     }
 
-    // ------------ populate Pokemon data views ------------ //
+    override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
+        TODO("Not yet implemented")
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                handleExitTransition()
+                handleExitAnimation()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -452,107 +419,8 @@ class PokemonDetailFragment : Fragment(),
         _binding = null
     }
 
-    override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
-        TODO("Not yet implemented")
-    }
-
 }
 
-suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { continuation ->
-
-    continuation.invokeOnCancellation { cancel() }
-
-    this.addListener(object : AnimatorListenerAdapter() {
-        private var endedSuccessfully = true
-
-        override fun onAnimationCancel(animation: Animator) {
-
-            endedSuccessfully = false
-        }
-
-        override fun onAnimationEnd(animation: Animator) {
-
-            animation.removeListener(this)
-
-            if (continuation.isActive) {
-                // If the coroutine is still active...
-                if (endedSuccessfully) {
-                    // ...and the Animator ended successfully, resume the coroutine
-                    continuation.resume(Unit)
-                } else {
-                    // ...and the Animator was cancelled, cancel the coroutine too
-                    continuation.cancel()
-                }
-            }
-        }
-    })
-
-}
-
-suspend fun TransitionSet.awaitTransitionEnd(executeBeforeReturn: (CancellableContinuation<Unit>) -> Unit) =
-    suspendCancellableCoroutine<Unit> { continuation ->
-
-        val listener = object : TransitionListenerAdapter() {
-            private var endedSuccessfully = true
-
-            override fun onTransitionCancel(transition: Transition) {
-                super.onTransitionCancel(transition)
-                endedSuccessfully = false
-            }
-
-            override fun onTransitionEnd(transition: Transition) {
-                super.onTransitionEnd(transition)
-                transition.removeListener(this)
-
-                if (continuation.isActive) {
-                    // If the coroutine is still active...
-                    if (endedSuccessfully) {
-                        // ...and the Animator ended successfully, resume the coroutine
-                        continuation.resume(Unit)
-                    } else {
-                        // ...and the Animator was cancelled, cancel the coroutine too
-                        continuation.cancel()
-                    }
-                }
-            }
-        }
-        continuation.invokeOnCancellation { removeListener(listener) }
-        this.addListener(listener)
-        executeBeforeReturn(continuation)
-    }
-
-
-suspend fun Animator.startAndWait() = suspendCancellableCoroutine<Unit> { continuation ->
-    continuation.invokeOnCancellation { cancel() }
-
-    this.addListener(object : AnimatorListenerAdapter() {
-
-        private var endedSuccessfully = true
-
-        override fun onAnimationCancel(animation: Animator?) {
-            endedSuccessfully = false
-        }
-
-        override fun onAnimationStart(animation: Animator?) {
-
-            animation?.removeListener(this)
-
-            if (continuation.isActive) {
-                // If the coroutine is still active...
-                if (endedSuccessfully) {
-                    // ...and the Animator ended successfully, resume the coroutine
-                    continuation.resume(Unit)
-                } else {
-                    // ...and the Animator was cancelled, cancel the coroutine too
-                    continuation.cancel()
-                }
-            }
-        }
-    })
-
-    start()
-
-}
 
 
 

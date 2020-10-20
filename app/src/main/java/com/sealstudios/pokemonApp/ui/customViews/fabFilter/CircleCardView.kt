@@ -203,18 +203,6 @@ class CircleCardView @JvmOverloads constructor(
         }
     }
 
-    suspend fun Animator.started() = suspendCancellableCoroutine<Unit> { continuation ->
-
-        continuation.invokeOnCancellation { cancel() }
-
-        addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationStart(animation: Animator?) {
-                continuation.resume(Unit)
-            }
-        })
-
-    }
-
     private fun getSlideTransitionListener(listener: FabFilterAnimationListener?): Transition.TransitionListener {
         return object : Transition.TransitionListener {
             override fun onTransitionEnd(transition: Transition) {

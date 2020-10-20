@@ -55,12 +55,13 @@ import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import kotlinx.coroutines.android.awaitFrame
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
 class PokemonDetailFragment : Fragment(),
-    PokemonMoveAdapterClickListener, FabFilterAnimationListener {
+    PokemonMoveAdapterClickListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -72,7 +73,7 @@ class PokemonDetailFragment : Fragment(),
     private lateinit var pokemonMoveAdapter: PokemonMoveAdapter
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
-    private var transitionListenerAdapter: TransitionListenerAdapter? = null
+
     private var hasExpanded: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,13 +83,42 @@ class PokemonDetailFragment : Fragment(),
 
     private fun addBackButtonCallback() {
         requireActivity().onBackPressedDispatcher.addCallback(this) {
-            startExitTransition()
+            handleExitTransition()
             this.remove()
         }
     }
 
-    private fun startExitTransition() {
-        createHideAnimation()
+    private fun handleExitTransition() {
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            val circleHideAnimationAsync = async {
+
+                val x: Int = binding.splash.right / 2
+                val location = IntArray(2)
+                binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
+                    location
+                )
+                val y =
+                    location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+                binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
+                    startAndWait()
+                    delay(150)
+                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
+                    popDelayed()
+                    awaitEnd()
+                    binding.splash.visibility = View.INVISIBLE
+                }
+            }
+            circleHideAnimationAsync.await()
+
+        }
+    }
+
+    private suspend fun popDelayed() {
+        withContext(Dispatchers.Main) {
+            delay(100)
+            findNavController().popBackStack()
+        }
     }
 
     override fun onCreateView(
@@ -97,7 +127,12 @@ class PokemonDetailFragment : Fragment(),
     ): View? {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
-        setAndPostponeEnterAnimation()
+        postponeEnterTransition()
+        handleNavigationArgs()
+        observeUIColor()
+        observeHasExpandedState()
+        observePokemon()
+        setViewModelProperties()
         PokemonDetailFragmentInsets().setInsets(binding)
         return binding.root
     }
@@ -107,80 +142,63 @@ class PokemonDetailFragment : Fragment(),
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-            handleNavigationArgs()
-            val setPokemonImageView = async {
-                setPokemonImageView(highResPokemonUrl(pokemonId))
-            }
-            val handleEnterAnimation = async {
-//                handleEnterAnimation()
-            }
-            setPokemonImageView.await()
-            handleEnterAnimation.await()
-            startPostponedEnterAnimation()
-            observePokemon()
-            setViewModelProperties(pokemonId)
-            setUpPokemonAdapter()
-            setUpPokemonMovesRecyclerView()
-            observeHasExpandedState()
-            observeUIColor()
+            setPokemonImageView(highResPokemonUrl(pokemonId))
+            handleEnterAnimation()
         }
+
+//            Log.d("DETAIL","after startPostponedEnterTransition")
+//            observePokemon()
+//            setViewModelProperties(pokemonId)
+//            setUpPokemonAdapter()
+//            setUpPokemonMovesRecyclerView()
+//            observeHasExpandedState()
+//            observeUIColor()
+
+
     }
 
-//    private suspend fun handleEnterAnimation() {
-//        withContext(Dispatchers.Default){
-//
-//            val enterTransition = async {
-//
-//                sharedElementEnterTransition = TransitionInflater.from(context)
-//                    .inflateTransition(R.transition.shared_element_transition)
-//                (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
-//
-//            }
-//
-//            val splashReveal = async {
-//
-//
-//                val x = binding.splash.right / 2
-//                val location = IntArray(2)
-//                binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
-//                    .getLocationOnScreen(location)
-//                val y = location[1] + binding.pokemonImageViewHolderLayout
-//                    .pokemonBackgroundCircleView.height / 2
-//                binding.splash.circleReveal(null, startAtX = x, startAtY = y)?.apply {
-//                    doOnEnd {  }
-//                    start()
-//                }
-//            }
-//
-//            /*
-//
-//        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-//            .setCardBackgroundColor(
-//                ContextCompat.getColor(binding.root.context, android.R.color.transparent)
-//            )
-//             */
-//
-//            // Wait for both of the first two operations to finish
-//            enterTransition.await()
-//            splashReveal.await()
-//
-//            // anim1 and scroll have now both finished, start the ObjectAnimator
-//            ObjectAnimator.ofFloat(textView, View.TRANSLATION_X, -100f, 0f).run {
-//                start()
-//                awaitEnd()
-//            }
-//        }
-//    }
+    private suspend fun handleEnterAnimation() {
+        viewLifecycleOwner.lifecycleScope.launch {
 
-    private fun setAndPostponeEnterAnimation() {
-        postponeEnterTransition()
-        sharedElementEnterTransition = TransitionInflater.from(context)
-            .inflateTransition(R.transition.shared_element_transition)
-        (sharedElementEnterTransition as TransitionSet).addListener(sharedElementListener())
-    }
+            val sharedElementEnterTransitionAsync = async {
+                sharedElementEnterTransition = TransitionInflater.from(context)
+                    .inflateTransition(R.transition.shared_element_transition)
+                (sharedElementEnterTransition as TransitionSet).run {
+                    awaitTransitionEnd {
+                        startPostponedEnterTransition()
+                    }
+                }
+            }
+            sharedElementEnterTransitionAsync.await()
 
-    private fun startPostponedEnterAnimation() {
-        startPostponedEnterTransition()
+            binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+                R.id.large_image
+            )
+
+            val x = binding.splash.right / 2
+            val location = IntArray(2)
+            binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
+                .getLocationOnScreen(location)
+            val y = location[1] + binding.pokemonImageViewHolderLayout
+                .pokemonBackgroundCircleView.height / 2
+            val splashRevealAnimator = async {
+                binding.splash.circleReveal(null, startAtX = x, startAtY = y).run {
+                    startAndWait()
+                    binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
+                        .setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                binding.root.context,
+                                android.R.color.transparent
+                            )
+                        )
+                    awaitEnd()
+                }
+            }
+            splashRevealAnimator.await()
+
+            pokemonDetailViewModel.setRevealAnimationExpandedState(true)
+
+        }
     }
 
     private fun handleNavigationArgs() {
@@ -193,7 +211,7 @@ class PokemonDetailFragment : Fragment(),
         )
     }
 
-    private fun setViewModelProperties(pokemonId: Int) {
+    private fun setViewModelProperties() {
         pokemonDetailViewModel.setId(pokemonId)
         pokemonDetailViewModel.setViewColors(
             args.dominantSwatchRgb,
@@ -203,7 +221,6 @@ class PokemonDetailFragment : Fragment(),
 
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
-            Log.d("DETAIL", "pokemon.observe")
             viewLifecycleOwner.lifecycleScope.launch {
                 pokemon?.let {
                     populateViews(it)
@@ -245,10 +262,10 @@ class PokemonDetailFragment : Fragment(),
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
-        transitionPokemonImageFromSmallToLarge(binding)
-        binding.root.post {
-            createRevealAnimation()
-        }
+//        transitionPokemonImageFromSmallToLarge(binding)
+//        binding.root.post {
+//            createRevealAnimation()
+//        }
     }
 
     @SuppressLint("DefaultLocale")
@@ -267,24 +284,22 @@ class PokemonDetailFragment : Fragment(),
 
     @SuppressLint("DefaultLocale")
     private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) {
-        Log.d("DETAIL", "populateViews")
         pokemon?.let {
             viewLifecycleOwner.lifecycleScope.launch {
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
-                setPokemonMoves(it.moves.getPokemonMoves())
+//                setPokemonMoves(it.moves.getPokemonMoves())
             }
         }
     }
 
-    private suspend fun setPokemonImageView(imageUrl: String) : Boolean =
-        suspendCancellableCoroutine { continuation ->
+    private suspend fun setPokemonImageView(imageUrl: String): Boolean = suspendCancellableCoroutine { continuation ->
             val requestOptions =
                 RequestOptions.noTransformation()
             glide.asBitmap()
                 .load(imageUrl)
                 .apply(requestOptions)
-                .into(object : CustomTarget<Bitmap>(){
+                .into(object : CustomTarget<Bitmap>() {
                     override fun onLoadCleared(placeholder: Drawable?) {
                         continuation.resume(false)
                     }
@@ -293,10 +308,16 @@ class PokemonDetailFragment : Fragment(),
                         resource: Bitmap,
                         transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
                     ) {
-                        binding.pokemonImageViewHolderLayout.pokemonImageView.setImageBitmap(resource)
+                        binding.pokemonImageViewHolderLayout.pokemonImageView.setImageBitmap(
+                            resource
+                        )
                         continuation.resume(true)
                     }
 
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        super.onLoadFailed(errorDrawable)
+                        continuation.resume(true)
+                    }
                 })
         }
 
@@ -312,7 +333,7 @@ class PokemonDetailFragment : Fragment(),
                 glide.asBitmap()
                     .load(R.drawable.pokeball_vector)
                     .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-                startPostponedEnterAnimation()
+                startPostponedEnterTransition()
                 return false
             }
 
@@ -323,68 +344,9 @@ class PokemonDetailFragment : Fragment(),
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                startPostponedEnterAnimation()
+                startPostponedEnterTransition()
                 return false
             }
-        }
-    }
-
-    private fun createRevealAnimation() {
-        val x = binding.splash.right / 2
-        val location = IntArray(2)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-            location
-        )
-        val y =
-            location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
-        binding.splash.circleReveal(this, startAtX = x, startAtY = y)
-    }
-
-    private fun createHideAnimation() {
-        val x: Int = binding.splash.right / 2
-        val location = IntArray(2)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-            location
-        )
-        val y =
-            location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
-        binding.splash.circleHide(this, endAtX = x, endAtY = y)
-    }
-
-    // ------------ Animation Listeners ------------ //
-
-    private fun sharedElementListener(): TransitionListenerAdapter {
-        return transitionListenerAdapter ?: object : TransitionListenerAdapter() {
-            override fun onTransitionEnd(transition: Transition) {
-                super.onTransitionEnd(transition)
-                _binding?.let {
-                    if (!hasExpanded) {
-                        transitionPokemonImageFromSmallToLarge(it)
-                        createRevealAnimation()
-                    }
-                }
-            }
-        }
-    }
-
-    private fun transitionPokemonImageFromSmallToLarge(it: PokemonDetailFragmentBinding) {
-        viewLifecycleOwner.lifecycleScope.launch {
-            it.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-                R.id.large_image
-            )
-        }
-    }
-
-    private fun removeSharedElementListener() {
-        (sharedElementEnterTransition as TransitionSet).removeListener(sharedElementListener())
-    }
-
-    // ------------ Animation Listeners ------------ //
-
-    private suspend fun popDelayed() {
-        withContext(Dispatchers.Main) {
-            delay(100)
-            findNavController().popBackStack()
         }
     }
 
@@ -419,9 +381,12 @@ class PokemonDetailFragment : Fragment(),
         binding.pokedexSubtitle.text =
             context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
         binding.pokedexEntryText.text = it.species.pokedexEntry
-        binding.shapeText.text = context.getString(R.string.shape_text, it.species.shape?.capitalize())
-        binding.formDescriptionText.text = context.getString(R.string.form_text, it.species.formDescription)
-        binding.habitatText.text = context.getString(R.string.habitat, it.species.habitat?.capitalize())
+        binding.shapeText.text =
+            context.getString(R.string.shape_text, it.species.shape?.capitalize())
+        binding.formDescriptionText.text =
+            context.getString(R.string.form_text, it.species.formDescription)
+        binding.habitatText.text =
+            context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
     private suspend fun setPokemonMoves(
@@ -430,24 +395,24 @@ class PokemonDetailFragment : Fragment(),
 
         val pokemonMoveList = mutableListOf<PokemonMove>()
 
-                Log.d("DETAIL", "setPokemonMoves $pokemonMoves")
-                for (moveEntry in pokemonMoves.entries) {
-                    if (!moveEntry.value.isNullOrEmpty()) {
-                        pokemonMoveList.addAll(moveEntry.value!!)
-                    }
+        Log.d("DETAIL", "setPokemonMoves $pokemonMoves")
+        for (moveEntry in pokemonMoves.entries) {
+            if (!moveEntry.value.isNullOrEmpty()) {
+                pokemonMoveList.addAll(moveEntry.value!!)
+            }
 //                    moveEntry.value?.forEach { move ->
 //                        Log.d("DETAIL", "move key $move")
 //                    }
-                }
-                pokemonMoveAdapter.submitList(pokemonMoveList)
+        }
+        pokemonMoveAdapter.submitList(pokemonMoveList)
 
-            binding.pokemonMovesLoading.visibility = View.GONE
+        binding.pokemonMovesLoading.visibility = View.GONE
 
-            if (pokemonMoveList.isEmpty()) {
-                binding.pokemonMovesEmptyText.visibility = View.VISIBLE
-            } else {
-                binding.pokemonMovesEmptyText.visibility = View.GONE
-            }
+        if (pokemonMoveList.isEmpty()) {
+            binding.pokemonMovesEmptyText.visibility = View.VISIBLE
+        } else {
+            binding.pokemonMovesEmptyText.visibility = View.GONE
+        }
     }
 
     private fun setUpPokemonMovesRecyclerView() {
@@ -475,7 +440,7 @@ class PokemonDetailFragment : Fragment(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             android.R.id.home -> {
-                startExitTransition()
+                handleExitTransition()
                 return true
             }
             else -> super.onOptionsItemSelected(item)
@@ -484,51 +449,10 @@ class PokemonDetailFragment : Fragment(),
 
     override fun onDestroyView() {
         super.onDestroyView()
-        removeSharedElementListener()
-        transitionListenerAdapter = null
         _binding = null
     }
 
     override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSlideHideAnimationStarted() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onSlideHideAnimationFinished() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onCircleRevealAnimationStarted() {
-        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-            .setCardBackgroundColor(
-                ContextCompat.getColor(binding.root.context, android.R.color.transparent)
-            )
-    }
-
-    override fun onCircleRevealAnimationFinished() {
-        pokemonDetailViewModel.setRevealAnimationExpandedState(true)
-    }
-
-    override fun onCircleHideAnimationStarted() {
-        lifecycleScope.launch {
-            delay(150)
-            binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-            popDelayed()
-        }
-    }
-
-    override fun onCircleHideAnimationFinished() {
-        binding.splash.visibility = View.INVISIBLE
-    }
-
-    override fun onArcAnimationStarted() {
-        TODO("Not yet implemented")
-    }
-
-    override fun onArcAnimationFinished() {
         TODO("Not yet implemented")
     }
 
@@ -538,14 +462,78 @@ suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { continuati
 
     continuation.invokeOnCancellation { cancel() }
 
-    addListener(object : AnimatorListenerAdapter() {
+    this.addListener(object : AnimatorListenerAdapter() {
+        private var endedSuccessfully = true
+
+        override fun onAnimationCancel(animation: Animator) {
+
+            endedSuccessfully = false
+        }
+
+        override fun onAnimationEnd(animation: Animator) {
+
+            animation.removeListener(this)
+
+            if (continuation.isActive) {
+                // If the coroutine is still active...
+                if (endedSuccessfully) {
+                    // ...and the Animator ended successfully, resume the coroutine
+                    continuation.resume(Unit)
+                } else {
+                    // ...and the Animator was cancelled, cancel the coroutine too
+                    continuation.cancel()
+                }
+            }
+        }
+    })
+
+}
+
+suspend fun TransitionSet.awaitTransitionEnd(executeBeforeReturn: (CancellableContinuation<Unit>) -> Unit) =
+    suspendCancellableCoroutine<Unit> { continuation ->
+
+        val listener = object : TransitionListenerAdapter() {
+            private var endedSuccessfully = true
+
+            override fun onTransitionCancel(transition: Transition) {
+                super.onTransitionCancel(transition)
+                endedSuccessfully = false
+            }
+
+            override fun onTransitionEnd(transition: Transition) {
+                super.onTransitionEnd(transition)
+                transition.removeListener(this)
+
+                if (continuation.isActive) {
+                    // If the coroutine is still active...
+                    if (endedSuccessfully) {
+                        // ...and the Animator ended successfully, resume the coroutine
+                        continuation.resume(Unit)
+                    } else {
+                        // ...and the Animator was cancelled, cancel the coroutine too
+                        continuation.cancel()
+                    }
+                }
+            }
+        }
+        continuation.invokeOnCancellation { removeListener(listener) }
+        this.addListener(listener)
+        executeBeforeReturn(continuation)
+    }
+
+
+suspend fun Animator.startAndWait() = suspendCancellableCoroutine<Unit> { continuation ->
+    continuation.invokeOnCancellation { cancel() }
+
+    this.addListener(object : AnimatorListenerAdapter() {
+
         private var endedSuccessfully = true
 
         override fun onAnimationCancel(animation: Animator?) {
             endedSuccessfully = false
         }
 
-        override fun onAnimationEnd(animation: Animator?) {
+        override fun onAnimationStart(animation: Animator?) {
 
             animation?.removeListener(this)
 
@@ -562,7 +550,10 @@ suspend fun Animator.awaitEnd() = suspendCancellableCoroutine<Unit> { continuati
         }
     })
 
+    start()
+
 }
+
 
 
 

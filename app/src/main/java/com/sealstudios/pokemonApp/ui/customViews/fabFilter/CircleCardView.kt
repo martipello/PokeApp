@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -13,8 +12,6 @@ import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
 import io.codetail.animation.arcanimator.ArcAnimator
 import io.codetail.animation.arcanimator.Side
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlin.coroutines.resume
 import kotlin.math.hypot
 import kotlin.math.min
 
@@ -77,7 +74,7 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     fun circleReveal(
-        listener: FabFilterAnimationListener?,
+        listener: FabFilterAnimationListener? = null,
         startAtX: Int = width / 2,
         startAtY: Int = height / 2
     ): Animator {
@@ -102,7 +99,7 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     fun circleHide(
-        listener: FabFilterAnimationListener?,
+        listener: FabFilterAnimationListener? = null,
         endAtX: Int = width / 2,
         endAtY: Int = height / 2
     ): Animator {

@@ -3,12 +3,12 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
+import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -31,9 +31,9 @@ import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
-import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
+import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
 import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
@@ -110,7 +110,7 @@ class PokemonListFragment : Fragment(),
 
     private fun hideFiltersAnimation() {
         viewLifecycleOwner.lifecycleScope.launch{
-            binding.pokemonListFilter.filterHolder.circleHide(null).run {
+            binding.pokemonListFilter.filterHolder.circleHide().run {
                 start()
                 awaitEnd()
                 binding.pokemonListFilter.filterHolder.visibility = View.INVISIBLE
@@ -133,7 +133,7 @@ class PokemonListFragment : Fragment(),
             ).run {
                 start()
                 awaitEnd()
-                binding.pokemonListFilter.filterHolder.circleReveal(null).run {
+                binding.pokemonListFilter.filterHolder.circleReveal().run {
                     start()
                     awaitEnd()
                     if (!filterIsExpanded){
@@ -236,13 +236,8 @@ class PokemonListFragment : Fragment(),
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
             adapter = pokemonAdapter
-            //TODO try to see if this works
-//            doOnPreDraw {
-//                startPostponedEnterTransition()
-//            }
-            viewTreeObserver.addOnPreDrawListener {
+            doOnPreDraw {
                 startPostponedEnterTransition()
-                true
             }
         }
     }

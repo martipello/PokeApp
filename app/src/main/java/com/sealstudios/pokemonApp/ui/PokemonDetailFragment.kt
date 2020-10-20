@@ -34,10 +34,10 @@ import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
 import com.sealstudios.pokemonApp.ui.listenerExtensions.startAndWait
-import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
@@ -108,19 +108,13 @@ class PokemonDetailFragment : Fragment(),
 
     private suspend fun handleEnterAnimation() {
         viewLifecycleOwner.lifecycleScope.launch {
-
-            //  TODO these don't need to be in async blocks
-
-            val sharedElementEnterTransitionAsync = async {
-                sharedElementEnterTransition = TransitionInflater.from(context)
-                    .inflateTransition(R.transition.shared_element_transition)
-                (sharedElementEnterTransition as TransitionSet).run {
-                    awaitTransitionEnd {
-                        startPostponedEnterTransition()
-                    }
+            sharedElementEnterTransition = TransitionInflater.from(context)
+                .inflateTransition(R.transition.shared_element_transition)
+            (sharedElementEnterTransition as TransitionSet).run {
+                awaitTransitionEnd {
+                    startPostponedEnterTransition()
                 }
             }
-            sharedElementEnterTransitionAsync.await()
             binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
                 R.id.large_image
             )
@@ -130,44 +124,38 @@ class PokemonDetailFragment : Fragment(),
                 .getLocationOnScreen(location)
             val y = location[1] + binding.pokemonImageViewHolderLayout
                 .pokemonBackgroundCircleView.height / 2
-            val splashRevealAnimator = async {
-                binding.splash.circleReveal(null, startAtX = x, startAtY = y).run {
-                    startAndWait()
-                    binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-                        .setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                binding.root.context,
-                                android.R.color.transparent
-                            )
+            binding.splash.circleReveal(null, startAtX = x, startAtY = y).run {
+                startAndWait()
+                binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
+                    .setCardBackgroundColor(
+                        ContextCompat.getColor(
+                            binding.root.context,
+                            android.R.color.transparent
                         )
-                    awaitEnd()
-                }
+                    )
+                awaitEnd()
             }
-            splashRevealAnimator.await()
             pokemonDetailViewModel.setRevealAnimationExpandedState(true)
         }
     }
 
     private fun handleExitAnimation() {
         viewLifecycleOwner.lifecycleScope.launch {
-            val circleHideAnimationAsync = async {
-                val x: Int = binding.splash.right / 2
-                val location = IntArray(2)
-                binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-                    location
-                )
-                val y =
-                    location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
-                binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
-                    startAndWait()
-                    delay(150)
-                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-                    popDelayed()
-                    awaitEnd()
-                    binding.splash.visibility = View.INVISIBLE
-                }
+            val x: Int = binding.splash.right / 2
+            val location = IntArray(2)
+            binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
+                location
+            )
+            val y =
+                location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+            binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
+                startAndWait()
+                delay(150)
+                binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
+                popDelayed()
+                awaitEnd()
+                binding.splash.visibility = View.INVISIBLE
             }
-            circleHideAnimationAsync.await()
         }
     }
 

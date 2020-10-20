@@ -1,8 +1,5 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -14,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.animation.doOnEnd
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,31 +20,23 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.transition.Transition
 import androidx.transition.TransitionInflater
-import androidx.transition.TransitionListenerAdapter
 import androidx.transition.TransitionSet
 import com.bumptech.glide.RequestManager
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
-import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
-import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
-import com.sealstudios.pokemonApp.ui.animationListeners.awaitEnd
-import com.sealstudios.pokemonApp.ui.animationListeners.awaitTransitionEnd
-import com.sealstudios.pokemonApp.ui.animationListeners.startAndWait
-import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.FabFilterAnimationListener
+import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
+import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
+import com.sealstudios.pokemonApp.ui.listenerExtensions.startAndWait
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
@@ -58,7 +46,6 @@ import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
 import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import kotlinx.coroutines.android.awaitFrame
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
@@ -121,6 +108,9 @@ class PokemonDetailFragment : Fragment(),
 
     private suspend fun handleEnterAnimation() {
         viewLifecycleOwner.lifecycleScope.launch {
+
+            //  TODO these don't need to be in async blocks
+
             val sharedElementEnterTransitionAsync = async {
                 sharedElementEnterTransition = TransitionInflater.from(context)
                     .inflateTransition(R.transition.shared_element_transition)

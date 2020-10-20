@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.ui.animationListeners
+package com.sealstudios.pokemonApp.ui.listenerExtensions
 
 import androidx.transition.Transition
 import androidx.transition.TransitionListenerAdapter

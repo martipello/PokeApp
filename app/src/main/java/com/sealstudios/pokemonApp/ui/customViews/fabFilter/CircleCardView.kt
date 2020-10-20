@@ -126,7 +126,7 @@ class CircleCardView @JvmOverloads constructor(
         return anim
     }
 
-    fun arcAnimateFilterFabIn(nestView: View, listener: FabFilterAnimationListener?) {
+    fun arcAnimateFilterFabIn(nestView: View, listener: FabFilterAnimationListener?): ArcAnimator {
         val arcAnimator = ArcAnimator.createArcAnimator(
             this,
             nestView,
@@ -134,12 +134,12 @@ class CircleCardView @JvmOverloads constructor(
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))
-        arcAnimator.start()
+        return arcAnimator
     }
 
     fun arcAnimateFilterFabOut(
         listener: FabFilterAnimationListener?
-    ) {
+    ): ArcAnimator {
         val arcAnimator = ArcAnimator.createArcAnimator(
             this,
             circleViewStartX,
@@ -148,7 +148,7 @@ class CircleCardView @JvmOverloads constructor(
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))
-        arcAnimator.start()
+        return arcAnimator
     }
 
     private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener? {

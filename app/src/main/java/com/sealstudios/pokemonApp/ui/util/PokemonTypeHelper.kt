@@ -34,6 +34,10 @@ enum class PokemonType(val color: Int, val icon: Int) {
         fun getPokemonEnumTypesForPokemonTypes(types: List<pokemonType>): List<PokemonType> {
             return types.map { valueOf(it.name.toUpperCase()) }
         }
+        @SuppressLint("DefaultLocale")
+        fun getPokemonEnumTypeForPokemonType(type: String): PokemonType {
+            return valueOf(type.toUpperCase())
+        }
 
         @SuppressLint("DefaultLocale")
         fun getAllPokemonTypesNames(): List<String> {

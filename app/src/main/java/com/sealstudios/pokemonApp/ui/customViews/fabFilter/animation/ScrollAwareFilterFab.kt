@@ -4,12 +4,16 @@ import android.os.Handler
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.CircleCardView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class ScrollAwareFilerFab(
     private val recyclerView: RecyclerView,
     val circleCardView: CircleCardView,
     val circleCardViewParent: ViewGroup,
-    val scrollAwareFilterFabAnimationListener: FabFilterAnimationListener
+    val scrollAwareFilterFabAnimationListener: FabFilterAnimationListener?
 ) {
 
     var scrolling: Boolean = false
@@ -43,12 +47,12 @@ class ScrollAwareFilerFab(
     }
 
     fun shouldShow() {
-        val handler = Handler()
-        handler.postDelayed({
+        CoroutineScope(Dispatchers.Main).launch {
+            delay(1000)
             if (!scrolling) {
                 scrolling = false
                 circleCardView.slideToShow(circleCardView, scrollAwareFilterFabAnimationListener)
             }
-        }, 1000)
+        }
     }
 }

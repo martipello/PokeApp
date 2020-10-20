@@ -1,9 +1,9 @@
 package com.sealstudios.pokemonApp.ui.customViews.fabFilter
 
 import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.content.Context
 import android.util.AttributeSet
-import android.util.Log
 import android.view.*
 import androidx.transition.Slide
 import androidx.transition.Transition
@@ -73,9 +73,11 @@ class CircleCardView @JvmOverloads constructor(
         return transition
     }
 
-    fun circleReveal(listener: FabFilterAnimationListener?) {
-        val y = height / 2
-        val x = width / 2
+    fun circleReveal(
+        listener: FabFilterAnimationListener? = null,
+        startAtX: Int = width / 2,
+        startAtY: Int = height / 2
+    ): Animator {
 
         val endRadius =
             hypot(
@@ -84,7 +86,7 @@ class CircleCardView @JvmOverloads constructor(
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            this, x, y,
+            this, startAtX, startAtY,
             0f,
             endRadius.toFloat()
         )
@@ -93,12 +95,14 @@ class CircleCardView @JvmOverloads constructor(
         listener?.let {
             anim.addListener(getCircleRevealAnimatorListener(it))
         }
-        anim.start()
+        return anim
     }
 
-    fun circleHide(listener: FabFilterAnimationListener?) {
-        val x = width / 2
-        val y = height / 2
+    fun circleHide(
+        listener: FabFilterAnimationListener? = null,
+        endAtX: Int = width / 2,
+        endAtY: Int = height / 2
+    ): Animator {
 
         val startRadius =
             hypot(
@@ -107,16 +111,19 @@ class CircleCardView @JvmOverloads constructor(
             ).toInt()
 
         val anim = ViewAnimationUtils.createCircularReveal(
-            this, x, y,
+            this, endAtX, endAtY,
             startRadius.toFloat(),
             0f
         )
-        // Always add this listener as it completes the animation
-        anim.addListener(getCircleHideAnimatorListener(listener))
-        anim.start()
+        listener?.let {
+            // If this listener is null make view invisible on ending animation
+            // visibility = View.INVISIBLE
+            anim.addListener(getCircleHideAnimatorListener(listener))
+        }
+        return anim
     }
 
-    fun arcAnimateFilterFabIn(nestView: View, listener: FabFilterAnimationListener?) {
+    fun arcAnimateFilterFabIn(nestView: View, listener: FabFilterAnimationListener?): ArcAnimator {
         val arcAnimator = ArcAnimator.createArcAnimator(
             this,
             nestView,
@@ -124,12 +131,12 @@ class CircleCardView @JvmOverloads constructor(
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))
-        arcAnimator.start();
+        return arcAnimator
     }
 
     fun arcAnimateFilterFabOut(
         listener: FabFilterAnimationListener?
-    ) {
+    ): ArcAnimator {
         val arcAnimator = ArcAnimator.createArcAnimator(
             this,
             circleViewStartX,
@@ -138,7 +145,7 @@ class CircleCardView @JvmOverloads constructor(
             Side.LEFT
         )
         arcAnimator.addListener(animatorListener(listener))
-        arcAnimator.start();
+        return arcAnimator
     }
 
     private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener? {
@@ -167,14 +174,12 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     private fun getCircleHideAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
-        return object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
+        return object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
                 visibility = View.INVISIBLE
                 listener?.onCircleHideAnimationFinished()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
                 listener?.onCircleHideAnimationStarted()
             }
@@ -182,14 +187,14 @@ class CircleCardView @JvmOverloads constructor(
     }
 
     private fun getCircleRevealAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
-        return object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
+        return object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator?) {
+                super.onAnimationEnd(animation)
                 listener?.onCircleRevealAnimationFinished()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {}
             override fun onAnimationStart(animation: Animator?) {
+                super.onAnimationStart(animation)
                 listener?.onCircleRevealAnimationStarted()
             }
         }

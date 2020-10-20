@@ -7,7 +7,7 @@
     </ConstraintSet>
 
     <ConstraintSet android:id="@+id/large_image">
-        <Constraint android:id="@id/pokemon_image_view_holder">
+        <Constraint android:id="@id/pokemon_image_detail_view_holder">
             <Layout
                 android:layout_width="0dp"
                 android:layout_height="0dp"
@@ -17,21 +17,18 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </Constraint>
 
-    <Constraint android:id="@id/pokemon_background_circle_view">
-        <Layout
-            android:layout_width="2dp"
-            android:layout_height="2dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-    </Constraint>
 </ConstraintSet>
 
     <Transition
         app:constraintSetEnd="@+id/large_image"
         app:constraintSetStart="@id/small_image"
         app:duration="100">
+        <KeyFrameSet >
+            <KeyAttribute
+                app:motionTarget="@+id/pokemon_background_circle_view"
+                app:framePosition="100"
+                android:alpha="0" />
+        </KeyFrameSet>
     </Transition>
 
 </appScene>

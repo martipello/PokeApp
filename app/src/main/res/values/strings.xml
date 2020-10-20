@@ -15,9 +15,9 @@
     <string name="notification_title">PokemonApp</string>
     <string name="cancel_download">Cancel</string>
 
-    <string name="no_results">No Results...</string>
+    <string name="no_results">No Results…</string>
     <string name="app_toolbar_header">Header image</string>
-    <string name="pokemonId">#%d</string>
+    <string name="pokemonId">%d</string>
     <string name="pokemon_id_label">#</string>
     <string name="filter">filter</string>
     <string name="moves_label">Moves</string>
@@ -25,17 +25,17 @@
     <string name="pok_dex_gen">Pokédex: %s</string>
     <string name="pok_dex_gen_label">Pokédex:</string>
     <string name="pok_dex_entry">Pokédex Entry</string>
-    <string name="weight">Weight : %d kg</string>
+    <string name="weight">%d kg</string>
     <string name="weight_label">Weight :</string>
-    <string name="height">Height : %d\"</string>
+    <string name="height">%d\"</string>
     <string name="height_label">Height :"</string>
-    <string name="generation">Generation : %s</string>
+    <string name="generation">%s</string>
     <string name="generation_label">Generation :</string>
-    <string name="habitat">Habitat : %s</string>
+    <string name="habitat">%s</string>
     <string name="habitat_label">Habitat :</string>
-    <string name="shape_text">Shape : %s</string>
+    <string name="shape_text">%s</string>
     <string name="shape_label">Shape :</string>
-    <string name="form_text">Form : %s</string>
+    <string name="form_text">%s</string>
     <string name="form_label">Form :</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
@@ -44,4 +44,6 @@
     <string name="intro_image">Intro image</string>
     <string name="transition_name">pokemon_%d_image</string>
     <string name="filter_pokemon_label">Filter Pokemon</string>
+    <string name="species">Species</string>
+    <string name="accuracy_percentage">%d\%</string>
 </resources>

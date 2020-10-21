@@ -177,9 +177,6 @@ class PokemonDetailFragment : Fragment(),
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.transitionName =
             args.transitionName
-        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
-            args.dominantSwatchRgb
-        )
     }
 
     private fun setViewModelProperties() {
@@ -192,6 +189,7 @@ class PokemonDetailFragment : Fragment(),
 
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
+            Log.d("DETAIL", "observePokemon")
             viewLifecycleOwner.lifecycleScope.launch {
                 pokemon?.let {
                     populateViews(it)
@@ -224,7 +222,10 @@ class PokemonDetailFragment : Fragment(),
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
-        binding.splash.setBackgroundColor(dominantColor)
+        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
+            dominantColor
+        )
+        binding.splash.setCardBackgroundColor(dominantColor)
         binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
             dominantColor
@@ -269,6 +270,7 @@ class PokemonDetailFragment : Fragment(),
 
     @SuppressLint("DefaultLocale")
     private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) {
+        Log.d("DETAIL", "populateViews")
         viewLifecycleOwner.lifecycleScope.launch {
             pokemon?.let {
                 binding.mainProgress.visibility = View.GONE

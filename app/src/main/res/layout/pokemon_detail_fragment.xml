@@ -75,7 +75,13 @@
 
             <include
                 android:id="@+id/pokemonImageViewHolderLayout"
-                layout="@layout/pokemon_detail_image_layout" />
+                layout="@layout/pokemon_detail_image_layout"
+                android:layout_height="0dp"
+                android:layout_width="0dp"
+                app:layout_constraintEnd_toEndOf="@id/backing_card"
+                app:layout_constraintStart_toStartOf="@id/backing_card"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintDimensionRatio="16:9"/>
 
             <View
                 android:id="@+id/card_top_guide"
@@ -84,7 +90,6 @@
                 android:orientation="horizontal"
                 app:layout_constraintBottom_toBottomOf="@id/pokemonImageViewHolderLayout"
                 app:layout_constraintTop_toTopOf="@id/pokemonImageViewHolderLayout" />
-
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/backing_card"
@@ -101,8 +106,8 @@
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/content_holder"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
                 android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
                 android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
@@ -117,10 +122,12 @@
                 app:layout_constraintWidth_max="500dp">
 
                 <ProgressBar
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
                     android:theme="@style/progressColor"
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_marginTop="@dimen/qualified_view_holder_image_corner_radius"
@@ -129,9 +136,11 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/content"
-                    android:layout_width="match_parent"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
@@ -443,6 +452,7 @@
                     </RelativeLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
+
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

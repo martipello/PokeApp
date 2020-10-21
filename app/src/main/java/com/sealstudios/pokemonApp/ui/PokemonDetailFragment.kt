@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.graphics.drawable.Drawable
@@ -79,10 +80,10 @@ class PokemonDetailFragment : Fragment(),
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
         handleNavigationArgs()
-        observeUIColor()
         setUpPokemonAdapter()
         setUpPokemonMovesRecyclerView()
         observeHasExpandedState()
+        observeUIColor()
         setViewModelProperties()
         PokemonDetailFragmentInsets().setInsets(binding)
         return binding.root
@@ -111,13 +112,7 @@ class PokemonDetailFragment : Fragment(),
             binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
                 R.id.large_image
             )
-            val x = binding.splash.right / 2
-            val location = IntArray(2)
-            binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
-                .getLocationOnScreen(location)
-            val y = location[1] + binding.pokemonImageViewHolderLayout
-                .pokemonBackgroundCircleView.height / 2
-            binding.splash.circleReveal(null, startAtX = x, startAtY = y).run {
+            createCircleReveal().run {
                 startAndWait()
                 binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
                     .setCardBackgroundColor(
@@ -131,6 +126,16 @@ class PokemonDetailFragment : Fragment(),
             pokemonDetailViewModel.setRevealAnimationExpandedState(true)
             continuation.resume(true)
         }
+    }
+
+    private fun createCircleReveal(): Animator {
+        val x = binding.splash.right / 2
+        val location = IntArray(2)
+        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
+            .getLocationOnScreen(location)
+        val y = location[1] + binding.pokemonImageViewHolderLayout
+            .pokemonBackgroundCircleView.height / 2
+        return binding.splash.circleReveal(null, startAtX = x, startAtY = y)
     }
 
     private fun handleExitAnimation() {
@@ -232,7 +237,19 @@ class PokemonDetailFragment : Fragment(),
             R.id.large_image
         )
         binding.root.post {
-//            createRevealAnimation()
+           viewLifecycleOwner.lifecycleScope.launch {
+                createCircleReveal().run {
+                    startAndWait()
+                    binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
+                        .setCardBackgroundColor(
+                            ContextCompat.getColor(
+                                binding.root.context,
+                                android.R.color.transparent
+                            )
+                        )
+                    awaitEnd()
+                }
+            }
         }
     }
 
@@ -258,9 +275,13 @@ class PokemonDetailFragment : Fragment(),
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
                 binding.content.visibility = View.VISIBLE
-                setPokemonMoves(it.moves.getPokemonMoves())
             }
         }
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            pokemon?.let {
+//                setPokemonMoves(it.moves.getPokemonMoves())
+//            }
+//        }
     }
 
     private suspend fun setPokemonImageView(imageUrl: String): Boolean = suspendCancellableCoroutine { continuation ->
@@ -330,7 +351,7 @@ class PokemonDetailFragment : Fragment(),
             context.getString(R.string.habitat, it.species.habitat?.capitalize())
     }
 
-    private suspend fun setPokemonMoves(
+    private fun setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
 

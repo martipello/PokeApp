@@ -26,12 +26,12 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val pokemon: LiveData<PokemonWithTypesAndSpeciesAndMoves>
-    private var id: MutableLiveData<Int> = MutableLiveData(-1)
+    var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
     var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
     init {
-        pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(id) { id ->
+        pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
             val pokemonLiveData = repository.getSinglePokemonById(id)
             Transformations.switchMap(pokemonLiveData) { pokemon ->
                 pokemon?.let {
@@ -64,10 +64,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         moves: MutableList<PokemonMove>
     ) {
         insertPokemonMoves(pokemonId, moves)
-    }
-
-    fun setId(id: Int) {
-        this.id.value = id
     }
 
     private suspend fun fetchMovesForId(
@@ -103,6 +99,16 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         }
     }
 
+    fun setPokemonId(pokemonId: Int) {
+        this.pokemonId.value = pokemonId
+        savedStateHandle.set(PokemonDetailViewModel.pokemonId, pokemonId)
+    }
+
+    private fun getPokemonIdSavedState(): MutableLiveData<Int> {
+        val id = savedStateHandle.get<Int>(PokemonDetailViewModel.pokemonId) ?: -1
+        return MutableLiveData(id)
+    }
+
     fun setRevealAnimationExpandedState(hasExpanded: Boolean) {
         revealAnimationExpanded.value = hasExpanded
         savedStateHandle.set(hasExpandedKey, hasExpanded)
@@ -126,6 +132,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     companion object {
+        private const val pokemonId: String = "pokemonId"
         private const val hasExpandedKey: String = "hasExpanded"
         private const val lightVibrantColorKey: String = "lightVibrantColor"
         private const val dominantColorKey: String = "dominantColor"

@@ -16,14 +16,9 @@ class PokemonListFragmentInsets {
 
         appBarLayout.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
             marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
+            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
             view.layoutParams = marginLayoutParams
-        }
-
-        appBarLayout.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
-            view.updatePadding(
-                left = windowInsets.systemWindowInsetLeft + initialPadding.left,
-                right = windowInsets.systemWindowInsetRight + initialPadding.right
-            )
         }
 
         appBarLayout.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->

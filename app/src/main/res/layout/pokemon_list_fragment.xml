@@ -3,7 +3,6 @@
     android:id="@+id/list_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     tools:context="com.sealstudios.pokemonApp.ui.PokemonListFragment">
 
     <include

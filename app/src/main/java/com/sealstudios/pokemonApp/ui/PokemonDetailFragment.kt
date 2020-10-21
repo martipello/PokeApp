@@ -30,6 +30,7 @@ import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPok
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves.Companion.getPokemonMoves
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
@@ -79,8 +80,9 @@ class PokemonDetailFragment : Fragment(),
         postponeEnterTransition()
         handleNavigationArgs()
         observeUIColor()
+        setUpPokemonAdapter()
+        setUpPokemonMovesRecyclerView()
         observeHasExpandedState()
-        observePokemon()
         setViewModelProperties()
         PokemonDetailFragmentInsets().setInsets(binding)
         return binding.root
@@ -93,20 +95,11 @@ class PokemonDetailFragment : Fragment(),
         viewLifecycleOwner.lifecycleScope.launch {
             setPokemonImageView(highResPokemonUrl(pokemonId))
             handleEnterAnimation()
+            observePokemon()
         }
-
-//            Log.d("DETAIL","after startPostponedEnterTransition")
-//            observePokemon()
-//            setViewModelProperties(pokemonId)
-//            setUpPokemonAdapter()
-//            setUpPokemonMovesRecyclerView()
-//            observeHasExpandedState()
-//            observeUIColor()
-
-
     }
 
-    private suspend fun handleEnterAnimation() {
+    private suspend fun handleEnterAnimation(): Boolean = suspendCancellableCoroutine { continuation ->
         viewLifecycleOwner.lifecycleScope.launch {
             sharedElementEnterTransition = TransitionInflater.from(context)
                 .inflateTransition(R.transition.shared_element_transition)
@@ -136,6 +129,7 @@ class PokemonDetailFragment : Fragment(),
                 awaitEnd()
             }
             pokemonDetailViewModel.setRevealAnimationExpandedState(true)
+            continuation.resume(true)
         }
     }
 
@@ -234,10 +228,12 @@ class PokemonDetailFragment : Fragment(),
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
-//        transitionPokemonImageFromSmallToLarge(binding)
-//        binding.root.post {
+        binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+            R.id.large_image
+        )
+        binding.root.post {
 //            createRevealAnimation()
-//        }
+        }
     }
 
     @SuppressLint("DefaultLocale")
@@ -256,11 +252,13 @@ class PokemonDetailFragment : Fragment(),
 
     @SuppressLint("DefaultLocale")
     private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) {
-        pokemon?.let {
-            viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
+            pokemon?.let {
+                binding.mainProgress.visibility = View.GONE
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
-//                setPokemonMoves(it.moves.getPokemonMoves())
+                binding.content.visibility = View.VISIBLE
+                setPokemonMoves(it.moves.getPokemonMoves())
             }
         }
     }

@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui
 import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -29,7 +28,6 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
@@ -83,7 +81,6 @@ class PokemonDetailFragment : Fragment(),
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
-//        observePokemonId()
         observeHasExpandedState()
         handleNavigationArgs()
         setUpPokemonAdapter()

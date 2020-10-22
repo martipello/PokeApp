@@ -24,8 +24,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
 import com.bumptech.glide.RequestManager
+import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.engine.GlideException
+import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
@@ -282,6 +287,7 @@ class PokemonDetailFragment : Fragment(),
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
                 binding.content.visibility = View.VISIBLE
+                Log.d("DETAIL", "TRANSITION NAME ${binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.transitionName}")
             }
         }
     }
@@ -291,25 +297,33 @@ class PokemonDetailFragment : Fragment(),
                 RequestOptions.noTransformation()
             glide.asBitmap()
                 .load(imageUrl)
+                .dontAnimate()
+                .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .apply(requestOptions)
-                .into(object : CustomTarget<Bitmap>() {
-                    override fun onLoadCleared(placeholder: Drawable?) {
+                .addListener(object : RequestListener<Bitmap?> {
+
+                    override fun onLoadFailed(
+                        e: GlideException?,
+                        model: Any,
+                        target: Target<Bitmap?>,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         continuation.resume(false)
+                        return false
                     }
+
                     override fun onResourceReady(
-                        resource: Bitmap,
-                        transition: com.bumptech.glide.request.transition.Transition<in Bitmap>?
-                    ) {
-                        binding.pokemonImageViewHolderLayout.pokemonImageView.setImageBitmap(
-                            resource
-                        )
+                        resource: Bitmap?,
+                        model: Any,
+                        target: Target<Bitmap?>,
+                        dataSource: DataSource,
+                        isFirstResource: Boolean
+                    ): Boolean {
                         continuation.resume(true)
+                        return false
                     }
-                    override fun onLoadFailed(errorDrawable: Drawable?) {
-                        super.onLoadFailed(errorDrawable)
-                        continuation.resume(true)
-                    }
-                })
+                }).into(binding.pokemonImageViewHolderLayout.pokemonImageView)
+
         }
 
 

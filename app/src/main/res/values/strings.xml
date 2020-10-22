@@ -18,6 +18,7 @@
     <string name="no_results">No Results…</string>
     <string name="app_toolbar_header">Header image</string>
     <string name="pokemonId">%d</string>
+    <string name="pokemonHashId"># %d</string>
     <string name="pokemon_id_label">#</string>
     <string name="filter">filter</string>
     <string name="moves_label">Moves</string>

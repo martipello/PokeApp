@@ -40,7 +40,7 @@ class PokemonViewHolder constructor(
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
-            itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
+            itemView.context.getString(R.string.pokemonHashId, pokemonWithTypesAndSpecies.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text =
             pokemonWithTypesAndSpecies.species.species.capitalize()
         binding.pokemonImageViewHolder.apply {

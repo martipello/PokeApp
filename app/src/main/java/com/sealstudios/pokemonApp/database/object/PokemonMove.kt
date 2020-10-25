@@ -4,7 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
-import com.sealstudios.pokemonApp.ui.adapter.type_helpers.PokemonMoveAdapterItem
 import org.jetbrains.annotations.NotNull
 
 @Entity

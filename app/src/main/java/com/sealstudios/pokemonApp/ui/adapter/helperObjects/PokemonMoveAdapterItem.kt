@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.ui.adapter.type_helpers
+package com.sealstudios.pokemonApp.ui.adapter.helperObjects
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 

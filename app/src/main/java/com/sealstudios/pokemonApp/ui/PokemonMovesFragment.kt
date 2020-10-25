@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
@@ -19,8 +18,8 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAn
 import com.sealstudios.pokemonApp.databinding.PokemonMovesFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
-import com.sealstudios.pokemonApp.ui.adapter.type_helpers.GenerationHeader
-import com.sealstudios.pokemonApp.ui.adapter.type_helpers.PokemonMoveAdapterItem
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.GenerationHeader
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveAdapterItem
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.GenerationHeaderViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonMoveViewHolder
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
@@ -120,8 +119,11 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
 
             val pokemonMoveList = getPokemonMoveListAsync.await()
 
-            withContext(Dispatchers.Main) {
+            lifecycleScope.launch(Dispatchers.IO){
                 pokemonMoveAdapter.submitList(pokemonMoveList)
+            }
+
+            withContext(Dispatchers.Main) {
 
                 binding.pokemonMovesLoading.visibility = View.GONE
 
@@ -139,8 +141,6 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     private fun setUpPokemonMovesRecyclerView() = binding.pokemonMoveRecyclerView.apply {
         adapter = pokemonMoveAdapter
         addPokemonMovesRecyclerViewDecoration(this)
-        itemAnimator = null
-        layoutManager = LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
     }
 
     private fun addPokemonMovesRecyclerViewDecoration(
@@ -156,6 +156,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     }
 
     override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
+        Log.d("MOVE_FRAGMENT", "onItemSelected $position")
         pokemonMoveAdapter.selectItem(position)
     }
 }

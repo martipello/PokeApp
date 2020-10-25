@@ -13,17 +13,18 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/type_ribbon"
-            android:src="@drawable/ic_type_ribbon"
-            app:tint="@color/dragon"
+            android:id="@+id/category_ribbon"
+            android:src="@drawable/ic_category_ribbon"
+            app:tint="@color/colorAccent"
+            android:visibility="gone"
             android:scaleType="fitXY"/>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/category_ribbon"
-            android:src="@drawable/ic_category_ribbon"
-            app:tint="@color/colorAccent"
+            android:id="@+id/type_ribbon"
+            android:src="@drawable/ic_type_ribbon"
+            android:visibility="gone"
             android:scaleType="fitXY"/>
 
     </FrameLayout>
@@ -45,7 +46,7 @@
 
             <TextView
                 android:id="@+id/level_learned_at_text_view"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="Learned at :"
@@ -59,7 +60,7 @@
                 style="@style/ThemeOverlay.MyCaptionText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_small_margin_4dp"
                 android:text="Show more"
                 app:layout_constraintHorizontal_bias="1"
                 app:layout_constraintHorizontal_chainStyle="packed"

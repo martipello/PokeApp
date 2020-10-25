@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
+import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -9,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.GenerationHeaderViewHolderBinding
 import com.sealstudios.pokemonApp.databinding.PokemonMoveViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
-import com.sealstudios.pokemonApp.ui.adapter.type_helpers.PokemonMoveAdapterItem
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveAdapterItem
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.GenerationHeaderViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonMoveViewHolder
 
@@ -36,26 +37,26 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         }
     }
 
-//    override fun onBindViewHolder(
-//        holder: RecyclerView.ViewHolder,
-//        position: Int,
-//        payloads: MutableList<Any>
-//    ) {
-////        super.onBindViewHolder(holder, position, payloads)
-//        if (payloads.isEmpty()) {
-//            super.onBindViewHolder(holder, position, payloads)
-//        } else {
-//            when (holder) {
-//                is PokemonMoveViewHolder -> {
-//                    differ.currentList[position].move?.let {
-//                        holder.bind(it, selectedItems.get(position, false))
-//                    }
-//                }
-//            }
-//        }
-//    }
+    override fun onBindViewHolder(
+        holder: RecyclerView.ViewHolder,
+        position: Int,
+        payloads: MutableList<Any>
+    ) {
+        if (payloads.isEmpty()) {
+            super.onBindViewHolder(holder, position, payloads)
+        } else {
+            when (holder) {
+                is PokemonMoveViewHolder -> {
+                    differ.currentList[position].move?.let {
+                        holder.bind(it, selectedItems.get(position, false))
+                    }
+                }
+            }
+        }
+    }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        Log.d("MOVE_ADAPTER", "onBindViewHolder for position $position")
         when (holder) {
             is PokemonMoveViewHolder -> {
                 differ.currentList[position].move?.let {
@@ -70,7 +71,7 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         }
     }
 
-    public fun selectItem(pos: Int) {
+    fun selectItem(pos: Int) {
         if (selectedItems[pos, false]) {
             selectedItems.put(pos, false)
         } else {

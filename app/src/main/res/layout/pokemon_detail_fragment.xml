@@ -424,7 +424,7 @@
 
                     <fragment
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="500dp"
                         android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
                         android:id="@+id/movesFragment"
                         app:layout_constraintTop_toBottomOf="@id/moves_divider"/>

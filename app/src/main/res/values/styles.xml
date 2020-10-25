@@ -110,6 +110,17 @@
         <item name="android:textColorPrimary">@color/black</item>
     </style>
 
+    <style name="ThemeOverlay.MySmallBodyText" parent="AppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_small_body</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+    <style name="ThemeOverlay.MySmallBodyTextBold" parent="AppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_small_body</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
     <style name="ThemeOverlay.MyCaptionText" parent="AppTheme">
         <item name="android:textSize">@dimen/qualified_text_size_caption</item>
         <item name="android:textColorPrimary">@color/black</item>

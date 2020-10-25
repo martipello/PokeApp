@@ -30,6 +30,9 @@ enum class PokemonType(val color: Int, val icon: Int) {
     FAIRY(color = R.color.fairy, icon = R.drawable.fairy_type_icon);
 
     companion object {
+
+        const val itemType = 1002
+
         @SuppressLint("DefaultLocale")
         fun getPokemonEnumTypesForPokemonTypes(types: List<pokemonType>): List<PokemonType> {
             return types.map { valueOf(it.name.toUpperCase()) }
@@ -72,8 +75,6 @@ enum class PokemonType(val color: Int, val icon: Int) {
 
         @SuppressLint("DefaultLocale", "InflateParams")
         fun setPokemonTypeChip(pokemonType: PokemonType, context: Context, chip: Chip) {
-//            val chip = LayoutInflater.from(context)
-//                .inflate(R.layout.pokemon_type_chip, null) as Chip
             chip.text = pokemonType.name.capitalize()
             chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
             chip.setChipBackgroundColorResource(pokemonType.color)

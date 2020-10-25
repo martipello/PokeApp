@@ -21,6 +21,7 @@
     <dimen name="qualified_small_margin_2dp">4dp</dimen>
 
     <dimen name="qualified_text_size_caption">16sp</dimen>
+    <dimen name="qualified_text_size_small_body">19sp</dimen>
     <dimen name="qualified_text_size_body">22sp</dimen>
     <dimen name="qualified_text_size_title">28sp</dimen>
     <dimen name="qualified_text_size_subtitle">24sp</dimen>

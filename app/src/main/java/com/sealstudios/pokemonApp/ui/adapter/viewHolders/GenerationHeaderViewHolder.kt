@@ -2,7 +2,7 @@ package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.GenerationHeaderViewHolderBinding
-import com.sealstudios.pokemonApp.ui.adapter.type_helpers.GenerationHeader
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.GenerationHeader
 
 class GenerationHeaderViewHolder
 constructor(

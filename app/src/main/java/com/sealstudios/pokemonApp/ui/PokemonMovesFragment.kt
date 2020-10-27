@@ -22,6 +22,7 @@ import com.sealstudios.pokemonApp.ui.adapter.helperObjects.GenerationHeader
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveAdapterItem
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.GenerationHeaderViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonMoveViewHolder
+import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonMovesViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -97,10 +98,13 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
                 val pokemonMoveList = mutableListOf<PokemonMoveAdapterItem>()
 
                 for (moveEntry in pokemonMoves.entries) {
+
+
                     pokemonMoveList.add(
                         PokemonMoveAdapterItem(
                             move = null,
-                            header = GenerationHeader(headerName = moveEntry.key),
+                            header = GenerationHeader(headerName = PokemonGeneration.formatGenerationName(
+                                PokemonGeneration.getGeneration(moveEntry.key))),
                             itemType = GenerationHeaderViewHolder.layoutType
                         )
                     )

@@ -20,6 +20,7 @@ import com.sealstudios.pokemonApp.ui.animation.collapse
 import com.sealstudios.pokemonApp.ui.animation.expand
 import com.sealstudios.pokemonApp.ui.util.PokemonCategory
 import com.sealstudios.pokemonApp.ui.util.PokemonCategory.Companion.getCategoryForDamageClass
+import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
@@ -33,12 +34,13 @@ constructor(
 
     fun bind(pokemonMove: PokemonMove, isExpanded: Boolean = false) = with(binding) {
         animateToggle(isExpanded)
+        val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
         //TODO change this to have the generation as a header to get the correct level learned at display on the tile
         pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
-        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelsLearnedAt.first()}"
+        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelsLearnedAt[generation.ordinal]}"
         ppText.text = pokemonMove.pp.toString()
-        generationText.text = pokemonMove.generation
-        powerText.text =
+        generationText.text = PokemonGeneration.formatGenerationName(generation)
+        powerText.text = pokemonMove.power.toString()
             if (pokemonMove.power.toString().isNotEmpty()) pokemonMove.power.toString() else "n/a"
 //        accuracyText.text = root.context.getString(R.string.accuracy_percentage, pokemonMove.accuracy)
         showMoreLessToggleButton.setOnClickListener {

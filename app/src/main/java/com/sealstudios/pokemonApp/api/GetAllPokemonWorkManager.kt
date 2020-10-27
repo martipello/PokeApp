@@ -32,27 +32,27 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                 )
             )
             getRemotePokemon(
-                worker = this@GetAllPokemonWorkManager,
-                coroutineScope = this
+                worker = this@GetAllPokemonWorkManager
             )
         })
         Result.success()
     }
 
 
-    private fun getRemotePokemon(
+    private suspend fun getRemotePokemon(
         worker: CoroutineWorker,
-        coroutineScope: CoroutineScope
     ) {
-        coroutineScope.launch {
+        withContext(context = Dispatchers.IO) {
             val pokemonRefListResponse = allPokemonRepository.getAllPokemonResponse()
             if (pokemonRefListResponse.isSuccessful) {
                 pokemonRefListResponse.body()?.results?.let { pokemonRefList ->
                     for (i in 0 until pokemonRefList.size) {
                         pokemonRefList[i]?.let { pokemonRef ->
                             val id = getPokemonIdFromUrl(pokemonRef.url)
-                            allPokemonRepository.fetchSpeciesForId(id)
-                            allPokemonRepository.fetchPokemonForId(id)
+                            val fetchSpecies = async { allPokemonRepository.fetchSpeciesForId(id) }
+                            val fetchPokemon = async { allPokemonRepository.fetchPokemonForId(id) }
+                            fetchPokemon.await()
+                            fetchSpecies.await()
                             setForeGroundAsync(
                                 worker, "$i of ${pokemonRefList.size}", i + 1, pokemonRefList.size
                             )

@@ -8,7 +8,7 @@ import androidx.room.Relation
 data class PokemonWithTypesAndSpecies @JvmOverloads constructor(
 
     @Ignore
-    var matches : Int? = 0,
+    var matches : Int = 0,
 
     @Embedded
     val pokemon: Pokemon,
@@ -33,7 +33,7 @@ data class PokemonWithTypesAndSpecies @JvmOverloads constructor(
             entityColumn = PokemonSpecies.SPECIES_ID
         )
     )
-    val species: PokemonSpecies
+    val species: PokemonSpecies?
 )
 
 

@@ -42,7 +42,7 @@ class PokemonViewHolder constructor(
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(R.string.pokemonHashId, pokemonWithTypesAndSpecies.pokemon.id)
         binding.pokemonSpeciesTextViewLabel.text =
-            pokemonWithTypesAndSpecies.species.species.capitalize()
+            pokemonWithTypesAndSpecies.species?.species?.capitalize()
         binding.pokemonImageViewHolder.apply {
             transitionName =
                 pokemonTransitionNameForId(

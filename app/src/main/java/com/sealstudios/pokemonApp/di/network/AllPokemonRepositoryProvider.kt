@@ -21,8 +21,6 @@ class AllPokemonRepositoryProvider {
         pokemonTypeJoinRepository: PokemonTypeJoinRepository,
         pokemonSpeciesRepository: PokemonSpeciesRepository,
         pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
-        pokemonMoveRepository: PokemonMoveRepository,
-        pokemonMoveJoinRepository: PokemonMoveJoinRepository
     ): GetAllPokemonRepository {
         return GetAllPokemonRepository(
             remotePokemonRepository,
@@ -30,9 +28,7 @@ class AllPokemonRepositoryProvider {
             pokemonTypeRepository,
             pokemonTypeJoinRepository,
             pokemonSpeciesRepository,
-            pokemonSpeciesJoinRepository,
-            pokemonMoveRepository,
-            pokemonMoveJoinRepository
+            pokemonSpeciesJoinRepository
         )
     }
 

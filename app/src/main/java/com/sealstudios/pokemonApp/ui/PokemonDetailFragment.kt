@@ -36,6 +36,7 @@ import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
 import com.sealstudios.pokemonApp.ui.listenerExtensions.startAndWait
+import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
@@ -326,20 +327,23 @@ class PokemonDetailFragment : Fragment(){
     ) {
         val context = binding.root.context
         binding.title.text = it.pokemon.name.capitalize()
-        binding.subtitle.text = it.species.species.capitalize()
-        binding.genTextView.text = context.getString(R.string.generation, it.species.generation)
+        binding.subtitle.text = it.species?.species?.capitalize()
+        it.species?.generation?.let {
+            binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
+                PokemonGeneration.getGeneration(it)))
+        }
         binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
         binding.heightTextView.text = context.getString(R.string.height, it.pokemon.height)
         binding.weightTextView.text = context.getString(R.string.weight, it.pokemon.weight)
         binding.pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, it.species.pokedex?.capitalize())
-        binding.pokedexEntryText.text = it.species.pokedexEntry
+            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize())
+        binding.pokedexEntryText.text = it.species?.pokedexEntry
         binding.shapeText.text =
-            context.getString(R.string.shape_text, it.species.shape?.capitalize())
+            context.getString(R.string.shape_text, it.species?.shape?.capitalize())
         binding.formDescriptionText.text =
-            context.getString(R.string.form_text, it.species.formDescription)
+            context.getString(R.string.form_text, it.species?.formDescription)
         binding.habitatText.text =
-            context.getString(R.string.habitat, it.species.habitat?.capitalize())
+            context.getString(R.string.habitat, it.species?.habitat?.capitalize())
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

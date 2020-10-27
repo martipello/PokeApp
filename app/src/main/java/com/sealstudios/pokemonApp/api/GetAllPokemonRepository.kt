@@ -2,10 +2,8 @@ package com.sealstudios.pokemonApp.api
 
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.database.`object`.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.mapPartialRemotePokemonMoveToDatabasePokemonMove
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
@@ -17,8 +15,8 @@ class GetAllPokemonRepository(
     private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
     private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
-    private val pokemonMoveRepository: PokemonMoveRepository,
-    private val pokemonMoveJoinRepository: PokemonMoveJoinRepository
+//    private val pokemonMoveRepository: PokemonMoveRepository,
+//    private val pokemonMoveJoinRepository: PokemonMoveJoinRepository
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
@@ -30,14 +28,14 @@ class GetAllPokemonRepository(
     suspend fun fetchPokemonForId(
         remotePokemonId: Int
     ) {
-        coroutineScope {
+        withContext(context = Dispatchers.IO) {
             val pokemonRequest =
                 remotePokemonRepository.pokemonById(remotePokemonId)
             pokemonRequest.let { pokemonResponse ->
                 if (pokemonResponse.isSuccessful) {
                     pokemonResponse.body()?.let { pokemon ->
                         insertPokemonTypes(pokemon)
-                        insertPartialPokemonMove(pokemon)
+//                        insertPartialPokemonMove(pokemon)
                         insertPokemon(
                             Pokemon.mapDbPokemonFromPokemonResponse(pokemon)
                         )
@@ -87,28 +85,28 @@ class GetAllPokemonRepository(
         }
     }
 
-    private suspend fun insertPartialPokemonMove(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
-    ) {
-        withContext(Dispatchers.IO) {
-            for (move in remotePokemon.moves) {
-                pokemonMoveRepository.insertPokemonMove(
-                    mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
-                )
-                pokemonMoveJoinRepository.insertPokemonMovesJoin(
-                    PokemonMovesJoin(
-                        remotePokemon.id,
-                        Pokemon.getPokemonIdFromUrl(move.move.url)
-                    )
-                )
-            }
-        }
-    }
+//    private suspend fun insertPartialPokemonMove(
+//        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+//    ) {
+//        withContext(Dispatchers.IO) {
+//            for (move in remotePokemon.moves) {
+//                pokemonMoveRepository.insertPokemonMove(
+//                    mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
+//                )
+//                pokemonMoveJoinRepository.insertPokemonMovesJoin(
+//                    PokemonMovesJoin(
+//                        remotePokemon.id,
+//                        Pokemon.getPokemonIdFromUrl(move.move.url)
+//                    )
+//                )
+//            }
+//        }
+//    }
 
     suspend fun fetchSpeciesForId(
         remotePokemonId: Int
     ) {
-        coroutineScope {
+        withContext(context = Dispatchers.IO) {
             val pokemonSpeciesRequest =
                 remotePokemonRepository.speciesForId(remotePokemonId)
             pokemonSpeciesRequest.let { pokemonSpeciesResponse ->

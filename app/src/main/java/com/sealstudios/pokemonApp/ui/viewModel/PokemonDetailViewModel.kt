@@ -5,6 +5,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesRepository
+import kotlinx.coroutines.launch
 
 val <A, B> Pair<A, B>.dominantColor: A get() = this.first
 val <A, B> Pair<A, B>.lightVibrantColor: B get() = this.second
@@ -14,20 +15,22 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val pokemon: LiveData<PokemonWithTypesAndSpecies>
+    var pokemon: LiveData<PokemonWithTypesAndSpecies> = MutableLiveData()
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
     var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
     init {
-        pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
-            val pokemonLiveData = repository.getSinglePokemonById(id)
-            Transformations.switchMap(pokemonLiveData) { pokemon ->
-                pokemon?.let {
-                    MutableLiveData(pokemon)
+        viewModelScope.launch {
+            pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
+                val pokemonLiveData = repository.getSinglePokemonById(id)
+                Transformations.switchMap(pokemonLiveData) { pokemon ->
+                    pokemon?.let {
+                        MutableLiveData(pokemon)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 
     fun setPokemonId(pokemonId: Int) {

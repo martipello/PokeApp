@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.repository
 
-import android.util.Log
-import com.sealstudios.pokemonApp.api.PokemonService
+import com.sealstudios.pokemonApp.api.service.PokemonService
 import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.api.`object`.PokemonMove
@@ -16,6 +15,10 @@ class RemotePokemonRepository @Inject constructor(
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
+        return pokemonService.getPokemonResponse(offset = 0, limit = 1050)
+    }
+
+    suspend fun getAllPokemon(): PokemonListResponse {
         return pokemonService.getPokemon(offset = 0, limit = 1100)
     }
 

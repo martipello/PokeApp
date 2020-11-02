@@ -19,10 +19,16 @@ interface PokemonMoveDao {
     fun getAllMoves(): LiveData<List<PokemonMove>>
 
     @Query("SELECT * FROM PokemonMove WHERE move_name == :name")
-    fun getSinglePokemonByName(name: String?): LiveData<PokemonMove>
+    fun getMoveByName(name: String?): LiveData<PokemonMove>
 
     @Query("SELECT * FROM PokemonMove WHERE move_id == :id")
-    fun getSinglePokemonById(id: Int?): LiveData<PokemonMove>
+    fun getMoveById(id: Int?): LiveData<PokemonMove>
+
+    @Query("SELECT * FROM PokemonMove WHERE move_id IN (:ids)")
+    fun getMovesByIds(ids: List<Int>): LiveData<List<PokemonMove>>
+
+    @Query("SELECT EXISTS (SELECT * FROM PokemonMove WHERE move_id =:id)")
+    suspend fun moveExists(id: Int): Boolean
 
     @Update
     suspend fun updatePokemonMove(pokemonMove: PokemonMove)
@@ -32,10 +38,6 @@ interface PokemonMoveDao {
 
     @Query("DELETE FROM PokemonMove")
     suspend fun deleteAll()
-
-//    @Transaction
-//    @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-//    fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
 
 }
 

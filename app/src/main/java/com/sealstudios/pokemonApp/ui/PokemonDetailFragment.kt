@@ -4,6 +4,7 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -176,7 +177,6 @@ class PokemonDetailFragment : Fragment(){
 
     private fun setViewModelProperties() {
         pokemonDetailViewModel.setPokemonId(pokemonId)
-        pokemonMovesViewModel.setPokemonId(pokemonId)
         pokemonDetailViewModel.setViewColors(
             args.dominantSwatchRgb,
             args.lightVibrantSwatchRgb
@@ -186,7 +186,9 @@ class PokemonDetailFragment : Fragment(){
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             lifecycleScope.launch {
+                Log.d("DETAIL", "pokemon $pokemon")
                 pokemon?.let {
+                    pokemonMovesViewModel.setPokemon(pokemon.pokemon)
                     populateViews(it)
                 }
             }

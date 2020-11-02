@@ -65,23 +65,11 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         pokemonMoveAdapter = PokemonMoveAdapter(clickListener = this)
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun populateViews(pokemon: PokemonWithTypesAndSpeciesAndMoves?) =
-        lifecycleScope.launch(Dispatchers.Main) {
-            if (pokemon != null && !pokemon.moves.isNullOrEmpty()) {
-                val getPokemonMovesAsync = async {
-                    pokemon.moves.getPokemonMoves()
-                }
-                val pokemonMoves = getPokemonMovesAsync.await()
-                setPokemonMoves(pokemonMoves)
-            }
-        }
-
     private fun observeMoves() {
-        pokemonMovesViewModel.pokemon.observe(viewLifecycleOwner, Observer {
+        pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer {
             it?.let {
                 lifecycleScope.launch(Dispatchers.Default) {
-                    populateViews(it)
+                    setPokemonMoves(it.getPokemonMoves())
                 }
             }
         })
@@ -123,7 +111,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
 
             val pokemonMoveList = getPokemonMoveListAsync.await()
 
-            lifecycleScope.launch(Dispatchers.IO){
+            lifecycleScope.launch(Dispatchers.Main){
                 pokemonMoveAdapter.submitList(pokemonMoveList)
             }
 

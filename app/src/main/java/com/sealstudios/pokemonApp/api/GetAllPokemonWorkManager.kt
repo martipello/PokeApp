@@ -46,13 +46,13 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
             val pokemonRefListResponse = allPokemonRepository.getAllPokemonResponse()
             if (pokemonRefListResponse.isSuccessful) {
                 pokemonRefListResponse.body()?.results?.let { pokemonRefList ->
-                    for (i in 0 until pokemonRefList.size) {
-                        pokemonRefList[i]?.let { pokemonRef ->
+                    for (i in pokemonRefList.indices) {
+                        pokemonRefList[i].let { pokemonRef ->
                             val id = getPokemonIdFromUrl(pokemonRef.url)
-                            val fetchSpecies = async { allPokemonRepository.fetchSpeciesForId(id) }
                             val fetchPokemon = async { allPokemonRepository.fetchPokemonForId(id) }
+                            async { allPokemonRepository.fetchSpeciesForId(id) }
                             fetchPokemon.await()
-                            fetchSpecies.await()
+//                            fetchSpecies.await()
                             setForeGroundAsync(
                                 worker, "$i of ${pokemonRefList.size}", i + 1, pokemonRefList.size
                             )

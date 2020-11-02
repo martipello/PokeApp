@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.api
+package com.sealstudios.pokemonApp.api.service
 
 import com.sealstudios.pokemonApp.api.`object`.*
 import retrofit2.Response
@@ -10,10 +10,16 @@ import retrofit2.http.Query
 interface PokemonService {
 
     @GET("pokemon/")
-    suspend fun getPokemon(
+    suspend fun getPokemonResponse(
         @Query(value = "offset") offset: Int,
         @Query(value = "limit") limit: Int
     ): Response<PokemonListResponse>
+
+    @GET("pokemon/")
+    suspend fun getPokemon(
+        @Query(value = "offset") offset: Int,
+        @Query(value = "limit") limit: Int
+    ): PokemonListResponse
 
     @GET("pokemon/{id}/")
     suspend fun getPokemonById(

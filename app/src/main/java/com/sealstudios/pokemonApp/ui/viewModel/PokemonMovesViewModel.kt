@@ -1,69 +1,125 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonMovesJoin
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
 import com.sealstudios.pokemonApp.repository.PokemonMoveJoinRepository
 import com.sealstudios.pokemonApp.repository.PokemonMoveRepository
-import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesAndMovesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PokemonMovesViewModel @ViewModelInject constructor(
-    private val repository: PokemonWithTypesAndSpeciesAndMovesRepository,
     private val moveRepository: PokemonMoveRepository,
     private val moveJoinRepository: PokemonMoveJoinRepository,
     private val remotePokemonRepository: RemotePokemonRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var pokemon: LiveData<PokemonWithTypesAndSpeciesAndMoves> = MutableLiveData()
-    var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
+    var pokemonMoves: LiveData<List<PokemonMove>> = MutableLiveData()
+    private var pokemon: MutableLiveData<Pokemon> = MutableLiveData()
+
     init {
         viewModelScope.launch {
-
-            pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
-                val pokemonLiveData = repository.getSinglePokemonById(id)
-                Transformations.switchMap(pokemonLiveData) { pokemon ->
-                    pokemon?.let {
-//                    viewModelScope.launch { maybeGetPokemonMoveIds(pokemon) }
-                        MutableLiveData(pokemon)
-                    }
-                }
-            })
+            pokemonMoves =
+                Transformations.distinctUntilChanged(Transformations.switchMap(pokemon) { pokemon ->
+                    Transformations.distinctUntilChanged(
+                        Transformations.switchMap(
+                            moveRepository.getMovesByIds(
+                                pokemon.move_ids
+                            )
+                        ) {
+                            viewModelScope.launch {
+                                val idsOfMovesToFetch = mutableListOf<Int>()
+                                for (moveId in pokemon.move_ids) {
+                                    if (!it.any { move -> move.id == moveId }) {
+                                        // Move not in database
+                                        idsOfMovesToFetch.add(moveId)
+                                    }
+                                }
+                                fetchPokemonMoves(pokemon, idsOfMovesToFetch)
+                            }
+                            MutableLiveData(it)
+                        })
+                })
         }
     }
 
-    private suspend fun maybeGetPokemonMoveIds(pokemon: PokemonWithTypesAndSpeciesAndMoves) {
-        val moves = mutableListOf<PokemonMove>()
-        pokemon.moves.forEach { pokemonMove ->
-            if (pokemonMove.id > 0 && pokemonMove.generation.isEmpty()) {
-                try {
-                    val move = fetchMovesForId(pokemonMove)
-                    move?.let {
-                        moves.add(move)
+    private suspend fun fetchPokemonMoves(
+        pokemon: Pokemon,
+        idsToFetch: List<Int>,
+    ) {
+        if (idsToFetch.isNotEmpty()) {
+            withContext(context = Dispatchers.IO) {
+                val pokemonRequest =
+                    remotePokemonRepository.pokemonById(pokemon.id)
+                pokemonRequest.let { pokemonResponse ->
+                    if (pokemonResponse.isSuccessful) {
+                        pokemonResponse.body()?.let { pokemonSnapshot ->
+                            val pokemonMoves = mutableListOf<PokemonMove>()
+                            for (i in pokemonSnapshot.moves.indices) {
+                                val moveApiResource = pokemonSnapshot.moves[i]
+                                if (idsToFetch.any { it == getPokemonIdFromUrl(moveApiResource.move.url) }) {
+                                    val partialPokemonMove =
+                                        createPartialPokemonMove(moveApiResource, i, pokemon)
+                                    val pokemonMove = fetchMoveDetail(partialPokemonMove)
+                                    pokemonMove?.let {
+                                        pokemonMoves.add(it)
+                                    }
+                                }
+                                //TODO re-look at this, currently saves in batches of ten
+                                // to stop observer firing and memory balance
+                                if (pokemonMoves.size > 9) {
+                                    savePokemonMoves(pokemon.id, pokemonMoves)
+                                    pokemonMoves.clear()
+                                } else if (i == pokemonSnapshot.moves.size - 1) {
+                                    savePokemonMoves(pokemon.id, pokemonMoves)
+                                    pokemonMoves.clear()
+                                }
+                            }
+                        }
                     }
-                } catch (e: Exception) {
-                    e.printStackTrace()
                 }
             }
         }
-        savePokemonMoves(pokemon.pokemon.id, moves)
+    }
+
+    private fun createPartialPokemonMove(
+        moveApiResource: PokemonMoveResponse,
+        i: Int,
+        pokemon: Pokemon
+    ): PokemonMove {
+        return PokemonMove(
+            id = getPokemonIdFromUrl(moveApiResource.move.url),
+            name = moveApiResource.move.name,
+            levelLearnedAt = if (i < pokemon.levelsLearnedAt.size) pokemon.levelsLearnedAt[i] else 0,
+            learnMethod = if (i < pokemon.learnMethods.size) pokemon.learnMethods[i] else "N/A",
+            versionLearnt = if (i < pokemon.versionsLearnt.size) pokemon.versionsLearnt[i] else "N/A",
+        )
+    }
+
+    private suspend fun savePokemonMove(
+        pokemonId: Int,
+        move: PokemonMove?
+    ) {
+        move?.let {
+            insertPokemonMove(pokemonId, move)
+        }
     }
 
     private suspend fun savePokemonMoves(
         pokemonId: Int,
-        moves: MutableList<PokemonMove>
+        moves: List<PokemonMove>
     ) {
         insertPokemonMoves(pokemonId, moves)
     }
 
-    private suspend fun fetchMovesForId(
+
+    private suspend fun fetchMoveDetail(
         pokemonMove: PokemonMove
     ): PokemonMove? {
         val pokemonMovesRequest = remotePokemonRepository.moveForId(pokemonMove.id)
@@ -81,72 +137,35 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                         damage_class_effect_chance = move.effect_chance
                     )
                 }
-            } else {
-                return null
             }
         }
         return null
     }
 
+    private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
+        moveRepository.insertPokemonMove(pokemonMove)
+        moveJoinRepository.insertPokemonMovesJoin(
+            PokemonMovesJoin(
+                remotePokemonId,
+                pokemonMove.id
+            )
+        )
+    }
+
     private suspend fun insertPokemonMoves(remotePokemonId: Int, pokemonMoves: List<PokemonMove>) {
-        withContext(Dispatchers.IO) {
-            moveRepository.insertPokemonMove(pokemonMoves)
-            val moveJoins = pokemonMoves.map { PokemonMovesJoin(remotePokemonId, it.id) }
-            moveJoinRepository.insertPokemonMovesJoins(moveJoins)
+        moveRepository.insertPokemonMoves(pokemonMoves)
+        val moveJoins = pokemonMoves.map {
+            PokemonMovesJoin(
+                remotePokemonId,
+                it.id
+            )
         }
+        moveJoinRepository.insertPokemonMovesJoins(moveJoins)
     }
 
-    fun setPokemonId(pokemonId: Int) {
-        this.pokemonId.value = pokemonId
-        savedStateHandle.set(PokemonMovesViewModel.pokemonId, pokemonId)
+    fun setPokemon(pokemon: Pokemon) {
+        this.pokemon.value = pokemon
     }
-
-    private fun getPokemonIdSavedState(): MutableLiveData<Int> {
-        val id = savedStateHandle.get<Int>(PokemonMovesViewModel.pokemonId) ?: -1
-        return MutableLiveData(id)
-    }
-
-    companion object {
-        private const val pokemonId: String = "pokemonId"
-    }
-
-//    private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
-//        moveRepository.insertPokemonMove(pokemonMove)
-//        moveJoinRepository.insertPokemonMovesJoin(
-//            PokemonMovesJoin(
-//                remotePokemonId,
-//                pokemonMove.id
-//            )
-//        )
-//    }
-//
-//    private fun fetchAbilitiesForId(
-//        remoteRepository: RemotePokemonRepository,
-//        remotePokemonId: Int
-//    ) {
-//        viewModelScope.launch {
-//            val pokemonAbilitiesRequest =
-//                remoteRepository.getRemotePokemonAbilitiesForId(remotePokemonId)
-//            pokemonAbilitiesRequest.let { pokemonAbilitiesResponse ->
-//                if (pokemonAbilitiesResponse.isSuccessful) {
-//                    pokemonAbilitiesResponse.body()?.let { ability ->
-//                        insertPokemonAbility(remotePokemonId, ability)
-//                    }
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    private suspend fun insertPokemonAbility(remotePokemonId: Int, ability: PokemonAbility) {
-//        localPokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-//        pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
-//            PokemonSpeciesJoin(
-//                remotePokemonId,
-//                pokemonSpecies.id
-//            )
-//        )
-//    }
 
 }
 

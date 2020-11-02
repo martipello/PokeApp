@@ -73,6 +73,8 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+
+    //Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
 
@@ -94,7 +96,6 @@ dependencies {
 
     // hilt
     implementation 'com.google.dagger:hilt-android:2.28-alpha'
-    implementation 'androidx.room:room-runtime:2.2.5'
     kapt 'com.google.dagger:hilt-android-compiler:2.28-alpha'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
     kaptTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
@@ -102,6 +103,12 @@ dependencies {
     implementation 'androidx.hilt:hilt-work:1.0.0-alpha02'
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+
+    //Room
+    implementation 'androidx.room:room-runtime:2.2.5'
+    //Paging
+
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha08"
 
     //WorkManager
     // Kotlin + coroutines

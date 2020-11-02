@@ -24,6 +24,10 @@ import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 class PokemonMoveViewHolder
@@ -37,7 +41,7 @@ constructor(
         val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
         //TODO change this to have the generation as a header to get the correct level learned at display on the tile
         pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
-        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelsLearnedAt[generation.ordinal]}"
+//        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelsLearnedAt[generation.ordinal]}"
         ppText.text = pokemonMove.pp.toString()
         generationText.text = PokemonGeneration.formatGenerationName(generation)
         powerText.text = pokemonMove.power.toString()
@@ -49,9 +53,13 @@ constructor(
         showMoreLessToggle.setOnClickListener {
             clickListener?.onItemSelected(adapterPosition, pokemonMove)
         }
-        val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMove)
-        buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
-        buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
+        CoroutineScope(Dispatchers.Default).launch {
+            val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMove)
+            withContext(Dispatchers.Main){
+                buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
+                buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
+            }
+        }
     }
 
     private fun animateToggle(isExpanded: Boolean) {
@@ -74,25 +82,28 @@ constructor(
         binding.showMoreLessToggleButton.animate().setDuration(200).rotation(0f)
     }
 
-    private fun getPokemonMoveTypeOrCategoryList(pokemonMove: PokemonMove): List<PokemonMoveTypeOrCategory> {
-        val typesOrCategoriesList = mutableListOf<PokemonMoveTypeOrCategory>()
-        val type = getPokemonEnumTypeForPokemonType(pokemonMove.type)
-        typesOrCategoriesList.add(
-            PokemonMoveTypeOrCategory(
-                type = type,
-                category = null,
-                itemType = PokemonType.itemType
+    private suspend fun getPokemonMoveTypeOrCategoryList(pokemonMove: PokemonMove): List<PokemonMoveTypeOrCategory> {
+        withContext(context = Dispatchers.Default){
+            val typesOrCategoriesList = mutableListOf<PokemonMoveTypeOrCategory>()
+            val type = getPokemonEnumTypeForPokemonType(pokemonMove.type)
+            typesOrCategoriesList.add(
+                PokemonMoveTypeOrCategory(
+                    type = type,
+                    category = null,
+                    itemType = PokemonType.itemType
+                )
             )
-        )
-        val category = getCategoryForDamageClass(pokemonMove.damage_class)
-        typesOrCategoriesList.add(
-            PokemonMoveTypeOrCategory(
-                type = null,
-                category = category,
-                itemType = PokemonCategory.itemType
+            val category = getCategoryForDamageClass(pokemonMove.damage_class)
+            typesOrCategoriesList.add(
+                PokemonMoveTypeOrCategory(
+                    type = null,
+                    category = category,
+                    itemType = PokemonCategory.itemType
+                )
             )
-        )
-        return typesOrCategoriesList
+            return@withContext typesOrCategoriesList
+        }
+        return emptyList()
     }
 
 

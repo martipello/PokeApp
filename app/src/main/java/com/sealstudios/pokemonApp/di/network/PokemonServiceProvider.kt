@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.di.network
 
 import com.sealstudios.pokemonApp.BuildConfig
-import com.sealstudios.pokemonApp.api.PokemonService
+import com.sealstudios.pokemonApp.api.service.PokemonService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

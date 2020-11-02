@@ -15,8 +15,6 @@ class GetAllPokemonRepository(
     private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
     private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
-//    private val pokemonMoveRepository: PokemonMoveRepository,
-//    private val pokemonMoveJoinRepository: PokemonMoveJoinRepository
 ) {
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
@@ -35,7 +33,6 @@ class GetAllPokemonRepository(
                 if (pokemonResponse.isSuccessful) {
                     pokemonResponse.body()?.let { pokemon ->
                         insertPokemonTypes(pokemon)
-//                        insertPartialPokemonMove(pokemon)
                         insertPokemon(
                             Pokemon.mapDbPokemonFromPokemonResponse(pokemon)
                         )
@@ -84,24 +81,6 @@ class GetAllPokemonRepository(
             }
         }
     }
-
-//    private suspend fun insertPartialPokemonMove(
-//        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
-//    ) {
-//        withContext(Dispatchers.IO) {
-//            for (move in remotePokemon.moves) {
-//                pokemonMoveRepository.insertPokemonMove(
-//                    mapPartialRemotePokemonMoveToDatabasePokemonMove(move)
-//                )
-//                pokemonMoveJoinRepository.insertPokemonMovesJoin(
-//                    PokemonMovesJoin(
-//                        remotePokemon.id,
-//                        Pokemon.getPokemonIdFromUrl(move.move.url)
-//                    )
-//                )
-//            }
-//        }
-//    }
 
     suspend fun fetchSpeciesForId(
         remotePokemonId: Int

@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.di.database.repository
 
-import com.sealstudios.pokemonApp.api.PokemonService
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
 import com.sealstudios.pokemonApp.repository.PokemonTypeRepository
 import dagger.Module

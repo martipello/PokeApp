@@ -2,12 +2,22 @@ package com.sealstudios.pokemonApp.database.`object`
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Ignore
 import androidx.room.PrimaryKey
-import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @Entity
-data class PokemonMove(
+data class PokemonMove @JvmOverloads constructor(
+
+    @Ignore
+    var versionLearnt: String = "",
+
+    @Ignore
+    var levelLearnedAt: Int = 0,
+
+    @Ignore
+    var learnMethod: String = "",
+
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = MOVE_ID)
@@ -15,15 +25,6 @@ data class PokemonMove(
 
     @ColumnInfo(name = MOVE_NAME)
     var name: String,
-
-    @ColumnInfo(name = VERSIONS_LEARNT)
-    var versionsLearnt: List<String> = emptyList(),
-
-    @ColumnInfo(name = LEVELS_LEARNED_AT)
-    var levelsLearnedAt: List<Int> = emptyList(),
-
-    @ColumnInfo(name = LEARN_METHODS)
-    var learnMethods: List<String> = emptyList(),
 
     @ColumnInfo(name = MOVE_ACCURACY)
     var accuracy: Int = 0,
@@ -63,9 +64,6 @@ data class PokemonMove(
         const val MOVE_DAMAGE_CLASS_EFFECT_CHANCE: String = "move_damage_class_effect_chance"
         const val MOVE_GENERATION: String = "move_generation"
         const val MOVE_TYPE: String = "move_type"
-        const val LEARN_METHODS: String = "learn_methods"
-        const val LEVELS_LEARNED_AT: String = "levels_learned_at"
-        const val VERSIONS_LEARNT: String = "versions_learnt"
 
         fun mapRemotePokemonMoveToDatabasePokemonMove(
             apiPokemonMove: com.sealstudios.pokemonApp.api.`object`.PokemonMove
@@ -81,18 +79,6 @@ data class PokemonMove(
                 damage_class = apiPokemonMove.damage_class.name,
                 type = apiPokemonMove.type.name,
                 damage_class_effect_chance = apiPokemonMove.effect_chance
-            )
-        }
-
-        fun mapPartialRemotePokemonMoveToDatabasePokemonMove(
-            apiPokemonMoveResponse: com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
-        ): PokemonMove {
-            return PokemonMove(
-                id = getPokemonIdFromUrl(apiPokemonMoveResponse.move.url),
-                name = apiPokemonMoveResponse.move.name,
-                levelsLearnedAt = apiPokemonMoveResponse.version_group_details.map { it.level_learned_at },
-                learnMethods = apiPokemonMoveResponse.version_group_details.map { it.move_learn_method.name },
-                versionsLearnt = apiPokemonMoveResponse.version_group_details.map { it.version_group.name }
             )
         }
     }

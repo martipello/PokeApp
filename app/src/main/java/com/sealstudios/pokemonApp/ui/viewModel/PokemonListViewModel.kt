@@ -71,7 +71,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         for (filter in filters) {
             for (type in pokemon.types) {
                 if (type.name.toLowerCase() == filter.toLowerCase()) {
-                    val matches = pokemon.matches?.plus(1)
+                    val matches = pokemon.matches.plus(1)
                     pokemon.apply {
                         this.matches = matches
                     }

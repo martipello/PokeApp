@@ -163,7 +163,6 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                android:text="100%"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"
                 app:layout_constraintTop_toTopOf="@id/accuracy_label" />

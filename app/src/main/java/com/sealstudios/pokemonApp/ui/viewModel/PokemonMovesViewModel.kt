@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
@@ -66,7 +67,9 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                                 if (idsToFetch.any { it == getPokemonIdFromUrl(moveApiResource.move.url) }) {
                                     val partialPokemonMove =
                                         createPartialPokemonMove(moveApiResource, i, pokemon)
+                                    Log.d(TAG, "PARTIAL_POKEMON $partialPokemonMove")
                                     val pokemonMove = fetchMoveDetail(partialPokemonMove)
+                                    Log.d(TAG, "FULL_POKEMON $pokemonMove")
                                     pokemonMove?.let {
                                         pokemonMoves.add(it)
                                     }
@@ -93,6 +96,7 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         i: Int,
         pokemon: Pokemon
     ): PokemonMove {
+        Log.d(TAG, "POKEMON $pokemon")
         return PokemonMove(
             id = getPokemonIdFromUrl(moveApiResource.move.url),
             name = moveApiResource.move.name,
@@ -122,24 +126,27 @@ class PokemonMovesViewModel @ViewModelInject constructor(
     private suspend fun fetchMoveDetail(
         pokemonMove: PokemonMove
     ): PokemonMove? {
-        val pokemonMovesRequest = remotePokemonRepository.moveForId(pokemonMove.id)
-        pokemonMovesRequest.let { pokemonMovesResponse ->
-            if (pokemonMovesResponse.isSuccessful) {
-                pokemonMovesResponse.body()?.let { move ->
-                    return pokemonMove.copy(
-                        accuracy = move.accuracy ?: 0,
-                        pp = move.pp,
-                        priority = move.priority,
-                        power = move.power ?: 0,
-                        generation = move.generation.name,
-                        damage_class = move.damage_class.name,
-                        type = move.type.name,
-                        damage_class_effect_chance = move.effect_chance
-                    )
+        return withContext(Dispatchers.IO) {
+            val pokemonMovesRequest = remotePokemonRepository.moveForId(pokemonMove.id)
+            pokemonMovesRequest.let { pokemonMovesResponse ->
+                if (pokemonMovesResponse.isSuccessful) {
+                    pokemonMovesResponse.body()?.let { move ->
+                        return@withContext pokemonMove.copy(
+                            accuracy = move.accuracy ?: 0,
+                            pp = move.pp,
+                            priority = move.priority,
+                            power = move.power ?: 0,
+                            generation = move.generation.name,
+                            damage_class = move.damage_class.name,
+                            type = move.type.name,
+                            damage_class_effect_chance = move.effect_chance
+                        )
+                    }
                 }
             }
+            return@withContext null
         }
-        return null
+
     }
 
     private suspend fun insertPokemonMove(remotePokemonId: Int, pokemonMove: PokemonMove) {
@@ -165,6 +172,10 @@ class PokemonMovesViewModel @ViewModelInject constructor(
 
     fun setPokemon(pokemon: Pokemon) {
         this.pokemon.value = pokemon
+    }
+
+    companion object {
+        const val TAG = "PMVM"
     }
 
 }

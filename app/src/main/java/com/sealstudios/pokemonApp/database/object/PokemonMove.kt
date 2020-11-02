@@ -9,15 +9,6 @@ import org.jetbrains.annotations.NotNull
 @Entity
 data class PokemonMove @JvmOverloads constructor(
 
-    @Ignore
-    var versionLearnt: String = "",
-
-    @Ignore
-    var levelLearnedAt: Int = 0,
-
-    @Ignore
-    var learnMethod: String = "",
-
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = MOVE_ID)
@@ -50,6 +41,16 @@ data class PokemonMove @JvmOverloads constructor(
     @ColumnInfo(name = MOVE_TYPE)
     var type: String = "",
 
+    @ColumnInfo(name = VERSION_LEARNT)
+    var versionLearnt: String = "",
+
+    @ColumnInfo(name = LEVEL_LEARNED_AT)
+    var levelLearnedAt: Int = 0,
+
+    @ColumnInfo(name = LEARN_METHOD)
+    var learnMethod: String = "",
+
+
     ) {
 
     companion object {
@@ -64,6 +65,9 @@ data class PokemonMove @JvmOverloads constructor(
         const val MOVE_DAMAGE_CLASS_EFFECT_CHANCE: String = "move_damage_class_effect_chance"
         const val MOVE_GENERATION: String = "move_generation"
         const val MOVE_TYPE: String = "move_type"
+        const val LEARN_METHOD: String = "learn_method"
+        const val LEVEL_LEARNED_AT: String = "level_learned_at"
+        const val VERSION_LEARNT: String = "version_learnt"
 
         fun mapRemotePokemonMoveToDatabasePokemonMove(
             apiPokemonMove: com.sealstudios.pokemonApp.api.`object`.PokemonMove

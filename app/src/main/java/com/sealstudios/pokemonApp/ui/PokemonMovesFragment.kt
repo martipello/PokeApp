@@ -78,8 +78,6 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     private suspend fun setPokemonMoves(
         pokemonMoves: Map<String, List<PokemonMove>?>
     ) {
-        //TODO decide whether to display all moves by id or separated by generation
-
         withContext(context = Dispatchers.Default) {
 
             val getPokemonMoveListAsync = async {

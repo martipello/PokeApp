@@ -46,5 +46,4 @@
     <string name="transition_name">pokemon_%d_image</string>
     <string name="filter_pokemon_label">Filter Pokemon</string>
     <string name="species">Species</string>
-    <string name="accuracy_percentage">%d\%</string>
 </resources>

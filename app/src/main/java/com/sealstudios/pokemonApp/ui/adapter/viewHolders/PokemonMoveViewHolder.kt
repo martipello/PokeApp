@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.PorterDuff
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.View
 import androidx.annotation.ColorInt
 import androidx.annotation.ColorRes
@@ -40,18 +41,20 @@ constructor(
         animateToggle(isExpanded)
         val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
         //TODO change this to have the generation as a header to get the correct level learned at display on the tile
+
+        Log.d(TAG,"move $pokemonMove")
         pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
-//        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelsLearnedAt[generation.ordinal]}"
+        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelLearnedAt}"
         ppText.text = pokemonMove.pp.toString()
         generationText.text = PokemonGeneration.formatGenerationName(generation)
         powerText.text = pokemonMove.power.toString()
             if (pokemonMove.power.toString().isNotEmpty()) pokemonMove.power.toString() else "n/a"
-//        accuracyText.text = root.context.getString(R.string.accuracy_percentage, pokemonMove.accuracy)
+        accuracyText.text = "${pokemonMove.accuracy}%"
         showMoreLessToggleButton.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, pokemonMove)
+            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
         }
         showMoreLessToggle.setOnClickListener {
-            clickListener?.onItemSelected(adapterPosition, pokemonMove)
+            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
         }
         CoroutineScope(Dispatchers.Default).launch {
             val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMove)
@@ -83,7 +86,7 @@ constructor(
     }
 
     private suspend fun getPokemonMoveTypeOrCategoryList(pokemonMove: PokemonMove): List<PokemonMoveTypeOrCategory> {
-        withContext(context = Dispatchers.Default){
+        return withContext(context = Dispatchers.Default){
             val typesOrCategoriesList = mutableListOf<PokemonMoveTypeOrCategory>()
             val type = getPokemonEnumTypeForPokemonType(pokemonMove.type)
             typesOrCategoriesList.add(
@@ -103,7 +106,6 @@ constructor(
             )
             return@withContext typesOrCategoriesList
         }
-        return emptyList()
     }
 
 
@@ -142,6 +144,7 @@ constructor(
 
     companion object {
         const val layoutType = 1000
+        const val TAG = "MOVE_VIEW_HOLDER"
     }
 
 }

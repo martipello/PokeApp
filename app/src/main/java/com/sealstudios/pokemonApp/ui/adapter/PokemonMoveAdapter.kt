@@ -56,7 +56,6 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Log.d("MOVE_ADAPTER", "onBindViewHolder for position $position")
         when (holder) {
             is PokemonMoveViewHolder -> {
                 differ.currentList[position].move?.let {

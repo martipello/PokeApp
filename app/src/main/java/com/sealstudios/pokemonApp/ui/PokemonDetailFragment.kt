@@ -186,7 +186,6 @@ class PokemonDetailFragment : Fragment(){
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             lifecycleScope.launch {
-                Log.d("DETAIL", "pokemon $pokemon")
                 pokemon?.let {
                     pokemonMovesViewModel.setPokemon(pokemon.pokemon)
                     populateViews(it)
@@ -364,9 +363,3 @@ class PokemonDetailFragment : Fragment(){
     }
 
 }
-
-
-
-
-
-

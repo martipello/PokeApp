@@ -50,6 +50,9 @@ data class PokemonMove @JvmOverloads constructor(
     @ColumnInfo(name = LEARN_METHOD)
     var learnMethod: String = "",
 
+    @ColumnInfo(name = DESCRIPTION)
+    var description: String = "",
+
 
     ) {
 
@@ -68,6 +71,7 @@ data class PokemonMove @JvmOverloads constructor(
         const val LEARN_METHOD: String = "learn_method"
         const val LEVEL_LEARNED_AT: String = "level_learned_at"
         const val VERSION_LEARNT: String = "version_learnt"
+        const val DESCRIPTION: String = "description"
 
         fun mapRemotePokemonMoveToDatabasePokemonMove(
             apiPokemonMove: com.sealstudios.pokemonApp.api.`object`.PokemonMove

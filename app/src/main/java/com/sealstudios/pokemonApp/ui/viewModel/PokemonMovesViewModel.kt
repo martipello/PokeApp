@@ -128,10 +128,12 @@ class PokemonMovesViewModel @ViewModelInject constructor(
     ): PokemonMove? {
         return withContext(Dispatchers.IO) {
             val pokemonMovesRequest = remotePokemonRepository.moveForId(pokemonMove.id)
+            Log.d(TAG, "${pokemonMovesRequest.body()}")
             pokemonMovesRequest.let { pokemonMovesResponse ->
                 if (pokemonMovesResponse.isSuccessful) {
                     pokemonMovesResponse.body()?.let { move ->
                         return@withContext pokemonMove.copy(
+                            description = move.flavor_text_entries?.findLast { it.language.name == "en" }?.flavor_text ?: "",
                             accuracy = move.accuracy ?: 0,
                             pp = move.pp,
                             priority = move.priority,

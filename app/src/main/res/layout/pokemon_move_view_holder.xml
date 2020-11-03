@@ -45,11 +45,11 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/level_learned_at_text_view"
+                android:id="@+id/level_learn_method"
                 style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Learned at :"
+                android:text="Learned by :"
                 app:layout_constraintBottom_toTopOf="@+id/expanded_content_barrier"
                 app:layout_constraintStart_toStartOf="@+id/pokemon_move_name_text_view"
                 app:layout_constraintEnd_toStartOf="@+id/show_more_less_toggle"
@@ -66,7 +66,7 @@
                 app:layout_constraintHorizontal_chainStyle="packed"
                 app:layout_constraintBottom_toBottomOf="@id/show_more_less_toggle_button"
                 app:layout_constraintEnd_toStartOf="@id/show_more_less_toggle_button"
-                app:layout_constraintStart_toEndOf="@+id/level_learned_at_text_view"
+                app:layout_constraintStart_toEndOf="@+id/level_learn_method"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
@@ -84,7 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 app:barrierDirection="bottom"
-                app:constraint_referenced_ids="level_learned_at_text_view,
+                app:constraint_referenced_ids="level_learn_method,
                 show_more_less_toggle, show_more_less_toggle_button,
                 pokemon_move_name_text_view" />
 
@@ -104,6 +104,15 @@
                 android:background="@color/colorAccent"
                 app:layout_constraintTop_toTopOf="parent"/>
 
+                <TextView
+                    android:id="@+id/level_learned_at_text_view"
+                    style="@style/ThemeOverlay.MySmallBodyText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Learned at :"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/divider"/>
+
             <TextView
                 android:id="@+id/generation_label"
                 style="@style/ThemeOverlay.MyBodyTextBold"
@@ -111,9 +120,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 android:text="Generation : "
+                app:layout_constraintTop_toBottomOf="@id/level_learned_at_text_view"
                 app:layout_constraintEnd_toStartOf="@id/barrier_vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <TextView
                 android:id="@+id/generation_text"

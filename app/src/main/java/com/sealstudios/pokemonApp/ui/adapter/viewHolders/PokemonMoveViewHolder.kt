@@ -44,18 +44,21 @@ constructor(
 
         Log.d(TAG,"move $pokemonMove")
         pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
+        levelLearnMethod.text = "Learnt by : ${pokemonMove.learnMethod.capitalize()}"
         levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelLearnedAt}"
-        ppText.text = pokemonMove.pp.toString()
+
         generationText.text = PokemonGeneration.formatGenerationName(generation)
         powerText.text = pokemonMove.power.toString()
-            if (pokemonMove.power.toString().isNotEmpty()) pokemonMove.power.toString() else "n/a"
         accuracyText.text = "${pokemonMove.accuracy}%"
+        ppText.text = pokemonMove.pp.toString()
+
         showMoreLessToggleButton.setOnClickListener {
             clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
         }
         showMoreLessToggle.setOnClickListener {
             clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
         }
+
         CoroutineScope(Dispatchers.Default).launch {
             val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMove)
             withContext(Dispatchers.Main){

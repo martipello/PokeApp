@@ -34,7 +34,7 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
 
-    private lateinit var pokemonMoveAdapter: PokemonMoveAdapter
+    private var pokemonMoveAdapter: PokemonMoveAdapter? = null
     private var _binding: PokemonMovesFragmentBinding? = null
     private val binding get() = _binding!!
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels(ownerProducer = {requireParentFragment()})
@@ -58,6 +58,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        pokemonMoveAdapter = null
     }
 
 
@@ -110,7 +111,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
             val pokemonMoveList = getPokemonMoveListAsync.await()
 
             lifecycleScope.launch(Dispatchers.Main){
-                pokemonMoveAdapter.submitList(pokemonMoveList)
+                pokemonMoveAdapter?.submitList(pokemonMoveList)
             }
 
             withContext(Dispatchers.Main) {
@@ -146,7 +147,6 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     }
 
     override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
-        Log.d("MOVE_FRAGMENT", "onItemSelected $position")
-        pokemonMoveAdapter.selectItem(position)
+        pokemonMoveAdapter?.selectItem(position)
     }
 }

@@ -177,7 +177,7 @@ data class PokemonMove(
     val shortEffect: String,
     val generation: NamedApiResource,
     val type: NamedApiResource,
-    val flavorTextEntries: List<FlavorText>
+    val flavor_text_entries: List<FlavorText>?
 )
 
 data class EvolutionChain(

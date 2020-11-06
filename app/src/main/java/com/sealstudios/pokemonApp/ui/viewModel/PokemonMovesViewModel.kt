@@ -97,6 +97,7 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         pokemon: Pokemon
     ): PokemonMove {
         Log.d(TAG, "POKEMON $pokemon")
+        Log.d(TAG, "MOVE $moveApiResource")
         return PokemonMove(
             id = getPokemonIdFromUrl(moveApiResource.move.url),
             name = moveApiResource.move.name,

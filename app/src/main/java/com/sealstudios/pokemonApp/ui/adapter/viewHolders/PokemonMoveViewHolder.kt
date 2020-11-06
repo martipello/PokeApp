@@ -40,9 +40,12 @@ constructor(
     fun bind(pokemonMove: PokemonMove, isExpanded: Boolean = false) = with(binding) {
         animateToggle(isExpanded)
         val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
-        //TODO change this to have the generation as a header to get the correct level learned at display on the tile
 
-        Log.d(TAG,"move $pokemonMove")
+        //TODO -------------------------------------
+        //TODO level learnt and method are incorrect
+        //TODO -------------------------------------
+
+        description.text = pokemonMove.description
         pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
         levelLearnMethod.text = "Learnt by : ${pokemonMove.learnMethod.capitalize()}"
         levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelLearnedAt}"
@@ -72,11 +75,13 @@ constructor(
         if (isExpanded) {
             rotateToggleOpen()
             binding.showMoreLessToggle.text = "Show less"
-            expand(binding.expandedContent)
+//            expand(binding.expandedContent)
+            binding.expandedContent.visibility = View.VISIBLE
         } else {
             rotateToggleClose()
             binding.showMoreLessToggle.text = "Show more"
-            collapse(binding.expandedContent)
+            binding.expandedContent.visibility = View.GONE
+//            collapse(binding.expandedContent)
         }
     }
 

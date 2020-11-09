@@ -9,6 +9,7 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
@@ -75,6 +76,7 @@ class PokemonViewHolder constructor(
         glide.asBitmap()
             .load(pokemonImage)
             .apply(requestOptions)
+            .format(DecodeFormat.PREFER_RGB_565)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }

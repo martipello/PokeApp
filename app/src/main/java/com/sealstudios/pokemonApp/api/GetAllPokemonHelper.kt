@@ -1,21 +1,29 @@
 package com.sealstudios.pokemonApp.api
 
+import androidx.work.OneTimeWorkRequest
+import androidx.work.WorkManager
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
+import javax.inject.Inject
 
-
-class GetAllPokemonRepository(
+class GetAllPokemonHelper @Inject constructor(
+    private val workManager: WorkManager,
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonRepository: PokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
     private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
+    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
 ) {
+
+    fun getAllPokemon() {
+        workManager.enqueue(OneTimeWorkRequest.from(GetAllPokemonWorkManager::class.java))
+    }
+
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
         return withContext(Dispatchers.IO) {
@@ -55,6 +63,12 @@ class GetAllPokemonRepository(
     }
 
     private suspend fun insertPokemon(pokemon: Pokemon) {
+        withContext(Dispatchers.IO) {
+            pokemonRepository.insertPokemon(pokemon)
+        }
+    }
+
+    suspend fun insertPokemon(pokemon: List<Pokemon>) {
         withContext(Dispatchers.IO) {
             pokemonRepository.insertPokemon(pokemon)
         }
@@ -101,5 +115,6 @@ class GetAllPokemonRepository(
 
         }
     }
+
 
 }

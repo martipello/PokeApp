@@ -7,12 +7,10 @@ import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.databinding.BindingAdapter
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.sealstudios.pokemonApp.api.GetAllPokemonViewModel
+import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
-import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstTime
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,7 +24,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferenceHelper: SharedPreferenceHelper
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    private val getAllPokemonViewModel: GetAllPokemonViewModel by viewModels()
+    @Inject
+    lateinit var  getAllPokemonHelper: GetAllPokemonHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadPokemonData() {
-        getAllPokemonViewModel.getAllPokemon()
+        getAllPokemonHelper.getAllPokemon()
     }
 
     private fun findNavController(): NavController {

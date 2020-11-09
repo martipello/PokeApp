@@ -28,7 +28,7 @@ data class PokemonType (
         const val TYPE_SLOT: String = "type_slot"
 
         fun getTypesInOrder(types: List<PokemonType>): List<PokemonType> {
-            return types.sortedBy { it.slot }
+            return types.sortedBy { it.name }
         }
 
     }

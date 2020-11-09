@@ -1,16 +1,13 @@
 package com.sealstudios.pokemonApp.database.`object`
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as ApiPokemon
 
 @TypeConverters(RoomIntListConverter::class)
-@Entity
-data class Pokemon(
+@Entity(indices = [Index(value = [Pokemon.POKEMON_NAME])])
+data class Pokemon constructor(
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = POKEMON_ID)
@@ -45,6 +42,7 @@ data class Pokemon(
 
 
     ) {
+
     companion object {
 
         const val POKEMON_ID: String = "pokemon_id"

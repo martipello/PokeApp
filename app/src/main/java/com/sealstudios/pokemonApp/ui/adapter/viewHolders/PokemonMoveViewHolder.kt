@@ -42,7 +42,7 @@ constructor(
         val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
 
         //TODO -------------------------------------
-        //TODO level learnt and method are incorrect
+        //TODO level learnt and method are incorrect because i don't show a value per generation
         //TODO -------------------------------------
 
         description.text = pokemonMove.description

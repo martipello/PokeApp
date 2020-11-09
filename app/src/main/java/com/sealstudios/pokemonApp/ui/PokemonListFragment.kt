@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -175,6 +176,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
+            Log.d("POKE_APP", "observePokemonList of size ${pokemonList.size}")
             pokemonList?.let { pokemonListWithTypesAndSpecies ->
                 pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
                 checkForEmptyLayout(pokemonListWithTypesAndSpecies)

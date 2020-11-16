@@ -329,22 +329,23 @@ class PokemonDetailFragment : Fragment(){
         val context = binding.root.context
         binding.title.text = it.pokemon.name.capitalize()
         binding.subtitle.text = it.species?.species?.capitalize()
-        it.species?.generation?.let {
-            binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
-                PokemonGeneration.getGeneration(it)))
-        }
+        binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
+            PokemonGeneration.getGeneration(it.species?.generation ?: "")))
         binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
         binding.heightTextView.text = context.getString(R.string.height, it.pokemon.height)
         binding.weightTextView.text = context.getString(R.string.weight, it.pokemon.weight)
         binding.pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize())
-        binding.pokedexEntryText.text = it.species?.pokedexEntry
+            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize() ?: "N/A")
+        it.species?.pokedexEntry?.let {
+            binding.pokedexEntryText.visibility = View.VISIBLE
+            binding.pokedexEntryText.text = it
+        }
         binding.shapeText.text =
-            context.getString(R.string.shape_text, it.species?.shape?.capitalize())
+            context.getString(R.string.shape_text, it.species?.shape?.capitalize() ?: "N/A")
         binding.formDescriptionText.text =
-            context.getString(R.string.form_text, it.species?.formDescription)
+            context.getString(R.string.form_text, it.species?.formDescription ?: "N/A")
         binding.habitatText.text =
-            context.getString(R.string.habitat, it.species?.habitat?.capitalize())
+            context.getString(R.string.habitat, it.species?.habitat?.capitalize() ?: "N/A")
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

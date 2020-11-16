@@ -410,6 +410,7 @@
                         style="@style/ThemeOverlay.MyBodyText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:visibility="gone"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:text="@string/pok_dex_entry"
                         app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />

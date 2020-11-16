@@ -12,7 +12,8 @@ enum class PokemonGeneration() {
     GENERATION_VII,
     GENERATION_VIII,
     GENERATION_IX,
-    GENERATION_X;
+    GENERATION_X,
+    UNKNOWN;
 
     companion object {
 
@@ -20,14 +21,22 @@ enum class PokemonGeneration() {
 
         @SuppressLint("DefaultLocale")
         fun getGeneration(generationName: String): PokemonGeneration {
-            return valueOf(generationName.replace('-', '_').toUpperCase())
+            return try {
+                valueOf(generationName.replace('-', '_').toUpperCase())
+            } catch (e: Exception) {
+                UNKNOWN
+            }
         }
 
         fun formatGenerationName(generation: PokemonGeneration) : String {
             val splitGeneration = generation.name.split(regex = Regex("_"), limit = 2)
-            val genName = splitGeneration[0].toLowerCase().capitalize()
-            val genNumber = splitGeneration[1].replace('_', ' ').toUpperCase()
-            return "$genName $genNumber"
+            return if (splitGeneration.size > 1){
+                val genName = splitGeneration[0].toLowerCase().capitalize()
+                val genNumber = splitGeneration[1].replace('_', ' ').toUpperCase()
+                "$genName $genNumber"
+            } else {
+                "Unknown"
+            }
         }
 
     }

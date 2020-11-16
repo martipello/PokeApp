@@ -13,7 +13,8 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType as pokemonType
 enum class PokemonCategory(val color: Int, val icon: Int) {
     PHYSICAL(color = R.color.physical, icon = R.drawable.physical),
     SPECIAL(color = R.color.special, icon = R.drawable.special),
-    STATUS(color = R.color.status, icon = R.drawable.status);
+    STATUS(color = R.color.status, icon = R.drawable.status),
+    UNKNOWN(color = R.color.white, icon = R.drawable.ic_pokeball);
 
     companion object {
 
@@ -22,7 +23,11 @@ enum class PokemonCategory(val color: Int, val icon: Int) {
         @SuppressLint("DefaultLocale")
         fun getCategoryForDamageClass(type: String): PokemonCategory {
             Log.d("PokemonCategory","getPokemonEnumCategoryForPokemonType $type")
-            return valueOf(type.toUpperCase())
+            return try {
+                valueOf(type.toUpperCase())
+            } catch (e: Exception) {
+                UNKNOWN
+            }
         }
 
         @SuppressLint("DefaultLocale")

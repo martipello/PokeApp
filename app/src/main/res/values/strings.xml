@@ -26,9 +26,9 @@
     <string name="pok_dex_gen">Pokédex: %s</string>
     <string name="pok_dex_gen_label">Pokédex:</string>
     <string name="pok_dex_entry">Pokédex Entry</string>
-    <string name="weight">%d kg</string>
+    <string name="weight">%.2f kg</string>
     <string name="weight_label">Weight :</string>
-    <string name="height">%d\"</string>
+    <string name="height">%.2f cm</string>
     <string name="height_label">Height :"</string>
     <string name="generation">%s</string>
     <string name="generation_label">Generation :</string>

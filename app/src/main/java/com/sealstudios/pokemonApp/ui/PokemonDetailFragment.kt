@@ -332,8 +332,16 @@ class PokemonDetailFragment : Fragment(){
         binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
             PokemonGeneration.getGeneration(it.species?.generation ?: "")))
         binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
-        binding.heightTextView.text = context.getString(R.string.height, it.pokemon.height)
-        binding.weightTextView.text = context.getString(R.string.weight, it.pokemon.weight)
+        Log.d("DETAIL","height ${it.pokemon.height}")
+        Log.d("DETAIL","weight ${it.pokemon.weight}")
+        val doubleHeight: Double = it.pokemon.height.toDouble()
+        val doubleWeight: Double = it.pokemon.weight.toDouble()
+        val height = doubleHeight / 10
+        val weight = doubleWeight / 10
+        Log.d("DETAIL","height $height")
+        Log.d("DETAIL","weight $weight")
+        binding.heightTextView.text = context.getString(R.string.height, height)
+        binding.weightTextView.text = context.getString(R.string.weight, weight)
         binding.pokedexSubtitle.text =
             context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize() ?: "N/A")
         it.species?.pokedexEntry?.let {

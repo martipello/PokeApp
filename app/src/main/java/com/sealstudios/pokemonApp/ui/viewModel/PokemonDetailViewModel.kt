@@ -3,15 +3,17 @@ package com.sealstudios.pokemonApp.ui.viewModel
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesRepository
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 
 val <A, B> Pair<A, B>.dominantColor: A get() = this.first
 val <A, B> Pair<A, B>.lightVibrantColor: B get() = this.second
 
 class PokemonDetailViewModel @ViewModelInject constructor(
     private val repository: PokemonWithTypesAndSpeciesRepository,
+    private val remoteRepositoryHelper: GetAllPokemonHelper,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -22,15 +24,26 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 
     init {
         viewModelScope.launch {
-            pokemon = Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
-                val pokemonLiveData = repository.getSinglePokemonById(id)
-                Transformations.switchMap(pokemonLiveData) { pokemon ->
-                    pokemon?.let {
-                        MutableLiveData(pokemon)
+            pokemon =
+                Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
+                    val pokemonLiveData = repository.getSinglePokemonById(id)
+                    Transformations.switchMap(pokemonLiveData) { pokemon ->
+                        pokemon?.let {
+                            if (it.species?.pokedexEntry == null) {
+                                viewModelScope.launch {
+                                    fetchRemotePokemon(id)
+                                }
+                            }
+                            MutableLiveData(pokemon)
+                        }
                     }
-                }
-            })
+                })
         }
+    }
+
+    private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
+        remoteRepositoryHelper.fetchPokemonForId(id)
+        remoteRepositoryHelper.fetchSpeciesForId(id)
     }
 
     fun setPokemonId(pokemonId: Int) {

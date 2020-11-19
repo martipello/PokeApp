@@ -6,13 +6,16 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
+import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
+import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 
 class PokemonAdapter(
     private val clickListener: PokemonAdapterClickListener,
+    private val remoteRepository: GetAllPokemonHelper,
     private val glide: RequestManager
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -25,7 +28,8 @@ class PokemonAdapter(
         return PokemonViewHolder(
             binding,
             clickListener,
-            glide
+            remoteRepository,
+            glide,
         )
     }
 

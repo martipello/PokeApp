@@ -25,6 +25,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
@@ -35,17 +36,13 @@ import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickL
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
-import com.sealstudios.pokemonApp.ui.listenerExtensions.whileScrolling
 import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
 import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -55,6 +52,9 @@ class PokemonListFragment : Fragment(),
 
     @Inject
     lateinit var glide: RequestManager
+    @Inject
+    lateinit var remoteRepository: GetAllPokemonHelper
+
     private val binding get() = _binding!!
     private var _binding: PokemonListFragmentBinding? = null
     private lateinit var pokemonAdapter: PokemonAdapter
@@ -175,7 +175,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setUpPokemonAdapter() {
-        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+        pokemonAdapter = PokemonAdapter(clickListener = this, remoteRepository = remoteRepository, glide = glide)
     }
 
     private fun observePokemonList() {

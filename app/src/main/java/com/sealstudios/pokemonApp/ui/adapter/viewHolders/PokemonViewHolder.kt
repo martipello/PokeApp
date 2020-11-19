@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.viewModelScope
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
@@ -15,6 +16,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
@@ -28,12 +30,19 @@ import kotlinx.coroutines.withContext
 class PokemonViewHolder constructor(
     private val binding: PokemonViewHolderBinding,
     private val clickListener: PokemonAdapterClickListener?,
+    private val remoteRepositoryHelper: GetAllPokemonHelper,
     private val glide: RequestManager
 ) : RecyclerView.ViewHolder(binding.root) {
 
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
         val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+
+        if (pokemonWithTypesAndSpecies.species == null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                fetchRemotePokemon(pokemonWithTypesAndSpecies.pokemon.id)
+            }
+        }
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
@@ -58,6 +67,11 @@ class PokemonViewHolder constructor(
             )
         }
         buildPokemonTypes(pokemonWithTypesAndSpecies, binding)
+    }
+
+    private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
+        remoteRepositoryHelper.fetchPokemonForId(id)
+        remoteRepositoryHelper.fetchSpeciesForId(id)
     }
 
     private fun buildPokemonTypes(pokemon: PokemonWithTypesAndSpecies, binding: PokemonViewHolderBinding) {

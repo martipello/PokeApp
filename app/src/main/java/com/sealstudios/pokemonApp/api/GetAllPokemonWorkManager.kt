@@ -66,9 +66,8 @@ class GetAllPokemonWorkManager @WorkerInject constructor(
                             )
                         })
                     }
-                    Log.d("POKE_APP", "await")
+
                     saveAll.await()
-                    Log.d("POKE_APP", "awaited")
 
                     setForeGroundAsync(
                         worker, "Downloaded partial pokedex data", 100, 100

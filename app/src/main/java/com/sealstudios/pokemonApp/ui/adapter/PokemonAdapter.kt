@@ -66,7 +66,7 @@ class PokemonAdapter(
                 ): Boolean {
                     return oldItem.pokemon.id == newItem.pokemon.id &&
                             oldItem.types.size == newItem.types.size &&
-                            oldItem.species?.species == newItem.species?.species;
+                            oldItem.species?.species == newItem.species?.species
                 }
 
             }

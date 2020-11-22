@@ -24,8 +24,10 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.snackbar.Snackbar
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
+import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
+import com.sealstudios.pokemonApp.api.states.Result
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
@@ -41,8 +43,10 @@ import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.PokemonViewModel
+import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import javax.inject.Inject
 
 
@@ -53,13 +57,14 @@ class PokemonListFragment : Fragment(),
     @Inject
     lateinit var glide: RequestManager
     @Inject
-    lateinit var remoteRepository: GetAllPokemonHelper
+    lateinit var sharedPreferenceHelper: SharedPreferenceHelper
 
     private val binding get() = _binding!!
     private var _binding: PokemonListFragmentBinding? = null
     private lateinit var pokemonAdapter: PokemonAdapter
     private var search: String = ""
     private var filterIsExpanded = false
+    private val pokemonViewModel: PokemonViewModel by viewModels()
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,11 +97,19 @@ class PokemonListFragment : Fragment(),
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
+        checkIsFirstTime()
         observeFilters()
         observePokemonList()
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
+    }
+
+    private fun checkIsFirstTime() {
+        observeAllPokemonResponse()
+        if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
+            sharedPreferenceHelper.setBool(SharedPreferenceHelper.isFirstTime, false)
+        }
     }
 
     private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
@@ -175,12 +188,51 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setUpPokemonAdapter() {
-        pokemonAdapter = PokemonAdapter(clickListener = this, remoteRepository = remoteRepository, glide = glide)
+        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+    }
+
+    private fun observeAllPokemonResponse() {
+        Log.d("PLF", "observeAllPokemonResponse")
+        pokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
+            Log.d("PLF", "observer")
+            when(allPokemon) {
+                is Result.Success -> Log.d("PLF", "result is success")
+                is Result.Failure -> Log.d("PLF", "result is ${allPokemon.errorHolder.message}")
+            }
+        })
+    }
+
+    private suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) = withContext(Dispatchers.IO) {
+        pokemonViewModel.insertPokemon(pokemonListResponseData.map {
+            val id = Pokemon.getPokemonIdFromUrl(it.url)
+            Pokemon(
+                id = id,
+                name = it.name,
+                image = Pokemon.highResPokemonUrl(id),
+                height = 0,
+                weight = 0,
+                move_ids = listOf(),
+                versionsLearnt = listOf(),
+                learnMethods = listOf(),
+                levelsLearnedAt = listOf(),
+                sprite = "",
+            )
+        })
+    }
+
+    private fun showSnackbarErrorWithRetry(error: String, retryFunction : (String) -> Unit) {
+        val snackbar: Snackbar = Snackbar.make(binding.root, "Error $error", Snackbar.LENGTH_LONG)
+        snackbar.setAction("RETRY") {
+            retryFunction(error)
+        }
+    }
+
+    private fun printErrorMessage(errorMessage: String) {
+        Log.d("RETRY Error","RETRY $errorMessage")
     }
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
-            Log.d("POKE_APP", "observePokemonList of size ${pokemonList.size}")
             pokemonList?.let { pokemonListWithTypesAndSpecies ->
                 pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
                 checkForEmptyLayout(pokemonListWithTypesAndSpecies)

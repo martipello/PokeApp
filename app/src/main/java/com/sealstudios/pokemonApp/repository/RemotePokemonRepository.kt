@@ -5,6 +5,7 @@ import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.api.`object`.PokemonMove
 import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
+import retrofit2.Call
 import retrofit2.Response
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
@@ -16,6 +17,10 @@ class RemotePokemonRepository @Inject constructor(
 
     suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
         return pokemonService.getPokemonResponse(offset = 0, limit = 1050)
+    }
+
+    suspend fun getAllPokemonResponseCall(): Call<PokemonListResponse> {
+        return pokemonService.getPokemonCall(offset = 0, limit = 1050)
     }
 
     suspend fun getAllPokemon(): PokemonListResponse {

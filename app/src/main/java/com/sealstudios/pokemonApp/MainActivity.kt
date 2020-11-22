@@ -1,55 +1,35 @@
 package com.sealstudios.pokemonApp
 
+//import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
-import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
-import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
-import com.sealstudios.pokemonApp.util.SharedPreferenceHelper.Companion.isFirstTime
 import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var sharedPreferenceHelper: SharedPreferenceHelper
     private var _binding: ActivityMainBinding? = null
     private val binding get() = _binding!!
-    @Inject
-    lateinit var  getAllPokemonHelper: GetAllPokemonHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSystemUiVisibility()
-        checkIsFirstTime()
     }
 
     private fun setSystemUiVisibility() {
         binding.root.systemUiVisibility =
             View.SYSTEM_UI_FLAG_LAYOUT_STABLE or
                     View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-    }
-
-    private fun checkIsFirstTime() {
-        if (sharedPreferenceHelper.getBool(isFirstTime)) {
-            downloadPokemonData()
-            sharedPreferenceHelper.setBool(isFirstTime, false)
-        }
-    }
-
-    private fun downloadPokemonData() {
-        getAllPokemonHelper.getAllPokemon()
     }
 
     private fun findNavController(): NavController {

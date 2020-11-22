@@ -30,20 +30,31 @@
 
 package com.sealstudios.pokemonApp.api.states
 
-import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
+sealed class Result<out T : Any> {
+  data class Success<out T : Any>(val value: T) : Result<T>()
+  data class Failure(val errorHolder:ErrorHolder) : Result<Nothing>()}
 
-
-sealed class NetworkState {
-  data class Success(val data : PokemonListResponse) : NetworkState()
-  object InvalidData :NetworkState()
-  data class Error(val error : String) : NetworkState()
-  data class NetworkException(val error : String) : NetworkState()
-  sealed class HttpErrors : NetworkState() {
-    data class ResourceForbidden(val exception: String) : HttpErrors()
-    data class ResourceNotFound(val exception: String) : HttpErrors()
-    data class InternalServerError(val exception: String) : HttpErrors()
-    data class BadGateWay(val exception: String) : HttpErrors()
-    data class ResourceRemoved(val exception: String) : HttpErrors()
-    data class RemovedResourceFound(val exception: String) : HttpErrors()
-  }
+sealed class ErrorHolder(override val message: String):Throwable(message){
+  data class NetworkConnection(override val message: String) : ErrorHolder(message)
+  data class BadRequest(override val message: String) : ErrorHolder(message)
+  data class UnAuthorized(override val message: String) : ErrorHolder(message)
+  data class InternalServerError(override val message: String) :ErrorHolder(message)
+  data class ResourceNotFound(override val message: String) : ErrorHolder(message)
+  data class UnExpected(override val message: String) : ErrorHolder(message)
+  data class Unknown(override val message: String) : ErrorHolder(message)
 }
+
+//sealed class NetworkState {
+//  data class Success(val data : Any) : NetworkState()
+//  object InvalidData :NetworkState()
+//  data class Error(val error : String) : NetworkState()
+//  data class NetworkException(val error : String) : NetworkState()
+//  sealed class HttpErrors : NetworkState() {
+//    data class ResourceForbidden(val exception: String) : HttpErrors()
+//    data class ResourceNotFound(val exception: String) : HttpErrors()
+//    data class InternalServerError(val exception: String) : HttpErrors()
+//    data class BadGateWay(val exception: String) : HttpErrors()
+//    data class ResourceRemoved(val exception: String) : HttpErrors()
+//    data class RemovedResourceFound(val exception: String) : HttpErrors()
+//  }
+//}

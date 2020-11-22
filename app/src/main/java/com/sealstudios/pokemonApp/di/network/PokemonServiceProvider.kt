@@ -25,3 +25,4 @@ class PokemonServiceProvider {
             .create(PokemonService::class.java)
     }
 }
+

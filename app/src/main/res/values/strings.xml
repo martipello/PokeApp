@@ -46,4 +46,6 @@
     <string name="transition_name">pokemon_%d_image</string>
     <string name="filter_pokemon_label">Filter Pokemon</string>
     <string name="species">Species</string>
+
+    <string name="adaptive_height_scroll_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehaviour</string>
 </resources>

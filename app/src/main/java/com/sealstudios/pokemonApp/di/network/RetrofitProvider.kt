@@ -13,7 +13,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class PokemonServiceProvider {
+class RetrofitProvider {
     @Provides
     @Singleton
     fun providePokemonService(): PokemonService {

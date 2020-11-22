@@ -1,30 +1,23 @@
 package com.sealstudios.pokemonApp.repository
 
+import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.api.service.PokemonService
-import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
-import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.api.`object`.PokemonMove
-import com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
-import retrofit2.Call
 import retrofit2.Response
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
 
 class RemotePokemonRepository @Inject constructor(
-    private val pokemonService: PokemonService
+    private val pokemonService: PokemonService,
+    private val responseHandler: ResponseHandler
 ) {
 
-    suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
-        return pokemonService.getPokemonResponse(offset = 0, limit = 1050)
-    }
-
-    suspend fun getAllPokemonResponseCall(): Call<PokemonListResponse> {
-        return pokemonService.getPokemonCall(offset = 0, limit = 1050)
-    }
-
-    suspend fun getAllPokemon(): PokemonListResponse {
-        return pokemonService.getPokemon(offset = 0, limit = 1100)
+    suspend fun getAllPokemonResponse(): Resource<PokemonListResponse> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemon(offset = 0, limit = 1050))
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
     }
 
     suspend fun pokemonById(id: Int): Response<apiPokemon> {

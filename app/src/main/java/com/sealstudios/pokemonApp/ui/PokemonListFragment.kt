@@ -24,14 +24,11 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.snackbar.Snackbar
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
-import com.sealstudios.pokemonApp.api.states.Result
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.databinding.PokemonListFragmentContentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
@@ -46,7 +43,10 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonViewModel
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -192,12 +192,24 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeAllPokemonResponse() {
-        Log.d("PLF", "observeAllPokemonResponse")
         pokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
-            Log.d("PLF", "observer")
-            when(allPokemon) {
-                is Result.Success -> Log.d("PLF", "result is success")
-                is Result.Failure -> Log.d("PLF", "result is ${allPokemon.errorHolder.message}")
+            when(allPokemon.status){
+                Status.SUCCESS -> {
+                    Log.d("LIST", "SUCCESS")
+                    CoroutineScope(Dispatchers.IO).launch {
+                        allPokemon.data?.results?.let {
+                            saveAllPokemon(it)
+                        }
+                    }
+                }
+                Status.ERROR -> {
+                    Log.d("LIST", "ERROR")
+                    setViewEmptyState()
+                }
+                Status.LOADING -> {
+                    Log.d("LIST", "LOADING")
+                    setViewLoadingState()
+                }
             }
         })
     }
@@ -220,22 +232,11 @@ class PokemonListFragment : Fragment(),
         })
     }
 
-    private fun showSnackbarErrorWithRetry(error: String, retryFunction : (String) -> Unit) {
-        val snackbar: Snackbar = Snackbar.make(binding.root, "Error $error", Snackbar.LENGTH_LONG)
-        snackbar.setAction("RETRY") {
-            retryFunction(error)
-        }
-    }
-
-    private fun printErrorMessage(errorMessage: String) {
-        Log.d("RETRY Error","RETRY $errorMessage")
-    }
-
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             pokemonList?.let { pokemonListWithTypesAndSpecies ->
                 pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
-                checkForEmptyLayout(pokemonListWithTypesAndSpecies)
+                setViewNotEmptyState()
             }
         })
     }
@@ -269,25 +270,22 @@ class PokemonListFragment : Fragment(),
             })
     }
 
-    private fun checkForEmptyLayout(it: List<PokemonWithTypesAndSpecies>) {
-        val content = binding.pokemonListFragmentContent
-        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility =
-            View.GONE
-        if (it.isNotEmpty()) {
-            hideRecyclerViewEmptyLayout(content)
-        } else {
-            showRecyclerViewEmptyLayout(content)
-        }
+    private fun setViewLoadingState(){
+//        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.VISIBLE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsText.visibility = View.GONE
     }
 
-    private fun showRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
-        content.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
-        content.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+    private fun setViewEmptyState(){
+//        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
     }
 
-    private fun hideRecyclerViewEmptyLayout(content: PokemonListFragmentContentBinding) {
-        content.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        content.emptyPokemonList.emptyResultsText.visibility = View.GONE
+    private fun setViewNotEmptyState(){
+//        binding.pokemonListFragmentContent.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+//        binding.pokemonListFragmentContent.emptyPokemonList.emptyResultsText.visibility = View.GONE
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {

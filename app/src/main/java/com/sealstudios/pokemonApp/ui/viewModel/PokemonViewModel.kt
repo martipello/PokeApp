@@ -1,26 +1,28 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
 import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
+import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import retrofit2.Response
 
 class PokemonViewModel @ViewModelInject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonRepository: PokemonRepository
 ) : ViewModel() {
 
-    var allPokemonResponse = liveData {
+    var allPokemonResponse: LiveData<Resource<PokemonListResponse>> = liveData {
+        emit(Resource.loading(null))
         emit(getAllPokemonResponse())
     }
 
-    private suspend fun getAllPokemonResponse(): Response<PokemonListResponse> {
+    private suspend fun getAllPokemonResponse(): Resource<PokemonListResponse> {
         return withContext(Dispatchers.IO) {
             return@withContext remotePokemonRepository.getAllPokemonResponse()
         }

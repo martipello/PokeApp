@@ -1,5 +1,4 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/list_fragment_container"
     android:layout_width="match_parent"
@@ -21,6 +20,10 @@
     <include
         android:id="@+id/empty_pokemon_list"
         layout="@layout/pokemon_list_empty" />
+
+    <include
+        android:id="@+id/error_pokemon_list"
+        layout="@layout/pokemon_list_error" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

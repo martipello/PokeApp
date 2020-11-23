@@ -15,4 +15,16 @@ class PokemonTypesJoin(
     @NotNull
     @ColumnInfo(name = TYPE_ID, index = true)
     val type_id: Int
-)
+) {
+    companion object {
+
+        fun mapTypeJoinsFromPokemonResponse(apiPokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon): List<PokemonTypesJoin> {
+            return apiPokemon.types.map { apiType ->
+                PokemonTypesJoin(
+                    pokemon_id = apiPokemon.id,
+                    type_id = Pokemon.getPokemonIdFromUrl(apiType.type.url),
+                )
+            }
+        }
+    }
+}

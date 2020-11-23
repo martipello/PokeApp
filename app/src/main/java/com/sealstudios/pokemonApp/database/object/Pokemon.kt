@@ -69,7 +69,7 @@ data class Pokemon constructor(
                 sprite = apiPokemon.sprites.front_default,
                 move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
                 levelsLearnedAt = moveVersions.map { it.level_learned_at },
-                learnMethods =  moveVersions.map { it.move_learn_method.name },
+                learnMethods = moveVersions.map { it.move_learn_method.name },
                 versionsLearnt = moveVersions.map { it.version_group.name }
             )
         }

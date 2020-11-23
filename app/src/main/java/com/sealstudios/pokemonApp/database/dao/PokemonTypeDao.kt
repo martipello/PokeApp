@@ -9,6 +9,9 @@ interface PokemonTypeDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertPokemonType(pokemonType: PokemonType)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertPokemonTypes(pokemonType: List<PokemonType>)
+
     @Update
     suspend fun updatePokemonType(pokemonType: PokemonType)
 

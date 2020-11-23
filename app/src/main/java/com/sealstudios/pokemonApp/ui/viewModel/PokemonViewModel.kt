@@ -4,6 +4,7 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
 import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
@@ -28,7 +29,27 @@ class PokemonViewModel @ViewModelInject constructor(
         }
     }
 
-    suspend fun insertPokemon(pokemon: List<Pokemon>) = withContext(Dispatchers.IO) {
+    private suspend fun insertPokemon(pokemon: List<Pokemon>) = withContext(Dispatchers.IO) {
         pokemonRepository.insertPokemon(pokemon)
     }
+
+    suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
+        withContext(Dispatchers.IO) {
+            insertPokemon(pokemonListResponseData.map {
+                val id = Pokemon.getPokemonIdFromUrl(it.url)
+                Pokemon(
+                    id = id,
+                    name = it.name,
+                    image = Pokemon.highResPokemonUrl(id),
+                    height = 0,
+                    weight = 0,
+                    move_ids = listOf(),
+                    versionsLearnt = listOf(),
+                    learnMethods = listOf(),
+                    levelsLearnedAt = listOf(),
+                    sprite = "",
+                )
+            })
+        }
+
 }

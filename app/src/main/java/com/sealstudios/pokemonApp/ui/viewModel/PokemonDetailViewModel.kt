@@ -3,15 +3,23 @@ package com.sealstudios.pokemonApp.ui.viewModel
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
-import com.sealstudios.pokemonApp.repository.PokemonWithTypesAndSpeciesRepository
-import kotlinx.coroutines.*
+import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
+import com.sealstudios.pokemonApp.repository.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 val <A, B> Pair<A, B>.dominantColor: A get() = this.first
 val <A, B> Pair<A, B>.lightVibrantColor: B get() = this.second
 
 class PokemonDetailViewModel @ViewModelInject constructor(
     private val repository: PokemonWithTypesAndSpeciesRepository,
+    private val remotePokemonRepository: RemotePokemonRepository,
+    private val pokemonTypeRepository: PokemonTypeRepository,
+    private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
+    private val pokemonSpeciesRepository: PokemonSpeciesRepository,
+    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -40,8 +48,66 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-//        remoteRepositoryHelper.fetchPokemonForId(id)
-//        remoteRepositoryHelper.fetchSpeciesForId(id)
+        fetchPokemonForId(id)
+        fetchSpeciesForId(id)
+    }
+
+    private suspend fun fetchPokemonForId(
+        remotePokemonId: Int
+    ) {
+        withContext(context = Dispatchers.IO) {
+            val pokemonRequest =
+                remotePokemonRepository.pokemonById(remotePokemonId)
+            pokemonRequest.let { pokemonResponse ->
+                if (pokemonResponse.isSuccessful) {
+                    pokemonResponse.body()?.let { pokemon ->
+                        repository.insertPokemon(mapDbPokemonFromPokemonResponse(pokemon))
+                        insertPokemonTypes(pokemon)
+                    }
+                }
+            }
+        }
+    }
+
+    private suspend fun fetchSpeciesForId(
+        remotePokemonId: Int
+    ) {
+        withContext(context = Dispatchers.IO) {
+            val pokemonSpeciesRequest =
+                remotePokemonRepository.speciesForId(remotePokemonId)
+            pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
+                if (pokemonSpeciesResponse.isSuccessful) {
+                    pokemonSpeciesResponse.body()?.let { species ->
+                        insertPokemonSpecies(
+                            remotePokemonId,
+                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(species)
+                        )
+                    }
+                }
+            }
+
+        }
+    }
+
+    private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
+        withContext(Dispatchers.IO) {
+            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
+            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
+                PokemonSpeciesJoin(
+                    remotePokemonId,
+                    pokemonSpecies.id
+                )
+            )
+        }
+    }
+
+    private suspend fun insertPokemonTypes(
+        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+    ) {
+        withContext(Dispatchers.IO) {
+            pokemonTypeRepository.insertPokemonTypes(PokemonType.mapDbPokemonTypesFromPokemonResponse(remotePokemon))
+            pokemonTypeJoinRepository.insertPokemonTypeJoins(PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon))
+        }
     }
 
     fun setPokemonId(pokemonId: Int) {

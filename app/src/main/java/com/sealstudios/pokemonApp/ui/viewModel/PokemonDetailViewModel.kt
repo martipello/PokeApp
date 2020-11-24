@@ -35,7 +35,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     val pokemonLiveData = repository.getSinglePokemonById(id)
                     Transformations.switchMap(pokemonLiveData) { pokemon ->
                         pokemon?.let {
-                            if (it.species?.pokedexEntry == null) {
+                            if (it.species?.pokedexEntry == null || it.types.isEmpty()) {
                                 viewModelScope.launch {
                                     fetchRemotePokemon(id)
                                 }

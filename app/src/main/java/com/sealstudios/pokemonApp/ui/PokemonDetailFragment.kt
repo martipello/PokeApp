@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
@@ -89,6 +90,7 @@ class PokemonDetailFragment : Fragment(){
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch(context = Dispatchers.Main) {
+            setNameAndID(view.context)
             setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
@@ -96,6 +98,11 @@ class PokemonDetailFragment : Fragment(){
             }
             observePokemon()
         }
+    }
+
+    private fun setNameAndID(context: Context) {
+        binding.title.text = pokemonName.capitalize()
+        binding.idLabel.text = context.getString(R.string.pokemonId, pokemonId)
     }
 
     private suspend fun handleEnterAnimation(): Boolean =
@@ -186,9 +193,14 @@ class PokemonDetailFragment : Fragment(){
     private fun observePokemon() {
         pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             lifecycleScope.launch {
-                pokemon?.let {
+                Log.d("DETAIL", "pokemon")
+                Log.d("DETAIL", "pokemon $pokemon")
+                if (pokemon.species != null && pokemon.types.isNotEmpty()){
                     pokemonMovesViewModel.setPokemon(pokemon.pokemon)
-                    populateViews(it)
+                    populateViews(pokemon)
+                    setDataState()
+                } else {
+                    setLoadingState()
                 }
             }
         })
@@ -259,12 +271,30 @@ class PokemonDetailFragment : Fragment(){
     private fun populateViews(pokemon: PokemonWithTypesAndSpecies?) =
         lifecycleScope.launch(Dispatchers.Main) {
             pokemon?.let {
-                binding.mainProgress.visibility = View.GONE
                 setPokemonTypes(it.types)
                 setPokemonFormData(it)
-                binding.content.visibility = View.VISIBLE
             }
         }
+
+    private fun setLoadingState() {
+        binding.mainProgress.visibility = View.VISIBLE
+        binding.content.visibility = View.GONE
+    }
+
+    private fun setErrorState() {
+        binding.mainProgress.visibility = View.GONE
+        binding.content.visibility = View.GONE
+    }
+
+    private fun setDataState() {
+        binding.mainProgress.visibility = View.GONE
+        binding.content.visibility = View.VISIBLE
+    }
+
+    private fun setDataEmptyState() {
+        binding.mainProgress.visibility = View.GONE
+        binding.content.visibility = View.GONE
+    }
 
     private suspend fun setPokemonImageView(imageUrl: String): Boolean =
         suspendCancellableCoroutine { continuation ->
@@ -328,18 +358,14 @@ class PokemonDetailFragment : Fragment(){
     ) {
         val context = binding.root.context
         binding.title.text = it.pokemon.name.capitalize()
+        binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
         binding.subtitle.text = it.species?.species?.capitalize()
         binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
             PokemonGeneration.getGeneration(it.species?.generation ?: "")))
-        binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
-        Log.d("DETAIL","height ${it.pokemon.height}")
-        Log.d("DETAIL","weight ${it.pokemon.weight}")
         val doubleHeight: Double = it.pokemon.height.toDouble()
         val doubleWeight: Double = it.pokemon.weight.toDouble()
         val height = doubleHeight / 10
         val weight = doubleWeight / 10
-        Log.d("DETAIL","height $height")
-        Log.d("DETAIL","weight $weight")
         binding.heightTextView.text = context.getString(R.string.height, height)
         binding.weightTextView.text = context.getString(R.string.weight, weight)
         binding.pokedexSubtitle.text =

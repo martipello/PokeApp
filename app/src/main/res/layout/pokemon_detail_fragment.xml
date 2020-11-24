@@ -76,12 +76,12 @@
             <include
                 android:id="@+id/pokemonImageViewHolderLayout"
                 layout="@layout/pokemon_detail_image_layout"
-                android:layout_height="0dp"
                 android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="16:9"
                 app:layout_constraintEnd_toEndOf="@id/backing_card"
                 app:layout_constraintStart_toStartOf="@id/backing_card"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintDimensionRatio="16:9"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/card_top_guide"
@@ -122,61 +122,60 @@
                 app:layout_constraintWidth_max="500dp">
 
                 <ProgressBar
+                    android:id="@+id/main_progress"
+                    style="?android:attr/progressBarStyleLarge"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="@dimen/qualified_view_holder_image_corner_radius"
+                    android:layout_marginBottom="@dimen/qualified_view_holder_image"
+                    android:theme="@style/progressColor"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:theme="@style/progressColor"
-                    style="?android:attr/progressBarStyleLarge"
-                    android:layout_marginTop="@dimen/qualified_view_holder_image_corner_radius"
-                    android:layout_marginBottom="@dimen/qualified_view_holder_image"
-                    android:id="@+id/main_progress"/>
+                    app:layout_constraintTop_toBottomOf="@id/title" />
+
+
+                <TextView
+                    android:id="@+id/title"
+                    style="@style/ThemeOverlay.MyLargeTitleTextBold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                    android:text="@string/title"
+                    app:layout_constraintEnd_toStartOf="@id/id_label"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/id_hash_label"
+                    style="@style/ThemeOverlay.MyCaptionTextBold"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:paddingEnd="1dp"
+                    android:text="@string/pokemon_id_label"
+                    app:layout_constraintEnd_toStartOf="@id/id_label"
+                    app:layout_constraintTop_toTopOf="@id/title"
+                    tools:ignore="RtlSymmetry" />
+
+                <TextView
+                    android:id="@+id/id_label"
+                    style="@style/ThemeOverlay.MyBodyText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pokemon_id_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/title" />
+
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:visibility="gone"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <TextView
-                        android:id="@+id/title"
-                        style="@style/ThemeOverlay.MyLargeTitleTextBold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:text="@string/title"
-                        app:layout_constraintBottom_toTopOf="@id/subtitle"
-                        app:layout_constraintEnd_toStartOf="@id/id_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/id_hash_label"
-                        style="@style/ThemeOverlay.MyCaptionTextBold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:paddingEnd="1dp"
-                        android:text="@string/pokemon_id_label"
-                        app:layout_constraintEnd_toStartOf="@id/id_label"
-                        app:layout_constraintTop_toTopOf="parent"
-                        tools:ignore="RtlSymmetry" />
-
-                    <TextView
-                        android:id="@+id/id_label"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:text="@string/pokemon_id_label"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title">
 
                     <TextView
                         android:id="@+id/subtitle"
@@ -186,14 +185,13 @@
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:text="@string/subtitle"
                         app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
-                        app:layout_constraintStart_toStartOf="@id/title"
-                        app:layout_constraintTop_toBottomOf="@id/title" />
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <com.google.android.flexbox.FlexboxLayout
                         android:id="@+id/pokemon_types_chip_group_container"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:gravity="end"
                         android:orientation="horizontal"
                         app:flexWrap="wrap"
@@ -221,7 +219,6 @@
                         style="@style/ThemeOverlay.MyBodyTextBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:text="@string/generation_label"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/types_barrier" />
@@ -231,7 +228,6 @@
                         style="@style/ThemeOverlay.MyBodyText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:paddingStart="@dimen/qualified_small_margin_8dp"
                         android:text="@string/generation_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -310,10 +306,10 @@
                         android:layout_width="1dp"
                         android:layout_height="10dp"
                         app:barrierDirection="end"
-                        app:layout_constraintTop_toBottomOf="@id/info_divider"
-                        app:layout_constraintBottom_toTopOf="@id/pokedex_divider"
                         app:constraint_referenced_ids="shape_label,
-                form_description_label, habitat_label" />
+                form_description_label, habitat_label"
+                        app:layout_constraintBottom_toTopOf="@id/pokedex_divider"
+                        app:layout_constraintTop_toBottomOf="@id/info_divider" />
 
 
                     <TextView
@@ -410,9 +406,9 @@
                         style="@style/ThemeOverlay.MyBodyText"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:text="@string/pok_dex_entry"
+                        android:visibility="gone"
                         app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />
 
                     <View
@@ -424,11 +420,11 @@
                         app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
 
                     <fragment
+                        android:id="@+id/movesFragment"
+                        android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
                         android:layout_width="match_parent"
                         android:layout_height="500dp"
-                        android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
-                        android:id="@+id/movesFragment"
-                        app:layout_constraintTop_toBottomOf="@id/moves_divider"/>
+                        app:layout_constraintTop_toBottomOf="@id/moves_divider" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

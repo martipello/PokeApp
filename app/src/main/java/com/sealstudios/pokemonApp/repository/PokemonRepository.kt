@@ -1,8 +1,10 @@
 package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
@@ -40,6 +42,15 @@ class PokemonRepository @Inject constructor(
 
     suspend fun deletePokemon(pokemon: dbPokemon) {
         pokemonDao.deletePokemon(pokemon)
+    }
+
+
+    fun getPokemonWithTypesAndSpeciesWithPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
+        return pokemonDao.getAllPokemonWithTypesAndSpeciesWithPaging()
+    }
+
+    fun searchPokemonWithTypesAndSpeciesWithPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return pokemonDao.searchAllPokemonWithTypesAndSpeciesWithPaging(search)
     }
 
 }

@@ -7,29 +7,29 @@ import com.sealstudios.pokemonApp.api.`object`.Pokemon as ApiPokemon
 
 @TypeConverters(RoomIntListConverter::class)
 @Entity(indices = [Index(value = [Pokemon.POKEMON_NAME])])
-data class Pokemon constructor(
+open class Pokemon constructor(
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = POKEMON_ID)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = POKEMON_NAME)
-    var name: String,
+    var name: String =  "",
 
     @ColumnInfo(name = POKEMON_IMAGE)
-    var image: String,
+    var image: String = "",
 
     @ColumnInfo(name = POKEMON_SPRITE)
-    var sprite: String?,
+    var sprite: String? = "",
 
     @ColumnInfo(name = POKEMON_WEIGHT)
-    val weight: Int,
+    val weight: Int = 0,
 
     @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int,
+    val height: Int = 0,
 
     @ColumnInfo(name = MOVE_IDS)
-    var move_ids: List<Int>,
+    var move_ids: List<Int> = emptyList(),
 
     @ColumnInfo(name = VERSIONS_LEARNT)
     var versionsLearnt: List<String> = emptyList(),

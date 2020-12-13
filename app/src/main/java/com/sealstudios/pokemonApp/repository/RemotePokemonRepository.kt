@@ -14,7 +14,7 @@ class RemotePokemonRepository @Inject constructor(
 
     suspend fun getAllPokemonResponse(): Resource<PokemonListResponse> {
         return try {
-            responseHandler.handleSuccess(pokemonService.getPokemon(offset = 0, limit = 50))
+            responseHandler.handleSuccess(pokemonService.getPokemon(offset = 0, limit = 1050))
         } catch (e: Exception) {
             responseHandler.handleException(e)
         }

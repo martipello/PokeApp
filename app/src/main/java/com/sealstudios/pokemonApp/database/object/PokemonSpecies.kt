@@ -13,46 +13,46 @@ data class PokemonSpecies(
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = SPECIES_ID)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = GENDER_RATE)
-    var gender_rate: Int,
+    var gender_rate: Int = 0,
 
     @ColumnInfo(name = CAPTURE_RATE)
-    var capture_rate: Int,
+    var capture_rate: Int = 0,
 
     @ColumnInfo(name = BASE_HAPPINESS)
-    var base_happiness: Int,
+    var base_happiness: Int = 0,
 
     @ColumnInfo(name = HATCH_COUNTER)
-    var hatch_counter: Int,
+    var hatch_counter: Int = 0,
 
     @ColumnInfo(name = EVOLUTION_CHAIN_ID)
-    var evolution_chain_id: Int,
+    var evolution_chain_id: Int = 0,
 
     @ColumnInfo(name = IS_BABY)
-    var isBaby: Boolean,
+    var isBaby: Boolean = false,
 
     @ColumnInfo(name = SPECIES_NAME)
-    var species: String,
+    var species: String = "",
 
     @ColumnInfo(name = POKEDEX)
-    var pokedex: String?,
+    var pokedex: String? = "",
 
     @ColumnInfo(name = POKEMON_GENERATION)
-    var generation: String?,
+    var generation: String? = "",
 
     @ColumnInfo(name = POKEDEX_ENTRY)
-    var pokedexEntry: String?,
+    var pokedexEntry: String? = "",
 
     @ColumnInfo(name = HABITAT)
-    var habitat: String?,
+    var habitat: String? = "",
 
     @ColumnInfo(name = SHAPE)
-    var shape: String?,
+    var shape: String? = "",
 
     @ColumnInfo(name = FORM_DESCRIPTION)
-    var formDescription: String
+    var formDescription: String = ""
 
 
 ) {

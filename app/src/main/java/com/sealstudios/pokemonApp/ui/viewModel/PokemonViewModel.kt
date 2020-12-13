@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -33,11 +34,16 @@ class PokemonViewModel @ViewModelInject constructor(
         pokemonRepository.insertPokemon(pokemon)
     }
 
+    private suspend fun insertPokemon(pokemon: Pokemon) = withContext(Dispatchers.IO) {
+        pokemonRepository.insertPokemon(pokemon)
+    }
+
     suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
         withContext(Dispatchers.IO) {
-            insertPokemon(pokemonListResponseData.map {
+            Log.d("POKEMON_VIEW_MODEL", "saveAllPokemon")
+            pokemonListResponseData.map {
                 val id = Pokemon.getPokemonIdFromUrl(it.url)
-                Pokemon(
+                insertPokemon(Pokemon(
                     id = id,
                     name = it.name,
                     image = Pokemon.highResPokemonUrl(id),
@@ -48,8 +54,8 @@ class PokemonViewModel @ViewModelInject constructor(
                     learnMethods = listOf(),
                     levelsLearnedAt = listOf(),
                     sprite = "",
-                )
-            })
+                ))
+            }
         }
 
 }

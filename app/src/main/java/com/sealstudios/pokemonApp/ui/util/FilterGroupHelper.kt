@@ -18,7 +18,6 @@ class FilterGroupHelper(
         if (pokemonTypes.size >= chipGroup.childCount) {
             for (x in 0 until chipGroup.childCount) {
                 val pokemonType = pokemonTypes[x]
-                Log.d("FILTER", "bind type ${pokemonType.name}")
                 chipGroup.getChildAt(x).apply {
                     this as Chip
                     this.chipIcon = ContextCompat.getDrawable(chipGroup.context, pokemonType.icon)

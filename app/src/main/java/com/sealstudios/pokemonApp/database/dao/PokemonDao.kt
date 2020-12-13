@@ -1,11 +1,9 @@
 package com.sealstudios.pokemonApp.database.dao
 
 import androidx.lifecycle.LiveData
+import androidx.paging.PagingSource
 import androidx.room.*
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesAndMoves
+import com.sealstudios.pokemonApp.database.`object`.*
 
 @Dao
 interface PokemonDao {
@@ -68,13 +66,19 @@ interface PokemonDao {
     @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun searchAllPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
 
+    @Transaction
+    @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
+    fun getAllPokemonWithTypesAndSpeciesWithPaging(): PagingSource<Int, PokemonWithTypesAndSpecies>
+
+    @Transaction
+    @Query("SELECT pokemon_id, pokemon_name, pokemon_image_url, pokemon_sprite FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    fun searchAllPokemonWithTypesAndSpeciesWithPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList>
+
     /// ************************************************************************************* ///
     ///                                 PokemonWithTypesAndSpeciesAndMoves                    ///
-    /// ************************************************************************************* ///
 
     @Transaction
     @Query("SELECT * FROM Pokemon WHERE pokemon_id == :id")
     fun getSinglePokemonWithTypesAndSpeciesAndMovesById(id: Int?): LiveData<PokemonWithTypesAndSpeciesAndMoves>
 
 }
-

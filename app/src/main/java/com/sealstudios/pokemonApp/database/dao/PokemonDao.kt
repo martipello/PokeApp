@@ -39,6 +39,14 @@ interface PokemonDao {
     suspend fun deleteAll()
 
     /// ************************************************************************************* ///
+    ///                                 PokemonWithSpecies                                    ///
+    /// ************************************************************************************* ///
+
+    @Transaction
+    @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
+    fun getAllPokemonWithSpecies(): LiveData<List<PokemonWithSpecies>>
+
+    /// ************************************************************************************* ///
     ///                                 PokemonWithTypes                                      ///
     /// ************************************************************************************* ///
 
@@ -62,7 +70,6 @@ interface PokemonDao {
     @Query("SELECT * FROM Pokemon WHERE pokemon_id == :id")
     fun getSinglePokemonWithTypesAndSpeciesById(id: Int?): LiveData<PokemonWithTypesAndSpecies>
 
-    @Transaction
     @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun searchAllPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
 

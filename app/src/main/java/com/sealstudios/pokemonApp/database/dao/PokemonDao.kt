@@ -3,7 +3,10 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
+import androidx.sqlite.db.SimpleSQLiteQuery
+import androidx.sqlite.db.SupportSQLiteQuery
 import com.sealstudios.pokemonApp.database.`object`.*
+
 
 @Dao
 interface PokemonDao {
@@ -70,8 +73,34 @@ interface PokemonDao {
     @Query("SELECT * FROM Pokemon WHERE pokemon_id == :id")
     fun getSinglePokemonWithTypesAndSpeciesById(id: Int?): LiveData<PokemonWithTypesAndSpecies>
 
+    @Transaction
     @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun searchAllPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
+
+
+
+
+    /// ************************************************************************************* ///
+    ///                                      TESTING QUERIES                                  ///
+
+    @RawQuery(observedEntities = [PokemonWithTypesAndSpecies::class])
+    fun pokemonRawQuery(query: SupportSQLiteQuery): LiveData<List<PokemonWithTypesAndSpecies>>
+
+    @Query("SELECT * FROM Pokemon LEFT JOIN PokemonType ON pokemon_id = type_id AND type_name =:filter WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    fun searchAndFilterAllPokemonWithTypesAndSpecies(search: String, filter: String): LiveData<List<PokemonWithTypesAndSpecies>>
+
+
+    @Query("SELECT * FROM Pokemon LEFT JOIN PokemonType WHERE pokemon_name LIKE :search AND type_name IN (:filters) ORDER BY pokemon_id ASC, type_slot DESC")
+    fun searchAndFilterPokemonWithTypesAndSpeciesOrderedByMatchesAndIds(search: String, filters: List<String>): LiveData<List<PokemonWithTypesAndSpecies>>
+
+
+    ///                                      TESTING QUERIES                                  ///
+    /// ************************************************************************************* ///
+
+
+
+
+
 
     @Transaction
     @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")

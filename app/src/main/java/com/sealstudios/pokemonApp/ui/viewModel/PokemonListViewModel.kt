@@ -41,6 +41,8 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     @SuppressLint("DefaultLocale")
     private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
+
+        //TODO can we remove these switchmaps
         return Transformations.switchMap(search) { search ->
             val allPokemon = repository.searchPokemonWithTypesAndSpecies(search)
             Transformations.switchMap(filters) { filters ->

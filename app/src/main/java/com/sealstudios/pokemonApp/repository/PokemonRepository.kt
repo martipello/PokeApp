@@ -14,9 +14,9 @@ class PokemonRepository @Inject constructor(
     private val pokemonDao: PokemonDao
 ) {
 
-    val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
+//    val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
-    fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
+    suspend fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
         return pokemonDao.getPokemonWithTypes(search)
     }
 
@@ -24,7 +24,7 @@ class PokemonRepository @Inject constructor(
         return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
     }
 
-    fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
+    suspend fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
         return pokemonDao.getSinglePokemonById(id)
     }
 

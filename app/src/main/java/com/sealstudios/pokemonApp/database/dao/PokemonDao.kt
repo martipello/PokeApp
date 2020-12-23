@@ -90,13 +90,27 @@ interface PokemonDao {
     fun searchAndFilterAllPokemonWithTypesAndSpecies(search: String, filter: String): LiveData<List<PokemonWithTypesAndSpecies>>
 
 
+//    @Query("SELECT * FROM Pokemon LEFT JOIN PokemonType WHERE pokemon_name LIKE :search AND type_name IN (:filters) ORDER BY pokemon_id ASC, type_slot DESC")
+
+    //    @Query("SELECT ATTRIBUTES.* FROM ATTRIBUTES INNER JOIN PRODUCTS_ATTRIBUTES
+    //    ON PRODUCTS_ATTRIBUTES._ATTRIBUTE_ID = ATTRIBUTES._ID INNER JOIN PRODUCTS
+    //    ON PRODUCTS._ID = PRODUCTS_ATTRIBUTES._PRODUCT_ID WHERE PRODUCTS._ID = :productId
+    //    ORDER BY PRODUCTS_ATTRIBUTES.DISPLAY_ORDERING ASC")
+
+//    @Query("SELECT Pokemon.* FROM Pokemon INNER JOIN PokemonType ON PokemonType.type_id = type_id INNER JOIN Pokemon ON Pokemon.pokemon_id = pokemon_id WHERE pokemon_name LIKE :search AND PokemonType.type_name IN (:filters) ORDER BY PokemonType.type_slot ASC")
+
     @Query("SELECT * FROM Pokemon LEFT JOIN PokemonType WHERE pokemon_name LIKE :search AND type_name IN (:filters) ORDER BY pokemon_id ASC, type_slot DESC")
     fun searchAndFilterPokemonWithTypesAndSpeciesOrderedByMatchesAndIds(search: String, filters: List<String>): LiveData<List<PokemonWithTypesAndSpecies>>
+
+    @Query("SELECT * FROM Pokemon INNER JOIN PokemonSpecies, PokemonSpeciesJoin ON Pokemon.pokemon_id = PokemonSpeciesJoin.pokemon_id AND PokemonSpecies.species_id = PokemonSpeciesJoin.species_id ORDER BY species_id ASC")
+    fun getAllPokemonSortedBySpecies(): LiveData<List<PokemonWithTypesAndSpecies>>
+
+    @Query("SELECT * FROM Pokemon INNER JOIN PokemonType, PokemonTypesJoin ON Pokemon.pokemon_id = PokemonTypesJoin.type_id AND PokemonType.type_id = PokemonTypesJoin.type_id ORDER BY type_slot ASC")
+    fun getAllPokemonSortedByTypeSlot(): LiveData<List<PokemonWithTypesAndSpecies>>
 
 
     ///                                      TESTING QUERIES                                  ///
     /// ************************************************************************************* ///
-
 
 
 

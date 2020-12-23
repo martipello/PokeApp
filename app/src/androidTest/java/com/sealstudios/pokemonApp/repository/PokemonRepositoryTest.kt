@@ -145,14 +145,40 @@ class SimplePokemonReadAndWriteTests {
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndTypesAndSpeciesAndJoinsThenSearchAndFilterPokemon() {
+    fun writePokemonAndTypesAndSpeciesAndJoinsThenReturnAllPokemonSortedBySpeciesRelation() {
+        createAndInsertBaseStarters()
+
+        val pokemonSortedBySpecies =
+            pokemonDao.getAllPokemonSortedBySpecies().getValueBlocking(scope)
+
+        assertThat(pokemonSortedBySpecies?.size, equalTo(3))
+
+        assertThat(pokemonSortedBySpecies!![0].species!!.id, equalTo(1))
+        assertThat(pokemonSortedBySpecies!![1].species!!.id, equalTo(2))
+        assertThat(pokemonSortedBySpecies!![2].species!!.id, equalTo(3))
+
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun writePokemonAndTypesAndSpeciesAndJoinsThenReturnAllPokemonSortedByTypesSlotRelation() {
+        createAndInsertBaseStarters()
+
+        val pokemonSortedBySpecies =
+            pokemonDao.getAllPokemonSortedByTypeSlot().getValueBlocking(scope)
+
+        assertThat(pokemonSortedBySpecies?.size, equalTo(3))
+
+    }
+
+    private fun createAndInsertBaseStarters() {
         val bulbasaurSpeciesID = 1
         val squirtleSpeciesID = 2
         val charmanderSpeciesID = 3
 
-        val bulbasaurID = 3
+        val bulbasaurID = 1
         val squirtleID = 2
-        val charmanderID = 1
+        val charmanderID = 3
 
         val grassTypeID = 1
         val poisonTypeID = 2
@@ -221,139 +247,8 @@ class SimplePokemonReadAndWriteTests {
             pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
 
         }
-
-//        val pokemonMatchingSearch =
-//            pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesOrderedByMatchesAndIds("%%", listOf())
-//                .getValueBlocking(scope)
-
-//        assertThat(pokemonMatchingSearch?.size, equalTo(3))
-//
-//        assertThat(pokemonMatchingSearch!![0].pokemon.name, equalTo(charmander.name))
-//        assertThat(pokemonMatchingSearch!![1].pokemon.name, equalTo(squirtle.name))
-//        assertThat(pokemonMatchingSearch!![2].pokemon.name, equalTo(bulbasaur.name))
-
-        val pokemonMatchingSearchAndFilter =
-            pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesOrderedByMatchesAndIds("%%", arrayListOf("fire"))
-                .getValueBlocking(scope)
-
-        assertThat(pokemonMatchingSearchAndFilter?.size, equalTo(1))
-
-        assertThat(
-            pokemonMatchingSearchAndFilter!![0].pokemon.name,
-            equalTo(charmander.name)
-        )
-
     }
 
-//    @Test
-//    @Throws(Exception::class)
-//    fun playingWithRawQuery() {
-//        val bulbasaurSpeciesID = 1
-//        val squirtleSpeciesID = 2
-//        val charmanderSpeciesID = 3
-//
-//        val bulbasaurID = 3
-//        val squirtleID = 2
-//        val charmanderID = 1
-//
-//        val grassTypeID = 1
-//        val poisonTypeID = 2
-//        val fireTypeID = 3
-//        val waterTypeID = 4
-//
-//        val charmander = Pokemon(id = charmanderID, name = "charmander")
-//        val squirtle = Pokemon(id = squirtleID, name = "squirtle")
-//        val bulbasaur = Pokemon(id = bulbasaurID, name = "bulbasaur")
-//
-//        val poisonType = PokemonType(id = poisonTypeID, name = "poison", slot = 1)
-//        val grassType = PokemonType(id = grassTypeID, name = "grass", slot = 2)
-//        val fireType = PokemonType(id = fireTypeID, name = "fire", slot = 1)
-//        val waterType = PokemonType(id = waterTypeID, name = "water", slot = 1)
-//
-//        val speciesBulbasaur = PokemonSpecies(
-//            id = bulbasaurSpeciesID,
-//            species = "Seed pokemon",
-//            pokedexEntry = "This pokemon is probably martins favourite after Raichu"
-//        )
-//        val speciesSquirtle = PokemonSpecies(
-//            id = squirtleSpeciesID,
-//            species = "Turtle pokemon",
-//            pokedexEntry = "Small shell pokemon"
-//        )
-//        val speciesCharmander = PokemonSpecies(
-//            id = charmanderSpeciesID,
-//            species = "Fire lizard pokemon",
-//            pokedexEntry = "If the flame on this pokemon's tail goes out it will die"
-//        )
-//
-//        val bulbasaurSpeciesJoin =
-//            PokemonSpeciesJoin(pokemon_id = bulbasaurID, species_id = bulbasaurSpeciesID)
-//        val charmanderSpeciesJoin =
-//            PokemonSpeciesJoin(pokemon_id = charmanderID, species_id = charmanderSpeciesID)
-//        val squirtleSpeciesJoin =
-//            PokemonSpeciesJoin(pokemon_id = squirtleID, species_id = squirtleSpeciesID)
-//
-//        val poisonJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = poisonTypeID)
-//        val grassJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = grassTypeID)
-//        val waterJoin = PokemonTypesJoin(pokemon_id = squirtleID, type_id = waterTypeID)
-//        val fireJoin = PokemonTypesJoin(pokemon_id = charmanderID, type_id = fireTypeID)
-//
-//        runBlocking {
-//
-//            pokemonDao.insertPokemon(bulbasaur)
-//            pokemonDao.insertPokemon(squirtle)
-//            pokemonDao.insertPokemon(charmander)
-//
-//            pokemonTypeDao.insertPokemonType(pokemonType = poisonType)
-//            pokemonTypeDao.insertPokemonType(pokemonType = grassType)
-//            pokemonTypeDao.insertPokemonType(pokemonType = fireType)
-//            pokemonTypeDao.insertPokemonType(pokemonType = waterType)
-//
-//            speciesDao.insertSpecies(speciesBulbasaur)
-//            speciesDao.insertSpecies(speciesCharmander)
-//            speciesDao.insertSpecies(speciesSquirtle)
-//
-//            speciesJoinDao.insertPokemonSpeciesJoin(bulbasaurSpeciesJoin)
-//            speciesJoinDao.insertPokemonSpeciesJoin(charmanderSpeciesJoin)
-//            speciesJoinDao.insertPokemonSpeciesJoin(squirtleSpeciesJoin)
-//
-//            pokemonTypeJoinDao.insertPokemonTypeJoin(poisonJoin)
-//            pokemonTypeJoinDao.insertPokemonTypeJoin(grassJoin)
-//            pokemonTypeJoinDao.insertPokemonTypeJoin(waterJoin)
-//            pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
-//
-//        }
-//
-//        val search = "%%"
-//        val queryWithSearchString =
-//            "SELECT * FROM Pokemon WHERE pokemon_name LIKE $search ORDER BY pokemon_id ASC"
-//
-//        val pokemonMatchingSearch =
-//            pokemonDao.pokemonRawQuery(SimpleSQLiteQuery(queryWithSearchString))
-//                .getValueBlocking(scope)
-//
-//        assertThat(pokemonMatchingSearch?.size, equalTo(3))
-//
-//        assertThat(pokemonMatchingSearch!![0].pokemon.name, equalTo(charmander.name))
-//        assertThat(pokemonMatchingSearch!![1].pokemon.name, equalTo(squirtle.name))
-//        assertThat(pokemonMatchingSearch!![2].pokemon.name, equalTo(bulbasaur.name))
-//
-//        val filter = "%fire%"
-//        val queryWithSearchAndFilterString =
-//            "SELECT * FROM Pokemon LEFT JOIN PokemonType ON pokemon_id = type_id AND type_name =$filter WHERE pokemon_name LIKE $search ORDER BY pokemon_name ASC"
-//
-//        val pokemonMatchingSearchAndFilter =
-//            pokemonDao.pokemonRawQuery(SimpleSQLiteQuery(queryWithSearchAndFilterString))
-//                .getValueBlocking(scope)
-//
-//        assertThat(pokemonMatchingSearchAndFilter?.size, equalTo(1))
-//
-//        assertThat(
-//            pokemonMatchingSearchAndFilter!![0].pokemon.name,
-//            equalTo(charmander.name)
-//        )
-//
-//    }
 
 //    @Test
 //    @Throws(Exception::class)

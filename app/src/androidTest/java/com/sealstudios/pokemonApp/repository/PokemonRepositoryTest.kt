@@ -50,6 +50,28 @@ class SimplePokemonReadAndWriteTests {
 
     private lateinit var db: PokemonRoomDatabase
 
+    val emptySearch = "%%"
+
+    val bulbasaurSpeciesID = 1
+    val squirtleSpeciesID = 2
+    val charmanderSpeciesID = 3
+    val charizardSpeciesID = 4
+    val pidgeySpeciesID = 5
+    val moltresSpeciesID = 6
+
+    val bulbasaurID = 1
+    val squirtleID = 2
+    val charmanderID = 3
+    val charizardID = 4
+    val pidgeyID = 5
+    val moltresID = 6
+
+    val grassTypeID = 1
+    val poisonTypeID = 2
+    val fireTypeID = 3
+    val waterTypeID = 4
+    val flyingTypeID = 5
+
     @Before
     fun createDb() {
         val context = ApplicationProvider.getApplicationContext<Context>()
@@ -73,7 +95,7 @@ class SimplePokemonReadAndWriteTests {
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndReadPokemonByName() {
+    fun writePokemonThenReadPokemonByName() {
         val bulbasaur = Pokemon(name = "bulbasaur")
         runBlocking {
             pokemonDao.insertPokemon(bulbasaur)
@@ -88,7 +110,7 @@ class SimplePokemonReadAndWriteTests {
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndSearchPokemonByName() {
+    fun writePokemonThenSearchPokemonByName() {
         val bulbasaur = Pokemon(name = "bulbasaur")
         scope.launch {
             pokemonDao.insertPokemon(bulbasaur)
@@ -104,49 +126,32 @@ class SimplePokemonReadAndWriteTests {
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndTypesAndSpeciesAndJoinsAndSearchPokemonWithTypesAndSpeciesByName() {
-        val bulbasaur = Pokemon(id = 1, name = "bulbasaur")
-        val poisonType = PokemonType(id = 1, name = "poison", slot = 1)
-        val grassType = PokemonType(id = 2, name = "grass", slot = 2)
-        val species = PokemonSpecies(
-            id = 1,
-            species = "Seed pokemon",
-            pokedexEntry = "This pokemon is probably martins favourite after Raichu"
-        )
-        val speciesJoin = PokemonSpeciesJoin(pokemon_id = 1, species_id = 1)
-        val poisonJoin = PokemonTypesJoin(pokemon_id = 1, type_id = 1)
-        val grassJoin = PokemonTypesJoin(pokemon_id = 1, type_id = 2)
+    fun writePokemonWithSpeciesAndTypesThenSearchByName() {
+
+        val bulbasaur = bulbasaur()
 
         runBlocking {
-            pokemonDao.insertPokemon(bulbasaur)
-            pokemonTypeDao.insertPokemonType(pokemonType = poisonType)
-            pokemonTypeDao.insertPokemonType(pokemonType = grassType)
-            speciesDao.insertSpecies(species)
-            speciesJoinDao.insertPokemonSpeciesJoin(speciesJoin)
-            pokemonTypeJoinDao.insertPokemonTypeJoin(poisonJoin)
-            pokemonTypeJoinDao.insertPokemonTypeJoin(grassJoin)
-        }
 
-        runBlocking {
+            insertBulbasaur()
 
             val pokemonMatchingSearch =
-                pokemonDao.searchAllPokemonWithTypesAndSpecies("%b%").getValueBlocking(scope)
+                pokemonDao.searchAndFilterPokemon("%b%").getValueBlocking(scope)
             assertThat(pokemonMatchingSearch?.size, equalTo(1))
 
-            assertThat(pokemonMatchingSearch!![0].pokemon.name, equalTo(bulbasaur.name))
+            assertThat(pokemonMatchingSearch!![0].pokemon.name, equalTo(bulbasaur.pokemon.name))
 
             assertThat(pokemonMatchingSearch!![0].types.size, equalTo(2))
-            assertThat(pokemonMatchingSearch!![0].types[0].name, equalTo(poisonType.name))
-            assertThat(pokemonMatchingSearch!![0].types[1].name, equalTo(grassType.name))
+            assertThat(pokemonMatchingSearch!![0].types[0].name, equalTo(bulbasaur.types[1].name))
+            assertThat(pokemonMatchingSearch!![0].types[1].name, equalTo(bulbasaur.types[0].name))
 
-            assertThat(pokemonMatchingSearch!![0].species?.species, equalTo(species.species))
+            assertThat(pokemonMatchingSearch!![0].species?.species, equalTo(bulbasaur.species!!.species))
         }
     }
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndTypesAndSpeciesAndJoinsThenReturnAllPokemonSortedBySpeciesRelation() {
-        createAndInsertBaseStarters()
+    fun writePokemonWithSpeciesAndTypesThenReturnAllPokemonSortedBySpecies() {
+        insertBaseStarters()
 
         val pokemonSortedBySpecies =
             pokemonDao.getAllPokemonSortedBySpecies().getValueBlocking(scope)
@@ -161,93 +166,217 @@ class SimplePokemonReadAndWriteTests {
 
     @Test
     @Throws(Exception::class)
-    fun writePokemonAndTypesAndSpeciesAndJoinsThenReturnAllPokemonSortedByTypesSlotRelation() {
-        createAndInsertBaseStarters()
+    fun writePokemonWithSpeciesAndTypesThenReturnAllPokemonSortedByTypesSlot() {
+        insertBaseStarters()
 
         val pokemonSortedBySpecies =
             pokemonDao.getAllPokemonSortedByTypeSlot().getValueBlocking(scope)
 
         assertThat(pokemonSortedBySpecies?.size, equalTo(3))
+        //TODO assert order
+    }
+
+    @Test
+    @Throws(Exception::class)
+    fun testFiltering() {
+        insertPokemonForFilterTest()
+
+        val pokemon =
+            pokemonDao.searchAndFilterPokemon(search = emptySearch).getValueBlocking(scope)
+
+        assertThat(pokemon?.size, equalTo(9))
+        //TODO assert order
+    }
+
+    private fun insertBaseStarters() = runBlocking {
+        insertBulbasaur()
+        insertSquirtle()
+        insertCharmander()
+    }
+
+    private fun insertPokemonForFilterTest() = runBlocking {
+        insertBulbasaur()
+        insertSquirtle()
+        insertCharmander()
+        insertCharizard()
+        insertMoltres()
+        insertPidgey()
+    }
+
+    private fun insertSquirtle() = runBlocking {
+
+        val squirtle = squirtle()
+        val squirtleSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = squirtleID, species_id = squirtleSpeciesID)
+        val waterJoin = PokemonTypesJoin(pokemon_id = squirtleID, type_id = waterTypeID)
+
+        pokemonDao.insertPokemon(squirtle.pokemon)
+
+        speciesDao.insertSpecies(squirtle.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(squirtleSpeciesJoin)
+
+        pokemonTypeDao.insertPokemonType(pokemonType = squirtle.types[0])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(waterJoin)
 
     }
 
-    private fun createAndInsertBaseStarters() {
-        val bulbasaurSpeciesID = 1
-        val squirtleSpeciesID = 2
-        val charmanderSpeciesID = 3
+    private fun insertBulbasaur() = runBlocking {
 
-        val bulbasaurID = 1
-        val squirtleID = 2
-        val charmanderID = 3
+        val bulbasaur = bulbasaur()
+        val grassJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = grassTypeID)
+        val poisonJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = poisonTypeID)
+        val bulbasaurSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = bulbasaurID, species_id = bulbasaurSpeciesID)
 
-        val grassTypeID = 1
-        val poisonTypeID = 2
-        val fireTypeID = 3
-        val waterTypeID = 4
+        pokemonDao.insertPokemon(bulbasaur.pokemon)
 
-        val charmander = Pokemon(id = charmanderID, name = "charmander")
-        val squirtle = Pokemon(id = squirtleID, name = "squirtle")
-        val bulbasaur = Pokemon(id = bulbasaurID, name = "bulbasaur")
+        speciesDao.insertSpecies(bulbasaur.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(bulbasaurSpeciesJoin)
 
-        val poisonType = PokemonType(id = poisonTypeID, name = "poison", slot = 1)
-        val grassType = PokemonType(id = grassTypeID, name = "grass", slot = 2)
-        val fireType = PokemonType(id = fireTypeID, name = "fire", slot = 1)
-        val waterType = PokemonType(id = waterTypeID, name = "water", slot = 1)
+        pokemonTypeDao.insertPokemonType(pokemonType = bulbasaur.types[0])
+        pokemonTypeDao.insertPokemonType(pokemonType = bulbasaur.types[1])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(grassJoin)
+        pokemonTypeJoinDao.insertPokemonTypeJoin(poisonJoin)
+    }
 
-        val speciesBulbasaur = PokemonSpecies(
+    private fun insertCharmander() = runBlocking {
+
+        val charmander = charmander()
+        val fireJoin = PokemonTypesJoin(pokemon_id = charmanderID, type_id = fireTypeID)
+        val charmanderSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = charmanderID, species_id = charmanderSpeciesID)
+
+        pokemonDao.insertPokemon(charmander.pokemon)
+        speciesDao.insertSpecies(charmander.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(charmanderSpeciesJoin)
+        pokemonTypeDao.insertPokemonType(pokemonType = charmander.types[0])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
+    }
+
+    private fun insertCharizard() = runBlocking {
+
+        val charizard = charizard()
+        val charizardSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = charizardID, species_id = charizardSpeciesID)
+
+        val fireJoin = PokemonTypesJoin(pokemon_id = charizardID, type_id = fireTypeID)
+        val flyingJoin = PokemonTypesJoin(pokemon_id = charizardID, type_id = flyingTypeID)
+
+        pokemonDao.insertPokemon(charizard.pokemon)
+
+        speciesDao.insertSpecies(charizard.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(charizardSpeciesJoin)
+
+        pokemonTypeDao.insertPokemonType(pokemonType = charizard.types[0])
+        pokemonTypeDao.insertPokemonType(pokemonType = charizard.types[1])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
+        pokemonTypeJoinDao.insertPokemonTypeJoin(flyingJoin)
+    }
+
+    private fun insertPidgey() = runBlocking {
+
+        val pidgey = pidgey()
+        val pidgeySpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = pidgeyID, species_id = pidgeySpeciesID)
+        val flyingJoin = PokemonTypesJoin(pokemon_id = pidgeyID, type_id = flyingTypeID)
+
+        pokemonDao.insertPokemon(pidgey.pokemon)
+
+        speciesDao.insertSpecies(pidgey.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(pidgeySpeciesJoin)
+
+        pokemonTypeDao.insertPokemonType(pokemonType = pidgey.types[0])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(flyingJoin)
+    }
+
+    private fun insertMoltres() = runBlocking {
+
+        val moltres = moltres()
+        val moltresSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = moltresID, species_id = moltresSpeciesID)
+
+        val fireJoin = PokemonTypesJoin(pokemon_id = moltresID, type_id = fireTypeID)
+        val flyingJoin = PokemonTypesJoin(pokemon_id = moltresID, type_id = flyingTypeID)
+
+        pokemonDao.insertPokemon(moltres.pokemon)
+
+        speciesDao.insertSpecies(moltres.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(moltresSpeciesJoin)
+
+        pokemonTypeDao.insertPokemonType(pokemonType = moltres.types[0])
+        pokemonTypeDao.insertPokemonType(pokemonType = moltres.types[1])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
+        pokemonTypeJoinDao.insertPokemonTypeJoin(flyingJoin)
+    }
+
+    fun bulbasaur(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = bulbasaurID, name = "bulbasaur"),
+        species = PokemonSpecies(
             id = bulbasaurSpeciesID,
             species = "Seed pokemon",
-            pokedexEntry = "This pokemon is probably martins favourite after Raichu"
+            pokedexEntry = "There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows larger."
+        ),
+        types = listOf(
+            PokemonType(id = poisonTypeID, name = "poison", slot = 1),
+            PokemonType(id = grassTypeID, name = "grass", slot = 2)
         )
-        val speciesSquirtle = PokemonSpecies(
+    )
+
+    fun squirtle(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = squirtleID, name = "squirtle"),
+        species = PokemonSpecies(
             id = squirtleSpeciesID,
             species = "Turtle pokemon",
             pokedexEntry = "Small shell pokemon"
-        )
-        val speciesCharmander = PokemonSpecies(
+        ),
+        types = listOf(PokemonType(id = waterTypeID, name = "water", slot = 1))
+    )
+
+    fun charmander(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = charmanderID, name = "charmander"),
+        species = PokemonSpecies(
             id = charmanderSpeciesID,
             species = "Fire lizard pokemon",
             pokedexEntry = "If the flame on this pokemon's tail goes out it will die"
+        ),
+        types = listOf(PokemonType(id = fireTypeID, name = "fire", slot = 1))
+    )
+
+    fun charizard(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = charizardID, name = "charizard"),
+        species = PokemonSpecies(
+            id = charizardSpeciesID,
+            species = "Fire flying lizard pokemon",
+            pokedexEntry = "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally"
+        ),
+        types = listOf(
+            PokemonType(id = fireTypeID, name = "fire", slot = 1),
+            PokemonType(id = flyingTypeID, name = "flying", slot = 2)
         )
+    )
 
-        val bulbasaurSpeciesJoin =
-            PokemonSpeciesJoin(pokemon_id = bulbasaurID, species_id = bulbasaurSpeciesID)
-        val charmanderSpeciesJoin =
-            PokemonSpeciesJoin(pokemon_id = charmanderID, species_id = charmanderSpeciesID)
-        val squirtleSpeciesJoin =
-            PokemonSpeciesJoin(pokemon_id = squirtleID, species_id = squirtleSpeciesID)
+    fun moltres(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = moltresID, name = "moltres"),
+        species = PokemonSpecies(
+            id = moltresSpeciesID,
+            species = "Fire bird pokemon",
+            pokedexEntry = "Known as the legendary bird of fire. Every flap of its wings creates a dazzling flash of flames"
+        ),
+        types = listOf(
+            PokemonType(id = fireTypeID, name = "fire", slot = 1),
+            PokemonType(id = flyingTypeID, name = "flying", slot = 2)
+        )
+    )
 
-        val poisonJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = poisonTypeID)
-        val grassJoin = PokemonTypesJoin(pokemon_id = bulbasaurID, type_id = grassTypeID)
-        val waterJoin = PokemonTypesJoin(pokemon_id = squirtleID, type_id = waterTypeID)
-        val fireJoin = PokemonTypesJoin(pokemon_id = charmanderID, type_id = fireTypeID)
-
-        runBlocking {
-
-            pokemonDao.insertPokemon(bulbasaur)
-            pokemonDao.insertPokemon(squirtle)
-            pokemonDao.insertPokemon(charmander)
-
-            pokemonTypeDao.insertPokemonType(pokemonType = poisonType)
-            pokemonTypeDao.insertPokemonType(pokemonType = grassType)
-            pokemonTypeDao.insertPokemonType(pokemonType = fireType)
-            pokemonTypeDao.insertPokemonType(pokemonType = waterType)
-
-            speciesDao.insertSpecies(speciesBulbasaur)
-            speciesDao.insertSpecies(speciesCharmander)
-            speciesDao.insertSpecies(speciesSquirtle)
-
-            speciesJoinDao.insertPokemonSpeciesJoin(bulbasaurSpeciesJoin)
-            speciesJoinDao.insertPokemonSpeciesJoin(charmanderSpeciesJoin)
-            speciesJoinDao.insertPokemonSpeciesJoin(squirtleSpeciesJoin)
-
-            pokemonTypeJoinDao.insertPokemonTypeJoin(poisonJoin)
-            pokemonTypeJoinDao.insertPokemonTypeJoin(grassJoin)
-            pokemonTypeJoinDao.insertPokemonTypeJoin(waterJoin)
-            pokemonTypeJoinDao.insertPokemonTypeJoin(fireJoin)
-
-        }
-    }
+    fun pidgey(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
+        pokemon = Pokemon(id = pidgeyID, name = "pidgey"),
+        species = PokemonSpecies(
+            id = pidgeySpeciesID,
+            species = "Bird pokemon",
+            pokedexEntry = "Pidgey is a Flying Pokémon. Among all the Flying Pokémon, it is the gentlest and easiest to capture. A perfect target for the beginning Pokémon Trainer to test his Pokémon's skills."
+        ),
+        types = listOf(PokemonType(id = flyingTypeID, name = "flying", slot = 1))
+    )
 
 
 //    @Test

@@ -108,6 +108,9 @@ interface PokemonDao {
     @Query("SELECT * FROM Pokemon INNER JOIN PokemonType, PokemonTypesJoin ON Pokemon.pokemon_id = PokemonTypesJoin.type_id AND PokemonType.type_id = PokemonTypesJoin.type_id ORDER BY type_slot ASC")
     fun getAllPokemonSortedByTypeSlot(): LiveData<List<PokemonWithTypesAndSpecies>>
 
+    @Query("SELECT * FROM Pokemon INNER JOIN PokemonType, PokemonTypesJoin ON Pokemon.pokemon_id = PokemonTypesJoin.type_id AND PokemonType.type_id = PokemonTypesJoin.type_id WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    fun searchAndFilterPokemon(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
+
 
     ///                                      TESTING QUERIES                                  ///
     /// ************************************************************************************* ///

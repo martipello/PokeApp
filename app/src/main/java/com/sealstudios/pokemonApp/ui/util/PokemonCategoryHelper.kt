@@ -22,7 +22,6 @@ enum class PokemonCategory(val color: Int, val icon: Int) {
 
         @SuppressLint("DefaultLocale")
         fun getCategoryForDamageClass(type: String): PokemonCategory {
-            Log.d("PokemonCategory","getPokemonEnumCategoryForPokemonType $type")
             return try {
                 valueOf(type.toUpperCase())
             } catch (e: Exception) {

@@ -1,40 +1,48 @@
 package com.sealstudios.pokemonApp.database.`object`
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.TypeConverters
+import androidx.room.*
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
-import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
+import com.sealstudios.pokemonApp.api.`object`.Pokemon as ApiPokemon
 
 @TypeConverters(RoomIntListConverter::class)
-@Entity
-data class Pokemon(
+@Entity(indices = [Index(value = [Pokemon.POKEMON_NAME])])
+open class Pokemon constructor(
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = POKEMON_ID)
-    var id: Int,
+    var id: Int = 0,
 
     @ColumnInfo(name = POKEMON_NAME)
-    var name: String,
+    var name: String =  "",
 
     @ColumnInfo(name = POKEMON_IMAGE)
-    var image: String,
+    var image: String = "",
 
     @ColumnInfo(name = POKEMON_SPRITE)
-    var sprite: String?,
+    var sprite: String? = "",
 
     @ColumnInfo(name = POKEMON_WEIGHT)
-    val weight: Int,
+    val weight: Int = 0,
 
     @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int,
+    val height: Int = 0,
 
     @ColumnInfo(name = MOVE_IDS)
-    var move_ids: List<Int>
+    var move_ids: List<Int> = emptyList(),
 
-) {
+    @ColumnInfo(name = VERSIONS_LEARNT)
+    var versionsLearnt: List<String> = emptyList(),
+
+    @ColumnInfo(name = LEVELS_LEARNED_AT)
+    var levelsLearnedAt: List<Int> = emptyList(),
+
+    @ColumnInfo(name = LEARN_METHODS)
+    var learnMethods: List<String> = emptyList(),
+
+
+    ) {
+
     companion object {
 
         const val POKEMON_ID: String = "pokemon_id"
@@ -44,8 +52,14 @@ data class Pokemon(
         const val POKEMON_WEIGHT: String = "pokemon_weight"
         const val POKEMON_SPRITE: String = "pokemon_sprite"
         const val MOVE_IDS: String = "pokemon_move_id"
+        const val LEARN_METHODS: String = "learn_methods"
+        const val LEVELS_LEARNED_AT: String = "levels_learned_at"
+        const val VERSIONS_LEARNT: String = "versions_learnt"
 
-        fun mapDbPokemonFromPokemonResponse(apiPokemon: apiPokemon): Pokemon {
+        fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
+
+            val moveVersions = apiPokemon.moves.map { it.version_group_details }.flatten()
+
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
@@ -53,20 +67,24 @@ data class Pokemon(
                 height = apiPokemon.height,
                 weight = apiPokemon.weight,
                 sprite = apiPokemon.sprites.front_default,
-                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl( it.move.url ) }
+                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
+                levelsLearnedAt = moveVersions.map { it.level_learned_at },
+                learnMethods = moveVersions.map { it.move_learn_method.name },
+                versionsLearnt = moveVersions.map { it.version_group.name }
             )
         }
 
         fun highResPokemonUrl(pokemonId: Int) =
             "https://pokeres.bastionbot.org/images/pokemon/${pokemonId}.png"
 
-        fun getPokemonIdFromUrl(pokemonUrl: String): Int {
-            val pokemonIndex = pokemonUrl.split("/".toRegex()).toTypedArray()
-            return if (pokemonIndex.size >= 2) {
-                pokemonIndex[pokemonIndex.size - 2].toInt()
-            } else {
-                -1
+        fun getPokemonIdFromUrl(pokemonUrl: String?): Int {
+            if (pokemonUrl != null) {
+                val pokemonIndex = pokemonUrl.split('/')
+                if (pokemonIndex.size >= 2) {
+                    return pokemonIndex[pokemonIndex.size - 2].toInt()
+                }
             }
+            return -1
         }
 
     }

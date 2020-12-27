@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:bind="http://schemas.android.com/tools"
     android:id="@+id/app_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="250dp"
+    android:clipToPadding="false"
     android:background="@color/colorPrimary"
     android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -12,6 +12,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clipToPadding="false"
         android:theme="@style/AppTheme.DarkAppBarOverlay"
         app:contentScrim="@color/colorPrimary"
         app:expandedTitleMarginEnd="64dp"
@@ -23,6 +24,7 @@
             android:id="@+id/toolbar_image"
             android:layout_width="match_parent"
             android:layout_height="250dp"
+            android:clipToPadding="false"
             android:contentDescription="@string/app_toolbar_header"
             android:scaleType="fitCenter"
             android:src="@drawable/pokemon_logo_black"

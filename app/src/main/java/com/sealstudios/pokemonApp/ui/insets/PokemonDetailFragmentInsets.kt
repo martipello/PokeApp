@@ -29,6 +29,12 @@ class PokemonDetailFragmentInsets {
                 bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
             )
         }
+
+        binding.scrollView.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
+            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
+            view.layoutParams = marginLayoutParams
+        }
     }
 
 }

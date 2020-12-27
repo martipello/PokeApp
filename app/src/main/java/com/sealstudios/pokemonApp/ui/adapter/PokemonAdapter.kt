@@ -25,7 +25,7 @@ class PokemonAdapter(
         return PokemonViewHolder(
             binding,
             clickListener,
-            glide
+            glide,
         )
     }
 
@@ -60,7 +60,9 @@ class PokemonAdapter(
                     oldItem: PokemonWithTypesAndSpecies,
                     newItem: PokemonWithTypesAndSpecies
                 ): Boolean {
-                    return oldItem.pokemon.id == newItem.pokemon.id
+                    return oldItem.pokemon.id == newItem.pokemon.id &&
+                            oldItem.types.size == newItem.types.size &&
+                            oldItem.species?.species == newItem.species?.species
                 }
 
             }

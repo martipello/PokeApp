@@ -15,13 +15,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [Pokemon::class,
-        PokemonType::class,
-        PokemonTypesJoin::class,
-        PokemonMove::class,
-        PokemonMovesJoin::class,
-        PokemonSpecies::class,
-        PokemonSpeciesJoin::class],
+    entities = [Pokemon::class, PokemonType::class, PokemonTypesJoin::class, PokemonMove::class, PokemonMovesJoin::class, PokemonSpecies::class, PokemonSpeciesJoin::class],
     version = DATABASE_VERSION,
     exportSchema = false
 )

@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.util
 
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
@@ -14,7 +15,7 @@ class FilterGroupHelper(
 
     fun bindChips() {
         val pokemonTypes = getAllPokemonTypes()
-        if (pokemonTypes.size <= chipGroup.childCount) {
+        if (pokemonTypes.size >= chipGroup.childCount) {
             for (x in 0 until chipGroup.childCount) {
                 val pokemonType = pokemonTypes[x]
                 chipGroup.getChildAt(x).apply {

@@ -1,10 +1,10 @@
 package com.sealstudios.pokemonApp.database.`object`
 
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.Description
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -13,28 +13,46 @@ data class PokemonSpecies(
     @NotNull
     @PrimaryKey
     @ColumnInfo(name = SPECIES_ID)
-    var id: Int,
+    var id: Int = 0,
+
+    @ColumnInfo(name = GENDER_RATE)
+    var gender_rate: Int = 0,
+
+    @ColumnInfo(name = CAPTURE_RATE)
+    var capture_rate: Int = 0,
+
+    @ColumnInfo(name = BASE_HAPPINESS)
+    var base_happiness: Int = 0,
+
+    @ColumnInfo(name = HATCH_COUNTER)
+    var hatch_counter: Int = 0,
+
+    @ColumnInfo(name = EVOLUTION_CHAIN_ID)
+    var evolution_chain_id: Int = 0,
+
+    @ColumnInfo(name = IS_BABY)
+    var isBaby: Boolean = false,
 
     @ColumnInfo(name = SPECIES_NAME)
-    var species: String,
+    var species: String = "",
 
     @ColumnInfo(name = POKEDEX)
-    var pokedex: String?,
+    var pokedex: String? = "",
 
     @ColumnInfo(name = POKEMON_GENERATION)
-    var generation: String?,
+    var generation: String? = "",
 
     @ColumnInfo(name = POKEDEX_ENTRY)
-    var pokedexEntry: String?,
+    var pokedexEntry: String? = "",
 
     @ColumnInfo(name = HABITAT)
-    var habitat: String?,
+    var habitat: String? = "",
 
     @ColumnInfo(name = SHAPE)
-    var shape: String?,
+    var shape: String? = "",
 
     @ColumnInfo(name = FORM_DESCRIPTION)
-    var formDescription: String
+    var formDescription: String = ""
 
 
 ) {
@@ -49,11 +67,17 @@ data class PokemonSpecies(
         const val POKEMON_GENERATION: String = "pokemon_generation"
         const val FORM_DESCRIPTION: String = "form_description"
 
+        const val IS_BABY: String = "is_baby"
+        const val EVOLUTION_CHAIN_ID: String = "evolution_chain_id"
+        const val HATCH_COUNTER: String = "hatch_counter"
+        const val CAPTURE_RATE: String = "capture_rate"
+        const val BASE_HAPPINESS: String = "base_happiness"
+        const val GENDER_RATE: String = "gender_rate"
+
         fun mapRemotePokemonSpeciesToDatabasePokemonSpecies(
             apiPokemonSpecies: com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
         ): PokemonSpecies {
             val pokedexEntry = getPokedexEntry(apiPokemonSpecies)
-            Log.d("PS", apiPokemonSpecies.form_descriptions.toString())
             return PokemonSpecies(
                 id = apiPokemonSpecies.id,
                 species = getPokemonSpeciesNameFromGenus(apiPokemonSpecies),
@@ -62,7 +86,13 @@ data class PokemonSpecies(
                 pokedexEntry = pokedexEntry,
                 habitat = apiPokemonSpecies.habitat?.name ?: "Unknown",
                 shape = apiPokemonSpecies.shape.name,
-                formDescription = getFormDescription(apiFormDescription = apiPokemonSpecies.form_descriptions)
+                formDescription = getFormDescription(apiFormDescription = apiPokemonSpecies.form_descriptions),
+                base_happiness = apiPokemonSpecies.base_happiness,
+                capture_rate = apiPokemonSpecies.capture_rate,
+                isBaby = apiPokemonSpecies.is_baby,
+                gender_rate = apiPokemonSpecies.gender_rate,
+                hatch_counter = apiPokemonSpecies.hatch_counter,
+                evolution_chain_id = getPokemonIdFromUrl(apiPokemonSpecies.evolution_chain.url),
             )
         }
 

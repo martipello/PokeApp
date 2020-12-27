@@ -3,7 +3,6 @@
     android:id="@+id/list_fragment_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     tools:context="com.sealstudios.pokemonApp.ui.PokemonListFragment">
 
     <include
@@ -15,7 +14,16 @@
         layout="@layout/pokemon_list_fragment_content" />
 
     <include
+        android:id="@+id/empty_pokemon_list"
+        layout="@layout/pokemon_list_empty" />
+
+    <include
+        android:id="@+id/error_pokemon_list"
+        layout="@layout/pokemon_list_error" />
+
+    <include
         android:id="@+id/pokemon_list_filter"
         layout="@layout/pokemon_list_fragment_filter_holder" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

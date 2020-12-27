@@ -14,8 +14,8 @@
         android:layout_height="match_parent"
         android:background="@color/colorAccent"
         android:elevation="@dimen/zero"
-        app:cardElevation="@dimen/zero"
-        android:visibility="invisible" />
+        android:visibility="invisible"
+        app:cardElevation="@dimen/zero" />
 
 
     <com.google.android.material.appbar.AppBarLayout
@@ -75,7 +75,13 @@
 
             <include
                 android:id="@+id/pokemonImageViewHolderLayout"
-                layout="@layout/pokemon_detail_image_layout" />
+                layout="@layout/pokemon_detail_image_layout"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="16:9"
+                app:layout_constraintEnd_toEndOf="@id/backing_card"
+                app:layout_constraintStart_toStartOf="@id/backing_card"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <View
                 android:id="@+id/card_top_guide"
@@ -85,7 +91,6 @@
                 app:layout_constraintBottom_toBottomOf="@id/pokemonImageViewHolderLayout"
                 app:layout_constraintTop_toTopOf="@id/pokemonImageViewHolderLayout" />
 
-
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/backing_card"
                 android:layout_width="0dp"
@@ -93,15 +98,14 @@
                 android:elevation="@dimen/qualified_medium_margin_16dp"
                 app:cardCornerRadius="@dimen/qualified_medium_margin_16dp"
                 app:cardElevation="@dimen/qualified_medium_margin_16dp"
-                app:layout_constraintBottom_toBottomOf="@id/content"
-                app:layout_constraintEnd_toEndOf="@id/content"
-                app:layout_constraintStart_toStartOf="@id/content"
+                app:layout_constraintBottom_toBottomOf="@id/content_holder"
+                app:layout_constraintEnd_toEndOf="@id/content_holder"
+                app:layout_constraintStart_toStartOf="@id/content_holder"
                 app:layout_constraintTop_toBottomOf="@id/card_top_guide"
                 app:layout_constraintWidth_max="500dp" />
 
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/content"
+                android:id="@+id/content_holder"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
@@ -117,312 +121,312 @@
                 app:layout_constraintTop_toBottomOf="@id/pokemonImageViewHolderLayout"
                 app:layout_constraintWidth_max="500dp">
 
+                <ProgressBar
+                    android:id="@+id/main_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/qualified_view_holder_image_corner_radius"
+                    android:layout_marginBottom="@dimen/qualified_view_holder_image"
+                    android:theme="@style/progressColor"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/title" />
+
+
                 <TextView
                     android:id="@+id/title"
+                    style="@style/ThemeOverlay.MyLargeTitleTextBold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/title"
-                    style="@style/ThemeOverlay.MyLargeTitleTextBold"
                     android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                    android:text="@string/title"
                     app:layout_constraintEnd_toStartOf="@id/id_label"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toTopOf="@id/subtitle"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/id_hash_label"
+                    style="@style/ThemeOverlay.MyCaptionTextBold"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/pokemon_id_label"
                     android:paddingEnd="1dp"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    style="@style/ThemeOverlay.MyCaptionTextBold"
+                    android:text="@string/pokemon_id_label"
                     app:layout_constraintEnd_toStartOf="@id/id_label"
-                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/title"
                     tools:ignore="RtlSymmetry" />
 
                 <TextView
                     android:id="@+id/id_label"
+                    style="@style/ThemeOverlay.MyBodyText"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/pokemon_id_label"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    style="@style/ThemeOverlay.MyBodyText"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="@id/title" />
 
-                <TextView
-                    android:id="@+id/subtitle"
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/content"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/subtitle"
-                    style="@style/ThemeOverlay.MySubTitleText"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintStart_toStartOf="@id/title"
-                    app:layout_constraintTop_toBottomOf="@id/title"
-                    app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"/>
-
-                <com.google.android.flexbox.FlexboxLayout
-                    android:id="@+id/pokemon_types_chip_group_container"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:gravity="end"
-                    android:orientation="horizontal"
-                    app:flexWrap="wrap"
-                    app:justifyContent="flex_end"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/subtitle">
-
-                    <com.google.android.material.chip.ChipGroup
-                        android:id="@+id/pokemon_types_chip_group"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"/>
-
-                </com.google.android.flexbox.FlexboxLayout>
-
-                <androidx.constraintlayout.widget.Barrier
-                    android:id="@+id/types_barrier"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    app:barrierDirection="bottom"
-                    app:constraint_referenced_ids="subtitle,pokemon_types_chip_group_container" />
-
-                <TextView
-                    android:id="@+id/gen_text_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generation_label"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/types_barrier" />
-
-                <TextView
-                    android:id="@+id/gen_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/generation_label"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/types_barrier"
-                    app:layout_constraintStart_toEndOf="@id/gen_text_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    tools:ignore="RtlSymmetry" />
-
-                <TextView
-                    android:id="@+id/height_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/height_label"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
-
-                <TextView
-                    android:id="@+id/height_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/height_label"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    app:layout_constraintStart_toEndOf="@id/height_label"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    tools:ignore="RtlSymmetry" />
-
-                <TextView
-                    android:id="@+id/weight_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/weight_label"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    app:layout_constraintStart_toEndOf="@id/height_text_view"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"
-                    tools:ignore="RtlSymmetry"/>
-
-                <TextView
-                    android:id="@+id/weight_text_view"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/weight_label"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    android:paddingEnd="@dimen/qualified_small_margin_8dp"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    app:layout_constraintStart_toEndOf="@id/weight_label"
-                    app:layout_constraintTop_toBottomOf="@id/gen_text_view"/>
-
-                <View
-                    android:id="@+id/info_divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:background="@color/light_grey"
-                    app:layout_constraintBottom_toTopOf="@id/pokemon_about_label"
-                    app:layout_constraintTop_toBottomOf="@id/height_text_view" />
-
-                <TextView
-                    android:id="@+id/pokemon_about_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:text="@string/species"
-                    style="@style/ThemeOverlay.MySubTitleTextBold"
-                    app:layout_constraintTop_toBottomOf="@id/info_divider" />
-
-                <TextView
-                    android:id="@+id/shape_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/shape_label"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toStartOf="@id/shape_text"
-                    app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
-
-                <TextView
-                    android:id="@+id/shape_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    app:layout_constraintStart_toEndOf="@id/shape_label"
-                    app:layout_constraintTop_toTopOf="@id/shape_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:ignore="RtlSymmetry" />
-
-                <TextView
-                    android:id="@+id/form_description_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/form_label"
-                    app:layout_constraintTop_toBottomOf="@id/shape_text" />
-
-                <TextView
-                    android:id="@+id/form_description_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintStart_toEndOf="@id/form_description_label"
-                    app:layout_constraintTop_toTopOf="@id/form_description_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:ignore="RtlSymmetry" />
-
-                <TextView
-                    android:id="@+id/habitat_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/habitat_label"
-                    style="@style/ThemeOverlay.MyBodyTextBold"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/form_description_text" />
-
-                <TextView
-                    android:id="@+id/habitat_text"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    android:paddingStart="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintStart_toEndOf="@id/habitat_label"
-                    app:layout_constraintTop_toTopOf="@id/habitat_label"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    tools:ignore="RtlSymmetry" />
-
-                <View
-                    android:id="@+id/pokedex_divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:background="@color/light_grey"
-                    app:layout_constraintTop_toBottomOf="@id/habitat_text" />
-
-                <TextView
-                    android:id="@+id/pokedex_entry_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:text="@string/pok_dex"
-                    style="@style/ThemeOverlay.MySubTitleTextBold"
-                    app:layout_constraintTop_toBottomOf="@id/pokedex_divider" />
-
-                <TextView
-                    android:id="@+id/pokedex_subtitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/pok_dex_gen_label"
-                    app:layout_constraintTop_toBottomOf="@id/pokedex_entry_label" />
-
-                <TextView
-                    android:id="@+id/pokedex_entry_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    style="@style/ThemeOverlay.MyBodyText"
-                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                    android:text="@string/pok_dex_entry"
-                    app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />
-
-                <View
-                    android:id="@+id/moves_divider"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:background="@color/light_grey"
-                    app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
-
-                <TextView
-                    android:id="@+id/moves_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                    android:text="@string/moves_label"
-                    style="@style/ThemeOverlay.MySubTitleTextBold"
-                    app:layout_constraintTop_toBottomOf="@id/moves_divider" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintHeight_max="500dp"
-                    android:id="@+id/pokemon_move_recycler_view"
-                    app:layout_constraintTop_toBottomOf="@id/moves_label"/>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/pokemon_moves_loading_holder"
-                    android:layout_margin="@dimen/qualified_small_margin_8dp"
-                    app:layout_constraintTop_toBottomOf="@id/moves_label"
-                    app:layout_constraintBottom_toBottomOf="parent">
-
-                    <ProgressBar
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/pokemon_moves_loading"
-                        style="@style/progressColor"
-                        android:layout_centerInParent="true"/>
+                    app:layout_constraintTop_toBottomOf="@id/title">
 
                     <TextView
+                        android:id="@+id/subtitle"
+                        style="@style/ThemeOverlay.MySubTitleText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/subtitle"
+                        app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <com.google.android.flexbox.FlexboxLayout
+                        android:id="@+id/pokemon_types_chip_group_container"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        app:flexWrap="wrap"
+                        app:justifyContent="flex_end"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/subtitle">
+
+                        <com.google.android.material.chip.ChipGroup
+                            android:id="@+id/pokemon_types_chip_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content" />
+
+                    </com.google.android.flexbox.FlexboxLayout>
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/types_barrier"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        app:barrierDirection="bottom"
+                        app:constraint_referenced_ids="subtitle,pokemon_types_chip_group_container" />
+
+                    <TextView
+                        android:id="@+id/gen_text_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/generation_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/types_barrier" />
+
+                    <TextView
+                        android:id="@+id/gen_text_view"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/generation_label"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/gen_text_label"
+                        app:layout_constraintTop_toBottomOf="@id/types_barrier"
+                        tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                        android:id="@+id/height_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/height_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+
+                    <TextView
+                        android:id="@+id/height_text_view"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/height_label"
+                        app:layout_constraintStart_toEndOf="@id/height_label"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                        tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                        android:id="@+id/weight_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/weight_label"
+                        app:layout_constraintStart_toEndOf="@id/height_text_view"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                        tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                        android:id="@+id/weight_text_view"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        android:paddingEnd="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/weight_label"
+                        app:layout_constraintStart_toEndOf="@id/weight_label"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+
+                    <View
+                        android:id="@+id/info_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:background="@color/light_grey"
+                        app:layout_constraintBottom_toTopOf="@id/pokemon_about_label"
+                        app:layout_constraintTop_toBottomOf="@id/height_text_view" />
+
+                    <TextView
+                        android:id="@+id/pokemon_about_label"
+                        style="@style/ThemeOverlay.MySubTitleTextBold"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:visibility="gone"
-                        android:id="@+id/pokemon_moves_empty_text"
-                        android:layout_centerInParent="true"
-                        android:text="No moves..."/>
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:text="@string/species"
+                        app:layout_constraintTop_toBottomOf="@id/info_divider" />
 
-                </RelativeLayout>
+
+                    <androidx.constraintlayout.widget.Barrier
+                        android:id="@+id/species_label_barrier"
+                        android:layout_width="1dp"
+                        android:layout_height="10dp"
+                        app:barrierDirection="end"
+                        app:constraint_referenced_ids="shape_label,
+                form_description_label, habitat_label"
+                        app:layout_constraintBottom_toTopOf="@id/pokedex_divider"
+                        app:layout_constraintTop_toBottomOf="@id/info_divider" />
+
+
+                    <TextView
+                        android:id="@+id/shape_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/shape_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
+
+                    <TextView
+                        android:id="@+id/shape_text"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
+                        app:layout_constraintTop_toTopOf="@id/shape_label"
+                        tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                        android:id="@+id/form_description_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/form_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/shape_text" />
+
+                    <TextView
+                        android:id="@+id/form_description_text"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
+                        app:layout_constraintTop_toTopOf="@id/form_description_label"
+                        tools:ignore="RtlSymmetry" />
+
+                    <TextView
+                        android:id="@+id/habitat_label"
+                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/habitat_label"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/form_description_text" />
+
+                    <TextView
+                        android:id="@+id/habitat_text"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="@dimen/qualified_small_margin_8dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
+                        app:layout_constraintTop_toTopOf="@id/habitat_label"
+                        tools:ignore="RtlSymmetry" />
+
+                    <View
+                        android:id="@+id/pokedex_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:background="@color/light_grey"
+                        app:layout_constraintTop_toBottomOf="@id/habitat_text" />
+
+                    <TextView
+                        android:id="@+id/pokedex_entry_label"
+                        style="@style/ThemeOverlay.MySubTitleTextBold"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:text="@string/pok_dex"
+                        app:layout_constraintTop_toBottomOf="@id/pokedex_divider" />
+
+                    <TextView
+                        android:id="@+id/pokedex_subtitle"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/pok_dex_gen_label"
+                        app:layout_constraintTop_toBottomOf="@id/pokedex_entry_label" />
+
+                    <TextView
+                        android:id="@+id/pokedex_entry_text"
+                        style="@style/ThemeOverlay.MyBodyText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                        android:text="@string/pok_dex_entry"
+                        android:visibility="gone"
+                        app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />
+
+                    <View
+                        android:id="@+id/moves_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:background="@color/light_grey"
+                        app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
+
+                    <fragment
+                        android:id="@+id/movesFragment"
+                        android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="500dp"
+                        app:layout_constraintTop_toBottomOf="@id/moves_divider" />
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

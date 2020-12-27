@@ -47,39 +47,22 @@ android {
 
     kotlinOptions {
         jvmTarget = "1.8"
-//        useIR = true
     }
-//    buildFeatures {
-//        compose true
-//    }
-//    composeOptions {
-//        kotlinCompilerVersion "1.4.0"
-//        kotlinCompilerExtensionVersion "1.0.0-alpha04"
-//    }
-
-//    packagingOptions {
-//        exclude 'META-INF/atomicfu.kotlin_module'
-//    }
 }
-
-//tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
-//    kotlinOptions {
-//        jvmTarget = "1.8"
-//        freeCompilerArgs += ["-Xallow-jvm-ir-dependencies", "-Xskip-prerelease-check"]
-//    }
-//}
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
+
+    //Navigation
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.3.2'
 
     //Custom UI
     implementation 'com.google.android:flexbox:2.0.1'
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
     implementation 'androidx.palette:palette-ktx:1.0.0'
 
@@ -87,14 +70,8 @@ dependencies {
     implementation "dev.chrisbanes:insetter-ktx:0.3.1"
     implementation 'com.github.asyl.animation:arcanimator:1.0.0'
 
-    //Compose
-//    implementation "androidx.compose.ui:ui:$compose_version"
-//    implementation "androidx.compose.material:material:$compose_version"
-//    implementation "androidx.ui:ui-tooling:$compose_version"
-
     // hilt
     implementation 'com.google.dagger:hilt-android:2.28-alpha'
-    implementation 'androidx.room:room-runtime:2.2.5'
     kapt 'com.google.dagger:hilt-android-compiler:2.28-alpha'
     kaptAndroidTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
     kaptTest 'com.google.dagger:hilt-android-compiler:2.28-alpha'
@@ -103,19 +80,20 @@ dependencies {
     kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 
+    //Room
+    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
+    implementation 'androidx.room:room-runtime:2.2.6'
+    implementation "androidx.room:room-ktx:2.3.0-alpha04"
+    kapt "androidx.room:room-compiler:2.3.0-alpha04"
+
+    //Paging
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha11"
+
     //WorkManager
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
     // Test helpers
     androidTestImplementation "androidx.work:work-testing:$work_version"
-
-    //Room dependencies
-    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
-    kapt "android.arch.persistence.room:compiler:1.1.1"
-    implementation "androidx.room:room-ktx:$rootProject.roomVersion"
-    kapt "androidx.room:room-compiler:$rootProject.roomVersion"
 
     //Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
@@ -131,7 +109,7 @@ dependencies {
     // Kotlin components
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10"
-    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.9"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.4.1"
     api "org.jetbrains.kotlinx:kotlinx-coroutines-android:$rootProject.coroutines"
 
     //retrofit
@@ -141,7 +119,7 @@ dependencies {
 
     //http client
     implementation 'com.squareup.okhttp3:okhttp:4.3.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.2.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.3.1'
 
     //GSON
     implementation 'com.google.code.gson:gson:2.8.5'
@@ -153,7 +131,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
     kapt 'androidx.annotation:annotation:1.1.0'
 
-    //SAVED STATE HANDLE
+    //Save state handle
     implementation "androidx.lifecycle:lifecycle-viewmodel-savedstate:2.3.0-alpha07"
 
     implementation "androidx.navigation:navigation-fragment-ktx:2.3.0"
@@ -164,6 +142,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation "androidx.core:core-ktx:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1"
 
     //LEAKS
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'

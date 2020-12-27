@@ -26,5 +26,9 @@
     <color name="steel">#B8B7D0</color>
     <color name="fairy">#F0B6BC</color>
 
+    <color name="physical">#CA2212</color>
+    <color name="status">#8C888C</color>
+    <color name="special">#505970</color>
+
     <color name="light_grey">#D1C9C9</color>
 </resources>

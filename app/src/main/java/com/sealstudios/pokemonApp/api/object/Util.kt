@@ -29,7 +29,7 @@ data class Encounter(
 )
 
 data class FlavorText(
-    val flavorText: String,
+    val flavor_text: String,
     val language: NamedApiResource
 )
 

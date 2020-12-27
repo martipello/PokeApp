@@ -9,6 +9,7 @@ import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
+import com.bumptech.glide.load.DecodeFormat
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
@@ -32,17 +33,23 @@ class PokemonViewHolder constructor(
 
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
-        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
-        binding.pokemonImageViewHolder.strokeColor = white
-        binding.pokemonImageViewHolder.setCardBackgroundColor(white)
+        setViewHolderDefaultState()
+
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
-        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.INVISIBLE
-        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
+
+        if (pokemonWithTypesAndSpecies.species == null) {
+            CoroutineScope(Dispatchers.IO).launch {
+                fetchRemotePokemon(pokemonWithTypesAndSpecies.pokemon.id)
+            }
+        }
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
-            itemView.context.getString(R.string.pokemonId, pokemonWithTypesAndSpecies.pokemon.id)
+            itemView.context.getString(
+                R.string.pokemonHashId,
+                pokemonWithTypesAndSpecies.pokemon.id
+            )
         binding.pokemonSpeciesTextViewLabel.text =
-            pokemonWithTypesAndSpecies.species.species.capitalize()
+            pokemonWithTypesAndSpecies.species?.species?.capitalize()
         binding.pokemonImageViewHolder.apply {
             transitionName =
                 pokemonTransitionNameForId(
@@ -59,22 +66,44 @@ class PokemonViewHolder constructor(
         buildPokemonTypes(pokemonWithTypesAndSpecies, binding)
     }
 
-    private fun buildPokemonTypes(pokemon: PokemonWithTypesAndSpecies, binding: PokemonViewHolderBinding) {
+    private fun setViewHolderDefaultState() {
+        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+
+        binding.pokemonImageViewHolder.strokeColor = white
+        binding.pokemonImageViewHolder.setCardBackgroundColor(white)
+        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
+        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
+    }
+
+    private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
+//        remoteRepositoryHelper.fetchPokemonForId(id)
+//        remoteRepositoryHelper.fetchSpeciesForId(id)
+    }
+
+    private fun buildPokemonTypes(
+        pokemon: PokemonWithTypesAndSpecies,
+        binding: PokemonViewHolderBinding
+    ) {
         CoroutineScope(Dispatchers.Default).launch {
             val types = PokemonType.getPokemonEnumTypesForPokemonTypes(
-                    pokemon.types
+                pokemon.types
             )
-            withContext(Dispatchers.Main){
-                TypesGroupHelper(binding.dualTypeChipLayout.pokemonTypesChipGroup, types).bindChips()
+            withContext(Dispatchers.Main) {
+                TypesGroupHelper(
+                    binding.dualTypeChipLayout.pokemonTypesChipGroup,
+                    types
+                ).bindChips()
             }
         }
     }
 
     private fun setPokemonImageView(pokemonImage: String) {
-        val requestOptions = RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
+        val requestOptions =
+            RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
         glide.asBitmap()
             .load(pokemonImage)
             .apply(requestOptions)
+            .format(DecodeFormat.PREFER_RGB_565)
             .listener(requestListener())
             .into(binding.pokemonImageView)
     }
@@ -121,12 +150,10 @@ class PokemonViewHolder constructor(
     }
 
     companion object {
-
         fun pokemonIdFromTransitionName(transitionName: String) = transitionName.split('_')[1]
         fun pokemonTransitionNameForId(id: Int, context: Context) =
             context.getString(R.string.transition_name, id)
     }
-
 }
 
 

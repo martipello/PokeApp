@@ -9,6 +9,9 @@ interface PokemonTypeJoinDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonTypeJoin(pokemonTypeJoin: PokemonTypesJoin)
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPokemonTypeJoins(pokemonTypeJoin: List<PokemonTypesJoin>)
+
     @Update
     suspend fun updatePokemonTypeJoin(pokemonTypeJoin: PokemonTypesJoin)
 

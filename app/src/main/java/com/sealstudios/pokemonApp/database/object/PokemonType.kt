@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import org.jetbrains.annotations.NotNull
 
 @Entity
-data class PokemonType (
+data class PokemonType(
 
     @NotNull
     @PrimaryKey
@@ -28,9 +28,20 @@ data class PokemonType (
         const val TYPE_SLOT: String = "type_slot"
 
         fun getTypesInOrder(types: List<PokemonType>): List<PokemonType> {
-            return types.sortedBy { it.slot }
+            return types.sortedBy { it.name }
         }
 
+        fun mapDbPokemonTypesFromPokemonResponse(apiPokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon): List<PokemonType> {
+            return apiPokemon.types.map { apiType ->
+                PokemonType(
+                    id = Pokemon.getPokemonIdFromUrl(
+                        apiType.type.url
+                    ),
+                    name = apiType.type.name,
+                    slot = apiType.slot
+                )
+            }
+        }
     }
 
 }

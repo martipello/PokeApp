@@ -4,5 +4,5 @@ data class PokemonListResponse(
     val count: Int?,
     val next: String?,
     val previous: String?,
-    val results: ArrayList<NamedApiResource?>?
+    val results: List<NamedApiResource>
 )

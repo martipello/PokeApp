@@ -8,7 +8,7 @@
     <dimen name="view_holder_image_border_width">6dp</dimen>
     <dimen name="card_elevation_6dp">6dp</dimen>
     <dimen name="fab_size">56dp</dimen>
-    <dimen name="chip_image_size">28dp</dimen>
+    <dimen name="chip_image_size">26dp</dimen>
     <dimen name="zero">0dp</dimen>
 
     <dimen name="qualified_view_holder_image">90dp</dimen>
@@ -22,6 +22,7 @@
     <dimen name="qualified_small_margin_2dp">2dp</dimen>
 
     <dimen name="qualified_text_size_caption">12sp</dimen>
+    <dimen name="qualified_text_size_small_body">14sp</dimen>
     <dimen name="qualified_text_size_body">16sp</dimen>
     <dimen name="qualified_text_size_subtitle">18sp</dimen>
     <dimen name="qualified_text_size_title">20sp</dimen>

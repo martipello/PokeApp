@@ -18,10 +18,6 @@
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-    <include
-        android:id="@+id/empty_pokemon_list"
-        layout="@layout/pokemon_list_empty" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 
 

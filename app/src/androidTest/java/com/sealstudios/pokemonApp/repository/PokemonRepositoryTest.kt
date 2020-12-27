@@ -51,6 +51,8 @@ class SimplePokemonReadAndWriteTests {
     private lateinit var db: PokemonRoomDatabase
 
     val emptySearch = "%%"
+    val searchBulbasaur = "%b%"
+
 
     val bulbasaurSpeciesID = 1
     val squirtleSpeciesID = 2
@@ -71,6 +73,29 @@ class SimplePokemonReadAndWriteTests {
     val fireTypeID = 3
     val waterTypeID = 4
     val flyingTypeID = 5
+
+    val allPokemonTypes = listOf(
+        "normal",
+        "water",
+        "fire",
+        "grass",
+        "electric",
+        "ice",
+        "fighting",
+        "poison",
+        "ground",
+        "flying",
+        "psychic",
+        "bug",
+        "rock",
+        "ghost",
+        "dark",
+        "dragon",
+        "steel",
+        "fairy",
+        "unknown",
+    )
+
 
     @Before
     fun createDb() {
@@ -117,7 +142,7 @@ class SimplePokemonReadAndWriteTests {
         }
         runBlocking {
             val pokemonMatchingSearch =
-                pokemonDao.searchAllPokemon("%b%").getValueBlocking(scope)
+                pokemonDao.searchAllPokemon(searchBulbasaur).getValueBlocking(scope)
 
             assertThat(pokemonMatchingSearch?.size, equalTo(1))
             assertThat(pokemonMatchingSearch!![0].name, equalTo(bulbasaur.name))
@@ -135,7 +160,7 @@ class SimplePokemonReadAndWriteTests {
             insertBulbasaur()
 
             val pokemonMatchingSearch =
-                pokemonDao.searchAndFilterPokemon("%b%").getValueBlocking(scope)
+                pokemonDao.searchAndFilterPokemon("%b%", allPokemonTypes).getValueBlocking(scope)
             assertThat(pokemonMatchingSearch?.size, equalTo(1))
 
             assertThat(pokemonMatchingSearch!![0].pokemon.name, equalTo(bulbasaur.pokemon.name))
@@ -144,7 +169,10 @@ class SimplePokemonReadAndWriteTests {
             assertThat(pokemonMatchingSearch!![0].types[0].name, equalTo(bulbasaur.types[1].name))
             assertThat(pokemonMatchingSearch!![0].types[1].name, equalTo(bulbasaur.types[0].name))
 
-            assertThat(pokemonMatchingSearch!![0].species?.species, equalTo(bulbasaur.species!!.species))
+            assertThat(
+                pokemonMatchingSearch!![0].species?.species,
+                equalTo(bulbasaur.species!!.species)
+            )
         }
     }
 
@@ -179,13 +207,52 @@ class SimplePokemonReadAndWriteTests {
     @Test
     @Throws(Exception::class)
     fun testFiltering() {
+
         insertPokemonForFilterTest()
 
-        val pokemon =
-            pokemonDao.searchAndFilterPokemon(search = emptySearch).getValueBlocking(scope)
+        val emptySearchSingleFilter =
+            pokemonDao.searchAndFilterPokemon(search = emptySearch, filters = listOf("grass"))
+                .getValueBlocking(scope)
 
-        assertThat(pokemon?.size, equalTo(9))
-        //TODO assert order
+        assertThat(emptySearchSingleFilter?.size, equalTo(1))
+
+        assertThat(emptySearchSingleFilter!![0].pokemon.name, equalTo("bulbasaur"))
+
+        val emptySearchMultiFilter =
+            pokemonDao.searchAndFilterPokemon(search = emptySearch, filters = listOf("fire", "flying"))
+                .getValueBlocking(scope)
+
+        assertThat(emptySearchMultiFilter?.size, equalTo(4))
+
+        assertThat(emptySearchMultiFilter!![0].pokemon.name, equalTo("charizard"))
+        assertThat(emptySearchMultiFilter!![1].pokemon.name, equalTo("moltres"))
+        assertThat(emptySearchMultiFilter!![2].pokemon.name, equalTo("charmander"))
+        assertThat(emptySearchMultiFilter!![3].pokemon.name, equalTo("pidgey"))
+
+        val searchBulbasaurSingleFilter =
+            pokemonDao.searchAndFilterPokemon(search = searchBulbasaur, filters = listOf("grass"))
+                .getValueBlocking(scope)
+
+        assertThat(searchBulbasaurSingleFilter?.size, equalTo(1))
+
+        assertThat(searchBulbasaurSingleFilter!![0].pokemon.name, equalTo("bulbasaur"))
+
+        val searchRMultiFilter =
+            pokemonDao.searchAndFilterPokemon(search = "%r%", filters = listOf("fire", "flying"))
+                .getValueBlocking(scope)
+
+        assertThat(searchRMultiFilter?.size, equalTo(3))
+
+        assertThat(searchRMultiFilter!![0].pokemon.name, equalTo("charizard")) // matches 2 filters and ID is 4
+        assertThat(searchRMultiFilter!![1].pokemon.name, equalTo("moltres")) // matches 2 filters and ID is 6
+        assertThat(searchRMultiFilter!![2].pokemon.name, equalTo("charmander")) // matches one filter and ID is 3
+
+        val searchAndMultiFilterNoResults =
+            pokemonDao.searchAndFilterPokemon(search = "%ex%", filters = listOf("fire", "flying"))
+                .getValueBlocking(scope)
+
+        assertThat(searchAndMultiFilterNoResults?.size, equalTo(0))
+
     }
 
     private fun insertBaseStarters() = runBlocking {
@@ -201,23 +268,6 @@ class SimplePokemonReadAndWriteTests {
         insertCharizard()
         insertMoltres()
         insertPidgey()
-    }
-
-    private fun insertSquirtle() = runBlocking {
-
-        val squirtle = squirtle()
-        val squirtleSpeciesJoin =
-            PokemonSpeciesJoin(pokemon_id = squirtleID, species_id = squirtleSpeciesID)
-        val waterJoin = PokemonTypesJoin(pokemon_id = squirtleID, type_id = waterTypeID)
-
-        pokemonDao.insertPokemon(squirtle.pokemon)
-
-        speciesDao.insertSpecies(squirtle.species!!)
-        speciesJoinDao.insertPokemonSpeciesJoin(squirtleSpeciesJoin)
-
-        pokemonTypeDao.insertPokemonType(pokemonType = squirtle.types[0])
-        pokemonTypeJoinDao.insertPokemonTypeJoin(waterJoin)
-
     }
 
     private fun insertBulbasaur() = runBlocking {
@@ -237,6 +287,23 @@ class SimplePokemonReadAndWriteTests {
         pokemonTypeDao.insertPokemonType(pokemonType = bulbasaur.types[1])
         pokemonTypeJoinDao.insertPokemonTypeJoin(grassJoin)
         pokemonTypeJoinDao.insertPokemonTypeJoin(poisonJoin)
+    }
+
+    private fun insertSquirtle() = runBlocking {
+
+        val squirtle = squirtle()
+        val squirtleSpeciesJoin =
+            PokemonSpeciesJoin(pokemon_id = squirtleID, species_id = squirtleSpeciesID)
+        val waterJoin = PokemonTypesJoin(pokemon_id = squirtleID, type_id = waterTypeID)
+
+        pokemonDao.insertPokemon(squirtle.pokemon)
+
+        speciesDao.insertSpecies(squirtle.species!!)
+        speciesJoinDao.insertPokemonSpeciesJoin(squirtleSpeciesJoin)
+
+        pokemonTypeDao.insertPokemonType(pokemonType = squirtle.types[0])
+        pokemonTypeJoinDao.insertPokemonTypeJoin(waterJoin)
+
     }
 
     private fun insertCharmander() = runBlocking {

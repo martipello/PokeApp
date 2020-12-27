@@ -44,13 +44,19 @@ class PokemonRepository @Inject constructor(
         pokemonDao.deletePokemon(pokemon)
     }
 
-
-    fun getPokemonWithTypesAndSpeciesWithPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
-        return pokemonDao.getAllPokemonWithTypesAndSpeciesWithPaging()
+    fun getAllPokemonWithTypesAndSpeciesForPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
+        return pokemonDao.getAllPokemonWithTypesAndSpeciesForPaging()
     }
 
-    fun searchPokemonWithTypesAndSpeciesWithPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return pokemonDao.searchAllPokemonWithTypesAndSpeciesWithPaging(search)
+    fun searchPokemonWithTypesAndSpeciesForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return pokemonDao.searchPokemonWithTypesAndSpeciesForPaging(search)
+    }
+
+    fun searchAndFilterPokemonWithTypesAndSpeciesForPaging(
+        search: String,
+        filters: List<String>
+    ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
     }
 
 }

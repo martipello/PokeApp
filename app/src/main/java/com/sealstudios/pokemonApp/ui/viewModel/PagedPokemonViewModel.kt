@@ -58,7 +58,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
                 maxSize = 200
             )
         ) {
-            searchAllPokemonWithPaging(search)
+            searchPokemonForPaging(search)
         }.liveData.cachedIn(viewModelScope)
     }
 
@@ -71,7 +71,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
                 maxSize = 60
             )
         ) {
-            searchAllPokemonWithPaging(search)
+            searchPokemonForPaging(search)
         }.flow.cachedIn(viewModelScope).combine(filters.asFlow()){ pagingData, filters ->
             Log.d("PPVM", "combine filter")
             pagingData.filter { filterTypesForFlow(it, filters) }
@@ -145,13 +145,18 @@ class PagedPokemonViewModel @ViewModelInject constructor(
 
 
     @SuppressLint("DefaultLocale")
-    private fun searchAllPokemonWithPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return repository.searchPokemonWithTypesAndSpeciesWithPaging(search)
+    private fun getAllPokemonForPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
+        return repository.getAllPokemonWithTypesAndSpeciesForPaging()
     }
 
     @SuppressLint("DefaultLocale")
-    private fun getAllPokemonWithPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
-        return repository.getPokemonWithTypesAndSpeciesWithPaging()
+    private fun searchPokemonForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return repository.searchPokemonWithTypesAndSpeciesForPaging(search)
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun searchAndFilterPokemonForPaging(search: String, filters: List<String>): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
     }
 
     @SuppressLint("DefaultLocale")

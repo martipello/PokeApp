@@ -9,8 +9,6 @@ import androidx.paging.*
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class PagedPokemonViewModel @ViewModelInject constructor(
@@ -44,40 +42,57 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             val search = pair?.first
             val filters = pair?.second
             if (search != null && filters != null) {
-                searchAndFilterPokemonPager(search).asLiveData()
+                searchAndFilterPokemonPager(search, filters.toList())
             } else null
         }
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchPokemonPager(search: String): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
+    private fun searchAndFilterPokemonPager(search: String, filters: List<String>): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
         return Pager(
-            config = PagingConfig(
-                pageSize = 50,
-                enablePlaceholders = false,
-                maxSize = 200
-            )
-        ) {
-            searchPokemonForPaging(search)
-        }.liveData.cachedIn(viewModelScope)
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemonPager(search: String): Flow<PagingData<PokemonWithTypesAndSpeciesForList>> {
-        val pager = Pager(
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false,
                 maxSize = 60
             )
         ) {
-            searchPokemonForPaging(search)
-        }.flow.cachedIn(viewModelScope).combine(filters.asFlow()){ pagingData, filters ->
-            Log.d("PPVM", "combine filter")
-            pagingData.filter { filterTypesForFlow(it, filters) }
-        }
-        return pager
+            if (filters.isEmpty()){
+                searchPokemonForPaging(search)
+            } else {
+                searchAndFilterPokemonForPaging(search, filters)
+            }
+        }.liveData.cachedIn(viewModelScope)
     }
+
+//    @SuppressLint("DefaultLocale")
+//    private fun searchPokemonPager(search: String): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
+//        return Pager(
+//            config = PagingConfig(
+//                pageSize = 50,
+//                enablePlaceholders = false,
+//                maxSize = 200
+//            )
+//        ) {
+//            searchPokemonForPaging(search)
+//        }.liveData.cachedIn(viewModelScope)
+//    }
+//
+//    @SuppressLint("DefaultLocale")
+//    private fun searchAndFilterPokemonPager(search: String): Flow<PagingData<PokemonWithTypesAndSpeciesForList>> {
+//        val pager = Pager(
+//            config = PagingConfig(
+//                pageSize = 20,
+//                enablePlaceholders = false,
+//                maxSize = 60
+//            )
+//        ) {
+//            searchPokemonForPaging(search)
+//        }.flow.cachedIn(viewModelScope).combine(filters.asFlow()){ pagingData, filters ->
+//            Log.d("PPVM", "combine filter")
+//            pagingData.filter { filterTypesForFlow(it, filters) }
+//        }
+//        return pager
+//    }
 
     suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
         Log.d("PPVM", "fetch remote pokemon for id : $id")

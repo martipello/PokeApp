@@ -15,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -73,7 +72,7 @@ class PokemonDetailFragment : Fragment(){
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
@@ -191,7 +190,7 @@ class PokemonDetailFragment : Fragment(){
     }
 
     private fun observePokemon() {
-        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
+        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, { pokemon ->
             lifecycleScope.launch {
                 Log.d("DETAIL", "pokemon")
                 Log.d("DETAIL", "pokemon $pokemon")
@@ -209,7 +208,7 @@ class PokemonDetailFragment : Fragment(){
     private fun observeHasExpandedState() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
             viewLifecycleOwner,
-            Observer { hasExpanded ->
+            { hasExpanded ->
                 this.hasExpanded = hasExpanded
                 if (hasExpanded) {
                     restoreUIState()
@@ -221,7 +220,7 @@ class PokemonDetailFragment : Fragment(){
     private fun observeUIColor() {
         pokemonDetailViewModel.dominantAndLightVibrantColors.observe(
             viewLifecycleOwner,
-            Observer { viewColors ->
+            { viewColors ->
                 setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor

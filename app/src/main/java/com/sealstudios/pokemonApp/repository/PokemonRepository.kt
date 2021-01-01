@@ -6,6 +6,8 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
@@ -16,7 +18,7 @@ class PokemonRepository @Inject constructor(
 
 //    val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
-    suspend fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
+    fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
         return pokemonDao.getPokemonWithTypes(search)
     }
 
@@ -24,7 +26,7 @@ class PokemonRepository @Inject constructor(
         return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
     }
 
-    suspend fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
+    fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
         return pokemonDao.getSinglePokemonById(id)
     }
 

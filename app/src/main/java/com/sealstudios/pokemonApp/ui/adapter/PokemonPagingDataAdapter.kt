@@ -32,7 +32,8 @@ class PokemonPagingDataAdapter(
                 oldItem.pokemon.id == newItem.pokemon.id
 
             override fun areContentsTheSame(oldItem: PokemonWithTypesAndSpeciesForList, newItem: PokemonWithTypesAndSpeciesForList): Boolean =
-                oldItem == newItem
+                oldItem.types.size == newItem.types.size &&
+                        oldItem.species?.species == newItem.species?.species
         }
     }
 }

@@ -11,10 +11,10 @@ import com.sealstudios.pokemonApp.database.`object`.*
 @Dao
 interface PokemonDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemon(pokemon: Pokemon)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemon(pokemon: List<Pokemon>)
 
     @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")

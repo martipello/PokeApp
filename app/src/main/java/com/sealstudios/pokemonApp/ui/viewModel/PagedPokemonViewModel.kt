@@ -21,9 +21,9 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchPokemon: LiveData<PagingData<PokemonWithTypesAndSpeciesForList>>
     var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
+    val searchPokemon: LiveData<PagingData<PokemonWithTypesAndSpeciesForList>>
 
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
@@ -44,7 +44,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             if (search != null && filters != null) {
                 searchAndFilterPokemonPager(search, filters.toList())
             } else null
-        }
+        }.distinctUntilChanged()
     }
 
     @SuppressLint("DefaultLocale")
@@ -64,38 +64,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
         }.liveData.cachedIn(viewModelScope)
     }
 
-//    @SuppressLint("DefaultLocale")
-//    private fun searchPokemonPager(search: String): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
-//        return Pager(
-//            config = PagingConfig(
-//                pageSize = 50,
-//                enablePlaceholders = false,
-//                maxSize = 200
-//            )
-//        ) {
-//            searchPokemonForPaging(search)
-//        }.liveData.cachedIn(viewModelScope)
-//    }
-//
-//    @SuppressLint("DefaultLocale")
-//    private fun searchAndFilterPokemonPager(search: String): Flow<PagingData<PokemonWithTypesAndSpeciesForList>> {
-//        val pager = Pager(
-//            config = PagingConfig(
-//                pageSize = 20,
-//                enablePlaceholders = false,
-//                maxSize = 60
-//            )
-//        ) {
-//            searchPokemonForPaging(search)
-//        }.flow.cachedIn(viewModelScope).combine(filters.asFlow()){ pagingData, filters ->
-//            Log.d("PPVM", "combine filter")
-//            pagingData.filter { filterTypesForFlow(it, filters) }
-//        }
-//        return pager
-//    }
-
     suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-        Log.d("PPVM", "fetch remote pokemon for id : $id")
         fetchPokemonForId(id)
         fetchSpeciesForId(id)
     }
@@ -186,7 +155,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             Log.d("PPVM", "filter $filter")
             pokemon.types.any { type ->
                 Log.d("PPVM", "type $type")
-                filter.toLowerCase() == type.name.toLowerCase()
+                filter.equals(type.name, ignoreCase = true)
             }
         }
     }
@@ -199,7 +168,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
         var match = false
         for (filter in filters) {
             for (type in pokemon.types) {
-                if (type.name.toLowerCase() == filter.toLowerCase()) {
+                if (type.name.equals(filter, ignoreCase = true)) {
                     val matches = pokemon.matches.plus(1)
                     pokemon.apply {
                         this.matches = matches

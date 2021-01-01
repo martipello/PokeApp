@@ -30,32 +30,32 @@ class PokemonViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun insertPokemon(pokemon: List<Pokemon>) = withContext(Dispatchers.IO) {
-        pokemonRepository.insertPokemon(pokemon)
-    }
+//    private suspend fun insertPokemon(pokemon: List<Pokemon>) = withContext(Dispatchers.IO) {
+//        pokemonRepository.insertPokemon(pokemon)
+//    }
+//
+//    private suspend fun insertPokemon(pokemon: Pokemon) = withContext(Dispatchers.IO) {
+//        pokemonRepository.insertPokemon(pokemon)
+//    }
 
-    private suspend fun insertPokemon(pokemon: Pokemon) = withContext(Dispatchers.IO) {
-        pokemonRepository.insertPokemon(pokemon)
-    }
-
-    suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
-        withContext(Dispatchers.IO) {
-            Log.d("POKEMON_VIEW_MODEL", "saveAllPokemon")
-            pokemonListResponseData.map {
-                val id = Pokemon.getPokemonIdFromUrl(it.url)
-                insertPokemon(Pokemon(
-                    id = id,
-                    name = it.name,
-                    image = Pokemon.highResPokemonUrl(id),
-                    height = 0,
-                    weight = 0,
-                    move_ids = listOf(),
-                    versionsLearnt = listOf(),
-                    learnMethods = listOf(),
-                    levelsLearnedAt = listOf(),
-                    sprite = "",
-                ))
-            }
-        }
+//    suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
+//        withContext(Dispatchers.IO) {
+//            Log.d("POKEMON_VIEW_MODEL", "saveAllPokemon")
+//            pokemonListResponseData.map {
+//                val id = Pokemon.getPokemonIdFromUrl(it.url)
+//                insertPokemon(Pokemon(
+//                    id = id,
+//                    name = it.name,
+//                    image = Pokemon.highResPokemonUrl(id),
+//                    height = 0,
+//                    weight = 0,
+//                    move_ids = listOf(),
+//                    versionsLearnt = listOf(),
+//                    learnMethods = listOf(),
+//                    levelsLearnedAt = listOf(),
+//                    sprite = "",
+//                ))
+//            }
+//        }
 
 }

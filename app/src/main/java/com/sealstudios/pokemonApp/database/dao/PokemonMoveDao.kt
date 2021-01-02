@@ -9,10 +9,10 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 @Dao
 interface PokemonMoveDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonMove(pokemonMove: PokemonMove)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonMoves(pokemonMove: List<PokemonMove>)
 
     @Query("SELECT * FROM PokemonMove ORDER BY move_id ASC")

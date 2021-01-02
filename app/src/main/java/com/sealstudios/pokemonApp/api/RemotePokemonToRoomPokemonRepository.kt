@@ -39,17 +39,15 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
         withContext(context = Dispatchers.IO) {
             val pokemonSpeciesRequest =
                 remotePokemonRepository.speciesForId(remotePokemonId)
-            pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
-                if (pokemonSpeciesResponse.isSuccessful) {
-                    pokemonSpeciesResponse.body()?.let { species ->
-                        insertPokemonSpecies(
-                            remotePokemonId,
-                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(species)
-                        )
-                    }
+            when (pokemonSpeciesRequest.status) {
+                Status.SUCCESS -> pokemonSpeciesRequest.data?.let {
+                    insertPokemonSpecies(
+                        remotePokemonId,
+                        PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
+                    )
                 }
+                else -> Log.d("RP2RPR", "fetch species failed")
             }
-
         }
     }
 
@@ -83,18 +81,6 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
         }
     }
 
-    private suspend fun insertPokemon(pokemon: Pokemon) {
-        withContext(Dispatchers.IO) {
-            pokemonRepository.insertPokemon(pokemon)
-        }
-    }
-
-    suspend fun insertPokemon(pokemon: List<Pokemon>) {
-        withContext(Dispatchers.IO) {
-            pokemonRepository.insertPokemon(pokemon)
-        }
-    }
-
     suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
         withContext(Dispatchers.IO) {
             pokemonListResponseData.map {
@@ -115,6 +101,12 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                 )
             }
         }
+
+    private suspend fun insertPokemon(pokemon: Pokemon) {
+        withContext(Dispatchers.IO) {
+            pokemonRepository.insertPokemon(pokemon)
+        }
+    }
 
     private suspend fun insertPokemonTypes(
         remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon

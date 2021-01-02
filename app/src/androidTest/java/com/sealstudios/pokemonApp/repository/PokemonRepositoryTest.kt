@@ -11,8 +11,8 @@ import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.dao.*
 import kotlinx.coroutines.*
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.MatcherAssert.assertThat
 import org.junit.After
-import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test

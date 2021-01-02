@@ -14,7 +14,7 @@ class RemotePokemonRepository @Inject constructor(
 
     suspend fun getAllPokemonResponse(): Resource<PokemonListResponse> {
         return try {
-            responseHandler.handleSuccess(pokemonService.getPokemon(offset = 0, limit = 1050))
+            responseHandler.handleSuccess(pokemonService.getPokemon(offset = 0, limit = 150))
         } catch (e: Exception) {
             responseHandler.handleException(e)
         }
@@ -32,8 +32,16 @@ class RemotePokemonRepository @Inject constructor(
         return pokemonService.getPokemonById(id, offset = 0, limit = 1)
     }
 
-    suspend fun speciesForId(id: Int): Response<PokemonSpecies> {
-        return pokemonService.getPokemonSpeciesForId(id)
+    suspend fun speciesById(id: Int): Response<PokemonSpecies> {
+        return pokemonService.getPokemonSpeciesById(id)
+    }
+
+    suspend fun speciesForId(id: Int): Resource<PokemonSpecies> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemonSpeciesForId(id))
+        } catch (e: Exception){
+            responseHandler.handleException(e)
+        }
     }
 
     suspend fun moveForId(id: Int): Response<PokemonMove> {
@@ -45,7 +53,7 @@ class RemotePokemonRepository @Inject constructor(
     }
 
     suspend fun getRemotePokemonEvolutionChainForId(id: Int): Response<PokemonSpecies> {
-        return pokemonService.getPokemonSpeciesForId(id)
+        return pokemonService.getPokemonSpeciesById(id)
     }
 
 }

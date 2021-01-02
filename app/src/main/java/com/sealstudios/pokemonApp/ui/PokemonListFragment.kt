@@ -27,6 +27,7 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
+import androidx.lifecycle.Observer
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.PokemonPagingDataAdapter
@@ -114,16 +115,13 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun checkIsFirstTime() {
-        remotePokemonToRoomPokemonRepository.getAllPokemon()
-
-//        Log.d("ERROR", "Check isFirstTime")
-
-//        if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
-//            Log.d("ERROR", "isFirstTime")
-//            observeAllPokemonResponse()
-//        } else {
-//            Log.d("ERROR", "not isFirstTime")
-//        }
+        Log.d("ERROR", "Check isFirstTime")
+        if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
+            Log.d("ERROR", "isFirstTime")
+            remotePokemonToRoomPokemonRepository.getAllPokemon()
+        } else {
+            Log.d("ERROR", "not isFirstTime")
+        }
     }
 
     private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
@@ -233,7 +231,7 @@ class PokemonListFragment : Fragment(),
 //    }
 
     private fun observePokemonList() {
-        pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, { pokemonList ->
+        pokemonListViewModel.searchPokemon.observe(viewLifecycleOwner, Observer { pokemonList ->
             Log.d("LIST", "List : $pokemonList")
             pokemonList?.let { pokemonListWithTypesAndSpecies ->
                 pokemonAdapter.submitList(pokemonListWithTypesAndSpecies)
@@ -248,7 +246,7 @@ class PokemonListFragment : Fragment(),
 
     private suspend fun observePagedPokemonList() {
         pokemonListViewModelWithPaging.searchPokemon.observe(
-            viewLifecycleOwner,
+            viewLifecycleOwner, Observer
             { pokemonPagingData ->
                 viewLifecycleOwner.lifecycleScope.launch {
                     Log.d("PLF", "submit data")
@@ -267,7 +265,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, {
+        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -275,7 +273,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeFilters() {
-        pokemonListViewModel.filters.observe(viewLifecycleOwner, { selectionsLiveData ->
+        pokemonListViewModel.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
             selectionsLiveData?.let { selections ->
                 setUpFilterView(selections)
             }
@@ -284,7 +282,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observeAnimationState() {
         pokemonListViewModel.isFiltersLayoutExpanded.observe(
-            viewLifecycleOwner,
+            viewLifecycleOwner, Observer
             { filterIsExpanded ->
                 if (filterIsExpanded && this.filterIsExpanded) {
                     binding.root.post {

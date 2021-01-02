@@ -74,7 +74,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     ) {
         withContext(context = Dispatchers.IO) {
             val pokemonSpeciesRequest =
-                remotePokemonRepository.speciesForId(remotePokemonId)
+                remotePokemonRepository.speciesById(remotePokemonId)
             pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
                 if (pokemonSpeciesResponse.isSuccessful) {
                     pokemonSpeciesResponse.body()?.let { species ->

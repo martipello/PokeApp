@@ -154,23 +154,6 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun filterTypesForFlow(
-        pokemon: PokemonWithTypesAndSpeciesForList,
-        filters: MutableSet<String>
-    ): Boolean {
-        if (filters.isEmpty()){
-            return true
-        }
-        return filters.any { filter ->
-            Log.d("PPVM", "filter $filter")
-            pokemon.types.any { type ->
-                Log.d("PPVM", "type $type")
-                filter.equals(type.name, ignoreCase = true)
-            }
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
     private fun filterTypes(
         pokemon: PokemonWithTypesAndSpecies,
         filters: MutableSet<String>

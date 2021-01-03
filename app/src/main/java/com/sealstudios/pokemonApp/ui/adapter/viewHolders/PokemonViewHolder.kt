@@ -15,15 +15,16 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
-import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import com.sealstudios.pokemonApp.database.`object`.PokemonType as dbType
+import com.sealstudios.pokemonApp.ui.util.PokemonType as networkType
 
 class PokemonViewHolder constructor(
     private val binding: PokemonViewHolderBinding,
@@ -32,16 +33,11 @@ class PokemonViewHolder constructor(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     @SuppressLint("DefaultLocale")
-    fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpecies) = with(binding) {
+    fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpeciesForList) = with(binding) {
         setViewHolderDefaultState()
 
         setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
 
-        if (pokemonWithTypesAndSpecies.species == null) {
-            CoroutineScope(Dispatchers.IO).launch {
-                fetchRemotePokemon(pokemonWithTypesAndSpecies.pokemon.id)
-            }
-        }
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
             itemView.context.getString(
@@ -63,7 +59,7 @@ class PokemonViewHolder constructor(
                 binding.pokemonImageViewHolder
             )
         }
-        buildPokemonTypes(pokemonWithTypesAndSpecies, binding)
+        buildPokemonTypes(pokemonWithTypesAndSpecies.types, binding)
     }
 
     private fun setViewHolderDefaultState() {
@@ -75,23 +71,18 @@ class PokemonViewHolder constructor(
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
     }
 
-    private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-//        remoteRepositoryHelper.fetchPokemonForId(id)
-//        remoteRepositoryHelper.fetchSpeciesForId(id)
-    }
-
     private fun buildPokemonTypes(
-        pokemon: PokemonWithTypesAndSpecies,
+        types: List<dbType>,
         binding: PokemonViewHolderBinding
     ) {
         CoroutineScope(Dispatchers.Default).launch {
-            val types = PokemonType.getPokemonEnumTypesForPokemonTypes(
-                pokemon.types
+            val enumTypes = networkType.getPokemonEnumTypesForPokemonTypes(
+                types
             )
             withContext(Dispatchers.Main) {
                 TypesGroupHelper(
                     binding.dualTypeChipLayout.pokemonTypesChipGroup,
-                    types
+                    enumTypes
                 ).bindChips()
             }
         }

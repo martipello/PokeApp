@@ -28,6 +28,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
     init {
+
         //TODO when the underlining data updates it causes this to be called
         // but this is done on the UI thread
         // causing an error
@@ -149,7 +150,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
 
     @SuppressLint("DefaultLocale")
     private fun searchAndFilterPokemonForPaging(search: String, filters: List<String>): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
+        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters.map { filter -> filter.toLowerCase() })
     }
 
     @SuppressLint("DefaultLocale")

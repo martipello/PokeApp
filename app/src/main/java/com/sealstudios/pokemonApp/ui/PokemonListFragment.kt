@@ -115,12 +115,10 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun checkIsFirstTime() {
-        Log.d("ERROR", "Check isFirstTime")
+        Log.d("PLF", "Check isFirstTime")
         if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
-            Log.d("ERROR", "isFirstTime")
             remotePokemonToRoomPokemonRepository.getAllPokemon()
-        } else {
-            Log.d("ERROR", "not isFirstTime")
+            sharedPreferenceHelper.setBool(SharedPreferenceHelper.isFirstTime, false)
         }
     }
 

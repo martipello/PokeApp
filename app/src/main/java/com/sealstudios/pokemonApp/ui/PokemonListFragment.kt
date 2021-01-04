@@ -195,8 +195,10 @@ class PokemonListFragment : Fragment(),
         pokemonListViewModelWithPaging.searchPokemon.observe(
             viewLifecycleOwner, Observer
             { pokemonPagingData ->
-                viewLifecycleOwner.lifecycleScope.launch {
-                    pokemonPagingAdapter.submitData(pokemonPagingData)
+                pokemonPagingData?.let {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        pokemonPagingAdapter.submitData(it)
+                    }
                 }
             })
     }

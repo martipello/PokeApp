@@ -29,15 +29,6 @@ class PagedPokemonViewModel @ViewModelInject constructor(
 
     init {
 
-        //TODO when the underlining data updates it causes this to be called
-        // but this is done on the UI thread
-        // causing an error
-        /*
-            11480-11480/com.sealstudios.pokemonApp E/ROOM: Cannot run invalidation tracker. Is the db closed?
-            java.lang.IllegalStateException: Cannot access database on the main thread since it may potentially lock the UI for a long period of time.
-            at androidx.room.RoomDatabase.assertNotMainThread(RoomDatabase.java:341)
-         */
-
         val combinedValues =
             MediatorLiveData<Pair<String?, MutableSet<String>?>?>().apply {
                 addSource(search) {
@@ -48,13 +39,16 @@ class PagedPokemonViewModel @ViewModelInject constructor(
                 }
             }
 
-        searchPokemon = Transformations.switchMap(combinedValues) { pair ->
-            val search = pair?.first
-            val filters = pair?.second
-            if (search != null && filters != null) {
-                searchAndFilterPokemonPager(search, filters.toList())
-            } else null
-        }.distinctUntilChanged()
+        searchPokemon = combinedValues.switchMap {
+            liveData {
+                val search = it?.first ?: return@liveData
+                val filters = it.second ?: return@liveData
+                withContext(Dispatchers.IO){
+                    emitSource(searchAndFilterPokemonPager(search, filters.toList()))
+                }
+            }.distinctUntilChanged()
+        }
+
     }
 
     @SuppressLint("DefaultLocale")

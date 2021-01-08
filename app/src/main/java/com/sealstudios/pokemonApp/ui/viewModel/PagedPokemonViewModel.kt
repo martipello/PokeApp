@@ -68,75 +68,6 @@ class PagedPokemonViewModel @ViewModelInject constructor(
         }.liveData.cachedIn(viewModelScope)
     }
 
-    suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-        fetchPokemonForId(id)
-        fetchSpeciesForId(id)
-    }
-
-    private suspend fun fetchPokemonForId(
-        remotePokemonId: Int
-    ) {
-        withContext(context = Dispatchers.IO) {
-            val pokemonRequest =
-                remotePokemonRepository.pokemonById(remotePokemonId)
-            pokemonRequest.let { pokemonResponse ->
-                if (pokemonResponse.isSuccessful) {
-                    pokemonResponse.body()?.let { pokemon ->
-                        repository.insertPokemon(Pokemon.mapDbPokemonFromPokemonResponse(pokemon))
-                        insertPokemonTypes(pokemon)
-                    }
-                }
-            }
-        }
-    }
-
-    private suspend fun fetchSpeciesForId(
-        remotePokemonId: Int
-    ) {
-        withContext(context = Dispatchers.IO) {
-            val pokemonSpeciesRequest =
-                remotePokemonRepository.speciesById(remotePokemonId)
-            pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
-                if (pokemonSpeciesResponse.isSuccessful) {
-                    pokemonSpeciesResponse.body()?.let { species ->
-                        insertPokemonSpecies(
-                            remotePokemonId,
-                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(species)
-                        )
-                    }
-                }
-            }
-
-        }
-    }
-
-    private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        withContext(Dispatchers.IO) {
-            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
-                PokemonSpeciesJoin(
-                    remotePokemonId,
-                    pokemonSpecies.id
-                )
-            )
-        }
-    }
-
-    private suspend fun insertPokemonTypes(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
-    ) {
-        withContext(Dispatchers.IO) {
-            pokemonTypeRepository.insertPokemonTypes(PokemonType.mapDbPokemonTypesFromPokemonResponse(remotePokemon))
-            pokemonTypeJoinRepository.insertPokemonTypeJoins(PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon))
-        }
-    }
-
-
-    @SuppressLint("DefaultLocale")
-    private fun getAllPokemonForPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
-        return repository.getAllPokemonWithTypesAndSpeciesForPaging()
-    }
-
     @SuppressLint("DefaultLocale")
     private fun searchPokemonForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
         return repository.searchPokemonWithTypesAndSpeciesForPaging(search)
@@ -145,26 +76,6 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     @SuppressLint("DefaultLocale")
     private fun searchAndFilterPokemonForPaging(search: String, filters: List<String>): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
         return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters.map { filter -> filter.toLowerCase() })
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun filterTypes(
-        pokemon: PokemonWithTypesAndSpecies,
-        filters: MutableSet<String>
-    ): Boolean {
-        var match = false
-        for (filter in filters) {
-            for (type in pokemon.types) {
-                if (type.name.equals(filter, ignoreCase = true)) {
-                    val matches = pokemon.matches.plus(1)
-                    pokemon.apply {
-                        this.matches = matches
-                    }
-                    match = true
-                }
-            }
-        }
-        return match
     }
 
     fun setSearch(search: String) {

@@ -1,13 +1,12 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import androidx.paging.*
-import com.sealstudios.pokemonApp.database.`object`.*
-import com.sealstudios.pokemonApp.repository.*
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
+import com.sealstudios.pokemonApp.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -38,7 +37,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             liveData {
                 val search = it?.first ?: return@liveData
                 val filters = it.second ?: return@liveData
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     emitSource(searchAndFilterPokemonPager(search, filters.toList()))
                 }
             }.distinctUntilChanged()
@@ -47,7 +46,10 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemonPager(search: String, filters: List<String>): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
+    private fun searchAndFilterPokemonPager(
+        search: String,
+        filters: List<String>
+    ): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
@@ -55,7 +57,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
                 maxSize = 60
             )
         ) {
-            if (filters.isEmpty()){
+            if (filters.isEmpty()) {
                 searchPokemonForPaging(search)
             } else {
                 searchAndFilterPokemonForPaging(search, filters)
@@ -69,8 +71,13 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemonForPaging(search: String, filters: List<String>): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters.map { filter -> filter.toLowerCase() })
+    private fun searchAndFilterPokemonForPaging(
+        search: String,
+        filters: List<String>
+    ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(
+            search,
+            filters.map { filter -> filter.toLowerCase() })
     }
 
     fun setSearch(search: String) {

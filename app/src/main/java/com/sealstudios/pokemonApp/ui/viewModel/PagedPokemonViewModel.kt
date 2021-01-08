@@ -13,11 +13,6 @@ import kotlinx.coroutines.withContext
 
 class PagedPokemonViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
-    private val remotePokemonRepository: RemotePokemonRepository,
-    private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonTypeRepository: PokemonTypeRepository,
-    private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 

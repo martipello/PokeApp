@@ -11,23 +11,10 @@ import retrofit2.http.Query
 interface PokemonService {
 
     @GET("pokemon/")
-    suspend fun getPokemonResponse(
-        @Query(value = "offset") offset: Int,
-        @Query(value = "limit") limit: Int
-    ): Response<PokemonListResponse>
-
-    @GET("pokemon/")
     suspend fun getPokemon(
         @Query(value = "offset") offset: Int,
         @Query(value = "limit") limit: Int
     ): PokemonListResponse
-
-    @GET("pokemon/{id}/")
-    suspend fun getPokemonById(
-        @Path(value = "id") pokemonId: Int,
-        @Query(value = "offset") offset: Int,
-        @Query(value = "limit") limit: Int
-    ): Response<Pokemon>
 
     @GET("pokemon/{id}/")
     suspend fun getPokemonForId(
@@ -36,36 +23,24 @@ interface PokemonService {
         @Query(value = "limit") limit: Int
     ): Pokemon
 
-    @GET("pokemon/{name}/")
-    suspend fun getPokemonByName(
-        @Path(value = "name") pokemonName: String,
-        @Query(value = "offset") offset: Int,
-        @Query(value = "limit") limit: Int
-    ): Response<Pokemon>
-
-    @GET("pokemon-species/{id}/")
-    suspend fun getPokemonSpeciesById(
-        @Path(value = "id") speciesId: Int
-    ): Response<PokemonSpecies>
-
     @GET("pokemon-species/{id}/")
     suspend fun getPokemonSpeciesForId(
         @Path(value = "id") speciesId: Int
     ): PokemonSpecies
 
-    @GET("ability/{id}/")
-    suspend fun getPokemonAbilityForId(
-        @Path(value = "id") abilityId: Int
-    ): Response<PokemonAbility>
-
     @GET("move/{id}/")
     suspend fun getPokemonMoveForId(
         @Path(value = "id") moveId: Int
-    ): Response<PokemonMove>
+    ): PokemonMove
+
+    @GET("ability/{id}/")
+    suspend fun getPokemonAbilityForId(
+        @Path(value = "id") abilityId: Int
+    ): PokemonAbility
 
     @GET("evolution-chain/{id}/")
     suspend fun getPokemonEvolutionsForId(
         @Path(value = "id") moveId: Int
-    ): Response<EvolutionChain>
+    ): EvolutionChain
 
 }

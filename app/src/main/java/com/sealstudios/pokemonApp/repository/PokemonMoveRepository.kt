@@ -23,7 +23,7 @@ class PokemonMoveRepository @Inject constructor(
         return pokemonMoveDao.getMoveById(id)
     }
 
-    fun getMovesByIds(ids: List<Int>): LiveData<List<PokemonMove>> {
+    fun movesForIds(ids: List<Int>): LiveData<List<PokemonMove>> {
         return pokemonMoveDao.getMovesByIds(ids)
     }
 

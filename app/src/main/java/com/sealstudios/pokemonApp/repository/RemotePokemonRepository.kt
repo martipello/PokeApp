@@ -2,7 +2,6 @@ package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.api.service.PokemonService
-import retrofit2.Response
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
@@ -23,38 +22,43 @@ class RemotePokemonRepository @Inject constructor(
     suspend fun pokemonForId(id: Int): Resource<apiPokemon> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonForId(id, offset = 0, limit = 1))
-        } catch (e: Exception){
+        } catch (e: Exception) {
             responseHandler.handleException(e)
         }
-    }
-
-    suspend fun pokemonById(id: Int): Response<apiPokemon> {
-        return pokemonService.getPokemonById(id, offset = 0, limit = 1)
-    }
-
-    suspend fun speciesById(id: Int): Response<PokemonSpecies> {
-        return pokemonService.getPokemonSpeciesById(id)
     }
 
     suspend fun speciesForId(id: Int): Resource<PokemonSpecies> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonSpeciesForId(id))
-        } catch (e: Exception){
+        } catch (e: Exception) {
             responseHandler.handleException(e)
         }
     }
 
-    suspend fun moveForId(id: Int): Response<PokemonMove> {
-        return pokemonService.getPokemonMoveForId(id)
+    suspend fun moveForId(id: Int): Resource<PokemonMove> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemonMoveForId(id))
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
     }
 
-    suspend fun getRemotePokemonAbilitiesForId(id: Int): Response<PokemonAbility> {
-        return pokemonService.getPokemonAbilityForId(id)
+    suspend fun getRemotePokemonEvolutionChainForId(id: Int): Resource<EvolutionChain> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemonEvolutionsForId(id))
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
     }
 
-    suspend fun getRemotePokemonEvolutionChainForId(id: Int): Response<PokemonSpecies> {
-        return pokemonService.getPokemonSpeciesById(id)
+    suspend fun getRemotePokemonAbilitiesForId(id: Int): Resource<PokemonAbility> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemonAbilityForId(id))
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
     }
+
 
 }
 

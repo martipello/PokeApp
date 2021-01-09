@@ -4,6 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Ignore
 import androidx.room.PrimaryKey
+import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -80,14 +81,26 @@ data class PokemonMove @JvmOverloads constructor(
                 id = apiPokemonMove.id,
                 name = apiPokemonMove.name,
                 accuracy = apiPokemonMove.accuracy ?: 0,
+                description = apiPokemonMove.flavor_text_entries?.findLast { it.language.name == "en" }?.flavor_text ?: "",
                 pp = apiPokemonMove.pp,
                 priority = apiPokemonMove.priority,
                 power = apiPokemonMove.power ?: 0,
                 generation = apiPokemonMove.generation.name,
                 damage_class = apiPokemonMove.damage_class.name,
                 type = apiPokemonMove.type.name,
-                damage_class_effect_chance = apiPokemonMove.effect_chance
+                damage_class_effect_chance = apiPokemonMove.effect_chance,
             )
         }
+
+        fun getPokemonMoveIdFromUrl(pokemonUrl: String?): Int {
+            if (pokemonUrl != null) {
+                val pokemonIndex = pokemonUrl.split('/')
+                if (pokemonIndex.size >= 2) {
+                    return pokemonIndex[pokemonIndex.size - 2].toInt()
+                }
+            }
+            return -1
+        }
+
     }
 }

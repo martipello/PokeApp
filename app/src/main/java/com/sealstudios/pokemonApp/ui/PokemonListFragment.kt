@@ -19,7 +19,6 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +30,6 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
-import com.sealstudios.pokemonApp.ui.adapter.PokemonPagingDataAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
@@ -40,7 +38,6 @@ import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
 import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
-import com.sealstudios.pokemonApp.ui.viewModel.PagedPokemonViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -66,9 +63,9 @@ class PokemonListFragment : Fragment(),
 
     private var search: String = ""
     private var filterIsExpanded = false
-//    private val pokemonListViewModelWithPaging by navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
+    //    private val pokemonListViewModelWithPaging by navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
+    //    private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,9 +83,10 @@ class PokemonListFragment : Fragment(),
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
         setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
+        postponeEnterTransition()
         return binding.root
     }
 
@@ -113,7 +111,6 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun checkIsFirstTime() {
-        Log.d("PLF", "Check isFirstTime")
         if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
             remotePokemonToRoomPokemonRepository.getAllPokemon()
             sharedPreferenceHelper.setBool(SharedPreferenceHelper.isFirstTime, false)
@@ -199,11 +196,11 @@ class PokemonListFragment : Fragment(),
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
-    private fun setUpPokemonPagingAdapter() {
-        pokemonPagingAdapter = PokemonPagingDataAdapter(glide, this)
-    }
+//    private fun setUpPokemonPagingAdapter() {
+//        pokemonPagingAdapter = PokemonPagingDataAdapter(glide, this)
+//    }
 
-    private suspend fun observePagedPokemonList() {
+//    private suspend fun observePagedPokemonList() {
 //        pokemonListViewModelWithPaging.searchPokemon.observe(
 //            viewLifecycleOwner, Observer { pokemonPagingData ->
 //                Log.d("PLF", "Observer Observer Observer")
@@ -213,7 +210,7 @@ class PokemonListFragment : Fragment(),
 //                    }
 //                }
 //            })
-    }
+//    }
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(

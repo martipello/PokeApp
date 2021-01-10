@@ -59,8 +59,8 @@ class PokemonAdapter(
                 override fun areContentsTheSame(
                     oldItem: PokemonWithTypesAndSpeciesForList,
                     newItem: PokemonWithTypesAndSpeciesForList
-                ): Boolean =
-                    oldItem.types.size == newItem.types.size &&
+                ): Boolean = oldItem.pokemon.id == newItem.pokemon.id &&
+                            oldItem.types.size == newItem.types.size &&
                             oldItem.species?.species == newItem.species?.species
             }
         }

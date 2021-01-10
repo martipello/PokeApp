@@ -34,9 +34,13 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             }
 
         searchPokemon = combinedValues.switchMap {
-            val search = it?.first ?: "%%"
-            val filters = it?.second ?: setOf<String>()
-            searchAndFilterPokemonPager(search, filters.toList())
+            liveData {
+                val search = it?.first ?: return@liveData
+                val filters = it.second ?: return@liveData
+                withContext(Dispatchers.IO) {
+                    emitSource(searchAndFilterPokemonPager(search, filters.toList()))
+                }
+            }
         }
 
     }

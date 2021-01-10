@@ -52,9 +52,10 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     ): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
         return Pager(
             config = PagingConfig(
-                pageSize = 20,
+                initialLoadSize = 10,
+                pageSize = 40,
                 enablePlaceholders = true,
-                maxSize = 60
+                maxSize = 120
             )
         ) {
             if (filters.isEmpty()) {

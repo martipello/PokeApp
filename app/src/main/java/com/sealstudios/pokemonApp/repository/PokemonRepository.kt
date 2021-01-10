@@ -23,10 +23,6 @@ class PokemonRepository @Inject constructor(
         return pokemonDao.getPokemonWithTypes(search)
     }
 
-    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>> {
-        return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
-    }
-
     fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
         return pokemonDao.getSinglePokemonById(id)
     }
@@ -49,6 +45,18 @@ class PokemonRepository @Inject constructor(
 
     fun getAllPokemonWithTypesAndSpeciesForPaging(): PagingSource<Int, PokemonWithTypesAndSpecies> {
         return pokemonDao.getAllPokemonWithTypesAndSpeciesForPaging()
+    }
+
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return pokemonDao.searchPokemonWithTypesAndSpecies(search)
+    }
+
+    fun searchAndFilterPokemonWithTypesAndSpecies(
+        search: String,
+        filters: List<String>
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        Log.d("REPO", filters.toString())
+        return pokemonDao.searchAndFilterPokemonWithTypesAndSpecies(search, filters)
     }
 
     fun searchPokemonWithTypesAndSpeciesForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {

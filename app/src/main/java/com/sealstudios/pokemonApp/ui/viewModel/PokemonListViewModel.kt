@@ -4,20 +4,19 @@ import android.annotation.SuppressLint
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import androidx.paging.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class PagedPokemonViewModel @ViewModelInject constructor(
+class PokemonListViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
-    val searchPokemon: LiveData<PagingData<PokemonWithTypesAndSpeciesForList>>
+    val searchPokemon: LiveData<List<PokemonWithTypesAndSpeciesForList>>
 
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
@@ -38,7 +37,11 @@ class PagedPokemonViewModel @ViewModelInject constructor(
                 val search = it?.first ?: return@liveData
                 val filters = it.second ?: return@liveData
                 withContext(Dispatchers.IO) {
-                    emitSource(searchAndFilterPokemonPager(search, filters.toList()))
+                    if (filters.isEmpty()) {
+                        emitSource(searchPokemon(search))
+                    } else {
+                        emitSource(searchAndFilterPokemon(search, filters.toList()))
+                    }
                 }
             }
         }
@@ -46,36 +49,16 @@ class PagedPokemonViewModel @ViewModelInject constructor(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemonPager(
-        search: String,
-        filters: List<String>
-    ): LiveData<PagingData<PokemonWithTypesAndSpeciesForList>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 40,
-                enablePlaceholders = true,
-                maxSize = 120
-            )
-        ) {
-            if (filters.isEmpty()) {
-                searchPokemonForPaging(search)
-            } else {
-                searchAndFilterPokemonForPaging(search, filters)
-            }
-        }.liveData.cachedIn(viewModelScope)
+    private fun searchPokemon(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return repository.searchPokemonWithTypesAndSpecies(search)
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchPokemonForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return repository.searchPokemonWithTypesAndSpeciesForPaging(search)
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemonForPaging(
+    private fun searchAndFilterPokemon(
         search: String,
         filters: List<String>
-    ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return repository.searchAndFilterPokemonWithTypesAndSpeciesForPaging(
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return repository.searchAndFilterPokemonWithTypesAndSpecies(
             search,
             filters.map { filter -> filter.toLowerCase() })
     }

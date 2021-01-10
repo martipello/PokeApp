@@ -19,6 +19,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
@@ -30,6 +31,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
+import com.sealstudios.pokemonApp.ui.adapter.PokemonPagingDataAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
@@ -38,6 +40,7 @@ import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
 import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
+import com.sealstudios.pokemonApp.ui.viewModel.PagedPokemonViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -64,8 +67,8 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
     private var filterIsExpanded = false
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
-    //    private val pokemonListViewModelWithPaging by navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
-    //    private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
+    private val pokemonListViewModelWithPaging by navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
+    private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,14 +99,14 @@ class PokemonListFragment : Fragment(),
         observeAnimationState()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
-//        setUpPokemonPagingAdapter()
+        setUpPokemonPagingAdapter()
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         checkIsFirstTime()
         observeFilters()
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            observePagedPokemonList()
-//        }
+        viewLifecycleOwner.lifecycleScope.launch {
+            observePagedPokemonList()
+        }
         observePokemonList()
         observeSearch()
         setUpViews()
@@ -141,7 +144,7 @@ class PokemonListFragment : Fragment(),
                     start()
                     awaitEnd()
                     if (filterIsExpanded) {
-                        pokemonListViewModel.setFiltersLayoutExpanded(false)
+                        pokemonListViewModelWithPaging.setFiltersLayoutExpanded(false)
                     }
                 }
             }
@@ -160,7 +163,7 @@ class PokemonListFragment : Fragment(),
                     start()
                     awaitEnd()
                     if (!filterIsExpanded) {
-                        pokemonListViewModel.setFiltersLayoutExpanded(true)
+                        pokemonListViewModelWithPaging.setFiltersLayoutExpanded(true)
                     }
                 }
             }
@@ -196,21 +199,21 @@ class PokemonListFragment : Fragment(),
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
-//    private fun setUpPokemonPagingAdapter() {
-//        pokemonPagingAdapter = PokemonPagingDataAdapter(glide, this)
-//    }
+    private fun setUpPokemonPagingAdapter() {
+        pokemonPagingAdapter = PokemonPagingDataAdapter(glide, this)
+    }
 
-//    private suspend fun observePagedPokemonList() {
-//        pokemonListViewModelWithPaging.searchPokemon.observe(
-//            viewLifecycleOwner, Observer { pokemonPagingData ->
-//                Log.d("PLF", "Observer Observer Observer")
-//                pokemonPagingData?.let {
-//                    viewLifecycleOwner.lifecycleScope.launch {
-//                        pokemonPagingAdapter.submitData(it)
-//                    }
-//                }
-//            })
-//    }
+    private suspend fun observePagedPokemonList() {
+        pokemonListViewModelWithPaging.searchPokemon.observe(
+            viewLifecycleOwner, Observer { pokemonPagingData ->
+                Log.d("PLF", "Observer Observer Observer")
+                pokemonPagingData?.let {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        pokemonPagingAdapter.submitData(it)
+                    }
+                }
+            })
+    }
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
@@ -223,7 +226,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
+        pokemonListViewModelWithPaging.search.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -231,7 +234,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeFilters() {
-        pokemonListViewModel.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
+        pokemonListViewModelWithPaging.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
             selectionsLiveData?.let { selections ->
                 setUpFilterView(selections)
             }
@@ -239,7 +242,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeAnimationState() {
-        pokemonListViewModel.isFiltersLayoutExpanded.observe(
+        pokemonListViewModelWithPaging.isFiltersLayoutExpanded.observe(
             viewLifecycleOwner, Observer { filterIsExpanded ->
                 if (filterIsExpanded && this.filterIsExpanded) {
                     binding.root.post {
@@ -285,7 +288,7 @@ class PokemonListFragment : Fragment(),
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
-            adapter = pokemonAdapter
+            adapter = pokemonPagingAdapter
             doOnPreDraw {
                 startPostponedEnterTransition()
             }
@@ -358,7 +361,7 @@ class PokemonListFragment : Fragment(),
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    pokemonListViewModel.setSearch("%$it%")
+                    pokemonListViewModelWithPaging.setSearch("%$it%")
                 }
                 return false
             }
@@ -395,9 +398,9 @@ class PokemonListFragment : Fragment(),
 
     override fun onFilterSelected(key: String, value: Boolean) {
         if (value) {
-            pokemonListViewModel.addFilter(key)
+            pokemonListViewModelWithPaging.addFilter(key)
         } else {
-            pokemonListViewModel.removeFilter(key)
+            pokemonListViewModelWithPaging.removeFilter(key)
         }
     }
 

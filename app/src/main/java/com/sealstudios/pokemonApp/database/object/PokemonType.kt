@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -31,7 +32,7 @@ data class PokemonType(
             return types.sortedBy { it.name }
         }
 
-        fun mapDbPokemonTypesFromPokemonResponse(apiPokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon): List<PokemonType> {
+        fun mapDbPokemonTypesFromPokemonResponse(apiPokemon: ApiPokemon): List<PokemonType> {
             return apiPokemon.types.map { apiType ->
                 PokemonType(
                     id = Pokemon.getPokemonIdFromUrl(

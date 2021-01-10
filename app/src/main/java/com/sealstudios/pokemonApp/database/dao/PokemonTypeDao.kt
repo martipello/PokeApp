@@ -6,10 +6,10 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType
 @Dao
 interface PokemonTypeDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonType(pokemonType: PokemonType)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonTypes(pokemonType: List<PokemonType>)
 
     @Update

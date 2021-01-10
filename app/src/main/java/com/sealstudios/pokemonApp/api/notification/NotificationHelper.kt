@@ -32,7 +32,8 @@ class NotificationHelper constructor(
         title: String,
         progressText: String,
         progress: Int,
-        max: Int
+        max: Int,
+        indeterminate: Boolean = false
     ): ForegroundInfo {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
@@ -52,7 +53,7 @@ class NotificationHelper constructor(
             createChannels(this, notificationManager)
             priority = if (progress != max) PRIORITY_MAX else PRIORITY_MIN
             setOngoing(progress != max)
-            setProgress(max, progress, false)
+            setProgress(max, progress, indeterminate)
             setContentText(progressText)
             setContentTitle(title)
             setTicker(title)

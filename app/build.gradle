@@ -54,6 +54,7 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //Navigation
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.2'
@@ -81,8 +82,8 @@ dependencies {
     annotationProcessor 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
 
     //Room
-    annotationProcessor "androidx.room:room-compiler:$rootProject.roomVersion"
-    implementation 'androidx.room:room-runtime:2.2.6'
+    annotationProcessor "androidx.room:room-compiler:2.3.0-alpha04"
+    implementation 'androidx.room:room-runtime:2.3.0-alpha04'
     implementation "androidx.room:room-ktx:2.3.0-alpha04"
     kapt "androidx.room:room-compiler:2.3.0-alpha04"
 

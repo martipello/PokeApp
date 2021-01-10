@@ -70,7 +70,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer {
             it?.let {
                 lifecycleScope.launch(Dispatchers.Default) {
-                    setPokemonMoves(it.getPokemonMoves())
+//                    setPokemonMoves(it.getPokemonMoves())
                 }
             }
         })

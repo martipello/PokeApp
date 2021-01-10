@@ -1,11 +1,14 @@
 package com.sealstudios.pokemonApp.repository
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon
 
@@ -16,15 +19,11 @@ class PokemonRepository @Inject constructor(
 
 //    val allPokemon: LiveData<List<dbPokemon>> = pokemonDao.getAllPokemon()
 
-    suspend fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
+    fun searchPokemon(search: String): LiveData<List<PokemonWithTypes>> {
         return pokemonDao.getPokemonWithTypes(search)
     }
 
-    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>> {
-        return pokemonDao.searchAllPokemonWithTypesAndSpecies(search)
-    }
-
-    suspend fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
+    fun getSinglePokemonById(id: Int): LiveData<dbPokemon> {
         return pokemonDao.getSinglePokemonById(id)
     }
 
@@ -48,6 +47,18 @@ class PokemonRepository @Inject constructor(
         return pokemonDao.getAllPokemonWithTypesAndSpeciesForPaging()
     }
 
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return pokemonDao.searchPokemonWithTypesAndSpecies(search)
+    }
+
+    fun searchAndFilterPokemonWithTypesAndSpecies(
+        search: String,
+        filters: List<String>
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        Log.d("REPO", filters.toString())
+        return pokemonDao.searchAndFilterPokemonWithTypesAndSpecies(search, filters)
+    }
+
     fun searchPokemonWithTypesAndSpeciesForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
         return pokemonDao.searchPokemonWithTypesAndSpeciesForPaging(search)
     }
@@ -56,6 +67,7 @@ class PokemonRepository @Inject constructor(
         search: String,
         filters: List<String>
     ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
+        Log.d("REPO", filters.toString())
         return pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
     }
 

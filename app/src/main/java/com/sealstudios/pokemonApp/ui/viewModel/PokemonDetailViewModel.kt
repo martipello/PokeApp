@@ -1,8 +1,11 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.repository.*
@@ -24,47 +27,63 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     var pokemon: LiveData<PokemonWithTypesAndSpecies> = MutableLiveData()
+
+    private var hasPokemonDetailsDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
+
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
     var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
     init {
         viewModelScope.launch {
-            pokemon =
-                Transformations.distinctUntilChanged(Transformations.switchMap(pokemonId) { id ->
-                    val pokemonLiveData = repository.getSinglePokemonById(id)
-                    Transformations.switchMap(pokemonLiveData) { pokemon ->
-                        pokemon?.let {
-                            if (it.species?.pokedexEntry == null || it.types.isEmpty()) {
-                                viewModelScope.launch {
+            pokemon = liveData {
+                emitSource(pokemonId.switchMap { id ->
+                    Log.d(TAG, "pokemon id changed")
+                    repository.getSinglePokemonById(id).switchMap { pokemon ->
+                        Log.d(TAG, "pokemon changed $pokemon")
+                        viewModelScope.launch {
+                            hasPokemonDetailsDownloaded.value?.let { hasDownloaded ->
+                                if (!hasDownloaded) {
+                                    Log.d(TAG, "!hasDownloaded")
                                     fetchRemotePokemon(id)
                                 }
                             }
-                            MutableLiveData(pokemon)
                         }
-                    }
-                })
+                        MutableLiveData(pokemon)
+                    }.distinctUntilChanged()
+                }.distinctUntilChanged())
+            }
         }
     }
 
     private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-        fetchPokemonForId(id)
-        fetchSpeciesForId(id)
+        Log.d(TAG, "fetchRemotePokemon")
+        withContext(Dispatchers.IO) {
+            fetchPokemonForId(id)
+            fetchSpeciesForId(id)
+        }
     }
 
     private suspend fun fetchPokemonForId(
         remotePokemonId: Int
     ) {
         withContext(context = Dispatchers.IO) {
-            val pokemonRequest =
-                remotePokemonRepository.pokemonById(remotePokemonId)
-            pokemonRequest.let { pokemonResponse ->
-                if (pokemonResponse.isSuccessful) {
-                    pokemonResponse.body()?.let { pokemon ->
-                        repository.insertPokemon(mapDbPokemonFromPokemonResponse(pokemon))
-                        insertPokemonTypes(pokemon)
+            Log.d(TAG, "fetchPokemonForId")
+            val pokemonRequest = remotePokemonRepository.pokemonForId(remotePokemonId)
+            when (pokemonRequest.status) {
+                Status.SUCCESS -> {
+                    withContext(Dispatchers.Main) {
+                        hasPokemonDetailsDownloaded.value = true
+                    }
+                    return@withContext pokemonRequest.data?.let { pokemon ->
+                        viewModelScope.launch {
+                            repository.updatePokemon(mapDbPokemonFromPokemonResponse(pokemon))
+                            insertPokemonTypes(pokemon)
+                        }
                     }
                 }
+                Status.ERROR -> Log.d(TAG, "fetchPokemonForId ERROR")
+                Status.LOADING -> Log.d(TAG, "fetchPokemonForId LOADING")
             }
         }
     }
@@ -73,19 +92,20 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         remotePokemonId: Int
     ) {
         withContext(context = Dispatchers.IO) {
-            val pokemonSpeciesRequest =
-                remotePokemonRepository.speciesForId(remotePokemonId)
-            pokemonSpeciesRequest.let { pokemonSpeciesResponse ->
-                if (pokemonSpeciesResponse.isSuccessful) {
-                    pokemonSpeciesResponse.body()?.let { species ->
+            Log.d(TAG, "fetchSpeciesForId")
+            val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(remotePokemonId)
+            when (pokemonSpeciesRequest.status) {
+                Status.SUCCESS -> {
+                    pokemonSpeciesRequest.data?.let {
                         insertPokemonSpecies(
                             remotePokemonId,
-                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(species)
+                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
                         )
                     }
                 }
+                Status.ERROR -> Log.d(TAG, "fetchSpeciesForId ERROR")
+                Status.LOADING -> Log.d(TAG, "fetchSpeciesForId LOADING")
             }
-
         }
     }
 
@@ -102,15 +122,24 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun insertPokemonTypes(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+        remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
-            pokemonTypeRepository.insertPokemonTypes(PokemonType.mapDbPokemonTypesFromPokemonResponse(remotePokemon))
-            pokemonTypeJoinRepository.insertPokemonTypeJoins(PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon))
+            pokemonTypeRepository.insertPokemonTypes(
+                PokemonType.mapDbPokemonTypesFromPokemonResponse(
+                    remotePokemon
+                )
+            )
+            pokemonTypeJoinRepository.insertPokemonTypeJoins(
+                PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(
+                    remotePokemon
+                )
+            )
         }
     }
 
     fun setPokemonId(pokemonId: Int) {
+        Log.d(TAG, "set pokemon id")
         this.pokemonId.value = pokemonId
         savedStateHandle.set(PokemonDetailViewModel.pokemonId, pokemonId)
     }
@@ -147,6 +176,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         private const val hasExpandedKey: String = "hasExpanded"
         private const val lightVibrantColorKey: String = "lightVibrantColor"
         private const val dominantColorKey: String = "dominantColor"
+        private const val TAG: String = "PDVM"
     }
 
 }

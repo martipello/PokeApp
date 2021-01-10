@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp
 
-//import com.sealstudios.pokemonApp.api.GetAllPokemonHelper
 import android.content.res.Resources
 import android.os.Bundle
 import android.view.Menu
@@ -11,7 +10,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {

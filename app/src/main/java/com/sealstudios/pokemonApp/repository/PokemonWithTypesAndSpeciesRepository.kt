@@ -12,11 +12,14 @@ class PokemonWithTypesAndSpeciesRepository @Inject constructor(
 ) {
 
     fun getSinglePokemonById(id: Int): LiveData<PokemonWithTypesAndSpecies> {
-
         return pokemonDao.getSinglePokemonWithTypesAndSpeciesById(id)
     }
 
     suspend fun insertPokemon(pokemon: Pokemon) {
         pokemonDao.insertPokemon(pokemon)
+    }
+
+    suspend fun updatePokemon(pokemon: Pokemon) {
+        pokemonDao.updatePokemon(pokemon)
     }
 }

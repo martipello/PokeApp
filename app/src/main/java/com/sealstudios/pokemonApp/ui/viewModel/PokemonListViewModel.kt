@@ -1,25 +1,27 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.repository.PokemonRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class PokemonListViewModel @ViewModelInject constructor(
     private val repository: PokemonRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    val searchPokemon: LiveData<List<PokemonWithTypesAndSpecies>>
     var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
+    val searchPokemon: LiveData<List<PokemonWithTypesAndSpeciesForList>>
 
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
     init {
+
         val combinedValues =
             MediatorLiveData<Pair<String?, MutableSet<String>?>?>().apply {
                 addSource(search) {
@@ -30,70 +32,35 @@ class PokemonListViewModel @ViewModelInject constructor(
                 }
             }
 
-        searchPokemon = Transformations.switchMap(combinedValues) { pair ->
-            val search = pair?.first
-            val filters = pair?.second
-            if (search != null && filters != null) {
-                searchAndFilterPokemon()
-            } else null
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun searchAndFilterPokemon(): LiveData<List<PokemonWithTypesAndSpecies>> {
-
-        //TODO can we remove these switchmaps
-        return Transformations.switchMap(search) { search ->
-            val allPokemon = repository.searchPokemonWithTypesAndSpecies(search)
-            Transformations.switchMap(filters) { filters ->
-                val pokemon = when {
-                    filters.isNullOrEmpty() -> allPokemon
-                    else -> {
-                        Transformations.switchMap(allPokemon) { pokemonList ->
-                            val filteredList = pokemonList.filter { pokemon ->
-                                pokemon.matches = 0
-                                val filter = filterTypes(pokemon, filters)
-                                filter
-                            }
-                            maybeSortList(filters, filteredList)
-                        }
+        searchPokemon = combinedValues.switchMap {
+            liveData {
+                val search = it?.first ?: return@liveData
+                val filters = it.second ?: return@liveData
+                withContext(Dispatchers.IO) {
+                    if (filters.isEmpty()) {
+                        emitSource(searchPokemon(search))
+                    } else {
+                        emitSource(searchAndFilterPokemon(search, filters.toList()))
                     }
-                }
-                pokemon
-            }
-        }
-    }
-
-    @SuppressLint("DefaultLocale")
-    private fun filterTypes(
-        pokemon: PokemonWithTypesAndSpecies,
-        filters: MutableSet<String>
-    ): Boolean {
-        var match = false
-        for (filter in filters) {
-            for (type in pokemon.types) {
-                if (type.name.toLowerCase() == filter.toLowerCase()) {
-                    val matches = pokemon.matches.plus(1)
-                    pokemon.apply {
-                        this.matches = matches
-                    }
-                    match = true
                 }
             }
         }
-        return match
+
     }
 
-    private fun maybeSortList(
-        filters: MutableSet<String>,
-        filteredList: List<PokemonWithTypesAndSpecies>
-    ): MutableLiveData<List<PokemonWithTypesAndSpecies>> {
-        return if (filters.size > 1)
-            MutableLiveData(filteredList.sortedByDescending {
-                Log.d("VM", "SORTING ${it.pokemon.name} ${it.matches}")
-                it.matches
-            })
-        else MutableLiveData(filteredList)
+    @SuppressLint("DefaultLocale")
+    private fun searchPokemon(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return repository.searchPokemonWithTypesAndSpecies(search)
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun searchAndFilterPokemon(
+        search: String,
+        filters: List<String>
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+        return repository.searchAndFilterPokemonWithTypesAndSpecies(
+            search,
+            filters.map { filter -> filter.toLowerCase() })
     }
 
     fun setSearch(search: String) {

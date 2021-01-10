@@ -1,9 +1,9 @@
 package com.sealstudios.pokemonApp.database.`object`
 
 import androidx.room.*
+import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
-import com.sealstudios.pokemonApp.api.`object`.Pokemon as ApiPokemon
 
 @TypeConverters(RoomIntListConverter::class)
 @Entity(indices = [Index(value = [Pokemon.POKEMON_NAME])])

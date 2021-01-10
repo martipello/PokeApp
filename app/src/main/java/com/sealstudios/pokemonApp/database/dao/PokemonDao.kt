@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import androidx.room.*
-import androidx.sqlite.db.SimpleSQLiteQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.sealstudios.pokemonApp.database.`object`.*
 
@@ -11,10 +10,10 @@ import com.sealstudios.pokemonApp.database.`object`.*
 @Dao
 interface PokemonDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemon(pokemon: Pokemon)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemon(pokemon: List<Pokemon>)
 
     @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
@@ -77,8 +76,23 @@ interface PokemonDao {
     fun getSinglePokemonWithTypesAndSpeciesById(id: Int?): LiveData<PokemonWithTypesAndSpecies>
 
     @Transaction
-    @Query("SELECT * FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-    fun searchAllPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
+    @Query("SELECT pokemon_id, pokemon_name, pokemon_image_url, pokemon_sprite FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>>
+
+    @Query(
+        """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
+                     INNER JOIN PokemonTypesJoin 
+                     ON Pokemon.pokemon_id = PokemonTypesJoin.pokemon_id 
+                     INNER JOIN PokemonType 
+                     ON PokemonType.type_id = PokemonTypesJoin.type_id 
+                     WHERE pokemon_name LIKE :search AND type_name IN (:filters)
+                     GROUP BY Pokemon.pokemon_id, Pokemon.pokemon_name
+                     ORDER BY count(*) DESC, Pokemon.pokemon_id ASC"""
+    )
+    fun searchAndFilterPokemonWithTypesAndSpecies(
+        search: String,
+        filters: List<String>
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>>
 
     ///                                                                                       ///
     /// ************************************************************************************* ///

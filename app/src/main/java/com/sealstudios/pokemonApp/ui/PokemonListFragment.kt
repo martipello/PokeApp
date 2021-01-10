@@ -11,7 +11,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
@@ -41,7 +40,6 @@ import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PagedPokemonViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -66,10 +64,8 @@ class PokemonListFragment : Fragment(),
 
     private var search: String = ""
     private var filterIsExpanded = false
-    private val pokemonListViewModel: PokemonListViewModel by viewModels()
     private val pokemonListViewModelWithPaging by navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
     private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
-    private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -100,14 +96,12 @@ class PokemonListFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonPagingAdapter()
-        setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         checkIsFirstTime()
         observeFilters()
         viewLifecycleOwner.lifecycleScope.launch {
             observePagedPokemonList()
         }
-        observePokemonList()
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
@@ -195,10 +189,6 @@ class PokemonListFragment : Fragment(),
         ).start()
     }
 
-    private fun setUpPokemonAdapter() {
-        pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
-    }
-
     private fun setUpPokemonPagingAdapter() {
         pokemonPagingAdapter = PokemonPagingDataAdapter(glide, this)
     }
@@ -211,16 +201,6 @@ class PokemonListFragment : Fragment(),
                     viewLifecycleOwner.lifecycleScope.launch {
                         pokemonPagingAdapter.submitData(it)
                     }
-                }
-            })
-    }
-
-    private fun observePokemonList() {
-        pokemonListViewModel.searchPokemon.observe(
-            viewLifecycleOwner, Observer { pokemonData ->
-                Log.d("PLF", "Observer Observer Observer")
-                pokemonData?.let {
-                    pokemonAdapter.submitList(it)
                 }
             })
     }

@@ -34,13 +34,9 @@ class PagedPokemonViewModel @ViewModelInject constructor(
             }
 
         searchPokemon = combinedValues.switchMap {
-            liveData {
-                val search = it?.first ?: return@liveData
-                val filters = it.second ?: return@liveData
-                withContext(Dispatchers.IO) {
-                    emitSource(searchAndFilterPokemonPager(search, filters.toList()))
-                }
-            }.distinctUntilChanged()
+            val search = it?.first ?: "%%"
+            val filters = it?.second ?: setOf<String>()
+            searchAndFilterPokemonPager(search, filters.toList())
         }
 
     }
@@ -53,7 +49,7 @@ class PagedPokemonViewModel @ViewModelInject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
-                enablePlaceholders = false,
+                enablePlaceholders = true,
                 maxSize = 60
             )
         ) {

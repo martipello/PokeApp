@@ -50,12 +50,8 @@ class PokemonWorkManager @WorkerInject constructor(
             when (pokemonRefListResponse.status) {
                 Status.SUCCESS -> {
                     pokemonRefListResponse.data?.let {
-                        Log.d("WORKER", "saveAllPokemon")
                         saveAllPokemon(it.results, worker)
-                        Log.d("WORKER", "finished saveAllPokemon")
-                        Log.d("WORKER", "savePokemonTypes")
-                        savePokemonTypes(it.results, worker)
-                        Log.d("WORKER", "finished savePokemonTypes")
+                        savePokemonTypesAndSpecies(it.results, worker)
                     }
                 }
                 Status.ERROR -> TODO()
@@ -77,22 +73,18 @@ class PokemonWorkManager @WorkerInject constructor(
         }
     }
 
-    private suspend fun savePokemonTypes(data: List<NamedApiResource>, worker: CoroutineWorker) {
+    private suspend fun savePokemonTypesAndSpecies(data: List<NamedApiResource>, worker: CoroutineWorker) {
         withContext(Dispatchers.IO) {
 
             for (i in data.indices) {
-                Log.d("WORKER", "savePokemonTypes for id $i")
                 data[i].let { pokemonRef ->
                     val id = getPokemonIdFromUrl(pokemonRef.url)
-                    Log.d("WORKER", "fetch pokemon")
                     val fetchPokemonAsync =
                         async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
-                    fetchPokemonAsync.await()
-                    Log.d("WORKER", "fetch pokemon types finished")
                     val fetchSpeciesAsync =
                         async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
                     fetchSpeciesAsync.await()
-                    Log.d("WORKER", "fetch pokemon species finished")
+                    fetchPokemonAsync.await()
                     setForeGroundAsync(
                         worker, "$i of ${data.size}", i + 1, data.size, false
                     )

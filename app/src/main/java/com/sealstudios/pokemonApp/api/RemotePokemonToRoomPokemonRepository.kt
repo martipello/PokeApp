@@ -3,10 +3,7 @@ package com.sealstudios.pokemonApp.api
 import android.util.Log
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
-import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
-import com.sealstudios.pokemonApp.api.`object`.PokemonListResponse
-import com.sealstudios.pokemonApp.api.`object`.Resource
-import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
@@ -109,7 +106,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     }
 
     private suspend fun insertPokemonTypes(
-        remotePokemon: com.sealstudios.pokemonApp.api.`object`.Pokemon
+        remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
             remotePokemon.types.map {

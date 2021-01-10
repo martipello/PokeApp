@@ -29,7 +29,7 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                 pokemon.switchMap { pokemon ->
                     liveData<List<PokemonMove>> {
                         moveRepository.movesForIds(pokemon.move_ids).switchMap { moves ->
-                            fetchAndSavePokemonMoves(pokemon, moves)
+//                            fetchAndSavePokemonMoves(pokemon, moves)
                             MutableLiveData(moves)
                         }.distinctUntilChanged()
                     }

@@ -109,7 +109,7 @@ data class NaturePokeathlonStatAffect(
     val nature: NamedApiResource
 )
 
-data class Pokemon(
+data class ApiPokemon(
     val id: Int,
     val url: String,
     val name: String,
@@ -125,7 +125,7 @@ data class Pokemon(
     val heldItems: List<PokemonHeldItem>,
     val moves: List<PokemonMoveResponse>,
     val stats: List<PokemonStat>,
-    val types: List<PokemonType>,
+    val types: List<ApiPokemonType>,
     val sprites: PokemonSprites
 )
 
@@ -165,7 +165,7 @@ data class PokemonMoveResponse(
     val version_group_details: List<PokemonMoveVersion>
 )
 
-data class PokemonMove(
+data class ApiPokemonMove(
     val id: Int,
     val name: String,
     val accuracy: Int?,
@@ -219,7 +219,7 @@ data class PokemonStat(
     val baseStat: Int
 )
 
-data class PokemonType(
+data class ApiPokemonType(
     val slot: Int,
     val type: NamedApiResource
 )
@@ -279,7 +279,7 @@ data class AwesomeName(
     val language: NamedApiResource
 )
 
-data class PokemonSpecies(
+data class ApiPokemonSpecies(
     val id: Int,
     val name: String,
     val order: Int,

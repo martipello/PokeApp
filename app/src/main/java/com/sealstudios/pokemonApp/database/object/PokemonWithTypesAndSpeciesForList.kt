@@ -5,10 +5,7 @@ import androidx.room.Ignore
 import androidx.room.Junction
 import androidx.room.Relation
 
-data class PokemonWithTypesAndSpeciesForList @JvmOverloads constructor(
-
-    @Ignore
-    var matches : Int = 0,
+data class PokemonWithTypesAndSpeciesForList constructor(
 
     @Embedded
     val pokemon: PokemonForList,

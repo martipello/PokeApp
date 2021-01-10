@@ -19,6 +19,7 @@ import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.navGraphViewModels
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
@@ -41,7 +42,10 @@ import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PagedPokemonViewModel
 import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -61,7 +65,8 @@ class PokemonListFragment : Fragment(),
 
     private var search: String = ""
     private var filterIsExpanded = false
-    private val pokemonListViewModelWithPaging: PagedPokemonViewModel by viewModels()
+    private val pokemonListViewModelWithPaging by viewModels<PagedPokemonViewModel>(ownerProducer = { requireActivity() })
+    //navGraphViewModels<PagedPokemonViewModel>(R.id.nav_graph) { defaultViewModelProviderFactory }
     private lateinit var pokemonPagingAdapter: PokemonPagingDataAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -82,7 +87,6 @@ class PokemonListFragment : Fragment(),
     ): View {
         setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
-        postponeEnterTransition()
         return binding.root
     }
 
@@ -193,8 +197,8 @@ class PokemonListFragment : Fragment(),
 
     private suspend fun observePagedPokemonList() {
         pokemonListViewModelWithPaging.searchPokemon.observe(
-            viewLifecycleOwner, Observer
-            { pokemonPagingData ->
+            viewLifecycleOwner, Observer { pokemonPagingData ->
+                Log.d("PLF", "Observer Observer Observer")
                 pokemonPagingData?.let {
                     viewLifecycleOwner.lifecycleScope.launch {
                         pokemonPagingAdapter.submitData(it)
@@ -221,8 +225,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observeAnimationState() {
         pokemonListViewModelWithPaging.isFiltersLayoutExpanded.observe(
-            viewLifecycleOwner, Observer
-            { filterIsExpanded ->
+            viewLifecycleOwner, Observer { filterIsExpanded ->
                 if (filterIsExpanded && this.filterIsExpanded) {
                     binding.root.post {
                         showFiltersAnimation()

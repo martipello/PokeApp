@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.repository
 import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.api.service.PokemonService
 import javax.inject.Inject
-import com.sealstudios.pokemonApp.api.`object`.Pokemon as apiPokemon
 
 
 class RemotePokemonRepository @Inject constructor(
@@ -19,7 +18,7 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
-    suspend fun pokemonForId(id: Int): Resource<apiPokemon> {
+    suspend fun pokemonForId(id: Int): Resource<ApiPokemon> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonForId(id, offset = 0, limit = 1))
         } catch (e: Exception) {
@@ -27,7 +26,7 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
-    suspend fun speciesForId(id: Int): Resource<PokemonSpecies> {
+    suspend fun speciesForId(id: Int): Resource<ApiPokemonSpecies> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonSpeciesForId(id))
         } catch (e: Exception) {
@@ -35,7 +34,7 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
-    suspend fun moveForId(id: Int): Resource<PokemonMove> {
+    suspend fun moveForId(id: Int): Resource<ApiPokemonMove> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonMoveForId(id))
         } catch (e: Exception) {

@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.sealstudios.pokemonApp.api.`object`.ApiPokemonSpecies
 import com.sealstudios.pokemonApp.api.`object`.Description
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import org.jetbrains.annotations.NotNull
@@ -75,7 +76,7 @@ data class PokemonSpecies(
         const val GENDER_RATE: String = "gender_rate"
 
         fun mapRemotePokemonSpeciesToDatabasePokemonSpecies(
-            apiPokemonSpecies: com.sealstudios.pokemonApp.api.`object`.PokemonSpecies
+            apiPokemonSpecies: ApiPokemonSpecies
         ): PokemonSpecies {
             val pokedexEntry = getPokedexEntry(apiPokemonSpecies)
             return PokemonSpecies(
@@ -106,7 +107,7 @@ data class PokemonSpecies(
             return formDescription
         }
 
-        private fun getPokedexEntry(apiPokemonSpecies: com.sealstudios.pokemonApp.api.`object`.PokemonSpecies): String {
+        private fun getPokedexEntry(apiPokemonSpecies: ApiPokemonSpecies): String {
             var pokedexEntry = "No Pokedex Data."
             for (entry in apiPokemonSpecies.flavor_text_entries) {
                 if (entry.language.name == "en") {
@@ -116,7 +117,7 @@ data class PokemonSpecies(
             return pokedexEntry
         }
 
-        private fun getPokemonSpeciesNameFromGenus(apiPokemonSpecies: com.sealstudios.pokemonApp.api.`object`.PokemonSpecies): String {
+        private fun getPokemonSpeciesNameFromGenus(apiPokemonSpecies: ApiPokemonSpecies): String {
             var pokemonSpecies = "Species Unknown."
             for (entry in apiPokemonSpecies.genera) {
                 if (entry.language.name == "en") {

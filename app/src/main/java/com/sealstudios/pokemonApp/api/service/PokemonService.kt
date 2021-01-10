@@ -1,8 +1,6 @@
 package com.sealstudios.pokemonApp.api.service
 
 import com.sealstudios.pokemonApp.api.`object`.*
-import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -21,17 +19,17 @@ interface PokemonService {
         @Path(value = "id") pokemonId: Int,
         @Query(value = "offset") offset: Int,
         @Query(value = "limit") limit: Int
-    ): Pokemon
+    ): ApiPokemon
 
     @GET("pokemon-species/{id}/")
     suspend fun getPokemonSpeciesForId(
         @Path(value = "id") speciesId: Int
-    ): PokemonSpecies
+    ): ApiPokemonSpecies
 
     @GET("move/{id}/")
     suspend fun getPokemonMoveForId(
         @Path(value = "id") moveId: Int
-    ): PokemonMove
+    ): ApiPokemonMove
 
     @GET("ability/{id}/")
     suspend fun getPokemonAbilityForId(

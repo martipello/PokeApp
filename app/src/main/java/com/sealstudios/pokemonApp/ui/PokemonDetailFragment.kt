@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -50,7 +51,7 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
-class PokemonDetailFragment : Fragment(){
+class PokemonDetailFragment : PokemonDetailAnimationManager(){
 
     @Inject
     lateinit var glide: RequestManager
@@ -64,17 +65,13 @@ class PokemonDetailFragment : Fragment(){
 
     private var hasExpanded: Boolean = false
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        addBackButtonCallback()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
+        setPokemonDetailFragmentBinding(binding)
         postponeEnterTransition()
         observeHasExpandedState()
         handleNavigationArgs()
@@ -89,7 +86,7 @@ class PokemonDetailFragment : Fragment(){
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch(context = Dispatchers.Main) {
-            setNameAndID(view.context)
+            setNameAndIDViews(view.context)
             setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
@@ -99,79 +96,9 @@ class PokemonDetailFragment : Fragment(){
         }
     }
 
-    private fun setNameAndID(context: Context) {
+    private fun setNameAndIDViews(context: Context) {
         binding.title.text = pokemonName.capitalize()
         binding.idLabel.text = context.getString(R.string.pokemonId, pokemonId)
-    }
-
-    private suspend fun handleEnterAnimation(): Boolean =
-        suspendCancellableCoroutine { continuation ->
-            lifecycleScope.launch {
-                sharedElementEnterTransition = TransitionInflater.from(context)
-                    .inflateTransition(R.transition.shared_element_transition)
-                (sharedElementEnterTransition as TransitionSet).run {
-                    awaitTransitionEnd {
-                        startPostponedEnterTransition()
-                    }
-                }
-                binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-                    R.id.large_image
-                )
-                createCircleReveal().run {
-                    startAndWait()
-                    binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-                        .setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                binding.root.context,
-                                android.R.color.transparent
-                            )
-                        )
-                    awaitEnd()
-                }
-                continuation.resume(true)
-            }
-        }
-
-    private fun createCircleReveal(): Animator {
-        val x = binding.splash.right / 2
-        val location = IntArray(2)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
-            .getLocationOnScreen(location)
-        val y = location[1] + binding.pokemonImageViewHolderLayout
-            .pokemonBackgroundCircleView.height / 2
-        return binding.splash.circleReveal(null, startAtX = x, startAtY = y)
-    }
-
-    private fun handleExitAnimation() = lifecycleScope.launch {
-        val x: Int = binding.splash.right / 2
-        val location = IntArray(2)
-        binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-            location
-        )
-        val y =
-            location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
-        binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
-            startAndWait()
-            delay(150)
-            binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToStart()
-            popDelayed()
-            awaitEnd()
-            binding.splash.visibility = View.INVISIBLE
-        }
-    }
-
-    private fun addBackButtonCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
-            handleExitAnimation()
-            this.remove()
-        }
-    }
-
-    private suspend fun popDelayed() {
-        withContext(Dispatchers.Main) {
-            delay(100)
-            findNavController().popBackStack()
-        }
     }
 
     private fun handleNavigationArgs() {
@@ -190,25 +117,19 @@ class PokemonDetailFragment : Fragment(){
     }
 
     private fun observePokemon() {
-        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, { pokemon ->
+        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
             lifecycleScope.launch {
-                Log.d("DETAIL", "pokemon")
                 Log.d("DETAIL", "pokemon $pokemon")
-                if (pokemon.species != null && pokemon.types.isNotEmpty()){
-                    pokemonMovesViewModel.setPokemon(pokemon.pokemon)
-                    populateViews(pokemon)
-                    setDataState()
-                } else {
-                    setLoadingState()
-                }
+//                pokemonMovesViewModel.setPokemon(pokemon.pokemon)
+                populateViews(pokemon)
+                setDataState()
             }
         })
     }
 
     private fun observeHasExpandedState() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
-            viewLifecycleOwner,
-            { hasExpanded ->
+            viewLifecycleOwner, Observer { hasExpanded ->
                 this.hasExpanded = hasExpanded
                 if (hasExpanded) {
                     restoreUIState()
@@ -219,8 +140,7 @@ class PokemonDetailFragment : Fragment(){
 
     private fun observeUIColor() {
         pokemonDetailViewModel.dominantAndLightVibrantColors.observe(
-            viewLifecycleOwner,
-            { viewColors ->
+            viewLifecycleOwner, Observer { viewColors ->
                 setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
@@ -381,19 +301,10 @@ class PokemonDetailFragment : Fragment(){
             context.getString(R.string.habitat, it.species?.habitat?.capitalize() ?: "N/A")
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                handleExitAnimation()
-                return true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
 }
+

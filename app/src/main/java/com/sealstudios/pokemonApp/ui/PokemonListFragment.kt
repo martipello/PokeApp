@@ -263,6 +263,7 @@ class PokemonListFragment : Fragment(),
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
+            this.setHasFixedSize(true)
             adapter = pokemonAdapter
             doOnPreDraw {
                 startPostponedEnterTransition()

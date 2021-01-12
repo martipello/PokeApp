@@ -67,8 +67,8 @@ class PokemonViewHolder constructor(
 
         binding.pokemonImageViewHolder.strokeColor = white
         binding.pokemonImageViewHolder.setCardBackgroundColor(white)
-        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
-        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
+        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.INVISIBLE
+        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.INVISIBLE
     }
 
     private fun buildPokemonTypes(

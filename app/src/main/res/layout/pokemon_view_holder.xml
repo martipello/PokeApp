@@ -9,22 +9,34 @@
     app:cardElevation="@dimen/card_elevation_6dp"
     tools:context="com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_margin="@dimen/qualified_medium_margin_16dp">-->
+
+
+<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/qualified_medium_margin_16dp">
+        android:orientation="horizontal"
+        android:padding="@dimen/qualified_medium_margin_16dp">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/pokemon_image_view_holder"
-            android:layout_width="@dimen/qualified_view_holder_image"
-            android:layout_height="@dimen/qualified_view_holder_image"
-            android:contentDescription="@string/pokemon_image"
-            app:cardCornerRadius="@dimen/qualified_view_holder_image_corner_radius"
-            app:strokeWidth="@dimen/small_margin_4dp"
-            app:strokeColor="@color/white"
-            app:cardBackgroundColor="@color/white"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/pokemon_image_view_holder"
+                android:layout_width="@dimen/qualified_view_holder_image"
+                android:layout_height="@dimen/qualified_view_holder_image"
+                android:contentDescription="@string/pokemon_image"
+                app:cardCornerRadius="@dimen/qualified_view_holder_image_corner_radius"
+                app:strokeWidth="@dimen/small_margin_4dp"
+                app:strokeColor="@color/white"
+                app:cardBackgroundColor="@color/white">
 
                 <ImageView
                     android:id="@+id/pokemon_image_view"
@@ -34,55 +46,51 @@
                     android:src="@drawable/pokeball_vector"
                     android:scaleType="centerCrop" />
 
-        </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        <TextView
-            android:id="@+id/pokemon_name_text_view"
-            android:layout_width="0dp"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
-            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:paddingEnd="@dimen/qualified_small_margin_8dp"
-            style="@style/ThemeOverlay.MyTitleText"
-            android:gravity="top"
-            app:layout_constraintBottom_toTopOf="@id/pokemon_species_text_view_label"
-            app:layout_constraintEnd_toStartOf="@id/pokemon_id_text_view_label"
-            app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_chainStyle="packed" />
+            android:paddingStart="@dimen/qualified_medium_margin_16dp"
+            android:paddingTop="@dimen/qualified_small_margin_8dp"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/pokemon_species_text_view_label"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            style="@style/ThemeOverlay.MyBodyText"
-            android:layout_marginTop="@dimen/qualified_small_margin_2dp"
-            android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
-            app:layout_constraintBottom_toTopOf="@id/dual_type_chip_layout"
-            app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
-            app:layout_constraintTop_toBottomOf="@id/pokemon_name_text_view" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/pokemon_id_text_view_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/ThemeOverlay.MyCaptionText"
-            android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
-            android:gravity="end"
-            app:layout_constraintTop_toTopOf="@id/pokemon_name_text_view"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/pokemon_name_text_view" />
+                <TextView
+                    android:id="@+id/pokemon_name_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    style="@style/ThemeOverlay.MyTitleText" />
 
-        <include layout="@layout/dual_type_chip_layout"
-            android:id="@+id/dual_type_chip_layout"
-            android:layout_height="wrap_content"
-            android:layout_width="wrap_content"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"/>
+                <TextView
+                    android:id="@+id/pokemon_id_text_view_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="@style/ThemeOverlay.MyCaptionText" />
 
+            </LinearLayout>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <TextView
+                android:id="@+id/pokemon_species_text_view_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                style="@style/ThemeOverlay.MyBodyText"/>
+
+            <include layout="@layout/dual_type_chip_layout"
+                android:id="@+id/dual_type_chip_layout"
+                android:layout_gravity="end"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 </com.google.android.material.card.MaterialCardView>

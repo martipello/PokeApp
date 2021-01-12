@@ -8,13 +8,13 @@
             android:id="@+id/type_chip_1"
             layout="@layout/pokemon_type_chip"
             android:layout_width="wrap_content"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_height="wrap_content" />
 
         <include
             android:id="@+id/type_chip_2"
             layout="@layout/pokemon_type_chip"
-            android:visibility="gone"
+            android:visibility="invisible"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

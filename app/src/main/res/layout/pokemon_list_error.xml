@@ -3,13 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="?android:attr/selectableItemBackground"
     app:layout_behavior="com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehavior">
 
     <TextView
         android:id="@+id/error_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/qualified_large_margin_32dp"
         android:text="@string/error_text"
         style="@style/ThemeOverlay.MyBodyText"
         android:visibility="gone"
@@ -19,20 +19,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toTopOf="@id/retry_button" />
 
-    <Button
-        android:id="@+id/retry_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
+    <com.google.android.material.button.MaterialButton
         android:text="Retry"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/retry_button"
         android:textColor="@color/black"
-        style="@style/Base.Widget.AppCompat.Button.Borderless"
-        android:background="@drawable/rounded_button_background"
+        app:rippleColor="@color/light_grey"
+        android:visibility="gone"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:cornerRadius="1000dp"
+        android:layout_marginBottom="@dimen/qualified_large_margin_32dp"
+        app:strokeColor="@color/colorAccent"
         android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/error_text"
-        app:layout_constraintWidth_max="200dp" />
+        app:layout_constraintWidth_max="200dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

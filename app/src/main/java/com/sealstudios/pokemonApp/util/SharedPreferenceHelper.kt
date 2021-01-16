@@ -8,8 +8,8 @@ class SharedPreferenceHelper constructor(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(prefsFileName, 0)
 
-    fun getBool(key: String): Boolean {
-        return sharedPreferences.getBoolean(key, true)
+    fun getBool(key: String, default: Boolean = true): Boolean {
+        return sharedPreferences.getBoolean(key, default)
     }
 
     fun setBool(key: String, value: Boolean) {
@@ -31,6 +31,7 @@ class SharedPreferenceHelper constructor(context: Context) {
     companion object {
         const val prefsFileName = "com.sealstudios.pokemonApp.prefs"
         const val isFirstTime = "pokemonApp.isFirstTime"
+        const val hasSuccessFullyFetchedPartialPokemonData = "pokemonApp.hasSuccessFullyFetchedPartialPokemonData"
     }
 
 }

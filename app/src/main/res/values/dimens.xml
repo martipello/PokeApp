@@ -13,6 +13,8 @@
 
     <dimen name="qualified_view_holder_image">90dp</dimen>
     <dimen name="qualified_view_holder_image_corner_radius">45dp</dimen>
+    <dimen name="qualified_large_margin_96dp">96dp</dimen>
+    <dimen name="qualified_large_margin_64dp">64dp</dimen>
     <dimen name="qualified_large_margin_32dp">32dp</dimen>
     <dimen name="qualified_large_margin_24dp">24dp</dimen>
     <dimen name="qualified_medium_margin_16dp">16dp</dimen>

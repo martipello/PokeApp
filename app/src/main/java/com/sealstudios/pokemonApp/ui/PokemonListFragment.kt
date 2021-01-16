@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +25,7 @@ import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
@@ -39,7 +39,7 @@ import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
-import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
+import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,9 +53,6 @@ class PokemonListFragment : Fragment(),
     lateinit var glide: RequestManager
 
     @Inject
-    lateinit var sharedPreferenceHelper: SharedPreferenceHelper
-
-    @Inject
     lateinit var remotePokemonToRoomPokemonRepository: RemotePokemonToRoomPokemonRepository
 
     private val binding get() = _binding!!
@@ -64,6 +61,7 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
     private var filterIsExpanded = false
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
+    private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,19 +94,11 @@ class PokemonListFragment : Fragment(),
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
-        checkIsFirstTime()
+        observeFetchAllPokemonResponse()
         observeFilters()
-        observePokemonList()
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
-    }
-
-    private fun checkIsFirstTime() {
-        if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
-            remotePokemonToRoomPokemonRepository.getAllPokemon()
-            sharedPreferenceHelper.setBool(SharedPreferenceHelper.isFirstTime, false)
-        }
     }
 
     private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
@@ -163,6 +153,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setUpFilterView(selections: MutableSet<String>) {
         binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
+            remotePokemonViewModel.fetchAllPokemon()
             if (filterIsExpanded) {
                 hideFiltersAnimation()
             }
@@ -190,12 +181,31 @@ class PokemonListFragment : Fragment(),
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
+    private fun observeFetchAllPokemonResponse() {
+        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
+            when (allPokemon.status) {
+                Status.SUCCESS -> {
+                    setViewNotEmptyState()
+                    observePokemonList()
+                }
+                Status.ERROR -> setViewErrorState()
+                Status.LOADING -> setViewLoadingState()
+            }
+        })
+    }
+
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
             viewLifecycleOwner, Observer { pokemonData ->
-                Log.d("PLF", "Observer Observer Observer")
-                pokemonData?.let {
-                    pokemonAdapter.submitList(it)
+                if (pokemonData != null) {
+                    if (pokemonData.isEmpty()){
+                        setViewEmptyState()
+                    } else {
+                        setViewNotEmptyState()
+                    }
+                    pokemonAdapter.submitList(pokemonData)
+                } else {
+                    setViewLoadingState()
                 }
             })
     }
@@ -242,6 +252,9 @@ class PokemonListFragment : Fragment(),
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
         binding.errorPokemonList.errorText.visibility = View.VISIBLE
         binding.errorPokemonList.retryButton.visibility = View.VISIBLE
+        binding.errorPokemonList.retryButton.setOnClickListener {
+            remotePokemonViewModel.fetchAllPokemon()
+        }
     }
 
     private fun setViewEmptyState() {

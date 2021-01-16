@@ -83,8 +83,8 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                         )
                     }
                 }
-                Status.ERROR -> Log.d(TAG, "Error getting pokemon move")
-                Status.LOADING -> Log.d(TAG, "Getting pokemon move")
+                Status.ERROR -> Log.d(TAG, "Error getting pokemon move error")
+                Status.LOADING -> Log.d(TAG, "Getting pokemon move loading")
             }
         }
 

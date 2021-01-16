@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.api
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject

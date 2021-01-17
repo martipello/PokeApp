@@ -29,8 +29,10 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
@@ -92,7 +94,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                 handleEnterAnimation()
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
             }
-            observePokemon()
+            observePokemonDetails()
         }
     }
 
@@ -116,13 +118,42 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
         )
     }
 
-    private fun observePokemon() {
-        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
-            lifecycleScope.launch {
-                Log.d("DETAIL", "pokemon $pokemon")
-//                pokemonMovesViewModel.setPokemon(pokemon.pokemon)
-                populateViews(pokemon)
-                setDataState()
+//    private fun observePokemon() {
+//        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { resourceWithPokemon ->
+//            lifecycleScope.launch {
+//                when(resourceWithPokemon.status){
+//                    Status.SUCCESS -> {
+//                        populateViews(resourceWithPokemon.data)
+//                        setDataState()
+//                    }
+//                    Status.ERROR -> {
+//
+//                    }
+//                    Status.LOADING -> {
+//
+//                    }
+//                }
+//            }
+//        })
+//    }
+
+    private fun observePokemonDetails() {
+        pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, Observer { resourceWithPokemon ->
+            Log.d("PDVM", "observe pokemonDetail status ${resourceWithPokemon.status}")
+            when(resourceWithPokemon.status){
+                Status.SUCCESS -> {
+                    resourceWithPokemon.data?.let {
+                        populateViews(it)
+                        setDataState()
+                    }
+                    //handle empty
+                }
+                Status.ERROR -> {
+
+                }
+                Status.LOADING -> {
+
+                }
             }
         })
     }
@@ -187,7 +218,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
     }
 
     @SuppressLint("DefaultLocale")
-    private fun populateViews(pokemon: PokemonWithTypesAndSpecies?) =
+    private fun populateViews(pokemon: PokemonWithTypes) =
         lifecycleScope.launch(Dispatchers.Main) {
             pokemon?.let {
                 setPokemonTypes(it.types)
@@ -273,32 +304,32 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(
-        it: PokemonWithTypesAndSpecies
+        it: PokemonWithTypes
     ) {
         val context = binding.root.context
         binding.title.text = it.pokemon.name.capitalize()
         binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
-        binding.subtitle.text = it.species?.species?.capitalize()
-        binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
-            PokemonGeneration.getGeneration(it.species?.generation ?: "")))
+//        binding.subtitle.text = it.species?.species?.capitalize()
+//        binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
+//            PokemonGeneration.getGeneration(it.species?.generation ?: "")))
         val doubleHeight: Double = it.pokemon.height.toDouble()
         val doubleWeight: Double = it.pokemon.weight.toDouble()
         val height = doubleHeight / 10
         val weight = doubleWeight / 10
         binding.heightTextView.text = context.getString(R.string.height, height)
         binding.weightTextView.text = context.getString(R.string.weight, weight)
-        binding.pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize() ?: "N/A")
-        it.species?.pokedexEntry?.let {
-            binding.pokedexEntryText.visibility = View.VISIBLE
-            binding.pokedexEntryText.text = it
-        }
-        binding.shapeText.text =
-            context.getString(R.string.shape_text, it.species?.shape?.capitalize() ?: "N/A")
-        binding.formDescriptionText.text =
-            context.getString(R.string.form_text, it.species?.formDescription ?: "N/A")
-        binding.habitatText.text =
-            context.getString(R.string.habitat, it.species?.habitat?.capitalize() ?: "N/A")
+//        binding.pokedexSubtitle.text =
+//            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize() ?: "N/A")
+//        it.species?.pokedexEntry?.let {
+//            binding.pokedexEntryText.visibility = View.VISIBLE
+//            binding.pokedexEntryText.text = it
+//        }
+//        binding.shapeText.text =
+//            context.getString(R.string.shape_text, it.species?.shape?.capitalize() ?: "N/A")
+//        binding.formDescriptionText.text =
+//            context.getString(R.string.form_text, it.species?.formDescription ?: "N/A")
+//        binding.habitatText.text =
+//            context.getString(R.string.habitat, it.species?.habitat?.capitalize() ?: "N/A")
     }
 
     override fun onDestroyView() {

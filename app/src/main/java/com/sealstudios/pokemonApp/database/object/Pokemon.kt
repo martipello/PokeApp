@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.database.`object`
 
 import androidx.room.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
 
@@ -14,7 +15,7 @@ open class Pokemon constructor(
     var id: Int = 0,
 
     @ColumnInfo(name = POKEMON_NAME)
-    var name: String =  "",
+    var name: String = "",
 
     @ColumnInfo(name = POKEMON_IMAGE)
     var image: String = "",
@@ -56,10 +57,24 @@ open class Pokemon constructor(
         const val LEVELS_LEARNED_AT: String = "levels_learned_at"
         const val VERSIONS_LEARNT: String = "versions_learnt"
 
+        fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
+            val id = getPokemonIdFromUrl(apiPokemon.url)
+            return Pokemon(
+                id = id,
+                name = apiPokemon.name,
+                image = highResPokemonUrl(id),
+                height = 0,
+                weight = 0,
+                move_ids = listOf(),
+                versionsLearnt = listOf(),
+                learnMethods = listOf(),
+                levelsLearnedAt = listOf(),
+                sprite = "",
+            )
+        }
+
         fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
-
             val moveVersions = apiPokemon.moves.map { it.version_group_details }.flatten()
-
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
@@ -88,4 +103,25 @@ open class Pokemon constructor(
         }
 
     }
+}
+
+fun Pokemon.isDefault(): Boolean {
+    val defaultPokemon = Pokemon.defaultPokemon(
+        NamedApiResource(
+            name = this.name,
+            id = this.id,
+            category = "",
+            url = "https://pokeapi.co/api/v2/pokemon/${this.id}/"
+        )
+    )
+    return this.id == defaultPokemon.id
+            && this.name == defaultPokemon.name
+            && this.height == defaultPokemon.height
+            && this.weight == defaultPokemon.weight
+            && this.image == defaultPokemon.image
+            && this.sprite == defaultPokemon.sprite
+            && this.move_ids == defaultPokemon.move_ids
+            && this.levelsLearnedAt == defaultPokemon.levelsLearnedAt
+            && this.versionsLearnt == defaultPokemon.versionsLearnt
+            && this.learnMethods == defaultPokemon.learnMethods
 }

@@ -5,9 +5,15 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,87 +32,112 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var pokemon: LiveData<PokemonWithTypesAndSpecies> = MutableLiveData()
-
-    private var hasPokemonDetailsDownloaded: MutableLiveData<Boolean> = MutableLiveData(false)
-
-    private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
     var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
-    init {
-        viewModelScope.launch {
-            pokemon = liveData {
-                emitSource(pokemonId.switchMap { id ->
-                    Log.d(TAG, "pokemon id changed")
-                    repository.getSinglePokemonById(id).switchMap { pokemon ->
-                        Log.d(TAG, "pokemon changed $pokemon")
-                        viewModelScope.launch {
-                            hasPokemonDetailsDownloaded.value?.let { hasDownloaded ->
-                                if (!hasDownloaded) {
-                                    Log.d(TAG, "!hasDownloaded")
-                                    fetchRemotePokemon(id)
-                                }
-                            }
-                        }
-                        MutableLiveData(pokemon)
+    private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
+
+    val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
+
+
+    private lateinit var pokemonSpecies: LiveData<Resource<PokemonSpecies>>
+
+
+    val pokemon = pokemonId.switchMap { id ->
+        liveData(viewModelScope.coroutineContext) {
+            emit(Resource.loading(null))
+            emitSource(
+                repository.getSinglePokemonById(id)
+                    .switchMap { pokemonWithTypesAndSpecies ->
+                        pokemonSpecies = pokemonSpecies(pokemonWithTypesAndSpecies.species, id)
+                        MutableLiveData(Resource.success(pokemonWithTypesAndSpecies))
                     }.distinctUntilChanged()
-                }.distinctUntilChanged())
+            )
+        }.distinctUntilChanged()
+    }
+
+    private fun pokemonDetails() = pokemonId.switchMap { id ->
+        liveData {
+            emit(Resource.loading(null))
+            val pokemonWithTypes = repository.getSinglePokemonWithTypesByIdAsync(id)
+            if (pokemonWithTypes.pokemon.isDefault()) {
+                emitSource(fetchPokemonDetails(pokemonWithTypes))
+            } else {
+                MutableLiveData(
+                    Resource.success(
+                        PokemonWithTypes(
+                            pokemon = pokemonWithTypes.pokemon,
+                            types = pokemonWithTypes.types
+                        )
+                    )
+                )
             }
         }
     }
 
-    private suspend fun fetchRemotePokemon(id: Int) = withContext(Dispatchers.IO) {
-        Log.d(TAG, "fetchRemotePokemon")
-        withContext(Dispatchers.IO) {
-            fetchPokemonForId(id)
-            fetchSpeciesForId(id)
-        }
-    }
-
-    private suspend fun fetchPokemonForId(
-        remotePokemonId: Int
-    ) {
-        withContext(context = Dispatchers.IO) {
-            Log.d(TAG, "fetchPokemonForId")
-            val pokemonRequest = remotePokemonRepository.pokemonForId(remotePokemonId)
-            when (pokemonRequest.status) {
-                Status.SUCCESS -> {
-                    withContext(Dispatchers.Main) {
-                        hasPokemonDetailsDownloaded.value = true
+    private fun fetchPokemonDetails(pokemonWithTypes: PokemonWithTypes) = liveData {
+        val pokemonRequest = remotePokemonRepository.pokemonForId(pokemonWithTypes.pokemon.id)
+        when (pokemonRequest.status) {
+            Status.SUCCESS -> {
+                if (pokemonRequest.data != null) {
+                    val pokemon = pokemonRequest.data
+                    viewModelScope.launch {
+                        repository.updatePokemon(mapDbPokemonFromPokemonResponse(pokemon))
+                        insertPokemonTypes(pokemon)
                     }
-                    return@withContext pokemonRequest.data?.let { pokemon ->
-                        viewModelScope.launch {
-                            repository.updatePokemon(mapDbPokemonFromPokemonResponse(pokemon))
-                            insertPokemonTypes(pokemon)
-                        }
-                    }
+                    emit(
+                        Resource.success(
+                            PokemonWithTypes(
+                                pokemon = mapDbPokemonFromPokemonResponse(pokemon),
+                                types = mapDbPokemonTypesFromPokemonResponse(pokemon)
+                            )
+                        )
+                    )
+                } else {
+                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null))
                 }
-                Status.ERROR -> Log.d(TAG, "fetchPokemonForId ERROR")
-                Status.LOADING -> Log.d(TAG, "fetchPokemonForId LOADING")
             }
+            Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null))
+            Status.LOADING -> emit(Resource.loading(null))
         }
     }
 
-    private suspend fun fetchSpeciesForId(
-        remotePokemonId: Int
-    ) {
-        withContext(context = Dispatchers.IO) {
-            Log.d(TAG, "fetchSpeciesForId")
-            val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(remotePokemonId)
+    private fun pokemonSpecies(pokemonSpecies: PokemonSpecies?, pokemonId: Int) = liveData(Dispatchers.IO) {
+        Log.d(TAG, "fetchSpeciesForId")
+        emit(Resource.loading(null))
+        if (pokemonSpecies != null) {
+            emit(Resource.success(pokemonSpecies))
+        } else {
+            val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(pokemonId)
             when (pokemonSpeciesRequest.status) {
                 Status.SUCCESS -> {
-                    pokemonSpeciesRequest.data?.let {
+                    pokemonSpeciesRequest.data?.let { pokemonSpecies ->
                         insertPokemonSpecies(
-                            remotePokemonId,
-                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
+                            pokemonId,
+                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
+                                pokemonSpecies
+                            )
+                        )
+                        emit(
+                            Resource.success(
+                                PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
+                                    pokemonSpecies
+                                )
+                            )
                         )
                     }
+                    emit(Resource.error(pokemonSpeciesRequest.message ?: "Data is empty", null))
                 }
-                Status.ERROR -> Log.d(TAG, "fetchSpeciesForId ERROR")
-                Status.LOADING -> Log.d(TAG, "fetchSpeciesForId LOADING")
+                Status.ERROR -> emit(
+                    Resource.error(
+                        pokemonSpeciesRequest.message ?: "Data is empty",
+                        null
+                    )
+                )
+                Status.LOADING -> emit(Resource.loading(null))
             }
         }
+
     }
 
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
@@ -126,12 +157,12 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     ) {
         withContext(Dispatchers.IO) {
             pokemonTypeRepository.insertPokemonTypes(
-                PokemonType.mapDbPokemonTypesFromPokemonResponse(
+                mapDbPokemonTypesFromPokemonResponse(
                     remotePokemon
                 )
             )
             pokemonTypeJoinRepository.insertPokemonTypeJoins(
-                PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(
+                mapTypeJoinsFromPokemonResponse(
                     remotePokemon
                 )
             )

@@ -58,6 +58,10 @@ interface PokemonDao {
     fun getSinglePokemonWithTypesById(id: Int?): LiveData<PokemonWithTypes>
 
     @Transaction
+    @Query("SELECT * FROM pokemon WHERE pokemon_id == :id LIMIT 1")
+    suspend fun getSinglePokemonWithTypesByIdAsync(id: Int?): PokemonWithTypes
+
+    @Transaction
     @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
     fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
 

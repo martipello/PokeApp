@@ -83,20 +83,8 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
         withContext(Dispatchers.IO) {
             pokemonListResponseData.map {
-                val id = Pokemon.getPokemonIdFromUrl(it.url)
                 insertPokemon(
-                    Pokemon(
-                        id = id,
-                        name = it.name,
-                        image = Pokemon.highResPokemonUrl(id),
-                        height = 0,
-                        weight = 0,
-                        move_ids = listOf(),
-                        versionsLearnt = listOf(),
-                        learnMethods = listOf(),
-                        levelsLearnedAt = listOf(),
-                        sprite = "",
-                    )
+                    Pokemon.defaultPokemon(it)
                 )
             }
         }

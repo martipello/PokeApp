@@ -63,7 +63,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             if (pokemonWithTypes.pokemon.isDefault()) {
                 emitSource(fetchPokemonDetails(pokemonWithTypes))
             } else {
-                MutableLiveData(
+                emit(
                     Resource.success(
                         PokemonWithTypes(
                             pokemon = pokemonWithTypes.pokemon,

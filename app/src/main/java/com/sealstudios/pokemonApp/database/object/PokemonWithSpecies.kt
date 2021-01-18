@@ -17,5 +17,5 @@ data class PokemonWithSpecies(
             entityColumn = PokemonSpecies.SPECIES_ID
         )
     )
-    val species: PokemonSpecies
+    val species: PokemonSpecies?
 )

@@ -95,6 +95,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
             }
             observePokemonDetails()
+            observePokemonSpecies()
         }
     }
 
@@ -146,6 +147,23 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                         populateViews(it)
                         setDataState()
                     }
+                    //handle empty
+                }
+                Status.ERROR -> {
+
+                }
+                Status.LOADING -> {
+
+                }
+            }
+        })
+    }
+
+    private fun observePokemonSpecies() {
+        pokemonDetailViewModel.pokemonSpecies.observe(viewLifecycleOwner, Observer { resourceWithPokemon ->
+            Log.d("PDVM", "observe pokemonSpecies status ${resourceWithPokemon.status}")
+            when(resourceWithPokemon.status){
+                Status.SUCCESS -> {
                     //handle empty
                 }
                 Status.ERROR -> {

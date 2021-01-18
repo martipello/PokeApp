@@ -18,12 +18,6 @@ class PokemonWithTypesAndSpeciesRepository @Inject constructor(
         return pokemonDao.getSinglePokemonWithTypesAndSpeciesById(id)
     }
 
-    suspend fun getSinglePokemonWithTypesByIdAsync(id: Int): PokemonWithTypes {
-        return withContext(Dispatchers.IO){
-            return@withContext pokemonDao.getSinglePokemonWithTypesByIdAsync(id)
-        }
-    }
-
     suspend fun insertPokemon(pokemon: Pokemon) {
         pokemonDao.insertPokemon(pokemon)
     }

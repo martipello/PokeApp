@@ -7,13 +7,10 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,24 +36,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
 
     val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
-
-
     val pokemonSpecies: LiveData<Resource<PokemonSpecies>> = pokemonSpecies()
 
-
-    val pokemon = pokemonId.switchMap { id ->
-        liveData(viewModelScope.coroutineContext) {
-            emit(Resource.loading(null))
-            emitSource(
-                repository.getSinglePokemonById(id)
-                    .switchMap { pokemonWithTypesAndSpecies ->
-                        MutableLiveData(Resource.success(pokemonWithTypesAndSpecies))
-                    }.distinctUntilChanged()
-            )
-        }.distinctUntilChanged()
-    }
-
     private fun pokemonDetails() = pokemonId.switchMap { id ->
+        Log.d(TAG, "id changed update details")
         liveData {
             emit(Resource.loading(null))
             val pokemonWithTypes = pokemonWithTypesRepository.getSinglePokemonWithTypesByIdAsync(id)
@@ -69,6 +52,23 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                             pokemon = pokemonWithTypes.pokemon,
                             types = pokemonWithTypes.types
                         )
+                    )
+                )
+            }
+        }
+    }
+
+    private fun pokemonSpecies() = pokemonId.switchMap { id ->
+        Log.d(TAG, "id changed update species")
+        liveData {
+            emit(Resource.loading(null))
+            val pokemonSpecies = pokemonSpeciesRepository.getSinglePokemonSpeciesByIdAsync(id)
+            if (pokemonSpecies == null) {
+                emitSource(fetchPokemonSpecies(id))
+            } else {
+                emit(
+                    Resource.success(
+                        pokemonSpecies
                     )
                 )
             }
@@ -102,25 +102,9 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun pokemonSpecies() = pokemonId.switchMap { id ->
-        liveData {
-            emit(Resource.loading(null))
-            val pokemonSpecies = pokemonSpeciesRepository.getSinglePokemonSpeciesByIdAsync(id)
-            Log.d(TAG, "pokemonSpecies $pokemonSpecies")
-            if (pokemonSpecies == null) {
-                emitSource(fetchPokemonSpecies(id))
-            } else {
-                emit(
-                    Resource.success(
-                        pokemonSpecies
-                    )
-                )
-            }
-        }
-    }
-
     private fun fetchPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
         val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(pokemonId)
+
         when (pokemonSpeciesRequest.status) {
             Status.SUCCESS -> {
                 if (pokemonSpeciesRequest.data != null) {
@@ -215,4 +199,9 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
 }
+
+data class PokemonWithTypesAndSpeciesAndState(
+    var pokemonWithTypesState: Resource<PokemonWithTypes>?,
+    var pokemonSpeciesAndState: Resource<PokemonSpecies>?
+)
 

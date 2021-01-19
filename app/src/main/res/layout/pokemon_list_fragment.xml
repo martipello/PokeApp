@@ -19,7 +19,7 @@
 
     <include
         android:id="@+id/error_pokemon_list"
-        layout="@layout/pokemon_list_error" />
+        layout="@layout/pokemon_error_layout" />
 
     <include
         android:id="@+id/pokemon_list_filter"

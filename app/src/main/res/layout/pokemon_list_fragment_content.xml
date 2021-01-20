@@ -7,6 +7,11 @@
     android:id="@+id/recycler_holder"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/swipe_refresh_pokemon_list">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pokemon_list_recycler_view"
         android:layout_width="match_parent"
@@ -17,6 +22,8 @@
         app:layout_constraintStart_toStartOf="parent"
         android:clipToPadding="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

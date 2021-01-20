@@ -6,8 +6,10 @@ enum class ErrorCodes(val code: Int, val message: String) {
     UNAUTHORIZED(code = 401, message = "Unauthorized"),
     FORBIDDEN(code = 403, message = "Forbidden"),
     NOT_FOUND(code = 404, message = "Not found"),
+    IS_A_TEAPOT(code = 418, message = "The server refuses the attempt to brew coffee with a teapot."),
     SOCKET_TIME_OUT(code = -1, message = "Socket timeout"),
-    SUCCESS(code = 200, message = "Success");
+    SUCCESS(code = 200, message = "Success"),
+    NO_CONNECTION(code = 1, message = "No Internet Connection");
 }
 
 

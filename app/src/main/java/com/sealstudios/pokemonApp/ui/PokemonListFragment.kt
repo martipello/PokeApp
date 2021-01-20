@@ -21,11 +21,13 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.states.ErrorCodes
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
@@ -47,7 +49,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
-    PokemonAdapterClickListener, FilterChipClickListener {
+    PokemonAdapterClickListener, FilterChipClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -153,7 +155,6 @@ class PokemonListFragment : Fragment(),
 
     private fun setUpFilterView(selections: MutableSet<String>) {
         binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
-            remotePokemonViewModel.fetchAllPokemon()
             if (filterIsExpanded) {
                 hideFiltersAnimation()
             }
@@ -188,7 +189,18 @@ class PokemonListFragment : Fragment(),
                     setViewNotEmptyState()
                     observePokemonList()
                 }
-                Status.ERROR -> setViewErrorState()
+                Status.ERROR -> {
+                    if (allPokemon.code == ErrorCodes.NO_CONNECTION.code) {
+                        if (remotePokemonViewModel.hasFetchedPartialPokemonData){
+                            setViewNotEmptyState()
+                            observePokemonList()
+                        } else {
+                            setViewErrorState(ErrorCodes.NO_CONNECTION.message)
+                        }
+                    } else {
+                        setViewErrorState(allPokemon.message ?: getString(R.string.error_text))
+                    }
+                }
                 Status.LOADING -> setViewLoadingState()
             }
         })
@@ -198,7 +210,7 @@ class PokemonListFragment : Fragment(),
         pokemonListViewModel.searchPokemon.observe(
             viewLifecycleOwner, Observer { pokemonData ->
                 if (pokemonData != null) {
-                    if (pokemonData.isEmpty()){
+                    if (pokemonData.isEmpty()) {
                         setViewEmptyState()
                     } else {
                         setViewNotEmptyState()
@@ -246,10 +258,12 @@ class PokemonListFragment : Fragment(),
         binding.errorPokemonList.retryButton.visibility = View.GONE
     }
 
-    private fun setViewErrorState() {
+    private fun setViewErrorState(errorMessage: String) {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
+        binding.errorPokemonList.errorText.text = errorMessage
         binding.errorPokemonList.errorText.visibility = View.VISIBLE
         binding.errorPokemonList.retryButton.visibility = View.VISIBLE
         binding.errorPokemonList.retryButton.setOnClickListener {
@@ -258,6 +272,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setViewEmptyState() {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         binding.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
@@ -266,6 +281,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setViewNotEmptyState() {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
@@ -277,6 +293,7 @@ class PokemonListFragment : Fragment(),
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
             this.setHasFixedSize(true)
+            binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
             adapter = pokemonAdapter
             doOnPreDraw {
                 startPostponedEnterTransition()
@@ -416,6 +433,11 @@ class PokemonListFragment : Fragment(),
 
     companion object {
         private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
+    }
+
+    override fun onRefresh() {
+        remotePokemonViewModel.setFetchedPartialPokemonData(false)
+        remotePokemonViewModel.fetchAllPokemon()
     }
 }
 

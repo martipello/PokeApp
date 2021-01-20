@@ -1,19 +1,28 @@
 package com.sealstudios.pokemonApp.api.`object`
 
 import com.sealstudios.pokemonApp.api.states.ErrorCodes
+import com.sealstudios.pokemonApp.di.network.NoConnectivityException
 import retrofit2.HttpException
 import java.net.SocketTimeoutException
 
 open class ResponseHandler {
+
     fun <T : Any> handleSuccess(data: T): Resource<T> {
         return Resource.success(data)
     }
 
     fun <T : Any> handleException(e: Exception): Resource<T> {
         return when (e) {
-            is HttpException -> Resource.error(getErrorMessage(e.code()), null)
-            is SocketTimeoutException -> Resource.error(getErrorMessage(ErrorCodes.SOCKET_TIME_OUT.code), null)
-            else -> Resource.error(getErrorMessage(Int.MAX_VALUE), null)
+            is HttpException -> Resource.error(getErrorMessage(e.code()), null, e.code())
+            is NoConnectivityException -> Resource.error(
+                e.localizedMessage ?: "No Connection", null,
+                ErrorCodes.NO_CONNECTION.code
+            )
+            is SocketTimeoutException -> Resource.error(
+                getErrorMessage(ErrorCodes.SOCKET_TIME_OUT.code), null,
+                ErrorCodes.SOCKET_TIME_OUT.code
+            )
+            else -> Resource.error(getErrorMessage(Int.MAX_VALUE), null, Int.MAX_VALUE)
         }
     }
 

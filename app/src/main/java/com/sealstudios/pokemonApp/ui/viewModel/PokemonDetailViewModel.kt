@@ -1,16 +1,18 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -39,7 +41,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     val pokemonSpecies: LiveData<Resource<PokemonSpecies>> = pokemonSpecies()
 
     private fun pokemonDetails() = pokemonId.switchMap { id ->
-        Log.d(TAG, "id changed update details")
         liveData {
             emit(Resource.loading(null))
             val pokemonWithTypes = pokemonWithTypesRepository.getSinglePokemonWithTypesByIdAsync(id)
@@ -59,7 +60,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private fun pokemonSpecies() = pokemonId.switchMap { id ->
-        Log.d(TAG, "id changed update species")
         liveData {
             emit(Resource.loading(null))
             val pokemonSpecies = pokemonSpeciesRepository.getSinglePokemonSpeciesByIdAsync(id)
@@ -94,10 +94,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         )
                     )
                 } else {
-                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null))
+                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null,pokemonRequest.code))
                 }
             }
-            Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null))
+            Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null, pokemonRequest.code))
             Status.LOADING -> emit(Resource.loading(null))
         }
     }
@@ -114,13 +114,13 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     insertPokemonSpecies(pokemonId, species)
                     emit(Resource.success(species))
                 } else {
-                    emit(Resource.error(pokemonSpeciesRequest.message ?: "Data is empty", null))
+                    emit(Resource.error(pokemonSpeciesRequest.message ?: "Data is empty", null, pokemonSpeciesRequest.code))
                 }
             }
             Status.ERROR -> emit(
                 Resource.error(
                     pokemonSpeciesRequest.message ?: "General error",
-                    null
+                    null, pokemonSpeciesRequest.code
                 )
             )
             Status.LOADING -> emit(Resource.loading(null))
@@ -158,7 +158,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     fun setPokemonId(pokemonId: Int) {
-        Log.d(TAG, "set pokemon id")
         this.pokemonId.value = pokemonId
         savedStateHandle.set(PokemonDetailViewModel.pokemonId, pokemonId)
     }
@@ -199,9 +198,4 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
 }
-
-data class PokemonWithTypesAndSpeciesAndState(
-    var pokemonWithTypesState: Resource<PokemonWithTypes>?,
-    var pokemonSpeciesAndState: Resource<PokemonSpecies>?
-)
 

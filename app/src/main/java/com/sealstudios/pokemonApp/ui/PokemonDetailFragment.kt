@@ -111,7 +111,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun observePokemonDetails() {
         pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, Observer { pokemonWithTypes ->
-            Log.d("PDVM", "observe pokemonDetail status ${pokemonWithTypes.status}")
             when (pokemonWithTypes.status) {
                 Status.SUCCESS -> {
                     pokemonWithTypes.data?.let {
@@ -132,7 +131,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun observePokemonSpecies() {
         pokemonDetailViewModel.pokemonSpecies.observe(viewLifecycleOwner, Observer { pokemonSpecies ->
-            Log.d("PDVM", "observe observePokemonSpecies status ${pokemonSpecies.status}")
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {

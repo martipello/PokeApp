@@ -20,7 +20,7 @@ class SharedPreferenceHelper constructor(context: Context) {
 
     companion object {
         const val prefsFileName = "com.sealstudios.pokemonApp.prefs"
-        const val hasSuccessFullyFetchedPartialPokemonData = "pokemonApp.hasSuccessFullyFetchedPartialPokemonData"
+        const val hasFetchedPartialPokemonData = "pokemonApp.hasFetchedPartialPokemonData"
     }
 
 }

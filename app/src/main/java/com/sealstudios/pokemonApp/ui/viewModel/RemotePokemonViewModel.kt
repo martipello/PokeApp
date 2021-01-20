@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
@@ -19,19 +18,16 @@ class RemotePokemonViewModel @ViewModelInject constructor(
 
     val allPokemonResponse = fetchAllPokemonAction.switchMap {
         liveData(context = viewModelScope.coroutineContext + Dispatchers.IO) {
-            if (!sharedPreferenceHelper.getBool(SharedPreferenceHelper.hasSuccessFullyFetchedPartialPokemonData, false)) {
+            if (!sharedPreferenceHelper.getBool(SharedPreferenceHelper.hasFetchedPartialPokemonData, false)) {
                 emit(Resource.loading(null))
                 val response = remoteRepository.getAllPokemonResponse()
                 when (response.status) {
                     Status.SUCCESS -> {
-                        sharedPreferenceHelper.setBool(
-                            SharedPreferenceHelper.hasSuccessFullyFetchedPartialPokemonData,
-                            true
-                        )
+                        setFetchedPartialPokemonData(true)
                         emit(Resource.success(response.data))
                         remoteRepository.startFetchAllPokemonTypesAndSpecies()
                     }
-                    Status.ERROR -> emit(Resource.error(response.message ?: "", response.data))
+                    Status.ERROR -> emit(Resource.error(response.message ?: "", response.data, response.code))
                     Status.LOADING -> emit(Resource.loading(response.data))
                 }
             } else {
@@ -48,5 +44,14 @@ class RemotePokemonViewModel @ViewModelInject constructor(
     fun fetchAllPokemon() {
         fetchAllPokemonAction.value = true
     }
+
+    fun setFetchedPartialPokemonData( success: Boolean ) {
+        sharedPreferenceHelper.setBool(
+            SharedPreferenceHelper.hasFetchedPartialPokemonData,
+            success
+        )
+    }
+
+    val hasFetchedPartialPokemonData get() = sharedPreferenceHelper.getBool(SharedPreferenceHelper.hasFetchedPartialPokemonData, false)
 
 }

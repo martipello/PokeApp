@@ -3,8 +3,9 @@ package com.sealstudios.pokemonApp.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.drawable.AnimatedVectorDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,6 +30,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
@@ -40,6 +42,7 @@ import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
+import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
@@ -117,7 +120,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                         populatePokemonDetailViews(it)
                         setDataState()
                     }
-                    //handle empty
                 }
                 Status.ERROR -> {
                     setErrorState()
@@ -221,7 +223,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         }
 
     private fun setLoadingState() {
-        binding.mainProgress.visibility = View.VISIBLE
+        binding.mainProgress.root.visibility = View.VISIBLE
+        binding.mainProgress.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
         binding.content.visibility = View.GONE
         binding.errorLayout.root.visibility = View.GONE
     }
@@ -231,19 +234,19 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.errorLayout.retryButton.setOnClickListener {
             pokemonDetailViewModel.setPokemonId(pokemonId)
         }
-        binding.mainProgress.visibility = View.GONE
+        binding.mainProgress.root.visibility = View.GONE
         binding.content.visibility = View.GONE
     }
 
     private fun setDataState() {
         binding.content.visibility = View.VISIBLE
-        binding.mainProgress.visibility = View.GONE
+        binding.mainProgress.root.visibility = View.GONE
         binding.errorLayout.root.visibility = View.GONE
     }
 
     private fun setDataEmptyState() {
         binding.errorLayout.root.visibility = View.VISIBLE
-        binding.mainProgress.visibility = View.GONE
+        binding.mainProgress.root.visibility = View.GONE
         binding.content.visibility = View.GONE
     }
 

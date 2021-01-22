@@ -58,23 +58,23 @@
             <set>
                 <objectAnimator
                     android:propertyName="rotation"
-                    android:duration="1500"
+                    android:duration="995"
                     android:valueFrom="0"
                     android:valueTo="340"
                     android:valueType="floatType"
                     android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
                 <objectAnimator
                     android:propertyName="rotation"
-                    android:startOffset="1500"
-                    android:duration="1000"
+                    android:startOffset="995"
+                    android:duration="494"
                     android:valueFrom="340"
                     android:valueTo="210"
                     android:valueType="floatType"
                     android:interpolator="@android:anim/accelerate_decelerate_interpolator"/>
                 <objectAnimator
                     android:propertyName="rotation"
-                    android:startOffset="2500"
-                    android:duration="2500"
+                    android:startOffset="1500"
+                    android:duration="1500"
                     android:valueFrom="210"
                     android:valueTo="720"
                     android:valueType="floatType"

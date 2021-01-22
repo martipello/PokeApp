@@ -34,6 +34,7 @@ import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.act
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
@@ -191,7 +192,7 @@ class PokemonListFragment : Fragment(),
                 }
                 Status.ERROR -> {
                     if (allPokemon.code == ErrorCodes.NO_CONNECTION.code) {
-                        if (remotePokemonViewModel.hasFetchedPartialPokemonData){
+                        if (remotePokemonViewModel.hasFetchedPartialPokemonData) {
                             setViewNotEmptyState()
                             observePokemonList()
                         } else {
@@ -251,7 +252,8 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setViewLoadingState() {
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.VISIBLE
+        binding.emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
         binding.errorPokemonList.errorText.visibility = View.GONE
@@ -260,7 +262,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setViewErrorState(errorMessage: String) {
         binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
         binding.errorPokemonList.errorText.text = errorMessage
@@ -273,7 +275,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setViewEmptyState() {
         binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         binding.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
         binding.errorPokemonList.errorText.visibility = View.GONE
@@ -282,7 +284,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setViewNotEmptyState() {
         binding.pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
         binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
         binding.errorPokemonList.errorText.visibility = View.GONE

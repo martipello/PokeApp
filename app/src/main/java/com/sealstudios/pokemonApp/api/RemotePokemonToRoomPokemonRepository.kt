@@ -17,9 +17,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonRepository: PokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
-    private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
 ) {
 
     fun startFetchAllPokemonTypesAndSpecies() {
@@ -71,7 +69,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
         withContext(Dispatchers.IO) {
             pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
+            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
                 PokemonSpeciesJoin(
                     remotePokemonId,
                     pokemonSpecies.id
@@ -112,7 +110,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                 pokemonTypeRepository.insertPokemonType(
                     pokemonType
                 )
-                pokemonTypeJoinRepository.insertPokemonTypeJoin(
+                pokemonTypeRepository.insertPokemonTypeJoin(
                     pokemonTypeJoin
                 )
             }

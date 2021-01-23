@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.di.database.repository
 
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
+import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
 import com.sealstudios.pokemonApp.repository.PokemonTypeRepository
 import dagger.Module
 import dagger.Provides
@@ -15,9 +16,10 @@ class PokemonTypeRepositoryProvider {
     @Singleton
     @Provides
     fun providePokemonTypeRepository(
-        pokemonTypeDao: PokemonTypeDao
+        pokemonTypeDao: PokemonTypeDao,
+        pokemonTypeJoinDao: PokemonTypeJoinDao,
     ): PokemonTypeRepository {
-        return PokemonTypeRepository(pokemonTypeDao)
+        return PokemonTypeRepository(pokemonTypeDao, pokemonTypeJoinDao)
     }
 
 }

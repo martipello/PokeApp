@@ -118,6 +118,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 Status.SUCCESS -> {
                     pokemonWithTypes.data?.let {
                         populatePokemonDetailViews(it)
+                        pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
                         setDataState()
                     }
                 }

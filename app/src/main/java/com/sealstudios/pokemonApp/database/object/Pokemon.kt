@@ -32,16 +32,6 @@ open class Pokemon constructor(
     @ColumnInfo(name = MOVE_IDS)
     var move_ids: List<Int> = emptyList(),
 
-    @ColumnInfo(name = VERSIONS_LEARNT)
-    var versionsLearnt: List<String> = emptyList(),
-
-    @ColumnInfo(name = LEVELS_LEARNED_AT)
-    var levelsLearnedAt: List<Int> = emptyList(),
-
-    @ColumnInfo(name = LEARN_METHODS)
-    var learnMethods: List<String> = emptyList(),
-
-
     ) {
 
     companion object {
@@ -53,9 +43,6 @@ open class Pokemon constructor(
         const val POKEMON_WEIGHT: String = "pokemon_weight"
         const val POKEMON_SPRITE: String = "pokemon_sprite"
         const val MOVE_IDS: String = "pokemon_move_id"
-        const val LEARN_METHODS: String = "learn_methods"
-        const val LEVELS_LEARNED_AT: String = "levels_learned_at"
-        const val VERSIONS_LEARNT: String = "versions_learnt"
 
         fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
             val id = getPokemonIdFromUrl(apiPokemon.url)
@@ -66,15 +53,12 @@ open class Pokemon constructor(
                 height = 0,
                 weight = 0,
                 move_ids = listOf(),
-                versionsLearnt = listOf(),
-                learnMethods = listOf(),
-                levelsLearnedAt = listOf(),
                 sprite = "",
             )
         }
 
         fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
-            val moveVersions = apiPokemon.moves.map { it.version_group_details }.flatten()
+
             return Pokemon(
                 id = apiPokemon.id,
                 name = apiPokemon.name,
@@ -83,9 +67,6 @@ open class Pokemon constructor(
                 weight = apiPokemon.weight,
                 sprite = apiPokemon.sprites.front_default,
                 move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
-                levelsLearnedAt = moveVersions.map { it.level_learned_at },
-                learnMethods = moveVersions.map { it.move_learn_method.name },
-                versionsLearnt = moveVersions.map { it.version_group.name }
             )
         }
 
@@ -121,7 +102,4 @@ fun Pokemon.isDefault(): Boolean {
             && this.image == defaultPokemon.image
             && this.sprite == defaultPokemon.sprite
             && this.move_ids == defaultPokemon.move_ids
-            && this.levelsLearnedAt == defaultPokemon.levelsLearnedAt
-            && this.versionsLearnt == defaultPokemon.versionsLearnt
-            && this.learnMethods == defaultPokemon.learnMethods
 }

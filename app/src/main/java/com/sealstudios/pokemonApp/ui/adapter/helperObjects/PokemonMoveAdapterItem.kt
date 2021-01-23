@@ -1,9 +1,9 @@
 package com.sealstudios.pokemonApp.ui.adapter.helperObjects
 
-import com.sealstudios.pokemonApp.database.`object`.PokemonMove
+import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData
 
 data class PokemonMoveAdapterItem(
-    val move: PokemonMove?,
+    val moveWithMetaData: PokemonMoveWithMetaData?,
     val header: GenerationHeader?,
     val itemType: Int
 )

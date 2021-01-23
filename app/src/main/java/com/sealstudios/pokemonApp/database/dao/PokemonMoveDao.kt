@@ -2,9 +2,8 @@ package com.sealstudios.pokemonApp.database.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithMovesAndMetaData
 
 @Dao
 interface PokemonMoveDao {
@@ -27,8 +26,19 @@ interface PokemonMoveDao {
     @Query("SELECT * FROM PokemonMove WHERE move_id IN (:ids)")
     fun getMovesByIds(ids: List<Int>): LiveData<List<PokemonMove>>
 
+    @Query("SELECT * FROM PokemonMove WHERE move_id IN (:ids)")
+    suspend fun getMovesByIdsAsync(ids: List<Int>): List<PokemonMove>
+
     @Query("SELECT EXISTS (SELECT * FROM PokemonMove WHERE move_id =:id)")
     suspend fun moveExists(id: Int): Boolean
+
+    @Transaction
+    @Query("""SELECT * FROM Pokemon WHERE Pokemon.pokemon_id == :id LIMIT 1""")
+    fun getPokemonWithMovesAndMetaDataById(id: Int): LiveData<PokemonWithMovesAndMetaData>
+
+    @Transaction
+    @Query("""SELECT * FROM Pokemon WHERE Pokemon.pokemon_id == :id LIMIT 1""")
+    suspend fun getPokemonWithMovesAndMetaDataByIdAsync(id: Int): PokemonWithMovesAndMetaData
 
     @Update
     suspend fun updatePokemonMove(pokemonMove: PokemonMove)

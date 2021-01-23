@@ -1,18 +1,18 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,9 +26,8 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
     private val pokemonWithTypesRepository: PokemonWithTypesRepository,
-    private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository,
+    private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -80,16 +79,18 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         when (pokemonRequest.status) {
             Status.SUCCESS -> {
                 if (pokemonRequest.data != null) {
-                    val pokemon = pokemonRequest.data
+                    val pokemonRequestData = pokemonRequest.data
+                    val pokemon = mapDbPokemonFromPokemonResponse(pokemonRequestData)
                     viewModelScope.launch {
-                        repository.updatePokemon(mapDbPokemonFromPokemonResponse(pokemon))
-                        insertPokemonTypes(pokemon)
+                        repository.updatePokemon(pokemon)
+                        insertPokemonTypes(pokemonRequestData)
+                        insertPokemonMoveMetaData(pokemonRequestData.moves, pokemon.id)
                     }
                     emit(
                         Resource.success(
                             PokemonWithTypes(
-                                pokemon = mapDbPokemonFromPokemonResponse(pokemon),
-                                types = mapDbPokemonTypesFromPokemonResponse(pokemon)
+                                pokemon = pokemon,
+                                types = mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)
                             )
                         )
                     )
@@ -131,7 +132,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
         withContext(Dispatchers.IO) {
             pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
+            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
                 PokemonSpeciesJoin(
                     remotePokemonId,
                     pokemonSpecies.id
@@ -149,11 +150,26 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     remotePokemon
                 )
             )
-            pokemonTypeJoinRepository.insertPokemonTypeJoins(
+            pokemonTypeRepository.insertPokemonTypeJoins(
                 mapTypeJoinsFromPokemonResponse(
                     remotePokemon
                 )
             )
+        }
+    }
+
+    private suspend fun insertPokemonMoveMetaData(moves: List<PokemonMoveResponse>, pokemonId: Int) {
+        for (moveResponse in moves) {
+            val moveId = getPokemonMoveIdFromUrl(moveResponse.move.url)
+            withContext(Dispatchers.IO) {
+                val moveMetaData = PokemonMoveMetaData.mapRemotePokemonToMoveMetaData(
+                    moveId,
+                    pokemonId,
+                    moveResponse.move.name,
+                    moveResponse.version_group_details)
+                Log.d(TAG, "INSERT METADATA $moveMetaData")
+                pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
+            }
         }
     }
 

@@ -14,6 +14,7 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
+import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonMoveViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
@@ -37,33 +38,30 @@ constructor(
     private val clickListener: PokemonMoveAdapterClickListener?,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    fun bind(pokemonMove: PokemonMove, isExpanded: Boolean = false) = with(binding) {
+    fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
         animateToggle(isExpanded)
-        val generation = PokemonGeneration.getGeneration(pokemonMove.generation)
+        val generation = PokemonGeneration.getGeneration(pokemonMoveWithMetaData.pokemonMove.generation)
 
-        //TODO -------------------------------------
-        //TODO level learnt and method are incorrect because i don't show a value per generation
-        //TODO -------------------------------------
+        description.text = pokemonMoveWithMetaData.pokemonMove.description
+        pokemonMoveNameTextView.text = pokemonMoveWithMetaData.pokemonMove.name.capitalize()
 
-        description.text = pokemonMove.description
-        pokemonMoveNameTextView.text = pokemonMove.name.capitalize()
-        levelLearnMethod.text = "Learnt by : ${pokemonMove.learnMethod.capitalize()}"
-        levelLearnedAtTextView.text = "Learned at level : ${pokemonMove.levelLearnedAt}"
+        levelLearnMethod.text = "Learnt by: ${pokemonMoveWithMetaData.pokemonMoveMetaData.learnMethods.toSet().joinToString { it.capitalize() }}"
+        levelLearnedAtTextView.text = "Learned at level : ${pokemonMoveWithMetaData.pokemonMoveMetaData.levelsLearnedAt}"
 
         generationText.text = PokemonGeneration.formatGenerationName(generation)
-        powerText.text = pokemonMove.power.toString()
-        accuracyText.text = "${pokemonMove.accuracy}%"
-        ppText.text = pokemonMove.pp.toString()
+        powerText.text = pokemonMoveWithMetaData.pokemonMove.power.toString()
+        accuracyText.text = "${pokemonMoveWithMetaData.pokemonMove.accuracy}%"
+        ppText.text = pokemonMoveWithMetaData.pokemonMove.pp.toString()
 
         showMoreLessToggleButton.setOnClickListener {
-            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
+            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
         }
         showMoreLessToggle.setOnClickListener {
-            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMove)
+            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
         }
 
         CoroutineScope(Dispatchers.Default).launch {
-            val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMove)
+            val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMoveWithMetaData.pokemonMove)
             withContext(Dispatchers.Main){
                 buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
                 buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
@@ -75,13 +73,11 @@ constructor(
         if (isExpanded) {
             rotateToggleOpen()
             binding.showMoreLessToggle.text = "Show less"
-//            expand(binding.expandedContent)
             binding.expandedContent.visibility = View.VISIBLE
         } else {
             rotateToggleClose()
             binding.showMoreLessToggle.text = "Show more"
             binding.expandedContent.visibility = View.GONE
-//            collapse(binding.expandedContent)
         }
     }
 

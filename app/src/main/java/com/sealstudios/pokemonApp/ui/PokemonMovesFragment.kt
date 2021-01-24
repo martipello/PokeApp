@@ -35,7 +35,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     private var pokemonMoveAdapter: PokemonMoveAdapter? = null
     private var _binding: PokemonMovesFragmentBinding? = null
     private val binding get() = _binding!!
-    private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels(ownerProducer = {requireParentFragment()})
+    private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels(ownerProducer = { requireParentFragment() })
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,19 +67,11 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     private fun observeMoves() {
         pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer { pokemonWithMovesAndMetaData ->
             lifecycleScope.launch(Dispatchers.IO) {
-                val movesWithMetaDataList: MutableList<PokemonMoveWithMetaData> = arrayListOf()
-                for (move in pokemonWithMovesAndMetaData.moves) {
-                    for (metaData in pokemonWithMovesAndMetaData.pokemonMoveMetaData) {
-                        if (move.name == metaData.moveName) {
-                            movesWithMetaDataList.add(
-                                PokemonMoveWithMetaData(
-                                    metaData, move
-                                )
-                            )
-                        }
-                    }
+                val movesWithMetaDataList = pokemonWithMovesAndMetaData.moves.flatMap { move ->
+                    pokemonWithMovesAndMetaData.pokemonMoveMetaData.filter {
+                        it.moveName == move.name
+                    }.map { PokemonMoveWithMetaData(it, move) }
                 }
-
                 setPokemonMoves(movesWithMetaDataList.separateByGeneration())
             }
         })
@@ -89,12 +81,12 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         pokemonMoves: Map<String, List<PokemonMoveWithMetaData>?>
     ) {
         withContext(context = Dispatchers.IO) {
-            val pokemonMoveList = pokemonMoveAsync(pokemonMoves = pokemonMoves).await()
-            lifecycleScope.launch(Dispatchers.Main){
+            val pokemonMoveList = mapMovesToHeadersAsync(pokemonMoves = pokemonMoves).await()
+            lifecycleScope.launch(Dispatchers.Main) {
                 pokemonMoveAdapter?.submitList(pokemonMoveList)
             }
             withContext(Dispatchers.Main) {
-                binding.pokemonMovesLoading.visibility = View.GONE
+                binding.pokemonMovesLoading.root.visibility = View.GONE
                 if (pokemonMoveList.isEmpty()) {
                     binding.pokemonMovesEmptyText.visibility = View.VISIBLE
                 } else {
@@ -104,31 +96,35 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         }
     }
 
-    private suspend fun pokemonMoveAsync(pokemonMoves: Map<String, List<PokemonMoveWithMetaData>?>) = withContext(Dispatchers.IO) {
-        return@withContext async {
-            val pokemonMoveList = mutableListOf<PokemonMoveAdapterItem>()
-            for (moveEntry in pokemonMoves.entries) {
-                pokemonMoveList.add(
-                    PokemonMoveAdapterItem(
-                        moveWithMetaData = null,
-                        header = GenerationHeader(headerName = PokemonGeneration.formatGenerationName(
-                            PokemonGeneration.getGeneration(moveEntry.key))),
-                        itemType = GenerationHeaderViewHolder.layoutType
-                    )
-                )
-                if (!moveEntry.value.isNullOrEmpty()) {
-                    pokemonMoveList.addAll(moveEntry.value!!.map {
+    private suspend fun mapMovesToHeadersAsync(pokemonMoves: Map<String, List<PokemonMoveWithMetaData>?>) =
+        withContext(Dispatchers.IO) {
+            return@withContext async {
+                val pokemonMoveList = mutableListOf<PokemonMoveAdapterItem>()
+                for (moveEntry in pokemonMoves.entries) {
+                    pokemonMoveList.add(
                         PokemonMoveAdapterItem(
-                            moveWithMetaData = it,
-                            header = null,
-                            itemType = PokemonMoveViewHolder.layoutType
+                            moveWithMetaData = null,
+                            header = GenerationHeader(
+                                headerName = PokemonGeneration.formatGenerationName(
+                                    PokemonGeneration.getGeneration(moveEntry.key)
+                                )
+                            ),
+                            itemType = GenerationHeaderViewHolder.layoutType
                         )
-                    })
+                    )
+                    if (!moveEntry.value.isNullOrEmpty()) {
+                        pokemonMoveList.addAll(moveEntry.value!!.map {
+                            PokemonMoveAdapterItem(
+                                moveWithMetaData = it,
+                                header = null,
+                                itemType = PokemonMoveViewHolder.layoutType
+                            )
+                        })
+                    }
                 }
+                pokemonMoveList
             }
-            pokemonMoveList
         }
-    }
 
     private fun setUpPokemonMovesRecyclerView() = binding.pokemonMoveRecyclerView.apply {
         adapter = pokemonMoveAdapter

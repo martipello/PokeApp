@@ -49,4 +49,5 @@
 
     <string name="adaptive_height_scroll_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehaviour</string>
     <string name="error_text">Oops that\'s an error...</string>
+    <string name="retry">Retry</string>
 </resources>

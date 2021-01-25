@@ -260,6 +260,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .apply(requestOptions)
+                .placeholder(R.drawable.pokeball_vector)
                 .addListener(imageRequestListener(continuation))
                 .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
 
@@ -274,7 +275,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 target: Target<Bitmap?>,
                 isFirstResource: Boolean
             ): Boolean {
-                continuation.resume(false)
+                if (continuation.isActive) continuation.resume(false)
                 return false
             }
 
@@ -285,7 +286,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                continuation.resume(true)
+                if (continuation.isActive) continuation.resume(true)
                 return false
             }
         }

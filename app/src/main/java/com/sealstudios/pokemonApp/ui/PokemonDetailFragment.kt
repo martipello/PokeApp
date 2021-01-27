@@ -100,12 +100,16 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setViewModelProperties() {
-        pokemonDetailViewModel.setPokemonId(pokemonId)
-        pokemonSpeciesViewModel.setPokemonId(pokemonId)
+        setPokemonIdForViewModels(pokemonId)
         pokemonDetailViewModel.setViewColors(
             args.dominantSwatchRgb,
             args.lightVibrantSwatchRgb
         )
+    }
+
+    private fun setPokemonIdForViewModels(pokemonId: Int){
+        pokemonDetailViewModel.setPokemonId(pokemonId)
+        pokemonSpeciesViewModel.setPokemonId(pokemonId)
     }
 
     private fun observePokemonDetails() {
@@ -121,7 +125,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 Status.ERROR -> {
                     binding.setError(
                         errorMessage = pokemonWithTypes.message ?: "Oops, Something went wrong.",
-                        fetchPokemon = { pokemonDetailViewModel.setPokemonId(pokemonId) }
+                        fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
                     )
                 }
                 Status.LOADING -> {

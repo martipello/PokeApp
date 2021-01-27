@@ -255,7 +255,7 @@
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                         android:text="@string/height_label"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_label" />
 
                     <TextView
                         android:id="@+id/height_text_view"
@@ -266,7 +266,7 @@
                         android:paddingStart="@dimen/qualified_small_margin_8dp"
                         android:text="@string/height_label"
                         app:layout_constraintStart_toEndOf="@id/height_label"
-                        app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_label"
                         tools:ignore="RtlSymmetry" />
 
                     <TextView
@@ -278,7 +278,7 @@
                         android:paddingStart="@dimen/qualified_small_margin_8dp"
                         android:text="@string/weight_label"
                         app:layout_constraintStart_toEndOf="@id/height_text_view"
-                        app:layout_constraintTop_toBottomOf="@id/gen_text_view"
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_label"
                         tools:ignore="RtlSymmetry" />
 
                     <TextView
@@ -292,7 +292,7 @@
                         android:paddingEnd="@dimen/qualified_small_margin_8dp"
                         android:text="@string/weight_label"
                         app:layout_constraintStart_toEndOf="@id/weight_label"
-                        app:layout_constraintTop_toBottomOf="@id/gen_text_view" />
+                        app:layout_constraintTop_toBottomOf="@id/gen_text_label" />
 
                     <View
                         android:id="@+id/info_divider"
@@ -300,136 +300,24 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                         android:background="@color/light_grey"
-                        app:layout_constraintBottom_toTopOf="@id/pokemon_about_label"
-                        app:layout_constraintTop_toBottomOf="@id/height_text_view" />
+                        app:layout_constraintBottom_toTopOf="@id/species_fragment"
+                        app:layout_constraintTop_toBottomOf="@id/height_label" />
 
-                    <TextView
-                        android:id="@+id/pokemon_about_label"
-                        style="@style/ThemeOverlay.MySubTitleTextBold"
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/species_fragment"
+                        android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:text="@string/species"
-                        app:layout_constraintTop_toBottomOf="@id/info_divider" />
-
-
-                    <androidx.constraintlayout.widget.Barrier
-                        android:id="@+id/species_label_barrier"
-                        android:layout_width="1dp"
-                        android:layout_height="10dp"
-                        app:barrierDirection="end"
-                        app:constraint_referenced_ids="shape_label,
-                form_description_label, habitat_label"
-                        app:layout_constraintBottom_toTopOf="@id/pokedex_divider"
-                        app:layout_constraintTop_toBottomOf="@id/info_divider" />
-
-
-                    <TextView
-                        android:id="@+id/shape_label"
-                        style="@style/ThemeOverlay.MyBodyTextBold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                        android:text="@string/shape_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
-
-                    <TextView
-                        android:id="@+id/shape_text"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/qualified_small_margin_8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
-                        app:layout_constraintTop_toTopOf="@id/shape_label"
-                        tools:ignore="RtlSymmetry" />
-
-                    <TextView
-                        android:id="@+id/form_description_label"
-                        style="@style/ThemeOverlay.MyBodyTextBold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                        android:text="@string/form_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/shape_text" />
-
-                    <TextView
-                        android:id="@+id/form_description_text"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/qualified_small_margin_8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
-                        app:layout_constraintTop_toTopOf="@id/form_description_label"
-                        tools:ignore="RtlSymmetry" />
-
-                    <TextView
-                        android:id="@+id/habitat_label"
-                        style="@style/ThemeOverlay.MyBodyTextBold"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                        android:text="@string/habitat_label"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/form_description_text" />
-
-                    <TextView
-                        android:id="@+id/habitat_text"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:paddingStart="@dimen/qualified_small_margin_8dp"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/species_label_barrier"
-                        app:layout_constraintTop_toTopOf="@id/habitat_label"
-                        tools:ignore="RtlSymmetry" />
-
-                    <View
-                        android:id="@+id/pokedex_divider"
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:background="@color/light_grey"
-                        app:layout_constraintTop_toBottomOf="@id/habitat_text" />
-
-                    <TextView
-                        android:id="@+id/pokedex_entry_label"
-                        style="@style/ThemeOverlay.MySubTitleTextBold"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:text="@string/pok_dex"
-                        app:layout_constraintTop_toBottomOf="@id/pokedex_divider" />
-
-                    <TextView
-                        android:id="@+id/pokedex_subtitle"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                        android:text="@string/pok_dex_gen_label"
-                        app:layout_constraintTop_toBottomOf="@id/pokedex_entry_label" />
-
-                    <TextView
-                        android:id="@+id/pokedex_entry_text"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                        android:text="@string/pok_dex_entry"
-                        android:visibility="gone"
-                        app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle" />
+                        app:layout_constraintTop_toBottomOf="@id/info_divider"
+                        tools:layout="@layout/pokemon_species_fragment" />
 
                     <View
                         android:id="@+id/moves_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                         android:background="@color/light_grey"
-                        app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
+                        app:layout_constraintTop_toBottomOf="@id/species_fragment" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/movesFragment"

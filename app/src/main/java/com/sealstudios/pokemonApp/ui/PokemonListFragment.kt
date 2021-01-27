@@ -25,7 +25,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.api.states.ErrorCodes
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
@@ -54,9 +53,6 @@ class PokemonListFragment : Fragment(),
 
     @Inject
     lateinit var glide: RequestManager
-
-    @Inject
-    lateinit var remotePokemonToRoomPokemonRepository: RemotePokemonToRoomPokemonRepository
 
     private val binding get() = _binding!!
     private var _binding: PokemonListFragmentBinding? = null
@@ -405,83 +401,54 @@ class PokemonListFragment : Fragment(),
         remotePokemonViewModel.setFetchedPartialPokemonData(false)
         remotePokemonViewModel.fetchAllPokemon()
     }
+
+    private fun hideEmptyLayout() {
+        binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+        binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
+    }
+
+    private fun hideErrorLayout() {
+        binding.errorPokemonList.root.visibility = View.GONE
+    }
+
+    private fun hideLoadingLayout() {
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
+    }
+
+    private fun PokemonListFragmentBinding.setLoading() {
+        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
+        hideEmptyLayout()
+        hideErrorLayout()
+    }
+
+    private fun PokemonListFragmentBinding.setError(errorMessage: String, fetchAllPokemon: () -> Unit) {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideEmptyLayout()
+        hideLoadingLayout()
+        errorPokemonList.errorImage.visibility = View.VISIBLE
+        errorPokemonList.errorText.text = errorMessage
+        errorPokemonList.retryButton.setOnClickListener {
+            fetchAllPokemon()
+        }
+
+    }
+
+    private fun PokemonListFragmentBinding.setEmpty() {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideErrorLayout()
+        hideLoadingLayout()
+        emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+        emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+    }
+
+    private fun PokemonListFragmentBinding.setNotEmpty() {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideEmptyLayout()
+        hideErrorLayout()
+        hideLoadingLayout()
+    }
+
 }
-
-private fun PokemonListFragmentBinding.setLoading() {
-
-    fun hideEmptyLayout() {
-        emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        emptyPokemonList.emptyResultsText.visibility = View.GONE
-    }
-
-    fun hideErrorLayout() {
-        errorPokemonList.root.visibility = View.GONE
-    }
-
-    emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
-    emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
-    hideEmptyLayout()
-    hideErrorLayout()
-}
-
-private fun PokemonListFragmentBinding.setError(errorMessage: String, fetchAllPokemon: () -> Unit) {
-
-    fun hideEmptyLayout() {
-        emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        emptyPokemonList.emptyResultsText.visibility = View.GONE
-    }
-
-    fun hideLoadingLayout() {
-        emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
-    }
-
-    pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-    hideEmptyLayout()
-    hideLoadingLayout()
-    errorPokemonList.errorText.text = errorMessage
-    errorPokemonList.retryButton.setOnClickListener {
-        fetchAllPokemon()
-    }
-
-}
-
-private fun PokemonListFragmentBinding.setEmpty() {
-
-    fun hideErrorLayout() {
-        errorPokemonList.root.visibility = View.GONE
-    }
-
-    fun hideLoadingLayout() {
-        emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
-    }
-
-    pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-    hideErrorLayout()
-    hideLoadingLayout()
-    emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
-    emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
-}
-
-private fun PokemonListFragmentBinding.setNotEmpty() {
-
-    fun hideEmptyLayout() {
-        emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        emptyPokemonList.emptyResultsText.visibility = View.GONE
-    }
-
-    fun hideErrorLayout() {
-        errorPokemonList.root.visibility = View.GONE
-    }
-
-    fun hideLoadingLayout() {
-        emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
-    }
-
-    pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
-    hideEmptyLayout()
-    hideErrorLayout()
-    hideLoadingLayout()
-}
-
 
 

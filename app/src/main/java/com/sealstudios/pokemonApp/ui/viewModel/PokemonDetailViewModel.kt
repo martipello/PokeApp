@@ -8,11 +8,13 @@ import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
+import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,7 +28,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
     private val pokemonWithTypesRepository: PokemonWithTypesRepository,
-    private val pokemonSpeciesRepository: PokemonSpeciesRepository,
     private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
@@ -37,7 +38,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
 
     val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
-    val pokemonSpecies: LiveData<Resource<PokemonSpecies>> = pokemonSpecies()
 
     private fun pokemonDetails() = pokemonId.switchMap { id ->
         liveData {
@@ -52,22 +52,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                             pokemon = pokemonWithTypes.pokemon,
                             types = pokemonWithTypes.types
                         )
-                    )
-                )
-            }
-        }
-    }
-
-    private fun pokemonSpecies() = pokemonId.switchMap { id ->
-        liveData {
-            emit(Resource.loading(null))
-            val pokemonSpecies = pokemonSpeciesRepository.getSinglePokemonSpeciesByIdAsync(id)
-            if (pokemonSpecies == null) {
-                emitSource(fetchPokemonSpecies(id))
-            } else {
-                emit(
-                    Resource.success(
-                        pokemonSpecies
                     )
                 )
             }
@@ -95,49 +79,11 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         )
                     )
                 } else {
-                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null,pokemonRequest.code))
+                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null, pokemonRequest.code))
                 }
             }
             Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null, pokemonRequest.code))
             Status.LOADING -> emit(Resource.loading(null))
-        }
-    }
-
-    private fun fetchPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
-        val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(pokemonId)
-
-        when (pokemonSpeciesRequest.status) {
-            Status.SUCCESS -> {
-                if (pokemonSpeciesRequest.data != null) {
-                    val species = PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
-                        pokemonSpeciesRequest.data
-                    )
-                    insertPokemonSpecies(pokemonId, species)
-                    emit(Resource.success(species))
-                } else {
-                    emit(Resource.error(pokemonSpeciesRequest.message ?: "Data is empty", null, pokemonSpeciesRequest.code))
-                }
-            }
-            Status.ERROR -> emit(
-                Resource.error(
-                    pokemonSpeciesRequest.message ?: "General error",
-                    null, pokemonSpeciesRequest.code
-                )
-            )
-            Status.LOADING -> emit(Resource.loading(null))
-        }
-
-    }
-
-    private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        withContext(Dispatchers.IO) {
-            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
-                PokemonSpeciesJoin(
-                    remotePokemonId,
-                    pokemonSpecies.id
-                )
-            )
         }
     }
 
@@ -166,7 +112,8 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     moveId,
                     pokemonId,
                     moveResponse.move.name,
-                    moveResponse.version_group_details)
+                    moveResponse.version_group_details
+                )
                 Log.d(TAG, "INSERT METADATA $moveMetaData")
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
             }

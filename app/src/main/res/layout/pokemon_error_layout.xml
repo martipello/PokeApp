@@ -14,6 +14,7 @@
         android:scaleType="centerInside"
         android:src="@drawable/pika_detective"
         app:layout_constraintDimensionRatio="H,1:1"
+        android:visibility="gone"
         android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
         app:layout_constraintWidth_max="200dp"
         app:layout_constraintVertical_chainStyle="packed"

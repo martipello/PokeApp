@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.database.`object`
 
 import androidx.room.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull
 
@@ -14,7 +15,7 @@ open class Pokemon constructor(
     var id: Int = 0,
 
     @ColumnInfo(name = POKEMON_NAME)
-    var name: String =  "",
+    var name: String = "",
 
     @ColumnInfo(name = POKEMON_IMAGE)
     var image: String = "",
@@ -31,16 +32,6 @@ open class Pokemon constructor(
     @ColumnInfo(name = MOVE_IDS)
     var move_ids: List<Int> = emptyList(),
 
-    @ColumnInfo(name = VERSIONS_LEARNT)
-    var versionsLearnt: List<String> = emptyList(),
-
-    @ColumnInfo(name = LEVELS_LEARNED_AT)
-    var levelsLearnedAt: List<Int> = emptyList(),
-
-    @ColumnInfo(name = LEARN_METHODS)
-    var learnMethods: List<String> = emptyList(),
-
-
     ) {
 
     companion object {
@@ -52,13 +43,21 @@ open class Pokemon constructor(
         const val POKEMON_WEIGHT: String = "pokemon_weight"
         const val POKEMON_SPRITE: String = "pokemon_sprite"
         const val MOVE_IDS: String = "pokemon_move_id"
-        const val LEARN_METHODS: String = "learn_methods"
-        const val LEVELS_LEARNED_AT: String = "levels_learned_at"
-        const val VERSIONS_LEARNT: String = "versions_learnt"
+
+        fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
+            val id = getPokemonIdFromUrl(apiPokemon.url)
+            return Pokemon(
+                id = id,
+                name = apiPokemon.name,
+                image = highResPokemonUrl(id),
+                height = 0,
+                weight = 0,
+                move_ids = listOf(),
+                sprite = "",
+            )
+        }
 
         fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
-
-            val moveVersions = apiPokemon.moves.map { it.version_group_details }.flatten()
 
             return Pokemon(
                 id = apiPokemon.id,
@@ -68,9 +67,6 @@ open class Pokemon constructor(
                 weight = apiPokemon.weight,
                 sprite = apiPokemon.sprites.front_default,
                 move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
-                levelsLearnedAt = moveVersions.map { it.level_learned_at },
-                learnMethods = moveVersions.map { it.move_learn_method.name },
-                versionsLearnt = moveVersions.map { it.version_group.name }
             )
         }
 
@@ -88,4 +84,22 @@ open class Pokemon constructor(
         }
 
     }
+}
+
+fun Pokemon.isDefault(): Boolean {
+    val defaultPokemon = Pokemon.defaultPokemon(
+        NamedApiResource(
+            name = this.name,
+            id = this.id,
+            category = "",
+            url = "https://pokeapi.co/api/v2/pokemon/${this.id}/"
+        )
+    )
+    return this.id == defaultPokemon.id
+            && this.name == defaultPokemon.name
+            && this.height == defaultPokemon.height
+            && this.weight == defaultPokemon.weight
+            && this.image == defaultPokemon.image
+            && this.sprite == defaultPokemon.sprite
+            && this.move_ids == defaultPokemon.move_ids
 }

@@ -30,7 +30,8 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
                 PokemonMoveViewHolder(binding, clickListener)
             }
             GenerationHeaderViewHolder.layoutType -> {
-                val binding = GenerationHeaderViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding =
+                    GenerationHeaderViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 GenerationHeaderViewHolder(binding)
             }
             else -> throw ClassCastException("Unknown viewType $viewType")
@@ -47,7 +48,7 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         } else {
             when (holder) {
                 is PokemonMoveViewHolder -> {
-                    differ.currentList[position].move?.let {
+                    differ.currentList[position].moveWithMetaData?.let {
                         holder.bind(it, selectedItems.get(position, false))
                     }
                 }
@@ -58,7 +59,7 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is PokemonMoveViewHolder -> {
-                differ.currentList[position].move?.let {
+                differ.currentList[position].moveWithMetaData?.let {
                     holder.bind(it, selectedItems.get(position, false))
                 }
             }
@@ -96,18 +97,19 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         return object : DiffUtil.ItemCallback<PokemonMoveAdapterItem>() {
 
             override fun areItemsTheSame(oldItem: PokemonMoveAdapterItem, newItem: PokemonMoveAdapterItem): Boolean {
-                return oldItem.move?.id == newItem.move?.id
+                return oldItem.moveWithMetaData?.pokemonMove?.id == newItem.moveWithMetaData?.pokemonMove?.id
             }
 
             override fun areContentsTheSame(oldItem: PokemonMoveAdapterItem, newItem: PokemonMoveAdapterItem): Boolean {
-                return oldItem.move?.id == newItem.move?.id && oldItem.move?.name == newItem.move?.name
+                return oldItem.moveWithMetaData?.pokemonMove?.id == newItem.moveWithMetaData?.pokemonMove?.id
+                        && oldItem.moveWithMetaData?.pokemonMove?.name == newItem.moveWithMetaData?.pokemonMove?.name
             }
 
         }
     }
 
     companion object {
-        const val expandSelected : Int = 100
+        const val expandSelected: Int = 100
     }
 }
 

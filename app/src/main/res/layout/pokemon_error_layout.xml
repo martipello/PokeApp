@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?android:attr/selectableItemBackground"
+    app:layout_behavior="com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehavior">
+
+    <ImageView
+        android:id="@+id/error_image"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:contentDescription="@string/no_results"
+        android:scaleType="centerInside"
+        android:src="@drawable/pika_detective"
+        app:layout_constraintDimensionRatio="H,1:1"
+        android:visibility="gone"
+        android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
+        app:layout_constraintWidth_max="200dp"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/error_text" />
+
+    <TextView
+        android:id="@+id/error_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/error_text"
+        style="@style/ThemeOverlay.MyBodyText"
+        app:layout_constraintVertical_chainStyle="packed"
+        app:layout_constraintTop_toBottomOf="@id/error_image"
+        android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/retry_button" />
+
+    <com.google.android.material.button.MaterialButton
+        android:text="@string/retry"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:id="@+id/retry_button"
+        android:textColor="@color/black"
+        app:rippleColor="@color/light_grey"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:cornerRadius="1000dp"
+        android:layout_marginBottom="@dimen/qualified_large_margin_32dp"
+        app:strokeColor="@color/colorAccent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/error_text"
+        app:layout_constraintWidth_max="200dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

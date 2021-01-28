@@ -16,7 +16,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 
     var search: MutableLiveData<String> = getSearchState()
     val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
-    val searchPokemon: LiveData<List<PokemonWithTypesAndSpeciesForList>>
+    val searchPokemon: LiveData<List<PokemonWithTypesAndSpeciesForList>?>
 
     val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
 
@@ -34,6 +34,7 @@ class PokemonListViewModel @ViewModelInject constructor(
 
         searchPokemon = combinedValues.switchMap {
             liveData {
+                emit(null)
                 val search = it?.first ?: return@liveData
                 val filters = it.second ?: return@liveData
                 withContext(Dispatchers.IO) {
@@ -49,7 +50,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     }
 
     @SuppressLint("DefaultLocale")
-    private fun searchPokemon(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+    private fun searchPokemon(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>?> {
         return repository.searchPokemonWithTypesAndSpecies(search)
     }
 
@@ -57,7 +58,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     private fun searchAndFilterPokemon(
         search: String,
         filters: List<String>
-    ): LiveData<List<PokemonWithTypesAndSpeciesForList>> {
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>?> {
         return repository.searchAndFilterPokemonWithTypesAndSpecies(
             search,
             filters.map { filter -> filter.toLowerCase() })

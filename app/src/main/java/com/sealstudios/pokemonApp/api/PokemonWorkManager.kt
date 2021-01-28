@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.api
 
 import android.content.Context
-import android.util.Log
 import androidx.annotation.NonNull
 import androidx.hilt.Assisted
 import androidx.hilt.work.WorkerInject
@@ -13,7 +12,10 @@ import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_ID
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_NAME
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.withContext
 
 class PokemonWorkManager @WorkerInject constructor(
     @Assisted @NonNull context: Context,
@@ -41,26 +43,26 @@ class PokemonWorkManager @WorkerInject constructor(
         Result.success()
     }
 
-
-    private suspend fun handleAllPokemonResponse(
-        worker: CoroutineWorker,
-    ) {
-        withContext(context = Dispatchers.IO) {
-            val pokemonRefListResponse = remotePokemonToRoomPokemonHelper.getAllPokemonResponse()
-            when (pokemonRefListResponse.status) {
-                Status.SUCCESS -> {
-                    pokemonRefListResponse.data?.let {
-                        saveAllPokemon(it.results, worker)
-                        savePokemonTypesAndSpecies(it.results, worker)
-                    }
+    private suspend fun handleAllPokemonResponse(worker: CoroutineWorker) = withContext(context = Dispatchers.IO) {
+        val pokemonRefListResponse = remotePokemonToRoomPokemonHelper.getAllPokemonResponse()
+        when (pokemonRefListResponse.status) {
+            Status.SUCCESS -> {
+                pokemonRefListResponse.data?.let {
+                    saveAllPokemon(it.results, worker)
+                    savePokemonTypesAndSpecies(it.results, worker)
                 }
-                Status.ERROR -> TODO()
-                Status.LOADING -> TODO()
+            }
+            Status.ERROR -> {
+            }
+            Status.LOADING -> {
             }
         }
     }
 
-    private suspend fun saveAllPokemon(data: List<NamedApiResource>, worker: CoroutineWorker) {
+    private suspend fun saveAllPokemon(
+        data: List<NamedApiResource>,
+        worker: CoroutineWorker
+    ) =
         withContext(Dispatchers.IO) {
             remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
             setForeGroundAsync(
@@ -71,11 +73,12 @@ class PokemonWorkManager @WorkerInject constructor(
                 true
             )
         }
-    }
 
-    private suspend fun savePokemonTypesAndSpecies(data: List<NamedApiResource>, worker: CoroutineWorker) {
+    private suspend fun savePokemonTypesAndSpecies(
+        data: List<NamedApiResource>,
+        worker: CoroutineWorker
+    ) =
         withContext(Dispatchers.IO) {
-
             for (i in data.indices) {
                 data[i].let { pokemonRef ->
                     val id = getPokemonIdFromUrl(pokemonRef.url)
@@ -90,9 +93,7 @@ class PokemonWorkManager @WorkerInject constructor(
                     )
                 }
             }
-
         }
-    }
 
     private fun setForeGroundAsync(
         worker: CoroutineWorker,
@@ -112,6 +113,5 @@ class PokemonWorkManager @WorkerInject constructor(
             )
         )
     }
-
 
 }

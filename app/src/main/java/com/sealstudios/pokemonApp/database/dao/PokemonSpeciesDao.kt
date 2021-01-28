@@ -19,8 +19,8 @@ interface PokemonSpeciesDao {
     @Query("SELECT * FROM PokemonSpecies WHERE species_name == :name")
     fun getSingleSpeciesByName(name: String?): LiveData<PokemonSpecies>
 
-    @Query("SELECT * FROM PokemonSpecies WHERE species_id == :id")
-    fun getSingleSpeciesById(id: Int?): LiveData<PokemonSpecies>
+    @Query("SELECT * FROM PokemonSpecies WHERE species_id == :id LIMIT 1")
+    suspend fun getSinglePokemonWithSpeciesByIdAsync(id: Int): PokemonSpecies
 
     @Update
     suspend fun updateSpecies(pokemonSpecies: PokemonSpecies)

@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -22,16 +21,19 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.api.RemotePokemonToRoomPokemonRepository
+import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.states.ErrorCodes
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.customViews.fabFilter.animation.ScrollAwareFilerFab
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
 import com.sealstudios.pokemonApp.ui.util.FilterChipClickListener
@@ -39,7 +41,7 @@ import com.sealstudios.pokemonApp.ui.util.FilterGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
-import com.sealstudios.pokemonApp.util.SharedPreferenceHelper
+import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -47,16 +49,10 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
-    PokemonAdapterClickListener, FilterChipClickListener {
+    PokemonAdapterClickListener, FilterChipClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var glide: RequestManager
-
-    @Inject
-    lateinit var sharedPreferenceHelper: SharedPreferenceHelper
-
-    @Inject
-    lateinit var remotePokemonToRoomPokemonRepository: RemotePokemonToRoomPokemonRepository
 
     private val binding get() = _binding!!
     private var _binding: PokemonListFragmentBinding? = null
@@ -64,6 +60,7 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
     private var filterIsExpanded = false
     private val pokemonListViewModel: PokemonListViewModel by viewModels()
+    private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -96,19 +93,11 @@ class PokemonListFragment : Fragment(),
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
-        checkIsFirstTime()
+        observeFetchAllPokemonResponse()
         observeFilters()
-        observePokemonList()
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
-    }
-
-    private fun checkIsFirstTime() {
-        if (sharedPreferenceHelper.getBool(SharedPreferenceHelper.isFirstTime)) {
-            remotePokemonToRoomPokemonRepository.getAllPokemon()
-            sharedPreferenceHelper.setBool(SharedPreferenceHelper.isFirstTime, false)
-        }
     }
 
     private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
@@ -190,12 +179,46 @@ class PokemonListFragment : Fragment(),
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
+    private fun observeFetchAllPokemonResponse() {
+        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
+            when (allPokemon.status) {
+                Status.SUCCESS -> {
+                    binding.setNotEmpty()
+                    observePokemonList()
+                }
+                Status.ERROR -> {
+                    if (allPokemon.code == ErrorCodes.NO_CONNECTION.code) {
+                        if (remotePokemonViewModel.hasFetchedPartialPokemonData) {
+                            binding.setNotEmpty()
+                            observePokemonList()
+                        } else {
+                            binding.setError(
+                                ErrorCodes.NO_CONNECTION.message
+                            ) { remotePokemonViewModel.fetchAllPokemon() }
+                        }
+                    } else {
+                        binding.setError(
+                            allPokemon.message ?: getString(R.string.error_text)
+                        ) { remotePokemonViewModel.fetchAllPokemon() }
+                    }
+                }
+                Status.LOADING -> binding.setLoading()
+            }
+        })
+    }
+
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
             viewLifecycleOwner, Observer { pokemonData ->
-                Log.d("PLF", "Observer Observer Observer")
-                pokemonData?.let {
-                    pokemonAdapter.submitList(it)
+                if (pokemonData != null) {
+                    if (pokemonData.isEmpty()) {
+                        binding.setEmpty()
+                    } else {
+                        binding.setNotEmpty()
+                    }
+                    pokemonAdapter.submitList(pokemonData)
+                } else {
+                    binding.setLoading()
                 }
             })
     }
@@ -228,42 +251,11 @@ class PokemonListFragment : Fragment(),
             })
     }
 
-    private fun setViewLoadingState() {
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.VISIBLE
-        binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
-        binding.errorPokemonList.errorText.visibility = View.GONE
-        binding.errorPokemonList.retryButton.visibility = View.GONE
-    }
-
-    private fun setViewErrorState() {
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
-        binding.errorPokemonList.errorText.visibility = View.VISIBLE
-        binding.errorPokemonList.retryButton.visibility = View.VISIBLE
-    }
-
-    private fun setViewEmptyState() {
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
-        binding.emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
-        binding.errorPokemonList.errorText.visibility = View.GONE
-        binding.errorPokemonList.retryButton.visibility = View.GONE
-    }
-
-    private fun setViewNotEmptyState() {
-        binding.emptyPokemonList.pokemonListLoading.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
-        binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
-        binding.errorPokemonList.errorText.visibility = View.GONE
-        binding.errorPokemonList.retryButton.visibility = View.GONE
-    }
-
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addRecyclerViewDecoration(this, context)
             this.setHasFixedSize(true)
+            binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
             adapter = pokemonAdapter
             doOnPreDraw {
                 startPostponedEnterTransition()
@@ -404,6 +396,59 @@ class PokemonListFragment : Fragment(),
     companion object {
         private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
     }
+
+    override fun onRefresh() {
+        remotePokemonViewModel.setFetchedPartialPokemonData(false)
+        remotePokemonViewModel.fetchAllPokemon()
+    }
+
+    private fun hideEmptyLayout() {
+        binding.emptyPokemonList.emptyResultsImage.visibility = View.GONE
+        binding.emptyPokemonList.emptyResultsText.visibility = View.GONE
+    }
+
+    private fun hideErrorLayout() {
+        binding.errorPokemonList.root.visibility = View.GONE
+    }
+
+    private fun hideLoadingLayout() {
+        binding.emptyPokemonList.pokemonListLoading.root.visibility = View.GONE
+    }
+
+    private fun PokemonListFragmentBinding.setLoading() {
+        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
+        hideEmptyLayout()
+        hideErrorLayout()
+    }
+
+    private fun PokemonListFragmentBinding.setError(errorMessage: String, fetchAllPokemon: () -> Unit) {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideEmptyLayout()
+        hideLoadingLayout()
+        errorPokemonList.errorImage.visibility = View.VISIBLE
+        errorPokemonList.errorText.text = errorMessage
+        errorPokemonList.retryButton.setOnClickListener {
+            fetchAllPokemon()
+        }
+
+    }
+
+    private fun PokemonListFragmentBinding.setEmpty() {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideErrorLayout()
+        hideLoadingLayout()
+        emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
+        emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
+    }
+
+    private fun PokemonListFragmentBinding.setNotEmpty() {
+        pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        hideEmptyLayout()
+        hideErrorLayout()
+        hideLoadingLayout()
+    }
+
 }
 
 

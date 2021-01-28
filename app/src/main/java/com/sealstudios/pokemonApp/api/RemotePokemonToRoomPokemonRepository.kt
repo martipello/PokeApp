@@ -4,6 +4,8 @@ import android.util.Log
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sealstudios.pokemonApp.api.`object`.*
+import com.sealstudios.pokemonApp.api.`object`.Resource
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
@@ -15,12 +17,10 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonRepository: PokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
-    private val pokemonTypeJoinRepository: PokemonTypeJoinRepository,
     private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    private val pokemonSpeciesJoinRepository: PokemonSpeciesJoinRepository
 ) {
 
-    fun getAllPokemon() {
+    fun startFetchAllPokemonTypesAndSpecies() {
         workManager.enqueue(OneTimeWorkRequest.from(PokemonWorkManager::class.java))
     }
 
@@ -69,7 +69,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
         withContext(Dispatchers.IO) {
             pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesJoinRepository.insertPokemonSpeciesJoin(
+            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
                 PokemonSpeciesJoin(
                     remotePokemonId,
                     pokemonSpecies.id
@@ -81,20 +81,8 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
     suspend fun saveAllPokemon(pokemonListResponseData: List<NamedApiResource>) =
         withContext(Dispatchers.IO) {
             pokemonListResponseData.map {
-                val id = Pokemon.getPokemonIdFromUrl(it.url)
                 insertPokemon(
-                    Pokemon(
-                        id = id,
-                        name = it.name,
-                        image = Pokemon.highResPokemonUrl(id),
-                        height = 0,
-                        weight = 0,
-                        move_ids = listOf(),
-                        versionsLearnt = listOf(),
-                        learnMethods = listOf(),
-                        levelsLearnedAt = listOf(),
-                        sprite = "",
-                    )
+                    Pokemon.defaultPokemon(it)
                 )
             }
         }
@@ -122,7 +110,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                 pokemonTypeRepository.insertPokemonType(
                     pokemonType
                 )
-                pokemonTypeJoinRepository.insertPokemonTypeJoin(
+                pokemonTypeRepository.insertPokemonTypeJoin(
                     pokemonTypeJoin
                 )
             }

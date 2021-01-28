@@ -1,26 +1,18 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.animation.Animator
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.transition.TransitionInflater
-import androidx.transition.TransitionSet
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -29,29 +21,26 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
-import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitEnd
-import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
-import com.sealstudios.pokemonApp.ui.listenerExtensions.startAndWait
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonDetailViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonMovesViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.dominantColor
-import com.sealstudios.pokemonApp.ui.viewModel.lightVibrantColor
+import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
 @AndroidEntryPoint
-class PokemonDetailFragment : PokemonDetailAnimationManager(){
+class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     @Inject
     lateinit var glide: RequestManager
@@ -59,6 +48,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
     private var pokemonId: Int = -1
     private val args: PokemonDetailFragmentArgs by navArgs()
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
+    private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
@@ -92,7 +82,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                 handleEnterAnimation()
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
             }
-            observePokemon()
+            observePokemonDetails()
+            observePokemonSpecies()
         }
     }
 
@@ -109,20 +100,53 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
     }
 
     private fun setViewModelProperties() {
-        pokemonDetailViewModel.setPokemonId(pokemonId)
+        setPokemonIdForViewModels(pokemonId)
         pokemonDetailViewModel.setViewColors(
             args.dominantSwatchRgb,
             args.lightVibrantSwatchRgb
         )
     }
 
-    private fun observePokemon() {
-        pokemonDetailViewModel.pokemon.observe(viewLifecycleOwner, Observer { pokemon ->
-            lifecycleScope.launch {
-                Log.d("DETAIL", "pokemon $pokemon")
-//                pokemonMovesViewModel.setPokemon(pokemon.pokemon)
-                populateViews(pokemon)
-                setDataState()
+    private fun setPokemonIdForViewModels(pokemonId: Int){
+        pokemonDetailViewModel.setPokemonId(pokemonId)
+        pokemonSpeciesViewModel.setPokemonId(pokemonId)
+    }
+
+    private fun observePokemonDetails() {
+        pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, Observer { pokemonWithTypes ->
+            when (pokemonWithTypes.status) {
+                Status.SUCCESS -> {
+                    pokemonWithTypes.data?.let {
+                        populatePokemonDetailViews(it)
+                        pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
+                        binding.setNotEmpty()
+                    }
+                }
+                Status.ERROR -> {
+                    binding.setError(
+                        errorMessage = pokemonWithTypes.message ?: "Oops, Something went wrong.",
+                        fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
+                    )
+                }
+                Status.LOADING -> {
+                    binding.setLoading()
+                }
+            }
+        })
+    }
+
+    private fun observePokemonSpecies() {
+        pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, Observer { pokemonSpecies ->
+            when (pokemonSpecies.status) {
+                Status.SUCCESS -> {
+                    pokemonSpecies.data?.let {
+                        binding.setSpeciesNotEmpty()
+                        populatePokemonSpeciesViews(it)
+                    }
+                }
+                else -> {
+                    binding.setSpeciesEmpty()
+                }
             }
         })
     }
@@ -166,7 +190,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
         binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
             R.id.large_image
         )
-
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
             .setCardBackgroundColor(
                 ContextCompat.getColor(
@@ -187,33 +210,17 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
     }
 
     @SuppressLint("DefaultLocale")
-    private fun populateViews(pokemon: PokemonWithTypesAndSpecies?) =
+    private fun populatePokemonDetailViews(pokemon: PokemonWithTypes) =
         lifecycleScope.launch(Dispatchers.Main) {
-            pokemon?.let {
-                setPokemonTypes(it.types)
-                setPokemonFormData(it)
-            }
+            setPokemonTypes(pokemon.types)
+            setPokemonFormData(pokemon)
         }
 
-    private fun setLoadingState() {
-        binding.mainProgress.visibility = View.VISIBLE
-        binding.content.visibility = View.GONE
-    }
-
-    private fun setErrorState() {
-        binding.mainProgress.visibility = View.GONE
-        binding.content.visibility = View.GONE
-    }
-
-    private fun setDataState() {
-        binding.mainProgress.visibility = View.GONE
-        binding.content.visibility = View.VISIBLE
-    }
-
-    private fun setDataEmptyState() {
-        binding.mainProgress.visibility = View.GONE
-        binding.content.visibility = View.GONE
-    }
+    @SuppressLint("DefaultLocale")
+    private fun populatePokemonSpeciesViews(pokemonSpecies: PokemonSpecies) =
+        lifecycleScope.launch(Dispatchers.Main) {
+            setPokemonSpeciesFormData(pokemonSpecies)
+        }
 
     private suspend fun setPokemonImageView(imageUrl: String): Boolean =
         suspendCancellableCoroutine { continuation ->
@@ -224,21 +231,20 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                 .dontAnimate()
                 .diskCacheStrategy(DiskCacheStrategy.DATA)
                 .apply(requestOptions)
+                .placeholder(R.drawable.pokeball_vector)
                 .addListener(imageRequestListener(continuation))
                 .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-
         }
 
     private fun imageRequestListener(continuation: CancellableContinuation<Boolean>): RequestListener<Bitmap?> {
         return object : RequestListener<Bitmap?> {
-
             override fun onLoadFailed(
                 e: GlideException?,
                 model: Any,
                 target: Target<Bitmap?>,
                 isFirstResource: Boolean
             ): Boolean {
-                continuation.resume(false)
+                if (continuation.isActive) continuation.resume(false)
                 return false
             }
 
@@ -249,7 +255,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                continuation.resume(true)
+                if (continuation.isActive) continuation.resume(true)
                 return false
             }
         }
@@ -273,37 +279,71 @@ class PokemonDetailFragment : PokemonDetailAnimationManager(){
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(
-        it: PokemonWithTypesAndSpecies
+        pokemonWithTypes: PokemonWithTypes
     ) {
         val context = binding.root.context
-        binding.title.text = it.pokemon.name.capitalize()
-        binding.idLabel.text = context.getString(R.string.pokemonId, it.pokemon.id)
-        binding.subtitle.text = it.species?.species?.capitalize()
-        binding.genTextView.text = context.getString(R.string.generation, PokemonGeneration.formatGenerationName(
-            PokemonGeneration.getGeneration(it.species?.generation ?: "")))
-        val doubleHeight: Double = it.pokemon.height.toDouble()
-        val doubleWeight: Double = it.pokemon.weight.toDouble()
+        binding.title.text = pokemonWithTypes.pokemon.name.capitalize()
+        binding.idLabel.text = context.getString(R.string.pokemonId, pokemonWithTypes.pokemon.id)
+        val doubleHeight: Double = pokemonWithTypes.pokemon.height.toDouble()
+        val doubleWeight: Double = pokemonWithTypes.pokemon.weight.toDouble()
         val height = doubleHeight / 10
         val weight = doubleWeight / 10
         binding.heightTextView.text = context.getString(R.string.height, height)
         binding.weightTextView.text = context.getString(R.string.weight, weight)
-        binding.pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, it.species?.pokedex?.capitalize() ?: "N/A")
-        it.species?.pokedexEntry?.let {
-            binding.pokedexEntryText.visibility = View.VISIBLE
-            binding.pokedexEntryText.text = it
-        }
-        binding.shapeText.text =
-            context.getString(R.string.shape_text, it.species?.shape?.capitalize() ?: "N/A")
-        binding.formDescriptionText.text =
-            context.getString(R.string.form_text, it.species?.formDescription ?: "N/A")
-        binding.habitatText.text =
-            context.getString(R.string.habitat, it.species?.habitat?.capitalize() ?: "N/A")
+    }
+
+    @SuppressLint("DefaultLocale")
+    private fun setPokemonSpeciesFormData(
+        species: PokemonSpecies
+    ) {
+        val context = binding.root.context
+        binding.subtitle.text = species.species.capitalize()
+        binding.genTextView.text = context.getString(
+            R.string.generation, PokemonGeneration.formatGenerationName(
+                PokemonGeneration.getGeneration(species.generation ?: "")
+            )
+        )
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun PokemonDetailFragmentBinding.setLoading() {
+        content.visibility = View.GONE
+        errorLayout.root.visibility = View.GONE
+        mainProgress.root.visibility = View.VISIBLE
+        mainProgress.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+    }
+
+    private fun PokemonDetailFragmentBinding.setError(errorMessage: String, fetchPokemon: () -> Unit) {
+        mainProgress.root.visibility = View.GONE
+        content.visibility = View.GONE
+        errorLayout.root.visibility = View.VISIBLE
+        errorLayout.errorImage.visibility = View.VISIBLE
+        errorLayout.errorText.text = errorMessage
+        errorLayout.retryButton.setOnClickListener {
+            fetchPokemon()
+        }
+    }
+
+    private fun PokemonDetailFragmentBinding.setNotEmpty() {
+        mainProgress.root.visibility = View.GONE
+        errorLayout.root.visibility = View.GONE
+        content.visibility = View.VISIBLE
+    }
+
+    private fun PokemonDetailFragmentBinding.setSpeciesEmpty() {
+        subtitle.visibility = View.GONE
+        genTextView.visibility = View.GONE
+        genTextLabel.visibility = View.GONE
+    }
+
+    private fun PokemonDetailFragmentBinding.setSpeciesNotEmpty() {
+        subtitle.visibility = View.VISIBLE
+        genTextView.visibility = View.VISIBLE
+        genTextLabel.visibility = View.VISIBLE
     }
 
 }

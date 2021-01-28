@@ -44,25 +44,16 @@ interface PokemonDao {
     ///                                 PokemonWithSpecies                                    ///
 
     @Transaction
+    @Query("SELECT * FROM pokemon WHERE pokemon_id == :id LIMIT 1")
+    suspend fun getSinglePokemonWithSpecies(id: Int?): PokemonWithSpecies
+
+    @Transaction
     @Query("SELECT * FROM Pokemon ORDER BY pokemon_id ASC")
     fun getAllPokemonWithSpecies(): LiveData<List<PokemonWithSpecies>>
 
     ///                                                                                       ///
     /// ************************************************************************************* ///
 
-    /// ************************************************************************************* ///
-    ///                                 PokemonWithTypes                                      ///
-
-    @Transaction
-    @Query("SELECT * FROM pokemon WHERE pokemon_id == :id LIMIT 1")
-    fun getSinglePokemonWithTypesById(id: Int?): LiveData<PokemonWithTypes>
-
-    @Transaction
-    @Query("SELECT * FROM pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-    fun getPokemonWithTypes(search: String?): LiveData<List<PokemonWithTypes>>
-
-    ///                                                                                       ///
-    /// ************************************************************************************* ///
 
     /// ************************************************************************************* ///
     ///                                 PokemonWithTypesAndSpecies                            ///
@@ -77,7 +68,7 @@ interface PokemonDao {
 
     @Transaction
     @Query("SELECT pokemon_id, pokemon_name, pokemon_image_url, pokemon_sprite FROM Pokemon WHERE pokemon_name LIKE :search ORDER BY pokemon_id ASC")
-    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>>
+    fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>?>
 
     @Query(
         """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
@@ -92,7 +83,7 @@ interface PokemonDao {
     fun searchAndFilterPokemonWithTypesAndSpecies(
         search: String,
         filters: List<String>
-    ): LiveData<List<PokemonWithTypesAndSpeciesForList>>
+    ): LiveData<List<PokemonWithTypesAndSpeciesForList>?>
 
     ///                                                                                       ///
     /// ************************************************************************************* ///

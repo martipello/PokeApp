@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
 import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData.Companion.separateByGeneration
@@ -20,6 +21,7 @@ import com.sealstudios.pokemonApp.ui.adapter.helperObjects.GenerationHeader
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveAdapterItem
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.GenerationHeaderViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonMoveViewHolder
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonMovesViewModel
@@ -53,26 +55,35 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         observeMoves()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        pokemonMoveAdapter = null
-    }
-
-
     private fun setUpPokemonAdapter() {
         pokemonMoveAdapter = PokemonMoveAdapter(clickListener = this)
     }
 
     private fun observeMoves() {
-        pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer { pokemonWithMovesAndMetaData ->
-            lifecycleScope.launch(Dispatchers.IO) {
-                val movesWithMetaDataList = pokemonWithMovesAndMetaData.moves.flatMap { move ->
-                    pokemonWithMovesAndMetaData.pokemonMoveMetaData.filter {
-                        it.moveName == move.name
-                    }.map { PokemonMoveWithMetaData(it, move) }
+        pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer { pokemonWithMovesAndMetaDataResource ->
+            when (pokemonWithMovesAndMetaDataResource.status) {
+                Status.SUCCESS -> {
+                    if (pokemonWithMovesAndMetaDataResource.data != null) {
+                        val pokemonWithMovesAndMetaData = pokemonWithMovesAndMetaDataResource.data
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val movesWithMetaDataList = pokemonWithMovesAndMetaData.moves.map { move ->
+                                pokemonWithMovesAndMetaData.pokemonMoveMetaData.filter {
+                                    it.moveName == move.name
+                                }.map { PokemonMoveWithMetaData(it, move) }
+                            }.flatten()
+                            setPokemonMoves(movesWithMetaDataList.separateByGeneration())
+                        }
+                    } else {
+                        binding.setEmpty()
+                    }
                 }
-                setPokemonMoves(movesWithMetaDataList.separateByGeneration())
+                Status.ERROR -> {
+                    binding.setError(pokemonWithMovesAndMetaDataResource.message ?: "Oops, something went wrong...")
+                    { pokemonMovesViewModel.retry() }
+                }
+                Status.LOADING -> {
+                    binding.setLoading()
+                }
             }
         })
     }
@@ -86,11 +97,10 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
                 pokemonMoveAdapter?.submitList(pokemonMoveList)
             }
             withContext(Dispatchers.Main) {
-                binding.pokemonMovesLoading.root.visibility = View.GONE
                 if (pokemonMoveList.isEmpty()) {
-                    binding.pokemonMovesEmptyText.visibility = View.VISIBLE
+                    binding.setEmpty()
                 } else {
-                    binding.pokemonMovesEmptyText.visibility = View.GONE
+                    binding.setNotEmpty()
                 }
             }
         }
@@ -102,29 +112,41 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
                 val pokemonMoveList = mutableListOf<PokemonMoveAdapterItem>()
                 for (moveEntry in pokemonMoves.entries) {
                     pokemonMoveList.add(
-                        PokemonMoveAdapterItem(
-                            moveWithMetaData = null,
-                            header = GenerationHeader(
-                                headerName = PokemonGeneration.formatGenerationName(
-                                    PokemonGeneration.getGeneration(moveEntry.key)
-                                )
-                            ),
-                            itemType = GenerationHeaderViewHolder.layoutType
-                        )
+                        createPokemonMoveAdapterHeaderItem(moveEntry.key)
                     )
                     if (!moveEntry.value.isNullOrEmpty()) {
                         pokemonMoveList.addAll(moveEntry.value!!.map {
-                            PokemonMoveAdapterItem(
-                                moveWithMetaData = it,
-                                header = null,
-                                itemType = PokemonMoveViewHolder.layoutType
-                            )
+                            createPokemonMoveAdapterListItem(it)
                         })
                     }
                 }
                 pokemonMoveList
             }
         }
+
+    private suspend fun createPokemonMoveAdapterListItem(pokemonMoveWithMetaData: PokemonMoveWithMetaData): PokemonMoveAdapterItem {
+        return withContext(Dispatchers.IO) {
+            return@withContext PokemonMoveAdapterItem(
+                moveWithMetaData = pokemonMoveWithMetaData,
+                header = null,
+                itemType = PokemonMoveViewHolder.layoutType
+            )
+        }
+    }
+
+    private suspend fun createPokemonMoveAdapterHeaderItem(headerName: String): PokemonMoveAdapterItem {
+        return withContext(Dispatchers.IO) {
+            return@withContext PokemonMoveAdapterItem(
+                moveWithMetaData = null,
+                header = GenerationHeader(
+                    headerName = PokemonGeneration.formatGenerationName(
+                        PokemonGeneration.getGeneration(headerName)
+                    )
+                ),
+                itemType = GenerationHeaderViewHolder.layoutType
+            )
+        }
+    }
 
     private fun setUpPokemonMovesRecyclerView() = binding.pokemonMoveRecyclerView.apply {
         adapter = pokemonMoveAdapter
@@ -146,4 +168,45 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     override fun onItemSelected(position: Int, pokemonMove: PokemonMove) {
         pokemonMoveAdapter?.selectItem(position)
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+        pokemonMoveAdapter = null
+    }
+
+    private fun PokemonMovesFragmentBinding.setLoading() {
+        movesContent.visibility = View.GONE
+        movesError.root.visibility = View.GONE
+        binding.movesEmptyText.visibility = View.GONE
+        movesLoading.root.visibility = View.VISIBLE
+        movesLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+    }
+
+    private fun PokemonMovesFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
+        movesLoading.root.visibility = View.GONE
+        movesContent.visibility = View.GONE
+        binding.movesEmptyText.visibility = View.GONE
+        movesError.errorImage.visibility = View.GONE
+        movesError.root.visibility = View.VISIBLE
+        movesError.errorText.text = errorMessage
+        movesError.retryButton.setOnClickListener {
+            retry()
+        }
+    }
+
+    private fun PokemonMovesFragmentBinding.setNotEmpty() {
+        movesError.root.visibility = View.GONE
+        movesLoading.root.visibility = View.GONE
+        binding.movesEmptyText.visibility = View.GONE
+        movesContent.visibility = View.VISIBLE
+    }
+
+    private fun PokemonMovesFragmentBinding.setEmpty() {
+        movesError.root.visibility = View.GONE
+        movesLoading.root.visibility = View.GONE
+        movesContent.visibility = View.GONE
+        movesEmptyText.visibility = View.VISIBLE
+    }
+
 }

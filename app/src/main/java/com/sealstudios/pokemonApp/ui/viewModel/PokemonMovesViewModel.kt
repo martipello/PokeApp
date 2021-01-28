@@ -1,17 +1,14 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
+import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.repository.PokemonMoveMetaDataRepository
 import com.sealstudios.pokemonApp.repository.PokemonMoveRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class PokemonMovesViewModel @ViewModelInject constructor(
     private val moveRepository: PokemonMoveRepository,
@@ -21,44 +18,36 @@ class PokemonMovesViewModel @ViewModelInject constructor(
 
     private var pokemon: MutableLiveData<Pokemon> = MutableLiveData()
 
-    val pokemonMoves: LiveData<PokemonWithMovesAndMetaData> = pokemon.switchMap {
+    // Doesn't handle errors as there isn't a way to emit them from the for loop in fetchPokemonMoves
+    // and meta data comes from the pokemon and not the move meaning we would double the calls to the API
+
+    val pokemonMoves: LiveData<Resource<PokemonWithMovesAndMetaData>> = pokemon.switchMap { pokemon ->
         liveData {
-            emitSource(moveRepository.getPokemonMovesAndMetaDataById(it.id))
-        }
-    }
+            emit(Resource.loading(null))
+            val pokemonWithMovesAndMetaData = moveRepository.getPokemonMovesAndMetaDataByIdAsync(pokemon.id)
+            if (pokemonWithMovesAndMetaData.moves.size != pokemon.move_ids.size) {
+                emitSource(fetchPokemonMoves(pokemon, pokemonWithMovesAndMetaData.moves))
+            } else {
+                emit(Resource.success(pokemonWithMovesAndMetaData))
+            }
 
-    init {
-        viewModelScope.launch {
-            pokemon.asFlow().collect { pokemon ->
-                val pokemonWithMovesAndMetaData = moveRepository.getPokemonMovesAndMetaDataByIdAsync(pokemon.id)
-                if (pokemonWithMovesAndMetaData.moves.size != pokemonWithMovesAndMetaData.pokemon.move_ids.size) {
-                    fetchPokemonMoves(pokemon, pokemonWithMovesAndMetaData.moves)
-                }
-                if (pokemonWithMovesAndMetaData.moves.size > pokemonWithMovesAndMetaData.pokemonMoveMetaData.size) {
-
-                    val idsOfMovesNotJoined = pokemonWithMovesAndMetaData.moves.filterNot { pokemonMove ->
-                        pokemonWithMovesAndMetaData.pokemonMoveMetaData.any { metaData -> pokemonMove.name == metaData.moveName }
-                    }.map { it.id }
-
-                    idsOfMovesNotJoined.forEach {
-                        viewModelScope.launch {
-                            insertPokemonMoveMetaDataJoin(pokemon.id, it)
-                        }
-                    }
-                }
+            if (pokemonWithMovesAndMetaData.moves.size > pokemonWithMovesAndMetaData.pokemonMoveMetaData.size) {
+                joinMetaDataToMoves(pokemonWithMovesAndMetaData, pokemon)
             }
         }
     }
 
-
-    private fun fetchPokemonMoves(pokemon: Pokemon, moves: List<PokemonMove>) {
-        val idsOfMovesToFetch = pokemon.move_ids.filterNot { pokemonMoveId ->
-            moves.map { it.id }.any { moveId -> pokemonMoveId == moveId }
-        }
-        idsOfMovesToFetch.forEach {
-            viewModelScope.launch {
-                fetchAndSavePokemonMove(it, pokemon)
+    private suspend fun fetchPokemonMoves(pokemon: Pokemon, moves: List<PokemonMove>) = liveData(Dispatchers.IO) {
+        withContext(Dispatchers.IO) {
+            val idsOfMovesToFetch = pokemon.move_ids.filterNot { pokemonMoveId ->
+                moves.map { it.id }.any { moveId -> pokemonMoveId == moveId }
             }
+            idsOfMovesToFetch.map {
+                async {
+                    fetchAndSavePokemonMove(it, pokemon)
+                }
+            }.awaitAll()
+            emit(Resource.success(moveRepository.getPokemonMovesAndMetaDataByIdAsync(pokemon.id)))
         }
     }
 
@@ -78,8 +67,8 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                         insertPokemonMoveMetaDataJoin(pokemon.id, it.id)
                     }
                 }
-                Status.ERROR -> Log.d(TAG, "Error getting pokemon move error")
-                Status.LOADING -> Log.d(TAG, "Getting pokemon move loading")
+                else -> {
+                }
             }
         }
     }
@@ -93,6 +82,21 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                     pokemonMove.id
                 )
             )
+        }
+    }
+
+    private suspend fun joinMetaDataToMoves(
+        pokemonWithMovesAndMetaData: PokemonWithMovesAndMetaData,
+        pokemon: Pokemon
+    ) {
+        val idsOfMovesNotJoined = pokemonWithMovesAndMetaData.moves.filterNot { pokemonMove ->
+            pokemonWithMovesAndMetaData.pokemonMoveMetaData.any { metaData -> pokemonMove.name == metaData.moveName }
+        }.map { it.id }
+
+        idsOfMovesNotJoined.forEach {
+            viewModelScope.launch {
+                insertPokemonMoveMetaDataJoin(pokemon.id, it)
+            }
         }
     }
 
@@ -111,8 +115,8 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         this.pokemon.value = pokemon
     }
 
-    companion object {
-        const val TAG = "PMVM"
+    fun retry() {
+        this.pokemon.value = this.pokemon.value
     }
 
 }

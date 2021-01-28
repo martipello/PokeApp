@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -12,7 +11,6 @@ import com.sealstudios.pokemonApp.repository.PokemonSpeciesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-
 
 class PokemonSpeciesViewModel @ViewModelInject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
@@ -40,7 +38,7 @@ class PokemonSpeciesViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun fetchPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
+    private suspend fun fetchPokemonSpecies(pokemonId: Int) = liveData(Dispatchers.IO) {
         val pokemonSpeciesRequest = remotePokemonRepository.speciesForId(pokemonId)
         when (pokemonSpeciesRequest.status) {
             Status.SUCCESS -> {

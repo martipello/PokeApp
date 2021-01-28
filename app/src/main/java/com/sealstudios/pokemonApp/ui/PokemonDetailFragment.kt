@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -140,12 +141,12 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {
+                        binding.setSpeciesNotEmpty()
                         populatePokemonSpeciesViews(it)
                     }
                 }
                 else -> {
-                    binding.subtitle.visibility = View.GONE
-                    binding.genTextView.visibility = View.GONE
+                    binding.setSpeciesEmpty()
                 }
             }
         })
@@ -332,6 +333,18 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         mainProgress.root.visibility = View.GONE
         errorLayout.root.visibility = View.GONE
         content.visibility = View.VISIBLE
+    }
+
+    private fun PokemonDetailFragmentBinding.setSpeciesEmpty() {
+        binding.subtitle.visibility = View.GONE
+        binding.genTextView.visibility = View.GONE
+        binding.genTextLabel.visibility = View.GONE
+    }
+
+    private fun PokemonDetailFragmentBinding.setSpeciesNotEmpty() {
+        binding.subtitle.visibility = View.VISIBLE
+        binding.genTextView.visibility = View.VISIBLE
+        binding.genTextLabel.visibility = View.VISIBLE
     }
 
 }

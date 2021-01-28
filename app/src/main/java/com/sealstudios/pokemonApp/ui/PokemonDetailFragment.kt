@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -336,15 +335,15 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun PokemonDetailFragmentBinding.setSpeciesEmpty() {
-        binding.subtitle.visibility = View.GONE
-        binding.genTextView.visibility = View.GONE
-        binding.genTextLabel.visibility = View.GONE
+        subtitle.visibility = View.GONE
+        genTextView.visibility = View.GONE
+        genTextLabel.visibility = View.GONE
     }
 
     private fun PokemonDetailFragmentBinding.setSpeciesNotEmpty() {
-        binding.subtitle.visibility = View.VISIBLE
-        binding.genTextView.visibility = View.VISIBLE
-        binding.genTextLabel.visibility = View.VISIBLE
+        subtitle.visibility = View.VISIBLE
+        genTextView.visibility = View.VISIBLE
+        genTextLabel.visibility = View.VISIBLE
     }
 
 }

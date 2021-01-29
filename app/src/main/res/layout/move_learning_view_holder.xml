@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="@string/generation"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:id="@+id/gen_cell" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/learned_at_level_label"
+        android:textAlignment="center"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_weight="1"
+        android:id="@+id/learned_at_cell" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:text="@string/learnt_by_label"
+        android:id="@+id/learn_method_cell" />
+
+</LinearLayout>

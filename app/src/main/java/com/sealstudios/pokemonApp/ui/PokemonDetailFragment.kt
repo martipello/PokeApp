@@ -298,10 +298,10 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     ) {
         val context = binding.root.context
         binding.subtitle.text = species.species.capitalize()
-        binding.genTextView.text = context.getString(
-            R.string.generation, PokemonGeneration.formatGenerationName(
-                PokemonGeneration.getGeneration(species.generation ?: "")
-            )
+        binding.genTextView.text = context.getString(R.string.generation_label)
+
+        binding.genTextView.text = PokemonGeneration.formatGenerationName(
+            PokemonGeneration.getGeneration(species.generation ?: "")
         )
     }
 

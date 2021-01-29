@@ -47,6 +47,7 @@ class PokemonAdapter(
     }
 
     companion object {
+
         private fun diffCallback(): DiffUtil.ItemCallback<PokemonWithTypesAndSpeciesForList> {
             return object : DiffUtil.ItemCallback<PokemonWithTypesAndSpeciesForList>() {
 

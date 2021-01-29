@@ -17,7 +17,8 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_category_ribbon"
             android:visibility="gone"
-            app:tint="@color/colorAccent" />
+            app:tint="@color/colorAccent"
+            android:contentDescription="@string/move_category" />
 
         <ImageView
             android:id="@+id/type_ribbon"
@@ -25,7 +26,8 @@
             android:layout_height="match_parent"
             android:scaleType="fitXY"
             android:src="@drawable/ic_type_ribbon"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="@string/move_type" />
 
     </FrameLayout>
 
@@ -36,10 +38,9 @@
 
         <TextView
             android:id="@+id/pokemon_move_name_text_view"
-            style="@style/ThemeOverlay.MyBodyTextBold"
+            style="@style/ThemeOverlay.MySmallBodyTextBold"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Headbutt"
             app:layout_constraintEnd_toStartOf="@+id/show_more_less_toggle"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -49,7 +50,7 @@
             style="@style/ThemeOverlay.MySmallBodyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Learned by :"
+            android:text="@string/learnt_by"
             android:layout_marginTop="@dimen/qualified_small_margin_4dp"
             app:layout_constraintBottom_toTopOf="@+id/expanded_content_barrier"
             app:layout_constraintEnd_toStartOf="@+id/show_more_less_toggle"
@@ -62,7 +63,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/qualified_small_margin_4dp"
-            android:text="Show more"
+            android:text="@string/show_more"
             app:layout_constraintBottom_toBottomOf="@id/show_more_less_toggle_button"
             app:layout_constraintEnd_toStartOf="@id/show_more_less_toggle_button"
             app:layout_constraintHorizontal_bias="1"
@@ -78,7 +79,8 @@
             android:src="@drawable/ic_expand_more_black_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/show_more_less_toggle"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/show_more" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/expanded_content_barrier"
@@ -93,7 +95,7 @@
             android:id="@+id/expanded_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/expanded_content_barrier">
 
@@ -107,80 +109,101 @@
 
             <TextView
                 android:id="@+id/description"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Description"
+                android:text="@string/move_description"
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider" />
 
             <TextView
                 android:id="@+id/level_learned_at_text_view"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="Learned at :"
+                android:text="@string/learning"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:visibility="gone"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/description" />
 
+            <include layout="@layout/move_learning_table_header"
+                android:id="@+id/level_learned_at_table_header"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/level_learned_at_text_view"
+                />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/level_learned_at_table"
+                android:visibility="gone"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/level_learned_at_table_header"/>
+
             <TextView
                 android:id="@+id/generation_label"
-                style="@style/ThemeOverlay.MyBodyTextBold"
+                style="@style/ThemeOverlay.MySmallBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                android:text="Generation : "
+                android:text="@string/generation_label"
                 app:layout_constraintEnd_toStartOf="@id/barrier_vertical"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/level_learned_at_text_view" />
+                app:layout_constraintTop_toBottomOf="@id/level_learned_at_table" />
 
             <TextView
                 android:id="@+id/generation_text"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                android:text="VIII"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"
                 app:layout_constraintTop_toTopOf="@id/generation_label" />
 
             <TextView
                 android:id="@+id/power_label"
-                style="@style/ThemeOverlay.MyBodyTextBold"
+                style="@style/ThemeOverlay.MySmallBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                android:text="Power : "
+                android:text="@string/power_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/generation_label" />
 
             <TextView
                 android:id="@+id/power_text"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                android:text="70"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"
                 app:layout_constraintTop_toTopOf="@id/power_label" />
 
             <TextView
                 android:id="@+id/accuracy_label"
-                style="@style/ThemeOverlay.MyBodyTextBold"
+                style="@style/ThemeOverlay.MySmallBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                android:text="Accuracy : "
+                android:text="@string/accuracy_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/power_label" />
 
             <TextView
                 android:id="@+id/accuracy_text"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
@@ -190,21 +213,20 @@
 
             <TextView
                 android:id="@+id/pp_label"
-                style="@style/ThemeOverlay.MyBodyTextBold"
+                style="@style/ThemeOverlay.MySmallBodyTextBold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                android:text="PP : "
+                android:text="@string/pp_label"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/accuracy_label" />
 
             <TextView
                 android:id="@+id/pp_text"
-                style="@style/ThemeOverlay.MyBodyText"
+                style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/qualified_small_margin_8dp"
-                android:text="20"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/barrier_vertical"
                 app:layout_constraintTop_toTopOf="@id/pp_label" />

@@ -30,7 +30,7 @@
     <string name="weight_label">Weight :</string>
     <string name="height">%.2f cm</string>
     <string name="height_label">Height :"</string>
-    <string name="generation">%s</string>
+    <string name="generation">Gen</string>
     <string name="generation_label">Generation :</string>
     <string name="habitat">%s</string>
     <string name="habitat_label">Habitat :</string>
@@ -48,7 +48,21 @@
     <string name="species">Species</string>
 
     <string name="adaptive_height_scroll_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehaviour</string>
-    <string name="error_text">Oops that\'s an error... 🤔</string>
+    <string name="error_text">Oops that\'s an error… 🤔</string>
     <string name="retry">Retry</string>
-    <string name="no_moves">No moves... 🤔</string>
+    <string name="no_moves">No moves… 🤔</string>
+    <string name="show_less">Show less</string>
+    <string name="show_more">Show more</string>
+    <string name="learnt_by">Learnt by: %s</string>
+    <string name="learned_at_level">Learned at level: %s</string>
+    <string name="move_accuracy">%d\%%</string>
+    <string name="move_category">Move category</string>
+    <string name="move_type">Move type</string>
+    <string name="move_description">Description</string>
+    <string name="power_label">Power :</string>
+    <string name="accuracy_label">Accuracy :</string>
+    <string name="pp_label">PP :</string>
+    <string name="learned_at_level_label">Lvl</string>
+    <string name="learnt_by_label">Method</string>
+    <string name="learning">Learning</string>
 </resources>

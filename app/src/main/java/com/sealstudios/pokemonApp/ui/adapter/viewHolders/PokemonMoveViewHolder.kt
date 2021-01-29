@@ -2,10 +2,8 @@ package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
 import android.annotation.SuppressLint
 import android.graphics.PorterDuff
-import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
@@ -22,8 +20,6 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.MoveLearningDecoration
-import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
-import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

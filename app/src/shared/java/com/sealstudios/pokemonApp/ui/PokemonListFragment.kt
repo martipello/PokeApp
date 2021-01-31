@@ -47,7 +47,9 @@ import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 
@@ -104,21 +106,28 @@ class PokemonListFragment : Fragment(),
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
-        createAds(view)
+        lifecycleScope.launch {
+            createAds(view)
+        }
     }
 
-    private fun createAds(view: View) {
-        val adsManager = AdsManager(view.context)
-        adsManager.createAds(listener = UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
-            ads.add(MyNativeAd(it))
-            if (!adsManager.getAdLoader().isLoading) {
-                pokemonAdapter.submitList(ads)
-            }
-            if (activity?.isDestroyed == true || activity?.isFinishing == true || activity?.isChangingConfigurations == true) {
-                it.destroy()
-                return@OnUnifiedNativeAdLoadedListener
-            }
-        })
+    private suspend fun createAds(view: View) {
+        withContext(Dispatchers.IO) {
+            val adsManager = AdsManager(view.context)
+            adsManager.createAds(listener = UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
+                ads.add(MyNativeAd(it))
+                if (!adsManager.getAdLoader().isLoading) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        pokemonListViewModel.refresh()
+                    }
+                }
+                if (activity?.isDestroyed == true || activity?.isFinishing == true || activity?.isChangingConfigurations == true) {
+                    it.destroy()
+                    return@OnUnifiedNativeAdLoadedListener
+                }
+            })
+        }
+
     }
 
 
@@ -238,11 +247,38 @@ class PokemonListFragment : Fragment(),
                     } else {
                         binding.setNotEmpty()
                     }
-                    pokemonAdapter.submitList(pokemonData)
+                    if (ads.isNotEmpty()) {
+                        lifecycleScope.launch {
+                            pokemonAdapter.submitList(mergeAds(pokemonData, ads))
+                        }
+                    } else {
+                        pokemonAdapter.submitList(pokemonData)
+                    }
                 } else {
                     binding.setLoading()
                 }
             })
+    }
+
+    private suspend fun mergeAds(
+        pokemon: List<PokemonAdapterListItem>,
+        ads: List<PokemonAdapterListItem>
+    ): List<PokemonAdapterListItem> {
+        return withContext(Dispatchers.Default){
+            val mergedList = mutableListOf<PokemonAdapterListItem>()
+            mergedList.addAll(pokemon)
+            val intersect = pokemon.size / ads.size
+            var counter = 0
+            for (index in pokemon.indices) {
+                if (index % intersect == 0) {
+                    counter++
+                    if (counter < ads.size) {
+                        mergedList.add(index, ads[counter])
+                    }
+                }
+            }
+            return@withContext mergedList
+        }
     }
 
     private fun observeSearch() {

@@ -14,10 +14,6 @@ class AdViewHolder constructor(
 
     fun bind(ad : UnifiedNativeAd) = with(binding) {
         val template: TemplateView = this.myTemplate
-        val styles = NativeTemplateStyle.Builder().withMainBackgroundColor(
-            ColorDrawable(Color.RED)
-        ).build()
-        template.setStyles(styles)
         template.setNativeAd(ad)
     }
 

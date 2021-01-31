@@ -83,6 +83,11 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
+    fun refresh(){
+        this.search.value = this.search.value
+        savedStateHandle.set(searchKey, this.search.value)
+    }
+
     fun setFiltersLayoutExpanded(isFiltersLayoutExpanded: Boolean) {
         this.isFiltersLayoutExpanded.value = isFiltersLayoutExpanded
         savedStateHandle.set(isFiltersLayoutExpandedKey, isFiltersLayoutExpanded)

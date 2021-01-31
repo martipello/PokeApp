@@ -65,4 +65,7 @@
     <string name="learned_at_level_label">Lvl</string>
     <string name="learnt_by_label">Method</string>
     <string name="learning">Learning</string>
+
+    <string name="ad_attribution">Ad</string>
+    <string name="ad_image">Ad image</string>
 </resources>

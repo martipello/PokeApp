@@ -32,6 +32,10 @@
             android:authorities="${applicationId}.workmanager-init"
             tools:node="remove" />
 
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="@string/AD_MOB_AD_UNIT_ID"/>
+
     </application>
 
 </manifest>

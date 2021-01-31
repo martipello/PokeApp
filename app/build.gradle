@@ -177,6 +177,10 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.10"
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.4.1"
 
+    implementation 'com.google.android.gms:play-services-ads:19.4.0'
+    implementation 'com.google.android.gms:play-services-basement:17.5.0'
+    implementation project(':nativetemplates')
+
     //LEAKS
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 

@@ -23,11 +23,15 @@ import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
+import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.ads.AdsManager
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.api.states.ErrorCodes
+import com.sealstudios.pokemonApp.database.`object`.MyNativeAd
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
+import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
@@ -50,6 +54,8 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
     PokemonAdapterClickListener, FilterChipClickListener, SwipeRefreshLayout.OnRefreshListener {
+
+    private var ads: MutableList<PokemonAdapterListItem> = mutableListOf()
 
     @Inject
     lateinit var glide: RequestManager
@@ -98,7 +104,23 @@ class PokemonListFragment : Fragment(),
         observeSearch()
         setUpViews()
         addScrollAwarenessForFilterFab()
+        createAds(view)
     }
+
+    private fun createAds(view: View) {
+        val adsManager = AdsManager(view.context)
+        adsManager.createAds(listener = UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
+            ads.add(MyNativeAd(it))
+            if (!adsManager.getAdLoader().isLoading) {
+                pokemonAdapter.submitList(ads)
+            }
+            if (activity?.isDestroyed == true || activity?.isFinishing == true || activity?.isChangingConfigurations == true) {
+                it.destroy()
+                return@OnUnifiedNativeAdLoadedListener
+            }
+        })
+    }
+
 
     private fun setFilterIsExpandedFromSavedInstanceState(savedInstanceState: Bundle?) {
         if (savedInstanceState != null) {
@@ -389,12 +411,10 @@ class PokemonListFragment : Fragment(),
     }
 
     override fun onDestroyView() {
+
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
+        ads.clear()
     }
 
     override fun onRefresh() {
@@ -447,6 +467,10 @@ class PokemonListFragment : Fragment(),
         hideEmptyLayout()
         hideErrorLayout()
         hideLoadingLayout()
+    }
+
+    companion object {
+        private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
     }
 
 }

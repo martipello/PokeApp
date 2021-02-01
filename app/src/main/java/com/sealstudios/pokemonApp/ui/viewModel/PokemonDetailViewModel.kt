@@ -68,14 +68,16 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     viewModelScope.launch {
                         repository.updatePokemon(pokemon)
                         insertPokemonTypes(pokemonRequestData)
-                        insertPokemonMoveMetaData(pokemonRequestData.moves, pokemon.id)
+                        pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
                     }
                     emit(
                         Resource.success(
-                            PokemonWithTypes(
-                                pokemon = pokemon,
-                                types = mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)
-                            )
+                            mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
+                                PokemonWithTypes(
+                                    pokemon = pokemon,
+                                    types = it
+                                )
+                            }
                         )
                     )
                 } else {
@@ -91,16 +93,20 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
-            pokemonTypeRepository.insertPokemonTypes(
-                mapDbPokemonTypesFromPokemonResponse(
-                    remotePokemon
+            mapDbPokemonTypesFromPokemonResponse(
+                remotePokemon
+            )?.let {
+                pokemonTypeRepository.insertPokemonTypes(
+                    it
                 )
-            )
-            pokemonTypeRepository.insertPokemonTypeJoins(
-                mapTypeJoinsFromPokemonResponse(
-                    remotePokemon
+            }
+            mapTypeJoinsFromPokemonResponse(
+                remotePokemon
+            )?.let {
+                pokemonTypeRepository.insertPokemonTypeJoins(
+                    it
                 )
-            )
+            }
         }
     }
 

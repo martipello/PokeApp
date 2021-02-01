@@ -32,8 +32,8 @@ data class PokemonType(
             return types.sortedBy { it.name }
         }
 
-        fun mapDbPokemonTypesFromPokemonResponse(apiPokemon: ApiPokemon): List<PokemonType> {
-            return apiPokemon.types.map { apiType ->
+        fun mapDbPokemonTypesFromPokemonResponse(apiPokemon: ApiPokemon): List<PokemonType>? {
+            return apiPokemon.types?.map { apiType ->
                 PokemonType(
                     id = Pokemon.getPokemonIdFromUrl(
                         apiType.type.url

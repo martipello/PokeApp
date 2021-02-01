@@ -97,7 +97,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
         remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
-            remotePokemon.types.map {
+            remotePokemon.types?.map {
                 val pokemonType = PokemonType(
                     Pokemon.getPokemonIdFromUrl(it.type.url),
                     it.type.name,

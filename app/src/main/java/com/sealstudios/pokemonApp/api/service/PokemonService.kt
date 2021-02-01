@@ -32,9 +32,9 @@ interface PokemonService {
     ): ApiPokemonMove
 
     @GET("ability/{id}/")
-    suspend fun getPokemonAbilityForId(
+    suspend fun getAbilityForId(
         @Path(value = "id") abilityId: Int
-    ): PokemonAbility
+    ): Ability
 
     @GET("evolution-chain/{id}/")
     suspend fun getPokemonEvolutionsForId(

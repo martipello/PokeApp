@@ -38,6 +38,7 @@
     <string name="shape_label">Shape :</string>
     <string name="form_text">%s</string>
     <string name="form_label">Form :</string>
+    <string name="effect_label">Effect :</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
     <string name="pokemon_name">pokemon_name</string>
@@ -68,4 +69,8 @@
 
     <string name="ad_attribution">Ad</string>
     <string name="ad_image">Ad image</string>
+    <string name="ability">Ability</string>
+    <string name="version_label">Version</string>
+    <string name="name">Name :</string>
+    <string name="short_effect_label">Short effect</string>
 </resources>

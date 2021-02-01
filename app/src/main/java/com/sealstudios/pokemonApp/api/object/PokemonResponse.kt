@@ -2,14 +2,14 @@ package com.sealstudios.pokemonApp.api.`object`
 
 data class Ability(
     val id: Int,
-    val name: String,
-    val isMainSeries: Boolean,
-    val generation: NamedApiResource,
-    val names: List<Name>,
-    val effectEntries: List<VerboseEffect>,
-    val effectChanges: List<AbilityEffectChange>,
-    val flavorTextEntries: List<AbilityFlavorText>,
-    val pokemon: List<AbilityPokemon>
+    val name: String?,
+    val isMainSeries: Boolean?,
+    val generation: NamedApiResource?,
+    val names: List<Name>?,
+    val effectEntries: List<VerboseEffect>?,
+    val effectChanges: List<AbilityEffectChange>?,
+    val flavorTextEntries: List<AbilityFlavorText>?,
+    val pokemon: List<AbilityPokemon>?
 )
 
 data class AbilityEffectChange(
@@ -111,22 +111,22 @@ data class NaturePokeathlonStatAffect(
 
 data class ApiPokemon(
     val id: Int,
-    val url: String,
-    val name: String,
-    val baseExperience: Int,
-    val height: Int,
-    val isDefault: Boolean,
-    val order: Int,
-    val weight: Int,
-    val species: NamedApiResource,
-    val abilities: List<PokemonAbility>,
-    val forms: List<PokemonForm>,
-    val gameIndices: List<VersionGameIndex>,
-    val heldItems: List<PokemonHeldItem>,
-    val moves: List<PokemonMoveResponse>,
-    val stats: List<PokemonStat>,
-    val types: List<ApiPokemonType>,
-    val sprites: PokemonSprites
+    val url: String?,
+    val name: String?,
+    val baseExperience: Int?,
+    val height: Int?,
+    val isDefault: Boolean?,
+    val order: Int?,
+    val weight: Int?,
+    val species: NamedApiResource?,
+    val abilities: List<PokemonAbility>?,
+    val forms: List<PokemonForm>?,
+    val gameIndices: List<VersionGameIndex>?,
+    val heldItems: List<PokemonHeldItem>?,
+    val moves: List<PokemonMoveResponse>?,
+    val stats: List<PokemonStat>?,
+    val types: List<ApiPokemonType>?,
+    val sprites: PokemonSprites?
 )
 
 data class PokemonSprites(

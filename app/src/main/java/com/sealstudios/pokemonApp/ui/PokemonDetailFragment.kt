@@ -50,6 +50,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
+    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -119,6 +120,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     pokemonWithTypes.data?.let {
                         populatePokemonDetailViews(it)
                         pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
+                        pokemonAbilityViewModel.setAbilityId(it.pokemon.abilityId)
                         binding.setNotEmpty()
                     }
                 }

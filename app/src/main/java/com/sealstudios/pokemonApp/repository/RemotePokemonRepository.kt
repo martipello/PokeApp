@@ -50,9 +50,9 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
-    suspend fun getRemotePokemonAbilitiesForId(id: Int): Resource<PokemonAbility> {
+    suspend fun getRemotePokemonAbilityForId(id: Int): Resource<Ability> {
         return try {
-            responseHandler.handleSuccess(pokemonService.getPokemonAbilityForId(id))
+            responseHandler.handleSuccess(pokemonService.getAbilityForId(id))
         } catch (e: Exception) {
             responseHandler.handleException(e)
         }

@@ -300,8 +300,8 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                         android:background="@color/light_grey"
-                        app:layout_constraintBottom_toTopOf="@id/species_fragment"
-                        app:layout_constraintTop_toBottomOf="@id/height_label" />
+                        app:layout_constraintTop_toBottomOf="@id/height_label"
+                        app:layout_constraintBottom_toTopOf="@id/species_fragment" />
 
 
                     <androidx.fragment.app.FragmentContainerView
@@ -310,14 +310,34 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toBottomOf="@id/info_divider"
+                        app:layout_constraintBottom_toTopOf="@id/ability_divider"
                         tools:layout="@layout/pokemon_species_fragment" />
+
+                    <View
+                        android:id="@+id/ability_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                        android:background="@color/light_grey"
+                        app:layout_constraintBottom_toTopOf="@id/ability_fragment"
+                        app:layout_constraintTop_toBottomOf="@id/species_fragment" />
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/ability_fragment"
+                        android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toBottomOf="@id/ability_divider"
+                        app:layout_constraintBottom_toTopOf="@id/moves_divider"
+                        tools:layout="@layout/pokemon_ability_fragment" />
 
                     <View
                         android:id="@+id/moves_divider"
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
+                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                         android:background="@color/light_grey"
-                        app:layout_constraintTop_toBottomOf="@id/species_fragment" />
+                        app:layout_constraintTop_toBottomOf="@id/ability_fragment" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/movesFragment"

@@ -142,12 +142,9 @@ data class PokemonSprites(
 )
 
 data class PokemonAbility(
-    val id: Int,
-    val name: String,
     val isHidden: Boolean,
     val slot: Int,
-    val generation: List<NamedApiResource>,
-    val effectEntries: List<Effect>
+    val ability: NamedApiResource,
 )
 
 data class PokemonHeldItem(

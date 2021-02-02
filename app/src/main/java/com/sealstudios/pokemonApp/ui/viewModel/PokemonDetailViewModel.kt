@@ -1,14 +1,12 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
-import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
-import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
-import com.sealstudios.pokemonApp.api.`object`.Resource
-import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
@@ -29,6 +27,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private val pokemonTypeRepository: PokemonTypeRepository,
     private val pokemonWithTypesRepository: PokemonWithTypesRepository,
     private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
+    private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -69,6 +68,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                         repository.updatePokemon(pokemon)
                         insertPokemonTypes(pokemonRequestData)
                         pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
+                        pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemon.id) }
                     }
                     emit(
                         Resource.success(
@@ -120,8 +120,22 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     moveResponse.move.name,
                     moveResponse.version_group_details
                 )
-                Log.d(TAG, "INSERT METADATA $moveMetaData")
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
+            }
+        }
+    }
+
+    private suspend fun insertPokemonAbilityMetaData(abilities: List<PokemonAbility>, pokemonId: Int) {
+        for (abilityResponse in abilities) {
+            val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
+            withContext(Dispatchers.IO) {
+                val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
+                    abilityId,
+                    pokemonId,
+                    abilityResponse.ability.name,
+                    abilityResponse.isHidden
+                )
+                pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
             }
         }
     }

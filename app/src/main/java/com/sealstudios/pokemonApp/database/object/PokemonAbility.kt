@@ -76,6 +76,18 @@ data class PokemonAbility @JvmOverloads constructor(
         const val ABILITY_EFFECT_ENTRY_SHORT_EFFECT: String = "ability_effect_entry_short_effect"
         const val ABILITY_IS_MAIN_SERIES: String = "ability_is_main_series"
 
+
+        fun getPokemonAbilityIdFromUrl(pokemonUrl: String?): Int {
+            if (pokemonUrl != null) {
+                val pokemonIndex = pokemonUrl.split('/')
+                if (pokemonIndex.size >= 2) {
+                    return pokemonIndex[pokemonIndex.size - 2].toInt()
+                }
+            }
+            return -1
+        }
+
+
     }
 
 }

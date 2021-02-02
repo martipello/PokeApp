@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.di.database.dao
 
 import android.app.Application
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
-import com.sealstudios.pokemonApp.database.dao.PokemonAbilityJoinDao
+import com.sealstudios.pokemonApp.database.dao.PokemonAbilityMetaDataDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -13,11 +13,11 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ApplicationComponent::class)
-class PokemonAbilitiesJoinDaoProvider {
+class PokemonAbilityMetaDataDaoProvider {
 
     @Singleton
     @Provides
-    fun providePokemonDao(application: Application): PokemonAbilityJoinDao {
-        return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonAbilityJoinDao()
+    fun providePokemonDao(application: Application): PokemonAbilityMetaDataDao {
+        return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonAbilityMetaDataDao()
     }
 }

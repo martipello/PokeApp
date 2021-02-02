@@ -27,6 +27,8 @@ import kotlinx.coroutines.launch
         PokemonMoveMetaDataJoin::class,
         PokemonAbility::class,
         PokemonAbilityJoin::class,
+        PokemonAbilityMetaData::class,
+        PokemonAbilityMetaDataJoin::class,
     ],
     version = DATABASE_VERSION,
     exportSchema = false
@@ -44,7 +46,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
     abstract fun pokemonSpeciesDao(): PokemonSpeciesDao
     abstract fun pokemonSpeciesJoinDao(): PokemonSpeciesJoinDao
     abstract fun pokemonAbilityDao(): PokemonAbilityDao
-    abstract fun pokemonAbilitiesJoinDao(): PokemonAbilityJoinDao
+    abstract fun pokemonAbilityJoinDao(): PokemonAbilityJoinDao
+    abstract fun pokemonAbilityMetaDataDao(): PokemonAbilityMetaDataDao
+    abstract fun pokemonAbilityMetaDataJoinDao(): PokemonAbilityMetaDataJoinDao
 
     private class PokemonRoomDatabaseCallback(
         private val scope: CoroutineScope
@@ -63,7 +67,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
                         database.pokemonMoveMetaDataDao(),
                         database.pokemonMoveMetaDataJoinDao(),
                         database.pokemonAbilityDao(),
-                        database.pokemonAbilitiesJoinDao()
+                        database.pokemonAbilityJoinDao(),
+                        database.pokemonAbilityMetaDataDao(),
+                        database.pokemonAbilityMetaDataJoinDao(),
                     )
                 }
             }
@@ -78,7 +84,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             pokemonMoveMetaDataDao: PokemonMoveMetaDataDao,
             pokemonMoveMetaDataJoinDao: PokemonMoveMetaDataJoinDao,
             pokemonAbilityDao: PokemonAbilityDao,
-            pokemonAbilityJoinDao: PokemonAbilityJoinDao
+            pokemonAbilityJoinDao: PokemonAbilityJoinDao,
+            pokemonAbilityMetaDataDao: PokemonAbilityMetaDataDao,
+            pokemonAbilityMetaDataJoinDao: PokemonAbilityMetaDataJoinDao,
         ) {
             // Delete all content here.
             pokemonDao.deleteAll()
@@ -90,6 +98,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             pokemonMoveMetaDataJoinDao.deleteAll()
             pokemonAbilityDao.deleteAll()
             pokemonAbilityJoinDao.deleteAll()
+            pokemonAbilityMetaDataDao.deleteAll()
+            pokemonAbilityMetaDataJoinDao.deleteAll()
         }
     }
 

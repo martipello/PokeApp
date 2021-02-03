@@ -1,25 +1,32 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbility
+import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData.Companion.separateByGeneration
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
+import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
-import com.sealstudios.pokemonApp.ui.util.PokemonGeneration.Companion.getGeneration
+import com.sealstudios.pokemonApp.ui.util.decorators.PokemonAbilityListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class PokemonAbilityFragment : Fragment() {
+
+    private var pokemonAbilityAdapter: PokemonAbilityAdapter? = null
     private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels({ requireParentFragment() })
     private var _binding: PokemonAbilityFragmentBinding? = null
     private val binding get() = _binding!!
@@ -27,53 +34,83 @@ class PokemonAbilityFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = PokemonAbilityFragmentBinding.inflate(inflater, container, false)
         _binding = binding
-        observePokemonAbility()
         return binding.root
     }
 
-
-    private fun observePokemonAbility() {
-//        pokemonAbilityViewModel.pokemonAbility.observe(viewLifecycleOwner, Observer { pokemonSpecies ->
-//            when (pokemonSpecies.status) {
-//                Status.SUCCESS -> {
-//                    pokemonSpecies.data?.let {
-//                        binding.setNotEmpty()
-//                        populatePokemonSpeciesViews(it)
-//                    }
-//                    //handle empty
-//                }
-//                Status.ERROR -> {
-//                    Log.d("PAF", "ERROR CODE ${pokemonSpecies.code} ERROR MESSAGE ${pokemonSpecies.message}")
-//                    if (pokemonSpecies.code == ErrorCodes.NOT_FOUND.code){
-//                        binding.setEmpty()
-//                    } else {
-//                        binding.setError(pokemonSpecies.message ?: "Oops, something went wrong...")
-//                        { pokemonAbilityViewModel.retry() }
-//                    }
-//                }
-//                Status.LOADING -> {
-//                    binding.setLoading()
-//                }
-//            }
-//        })
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setUpPokemonAdapter()
+        setUpPokemonAdapterRecyclerView()
+        observePokemonAbilities()
     }
 
-    @SuppressLint("DefaultLocale")
-    private fun populatePokemonSpeciesViews(pokemonAbility: PokemonAbility) =
-        lifecycleScope.launch(Dispatchers.Main) {
-            setPokemonAbilityFormData(pokemonAbility)
-        }
+    private fun setUpPokemonAdapter() {
+        pokemonAbilityAdapter = PokemonAbilityAdapter()
+    }
 
-    @SuppressLint("DefaultLocale")
-    private fun setPokemonAbilityFormData(
-        pokemonAbility: PokemonAbility
+    private fun observePokemonAbilities() {
+        pokemonAbilityViewModel.pokemonAbilities.observe(viewLifecycleOwner, Observer { pokemonWithAbilitiesAndMetaDataResource ->
+            when (pokemonWithAbilitiesAndMetaDataResource.status) {
+                Status.SUCCESS -> {
+                    if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
+                        val pokemonWithAbilitiesAndMetaData = pokemonWithAbilitiesAndMetaDataResource.data
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            val abilitiesWithMetaDataList = pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
+                                pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
+                                    it.abilityName == ability.name
+                                }.map { PokemonAbilityWithMetaData(ability, it) }
+                            }.flatten()
+                            setPokemonAbilities(abilitiesWithMetaDataList)
+                        }
+                    } else {
+                        binding.setEmpty()
+                    }
+                }
+                Status.ERROR -> {
+                    binding.setError(pokemonWithAbilitiesAndMetaDataResource.message ?: "Oops, something went wrong...")
+                    { pokemonAbilityViewModel.retry() }
+                }
+                Status.LOADING -> {
+                    binding.setLoading()
+                }
+            }
+        })
+    }
+
+    private suspend fun setPokemonAbilities(
+        pokemonAbilities: List<PokemonAbilityWithMetaData>
     ) {
-        binding.nameText.text = pokemonAbility.name
-        binding.flavorTextText.text = pokemonAbility.flavorText
-        binding.generationText.text = getGeneration(pokemonAbility.generation).name
-        binding.versionGroupText.text = pokemonAbility.abilityEffectChangeVersionGroup
-        binding.shortEffectText.text = pokemonAbility.abilityEffectEntryShortEffect
-        binding.effectText.text = pokemonAbility.abilityEffectEntry
+        withContext(context = Dispatchers.IO) {
+            lifecycleScope.launch(Dispatchers.Main) {
+                pokemonAbilityAdapter?.submitList(pokemonAbilities)
+            }
+            withContext(Dispatchers.Main) {
+                if (pokemonAbilities.isEmpty()) {
+                    binding.setEmpty()
+                } else {
+                    binding.setNotEmpty()
+                }
+            }
+        }
+    }
+
+    private fun setUpPokemonAdapterRecyclerView() = binding.pokemonAbilityRecyclerView.apply {
+        adapter = pokemonAbilityAdapter
+        addPokemonAdapterRecyclerViewDecoration(this)
+    }
+
+    private fun addPokemonAdapterRecyclerViewDecoration(
+        recyclerView: RecyclerView
+    ) {
+        recyclerView.addItemDecoration(
+            PokemonAbilityListDecoration(
+                R.drawable.divider,
+                recyclerView.context,
+                recyclerView.context.resources.getDimensionPixelSize(
+                    R.dimen.qualified_small_margin_8dp
+                ),
+            )
+        )
     }
 
     private fun PokemonAbilityFragmentBinding.setLoading() {

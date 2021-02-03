@@ -21,7 +21,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     // Doesn't handle errors as there isn't a way to emit them from the for loop in fetchPokemonAbilities
     // and meta data comes from the pokemon and not the move meaning we would double the calls to the API
 
-    val pokemonMoves: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemon.switchMap { pokemon ->
+    val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemon.switchMap { pokemon ->
         liveData {
             emit(Resource.loading(null))
             val pokemonWithAbilitiesAndMetaData =

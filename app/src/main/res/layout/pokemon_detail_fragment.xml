@@ -249,7 +249,7 @@
 
                     <TextView
                         android:id="@+id/height_label"
-                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        style="@style/ThemeOverlay.MySmallBodyTextBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
@@ -259,7 +259,7 @@
 
                     <TextView
                         android:id="@+id/height_text_view"
-                        style="@style/ThemeOverlay.MyBodyText"
+                        style="@style/ThemeOverlay.MySmallBodyText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
@@ -271,7 +271,7 @@
 
                     <TextView
                         android:id="@+id/weight_label"
-                        style="@style/ThemeOverlay.MyBodyTextBold"
+                        style="@style/ThemeOverlay.MySmallBodyTextBold"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
@@ -283,7 +283,7 @@
 
                     <TextView
                         android:id="@+id/weight_text_view"
-                        style="@style/ThemeOverlay.MyBodyText"
+                        style="@style/ThemeOverlay.MySmallBodyText"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
@@ -310,7 +310,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintTop_toBottomOf="@id/info_divider"
-                        app:layout_constraintBottom_toTopOf="@id/ability_divider"
+                        app:layout_constraintBottom_toTopOf="@id/ability_fragment"
                         tools:layout="@layout/pokemon_species_fragment" />
 
                     <androidx.fragment.app.FragmentContainerView

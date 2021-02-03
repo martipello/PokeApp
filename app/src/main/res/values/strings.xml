@@ -69,8 +69,9 @@
 
     <string name="ad_attribution">Ad</string>
     <string name="ad_image">Ad image</string>
-    <string name="ability">Ability</string>
-    <string name="version_label">Version</string>
+    <string name="abilities">Abilities</string>
+    <string name="version_label">Version :</string>
     <string name="name">Name :</string>
-    <string name="short_effect_label">Short effect</string>
+    <string name="short_effect_label">Short effect :</string>
+    <string name="move_description_label">Description :</string>
 </resources>

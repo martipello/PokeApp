@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:visibility="visible"
+    android:id="@+id/ability_content">
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/ability_label_barrier"
+        android:layout_width="1dp"
+        android:layout_height="10dp"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="generation_label,
+                short_effect_label, effect_label, name_label, flavor_text_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/name"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/name_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/name_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/flavor_text_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/move_description_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/name_label" />
+
+    <TextView
+        android:id="@+id/flavor_text_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/flavor_text_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/generation_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/generation_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flavor_text_label" />
+
+    <TextView
+        android:id="@+id/generation_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/generation_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/version_group_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/version_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/generation_label" />
+
+    <TextView
+        android:id="@+id/version_group_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/version_group_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/short_effect_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/short_effect_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/version_group_label" />
+
+    <TextView
+        android:id="@+id/short_effect_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/short_effect_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/effect_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/effect_label"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/short_effect_label" />
+
+    <TextView
+        android:id="@+id/effect_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
+        app:layout_constraintTop_toTopOf="@id/effect_label"
+        tools:ignore="RtlSymmetry" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

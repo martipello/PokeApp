@@ -121,7 +121,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     pokemonWithTypes.data?.let {
                         populatePokemonDetailViews(it)
                         pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
-//                        pokemonAbilityViewModel.setAbilityId(it.pokemon.abilityId)
+                        pokemonAbilityViewModel.setPokemon(pokemon = it.pokemon)
                         binding.setNotEmpty()
                     }
                 }

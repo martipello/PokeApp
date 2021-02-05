@@ -66,7 +66,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         android:text="@string/generation_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/flavor_text_label" />
+        app:layout_constraintTop_toBottomOf="@id/flavor_text_text" />
 
     <TextView
         android:id="@+id/generation_text"
@@ -74,9 +74,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
-        app:layout_constraintTop_toTopOf="@id/generation_label"
+        app:layout_constraintTop_toBottomOf="@id/flavor_text_text"
         tools:ignore="RtlSymmetry" />
 
     <TextView
@@ -129,17 +130,18 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         android:text="@string/effect_label"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/short_effect_label" />
+        app:layout_constraintTop_toBottomOf="@id/short_effect_text" />
 
     <TextView
         android:id="@+id/effect_text"
         style="@style/ThemeOverlay.MySmallBodyText"
         android:layout_width="0dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         android:layout_height="wrap_content"
         android:paddingStart="@dimen/qualified_small_margin_8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/ability_label_barrier"
-        app:layout_constraintTop_toTopOf="@id/effect_label"
+        app:layout_constraintTop_toBottomOf="@id/short_effect_text"
         tools:ignore="RtlSymmetry" />
 
 

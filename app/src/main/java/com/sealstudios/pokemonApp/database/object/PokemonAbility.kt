@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.database.`object`
 
+import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -50,19 +51,19 @@ data class PokemonAbility @JvmOverloads constructor(
                 id = ability.id,
                 name = ability.name ?: "",
                 generation = ability.generation?.name ?: "",
-                abilityEffectChange = ability.effectChanges?.map { abilityEffectChange ->
-                    abilityEffectChange.effectEntries
-                        .firstOrNull { effect -> effect.language.name == "en" }
+                abilityEffectChange = ability.effect_changes?.map { abilityEffectChange ->
+                    abilityEffectChange.effect_entries
+                        ?.firstOrNull { effect -> effect.language?.name == "en" }
                 }
                     ?.map { it?.effect }?.getOrElse(0) { "" } ?: "",
-                abilityEffectChangeVersionGroup = ability.effectChanges?.map { abilityEffectChange -> abilityEffectChange.versionGroup.name }
+                abilityEffectChangeVersionGroup = ability.effect_changes?.map { abilityEffectChange -> abilityEffectChange.version_group?.name ?: ""}
                     ?.getOrElse(0) { "" } ?: "",
-                abilityEffectEntry = ability.effectEntries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
+                abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
                     ?: "",
-                abilityEffectEntryShortEffect = ability.effectEntries?.firstOrNull { effect -> effect.language.name == "en" }?.shortEffect
+                abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.short_effect
                     ?: "",
-                flavorText = ability.flavorTextEntries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavorText ?: "",
-                isMainSeries = ability.isMainSeries ?: false
+                flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text ?: "",
+                isMainSeries = ability.is_main_series ?: false
             )
         }
 

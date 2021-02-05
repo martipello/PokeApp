@@ -15,9 +15,9 @@ data class Description(
 )
 
 data class Effect(
-    val effect: String,
-    val shortEffect: String,
-    val language: NamedApiResource
+    val effect: String?,
+    val shortEffect: String?,
+    val language: NamedApiResource?
 )
 
 data class Encounter(
@@ -50,7 +50,7 @@ data class Name(
 
 data class VerboseEffect(
     val effect: String,
-    val shortEffect: String,
+    val short_effect: String,
     val language: NamedApiResource
 )
 

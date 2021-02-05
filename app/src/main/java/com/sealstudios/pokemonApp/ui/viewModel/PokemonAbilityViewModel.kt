@@ -23,13 +23,10 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     // and meta data comes from the pokemon and not the move meaning we would double the calls to the API
 
     val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemon.switchMap { pokemon ->
-        Log.d("PAVM", "POKEMON CHANGED $pokemon")
         liveData {
             emit(Resource.loading(null))
             val pokemonWithAbilitiesAndMetaData =
                 pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
-            Log.d("PAVM", "POKEMONWITHABILITYANDMETA IDS ${pokemonWithAbilitiesAndMetaData.abilities.size}")
-            Log.d("PAVM", "POKEMONWITHABILITYANDMETA IDS ${pokemon.abilityIds.size}")
             if (pokemonWithAbilitiesAndMetaData.abilities.size != pokemon.abilityIds.size) {
                 emitSource(fetchPokemonAbilities(pokemon, pokemonWithAbilitiesAndMetaData.abilities))
             } else {
@@ -48,7 +45,6 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
                 val idsOfAbilitiesToFetch = pokemon.abilityIds.filterNot { pokemonAbilityId ->
                     abilities.map { it.id }.any { abilityId -> pokemonAbilityId == abilityId }
                 }
-                Log.d("PAVM", "idsOfAbilitiesToFetch $idsOfAbilitiesToFetch")
                 idsOfAbilitiesToFetch.map {
                     async {
                         fetchAndSavePokemonAbility(it, pokemon)
@@ -72,6 +68,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
             val abilityRequest = remotePokemonRepository.abilityForId(abilityId)
             when (abilityRequest.status) {
                 Status.SUCCESS -> {
+                    Log.d("PAVM", "abilityRequest ${abilityRequest.data.toString()}")
                     abilityRequest.data?.let {
                         insertPokemonAbility(
                             pokemon.id,

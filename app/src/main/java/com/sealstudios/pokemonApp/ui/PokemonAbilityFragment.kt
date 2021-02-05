@@ -15,6 +15,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData.Companion.separateByGeneration
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
+import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonAbilityListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
@@ -97,6 +98,7 @@ class PokemonAbilityFragment : Fragment() {
     private fun setUpPokemonAdapterRecyclerView() = binding.pokemonAbilityRecyclerView.apply {
         adapter = pokemonAbilityAdapter
         addPokemonAdapterRecyclerViewDecoration(this)
+        layoutManager = NoScrollLayoutManager(context = this.context)
     }
 
     private fun addPokemonAdapterRecyclerViewDecoration(

@@ -14,7 +14,9 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.SplashScreenContainerBinding
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
 import com.sealstudios.pokemonApp.ui.listenerExtensions.startAndWait
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlin.math.hypot
 
 
@@ -38,7 +40,7 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun handleEnterAnimation() {
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             binding.splashScreen.motionRoot.run {
                 awaitTransitionEnd()
                 createRevealAnimation()
@@ -50,10 +52,12 @@ class SplashScreenFragment : Fragment() {
         val x: Int = binding.root.right / 2
         val y: Int = binding.root.bottom - binding.root.bottom / 9
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
-        viewLifecycleOwner.lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             createCircleRevealAnimator(x, y, endRadius).run {
                 duration = 250
-                binding.pokeballOpen.visibility = View.VISIBLE
+                withContext(Dispatchers.Main){
+                    binding.pokeballOpen.visibility = View.VISIBLE
+                }
                 startAndWait()
                 navigateToListFragment()
             }

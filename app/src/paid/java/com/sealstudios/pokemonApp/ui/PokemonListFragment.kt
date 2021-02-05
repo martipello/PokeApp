@@ -91,12 +91,12 @@ class PokemonListFragment : Fragment(),
         observeAnimationState()
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
+        setUpViews()
         setUpPokemonAdapter()
         setUpPokemonRecyclerView(view.context)
         observeFetchAllPokemonResponse()
         observeFilters()
         observeSearch()
-        setUpViews()
         addScrollAwarenessForFilterFab()
     }
 
@@ -112,6 +112,13 @@ class PokemonListFragment : Fragment(),
                 showFiltersAnimation()
             }
         }
+        binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
+            if (filterIsExpanded) {
+                hideFiltersAnimation()
+            }
+        }
+        binding.pokemonListFilter.filterGroupLayout.root.chipSpacingHorizontal = 96.dp
+        binding.pokemonListFilter.filterGroupLayout.root.chipSpacingVertical = 8.dp
     }
 
     private fun hideFiltersAnimation() {
@@ -151,19 +158,13 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setUpFilterView(selections: MutableSet<String>) {
-        binding.pokemonListFilter.closeFiltersButton.setOnClickListener {
-            if (filterIsExpanded) {
-                hideFiltersAnimation()
-            }
+        lifecycleScope.launch {
+            FilterGroupHelper(
+                chipGroup = binding.pokemonListFilter.filterGroupLayout.root,
+                clickListener = this@PokemonListFragment,
+                selections = selections
+            ).bindChips()
         }
-        val chipGroup = binding.pokemonListFilter.filterGroupLayout.root
-        chipGroup.chipSpacingHorizontal = 96.dp
-        chipGroup.chipSpacingVertical = 8.dp
-        FilterGroupHelper(
-            chipGroup = chipGroup,
-            clickListener = this@PokemonListFragment,
-            selections = selections
-        ).bindChips()
     }
 
     private fun addScrollAwarenessForFilterFab() {

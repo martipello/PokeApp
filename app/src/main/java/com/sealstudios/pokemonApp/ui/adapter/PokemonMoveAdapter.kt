@@ -80,7 +80,6 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         notifyItemChanged(pos, expandSelected)
     }
 
-
     override fun getItemViewType(position: Int): Int {
         return differ.currentList[position].itemType
     }

@@ -59,7 +59,7 @@
     <string name="move_accuracy">%d\%%</string>
     <string name="move_category">Move category</string>
     <string name="move_type">Move type</string>
-    <string name="move_description">Description</string>
+    <string name="move_description">Description :</string>
     <string name="power_label">Power :</string>
     <string name="accuracy_label">Accuracy :</string>
     <string name="pp_label">PP :</string>
@@ -74,4 +74,7 @@
     <string name="name">Name :</string>
     <string name="short_effect_label">Short effect :</string>
     <string name="move_description_label">Description :</string>
+    <string name="hidden_ability">Hidden Ability : %s</string>
+    <string name="main_series_label">Main series :</string>
+    <string name="effect_change_label">Effect change :</string>
 </resources>

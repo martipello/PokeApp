@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.database.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
@@ -15,6 +16,10 @@ interface PokemonAbilityMetaDataDao {
 
     @Query("SELECT * FROM PokemonAbilityMetaData WHERE ability_meta_data_id IN (:pokemonAbilityMetaDataIds)")
     suspend fun getAbilityMetaDataByIdsAsync(pokemonAbilityMetaDataIds: List<Int>): List<PokemonAbilityMetaData>
+
+    @Transaction
+    @Query("SELECT * FROM Pokemon WHERE Pokemon.pokemon_id == :id LIMIT 1")
+    fun getPokemonWithAbilitiesAndMetaDataById(id: Int): LiveData<PokemonWithAbilitiesAndMetaData>
 
     @Transaction
     @Query("SELECT * FROM Pokemon WHERE Pokemon.pokemon_id == :id LIMIT 1")

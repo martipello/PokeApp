@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.repository
 
+import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaDataJoin
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
@@ -21,8 +22,8 @@ class PokemonAbilityMetaDataRepository @Inject constructor(
         pokemonAbilityMetaDataDao.insertAbilityMetaDataList(pokemonAbilityMetaData)
     }
 
-    suspend fun movesForIdsAsync(ids: List<Int>): List<PokemonAbilityMetaData> {
-        return pokemonAbilityMetaDataDao.getAbilityMetaDataByIdsAsync(ids)
+    fun getPokemonWithAbilitiesAndMetaDataById(id: Int): LiveData<PokemonWithAbilitiesAndMetaData> {
+        return pokemonAbilityMetaDataDao.getPokemonWithAbilitiesAndMetaDataById(id)
     }
 
     suspend fun getPokemonWithAbilitiesAndMetaDataByIdAsync(id: Int): PokemonWithAbilitiesAndMetaData {

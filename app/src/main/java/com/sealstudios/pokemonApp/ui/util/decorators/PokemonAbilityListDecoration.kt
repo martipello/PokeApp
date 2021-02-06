@@ -10,11 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 class PokemonAbilityListDecoration constructor(
-    resId: Int, context: Context,
     private val margin: Int,
 ) : RecyclerView.ItemDecoration() {
-
-    private val divider: Drawable? = ContextCompat.getDrawable(context, resId)
 
     override fun getItemOffsets(
         outRect: Rect,
@@ -24,34 +21,13 @@ class PokemonAbilityListDecoration constructor(
     ) {
         super.getItemOffsets(outRect, view, parent, state)
 
-        if (parent.getChildAdapterPosition(view) != 0) {
-            outRect.top = margin
-        }
+        outRect.left = margin
+        outRect.right = margin
+
         if (parent.getChildAdapterPosition(view) != parent.childCount) {
             outRect.bottom = margin
         }
 
-    }
-
-    override fun onDrawOver(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
-
-        val left: Int = parent.paddingLeft + (margin * 4)
-        val right: Int = parent.width - parent.paddingRight - (margin * 4)
-
-        val childCount: Int = parent.childCount
-
-        for (i in 0 until childCount) {
-            val child: View = parent.getChildAt(i)
-            val params = child.layoutParams as RecyclerView.LayoutParams
-            if (i != childCount - 1) {
-                divider?.let {
-                    val top = child.bottom + params.bottomMargin + margin
-                    val bottom: Int = top + it.intrinsicHeight
-                    it.setBounds(left, top, right, bottom)
-                    it.draw(c)
-                }
-            }
-        }
     }
 
 }

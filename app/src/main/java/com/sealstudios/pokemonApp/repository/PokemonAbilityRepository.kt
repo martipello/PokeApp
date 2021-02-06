@@ -29,6 +29,10 @@ class PokemonAbilityRepository @Inject constructor(
         return pokemonAbilityDao.getPokemonAbilityByIdAsync(id)
     }
 
+    suspend fun getPokemonAbilitiesByIdsAsync(ids: List<Int>): List<PokemonAbility> {
+        return pokemonAbilityDao.getPokemonAbilitiesByIdsAsync(ids)
+    }
+
     suspend fun updatePokemonAbility(pokemonAbility: PokemonAbility) {
         pokemonAbilityDao.updatePokemonAbility(pokemonAbility)
     }

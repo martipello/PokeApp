@@ -10,6 +10,7 @@ import com.sealstudios.pokemonApp.repository.PokemonAbilityMetaDataRepository
 import com.sealstudios.pokemonApp.repository.PokemonAbilityRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.*
+import kotlin.coroutines.CoroutineContext
 
 class PokemonAbilityViewModel @ViewModelInject constructor(
     private val pokemonAbilityRepository: PokemonAbilityRepository,
@@ -25,40 +26,52 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemon.switchMap { pokemon ->
         liveData {
             emit(Resource.loading(null))
+
             val pokemonWithAbilitiesAndMetaData =
                 pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
-            if (pokemonWithAbilitiesAndMetaData.abilities.size != pokemon.abilityIds.size) {
-                emitSource(fetchPokemonAbilities(pokemon, pokemonWithAbilitiesAndMetaData.abilities))
-            } else {
-                emit(Resource.success(pokemonWithAbilitiesAndMetaData))
+            if (pokemonWithAbilitiesAndMetaData.abilities.size > pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.size) {
+                joinMetaDataToAbilities(pokemonWithAbilitiesAndMetaData, pokemon)
             }
 
-            if (pokemonWithAbilitiesAndMetaData.abilities.size > pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.size) {
-                joinMetaDataToAbility(pokemonWithAbilitiesAndMetaData, pokemon)
+            if (pokemon.abilityIds.size != pokemonWithAbilitiesAndMetaData.abilities.size) {
+                emitSource(
+                    fetchPokemonAbilities(
+                        pokemon,
+                        pokemonWithAbilitiesAndMetaData.abilities.map { it.id })
+                )
+            } else {
+                emit(Resource.success(pokemonWithAbilitiesAndMetaData))
             }
         }
     }
 
-    private suspend fun fetchPokemonAbilities(pokemon: Pokemon, abilities: List<PokemonAbility>) =
+    private suspend fun fetchPokemonAbilities(pokemon: Pokemon, abilityIds: List<Int>) =
         liveData(Dispatchers.IO) {
             withContext(Dispatchers.IO) {
                 val idsOfAbilitiesToFetch = pokemon.abilityIds.filterNot { pokemonAbilityId ->
-                    abilities.map { it.id }.any { abilityId -> pokemonAbilityId == abilityId }
+                    abilityIds.any { abilityId -> pokemonAbilityId == abilityId }
                 }
                 idsOfAbilitiesToFetch.map {
                     async {
                         fetchAndSavePokemonAbility(it, pokemon)
                     }
                 }.awaitAll()
+
+                //TODO logs indicate that everything here is correct, all inserts are waited on
+                // but querying the database without the below delay omits the meta data
+                roomDatabaseHotFix()
+
                 emit(
                     Resource.success(
-                        pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(
-                            pokemon.id
-                        )
+                        pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
                     )
                 )
             }
         }
+
+    private suspend fun roomDatabaseHotFix() {
+        delay(1000)
+    }
 
     private suspend fun fetchAndSavePokemonAbility(
         abilityId: Int,
@@ -68,7 +81,6 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
             val abilityRequest = remotePokemonRepository.abilityForId(abilityId)
             when (abilityRequest.status) {
                 Status.SUCCESS -> {
-                    Log.d("PAVM", "abilityRequest ${abilityRequest.data.toString()}")
                     abilityRequest.data?.let {
                         insertPokemonAbility(
                             pokemon.id,
@@ -86,27 +98,34 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     private suspend fun insertPokemonAbility(remotePokemonId: Int, pokemonAbility: PokemonAbility) {
         withContext(Dispatchers.IO) {
             pokemonAbilityRepository.insertPokemonAbility(pokemonAbility)
+            insertPokemonAbilityJoin(remotePokemonId, pokemonAbility.id)
+        }
+    }
+
+    private suspend fun insertPokemonAbilityJoin(remotePokemonId: Int, pokemonAbilityId: Int) {
+        withContext(Dispatchers.IO) {
             pokemonAbilityRepository.insertPokemonAbilityJoin(
                 PokemonAbilityJoin(
                     remotePokemonId,
-                    pokemonAbility.id
+                    pokemonAbilityId
                 )
             )
         }
     }
 
-    private suspend fun joinMetaDataToAbility(
+    private suspend fun joinMetaDataToAbilities(
         pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData,
         pokemon: Pokemon
     ) {
-        val idsOfAbilitiesNotJoined = pokemonWithAbilitiesAndMetaData.abilities.filterNot { pokemonAbility ->
-            pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.any { metaData -> pokemonAbility.name == metaData.abilityName }
-        }.map { it.id }
-
-        idsOfAbilitiesNotJoined.forEach {
-            viewModelScope.launch {
-                insertPokemonAbilityMetaDataJoin(pokemon.id, it)
-            }
+        withContext(Dispatchers.IO) {
+            val idsOfAbilitiesNotJoined = pokemonWithAbilitiesAndMetaData.abilities.filterNot { pokemonAbility ->
+                pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.any { metaData -> pokemonAbility.name == metaData.abilityName }
+            }.map { it.id }
+            idsOfAbilitiesNotJoined.map {
+                async {
+                    insertPokemonAbilityMetaDataJoin(pokemon.id, it)
+                }
+            }.awaitAll()
         }
     }
 
@@ -127,6 +146,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     }
 
     fun retry() {
+        Log.d("PAVM", "RETRY")
         this.pokemon.value = this.pokemon.value
     }
 

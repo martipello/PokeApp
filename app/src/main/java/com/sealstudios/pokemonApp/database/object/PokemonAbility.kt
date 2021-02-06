@@ -5,7 +5,9 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.Ability
+import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import org.jetbrains.annotations.NotNull
+import java.util.*
 
 @Entity
 data class PokemonAbility @JvmOverloads constructor(
@@ -56,13 +58,17 @@ data class PokemonAbility @JvmOverloads constructor(
                         ?.firstOrNull { effect -> effect.language?.name == "en" }
                 }
                     ?.map { it?.effect }?.getOrElse(0) { "" } ?: "",
-                abilityEffectChangeVersionGroup = ability.effect_changes?.map { abilityEffectChange -> abilityEffectChange.version_group?.name ?: ""}
-                    ?.getOrElse(0) { "" } ?: "",
+                abilityEffectChangeVersionGroup = PokemonGeneration.getVersionForGeneration(
+                    PokemonGeneration.getGeneration(
+                        ability.generation?.name ?: ""
+                    )
+                ),
                 abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
                     ?: "",
                 abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.short_effect
                     ?: "",
-                flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text ?: "",
+                flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text
+                    ?: "",
                 isMainSeries = ability.is_main_series ?: false
             )
         }
@@ -86,6 +92,20 @@ data class PokemonAbility @JvmOverloads constructor(
                 }
             }
             return -1
+        }
+
+        fun formatAbilityName(abilityName: String): String {
+            val parts = abilityName.split(regex = Regex("-"), limit = 2)
+            return if (parts.size > 1) {
+                val stringBuilder = StringBuilder()
+                for (part in parts) {
+                    stringBuilder.append(part.capitalize(Locale.ROOT))
+                    stringBuilder.append(" ")
+                }
+                stringBuilder.toString()
+            } else {
+                abilityName.capitalize(Locale.ROOT)
+            }
         }
 
 

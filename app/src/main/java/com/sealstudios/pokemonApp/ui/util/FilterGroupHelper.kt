@@ -20,18 +20,21 @@ class FilterGroupHelper(
             if (pokemonTypes.size >= chipGroup.childCount) {
                 for (x in 0 until chipGroup.childCount) {
                     val pokemonType = pokemonTypes[x]
-                    chipGroup.getChildAt(x).apply {
-                        this as Chip
-                        this.chipIcon = ContextCompat.getDrawable(chipGroup.context, pokemonType.icon)
-                        this.text = pokemonType.name
-                        this.isChipIconVisible = !selections.contains(pokemonType.name)
-                        this.isChecked = selections.contains(pokemonType.name)
-                        this.setChipBackgroundColorResource(pokemonType.color)
-                        this.setOnClickListener {
-                            it as Chip
-                            clickListener.onFilterSelected(pokemonType.name, it.isChecked)
+                    withContext(Dispatchers.Main){
+                        chipGroup.getChildAt(x).apply {
+                            this as Chip
+                            this.chipIcon = ContextCompat.getDrawable(chipGroup.context, pokemonType.icon)
+                            this.text = pokemonType.name
+                            this.isChipIconVisible = !selections.contains(pokemonType.name)
+                            this.isChecked = selections.contains(pokemonType.name)
+                            this.setChipBackgroundColorResource(pokemonType.color)
+                            this.setOnClickListener {
+                                it as Chip
+                                clickListener.onFilterSelected(pokemonType.name, it.isChecked)
+                            }
                         }
                     }
+
                 }
             }
         }

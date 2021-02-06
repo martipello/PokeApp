@@ -21,9 +21,12 @@
         android:id="@+id/error_pokemon_list"
         layout="@layout/pokemon_error_layout" />
 
-    <include
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/pokemon_list_filter"
-        layout="@layout/pokemon_list_fragment_filter_holder" />
+        android:name="com.sealstudios.pokemonApp.ui.PokemonFiltersFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:layout="@layout/pokemon_list_fragment_filter_holder" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

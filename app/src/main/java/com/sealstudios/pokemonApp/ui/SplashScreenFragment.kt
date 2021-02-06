@@ -52,7 +52,7 @@ class SplashScreenFragment : Fragment() {
         val x: Int = binding.root.right / 2
         val y: Int = binding.root.bottom - binding.root.bottom / 9
         val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+        viewLifecycleOwner.lifecycleScope.launch {
             createCircleRevealAnimator(x, y, endRadius).run {
                 duration = 250
                 withContext(Dispatchers.Main){
@@ -86,3 +86,4 @@ class SplashScreenFragment : Fragment() {
         _binding = null
     }
 }
+

@@ -18,8 +18,6 @@ class PokemonListViewModel @ViewModelInject constructor(
     val filters: MutableLiveData<MutableSet<String>> = getCurrentFiltersState()
     val searchPokemon: LiveData<List<PokemonWithTypesAndSpeciesForList>?>
 
-    val isFiltersLayoutExpanded: MutableLiveData<Boolean> = getFiltersLayoutExpanded()
-
     init {
 
         val combinedValues =
@@ -69,6 +67,16 @@ class PokemonListViewModel @ViewModelInject constructor(
         savedStateHandle.set(searchKey, search)
     }
 
+    fun refresh() {
+        this.search.value = this.search.value
+        savedStateHandle.set(searchKey, this.search.value)
+    }
+
+    private fun getSearchState(): MutableLiveData<String> {
+        val searchString = savedStateHandle.get<String>(searchKey) ?: ""
+        return MutableLiveData("%$searchString%")
+    }
+
     fun addFilter(filter: String) {
         filters.value?.let {
             it.add(filter)
@@ -83,35 +91,14 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
-    fun refresh() {
-        this.search.value = this.search.value
-        savedStateHandle.set(searchKey, this.search.value)
-    }
-
-    fun setFiltersLayoutExpanded(isFiltersLayoutExpanded: Boolean) {
-        this.isFiltersLayoutExpanded.value = isFiltersLayoutExpanded
-        savedStateHandle.set(isFiltersLayoutExpandedKey, isFiltersLayoutExpanded)
-    }
-
-    private fun getSearchState(): MutableLiveData<String> {
-        val searchString = savedStateHandle.get<String>(searchKey) ?: ""
-        return MutableLiveData("%$searchString%")
-    }
-
     private fun getCurrentFiltersState(): MutableLiveData<MutableSet<String>> {
         val filters = savedStateHandle.get<MutableSet<String>>(filtersKey)
             ?: mutableSetOf()
         return MutableLiveData(filters)
     }
 
-    private fun getFiltersLayoutExpanded(): MutableLiveData<Boolean> {
-        val isExpanded = savedStateHandle.get<Boolean>(isFiltersLayoutExpandedKey) ?: false
-        return MutableLiveData(isExpanded)
-    }
-
     companion object {
         private const val searchKey: String = "search"
         private const val filtersKey: String = "filters"
-        private const val isFiltersLayoutExpandedKey: String = "filtersExpanded"
     }
 }

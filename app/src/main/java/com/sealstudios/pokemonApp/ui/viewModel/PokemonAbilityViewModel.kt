@@ -58,7 +58,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
 
                 //TODO logs indicate that everything here is correct, all inserts are waited on
                 // but querying the database without the below delay omits the meta data
-                roomDatabaseHotFix()
+//                roomDatabaseHotFix()
 
                 emit(
                     Resource.success(

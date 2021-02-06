@@ -3,10 +3,10 @@ package com.sealstudios.pokemonApp.database.`object`
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
-data class PokemonMoveWithMetaData (
-    val pokemonMoveMetaData: PokemonMoveMetaData,
-    val pokemonMove: PokemonMove
-){
+data class PokemonMoveWithMetaData(
+    val pokemonMove: PokemonMove,
+    val pokemonMoveMetaData: PokemonMoveMetaData
+) {
     companion object {
 
         suspend fun List<PokemonMoveWithMetaData>.separateByGeneration() =

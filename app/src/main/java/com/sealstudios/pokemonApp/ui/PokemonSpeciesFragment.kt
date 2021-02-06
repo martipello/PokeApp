@@ -65,8 +65,7 @@ class PokemonSpeciesFragment : Fragment() {
         species: PokemonSpecies
     ) {
         val context = binding.root.context
-        binding.pokedexSubtitle.text =
-            context.getString(R.string.pok_dex_gen, species.pokedex?.capitalize() ?: "N/A")
+        binding.pokedexSubtitleText.text = species.pokedex?.capitalize() ?: "N/A"
         species.pokedexEntry?.let {
             binding.pokedexEntryText.visibility = View.VISIBLE
             binding.pokedexEntryText.text = it

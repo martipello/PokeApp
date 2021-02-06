@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,6 +51,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
+    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -119,6 +121,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     pokemonWithTypes.data?.let {
                         populatePokemonDetailViews(it)
                         pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
+                        pokemonAbilityViewModel.setPokemon(pokemon = it.pokemon)
                         binding.setNotEmpty()
                     }
                 }

@@ -38,6 +38,7 @@
     <string name="shape_label">Shape :</string>
     <string name="form_text">%s</string>
     <string name="form_label">Form :</string>
+    <string name="effect_label">Effect :</string>
     <string name="title">Title</string>
     <string name="subtitle">Subtitle</string>
     <string name="pokemon_name">pokemon_name</string>
@@ -58,7 +59,7 @@
     <string name="move_accuracy">%d\%%</string>
     <string name="move_category">Move category</string>
     <string name="move_type">Move type</string>
-    <string name="move_description">Description</string>
+    <string name="move_description">Description :</string>
     <string name="power_label">Power :</string>
     <string name="accuracy_label">Accuracy :</string>
     <string name="pp_label">PP :</string>
@@ -68,4 +69,12 @@
 
     <string name="ad_attribution">Ad</string>
     <string name="ad_image">Ad image</string>
+    <string name="abilities">Abilities</string>
+    <string name="version_label">Version :</string>
+    <string name="name">Name :</string>
+    <string name="short_effect_label">Short effect :</string>
+    <string name="move_description_label">Description :</string>
+    <string name="hidden_ability">Hidden Ability : %s</string>
+    <string name="main_series_label">Main series :</string>
+    <string name="effect_change_label">Effect change :</string>
 </resources>

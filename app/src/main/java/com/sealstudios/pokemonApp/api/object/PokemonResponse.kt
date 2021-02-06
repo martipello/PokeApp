@@ -2,25 +2,37 @@ package com.sealstudios.pokemonApp.api.`object`
 
 data class Ability(
     val id: Int,
-    val name: String,
-    val isMainSeries: Boolean,
-    val generation: NamedApiResource,
-    val names: List<Name>,
-    val effectEntries: List<VerboseEffect>,
-    val effectChanges: List<AbilityEffectChange>,
-    val flavorTextEntries: List<AbilityFlavorText>,
-    val pokemon: List<AbilityPokemon>
-)
+    val name: String?,
+    val is_main_series: Boolean?,
+    val generation: NamedApiResource?,
+    val names: List<Name>?,
+    val effect_entries: List<VerboseEffect>?,
+    val effect_changes: List<AbilityEffectChange>?,
+    val flavor_text_entries: List<AbilityFlavorText>?,
+    val pokemon: List<AbilityPokemon>?
+) {
+    override fun toString(): String {
+        return "Ability(id=$id, " +
+                "\nname=$name, " +
+                "\nisMainSeries=$is_main_series, " +
+                "\ngeneration=$generation, " +
+                "\nnames=$names, " +
+                "\neffectEntries=$effect_entries, " +
+                "\neffectChanges=$effect_changes, " +
+                "\nflavorTextEntries=$flavor_text_entries, " +
+                "\npokemon=$pokemon)"
+    }
+}
 
 data class AbilityEffectChange(
-    val effectEntries: List<Effect>,
-    val versionGroup: NamedApiResource
+    val effect_entries: List<Effect>?,
+    val version_group: NamedApiResource?
 )
 
 data class AbilityFlavorText(
-    val flavorText: String,
+    val flavor_text: String,
     val language: NamedApiResource,
-    val versionGroup: NamedApiResource
+    val version_group: NamedApiResource
 )
 
 data class AbilityPokemon(
@@ -111,22 +123,22 @@ data class NaturePokeathlonStatAffect(
 
 data class ApiPokemon(
     val id: Int,
-    val url: String,
-    val name: String,
-    val baseExperience: Int,
-    val height: Int,
-    val isDefault: Boolean,
-    val order: Int,
-    val weight: Int,
-    val species: NamedApiResource,
-    val abilities: List<PokemonAbility>,
-    val forms: List<PokemonForm>,
-    val gameIndices: List<VersionGameIndex>,
-    val heldItems: List<PokemonHeldItem>,
-    val moves: List<PokemonMoveResponse>,
-    val stats: List<PokemonStat>,
-    val types: List<ApiPokemonType>,
-    val sprites: PokemonSprites
+    val url: String?,
+    val name: String?,
+    val baseExperience: Int?,
+    val height: Int?,
+    val isDefault: Boolean?,
+    val order: Int?,
+    val weight: Int?,
+    val species: NamedApiResource?,
+    val abilities: List<PokemonAbility>?,
+    val forms: List<PokemonForm>?,
+    val gameIndices: List<VersionGameIndex>?,
+    val heldItems: List<PokemonHeldItem>?,
+    val moves: List<PokemonMoveResponse>?,
+    val stats: List<PokemonStat>?,
+    val types: List<ApiPokemonType>?,
+    val sprites: PokemonSprites?
 )
 
 data class PokemonSprites(
@@ -142,12 +154,9 @@ data class PokemonSprites(
 )
 
 data class PokemonAbility(
-    val id: Int,
-    val name: String,
     val isHidden: Boolean,
     val slot: Int,
-    val generation: List<NamedApiResource>,
-    val effectEntries: List<Effect>
+    val ability: NamedApiResource,
 )
 
 data class PokemonHeldItem(
@@ -174,7 +183,7 @@ data class ApiPokemonMove(
     val damage_class: NamedApiResource,
     val effect_chance: Int,
     val priority: Int,
-    val shortEffect: String,
+    val short_effect: String,
     val generation: NamedApiResource,
     val type: NamedApiResource,
     val flavor_text_entries: List<FlavorText>?

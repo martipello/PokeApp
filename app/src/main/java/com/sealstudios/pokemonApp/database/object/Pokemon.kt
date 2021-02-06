@@ -32,6 +32,9 @@ open class Pokemon constructor(
     @ColumnInfo(name = MOVE_IDS)
     var move_ids: List<Int> = emptyList(),
 
+    @ColumnInfo(name = ABILITY_IDS)
+    val abilityIds: List<Int> = emptyList(),
+
     ) {
 
     companion object {
@@ -43,6 +46,7 @@ open class Pokemon constructor(
         const val POKEMON_WEIGHT: String = "pokemon_weight"
         const val POKEMON_SPRITE: String = "pokemon_sprite"
         const val MOVE_IDS: String = "pokemon_move_id"
+        const val ABILITY_IDS: String = "pokemon_ability_ids"
 
         fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
             val id = getPokemonIdFromUrl(apiPokemon.url)
@@ -54,6 +58,7 @@ open class Pokemon constructor(
                 weight = 0,
                 move_ids = listOf(),
                 sprite = "",
+                abilityIds = listOf()
             )
         }
 
@@ -61,12 +66,14 @@ open class Pokemon constructor(
 
             return Pokemon(
                 id = apiPokemon.id,
-                name = apiPokemon.name,
+                name = apiPokemon.name ?: "",
                 image = highResPokemonUrl(apiPokemon.id),
-                height = apiPokemon.height,
-                weight = apiPokemon.weight,
-                sprite = apiPokemon.sprites.front_default,
-                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
+                height = apiPokemon.height ?: 0,
+                weight = apiPokemon.weight ?: 0,
+                sprite = apiPokemon.sprites?.front_default ?: "",
+                move_ids = apiPokemon.moves?.map { getPokemonIdFromUrl(it.move.url) } ?: listOf(),
+                abilityIds = apiPokemon.abilities?.map { pokemonAbility -> getPokemonIdFromUrl(pokemonAbility.ability.url) }
+                    ?: listOf()
             )
         }
 

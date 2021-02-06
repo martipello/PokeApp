@@ -69,7 +69,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
                             val movesWithMetaDataList = pokemonWithMovesAndMetaData.moves.map { move ->
                                 pokemonWithMovesAndMetaData.pokemonMoveMetaData.filter {
                                     it.moveName == move.name
-                                }.map { PokemonMoveWithMetaData(it, move) }
+                                }.map { PokemonMoveWithMetaData(move, it) }
                             }.flatten()
                             setPokemonMoves(movesWithMetaDataList.separateByGeneration())
                         }

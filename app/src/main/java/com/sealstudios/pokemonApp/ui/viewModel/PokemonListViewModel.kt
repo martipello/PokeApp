@@ -83,7 +83,7 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
-    fun refresh(){
+    fun refresh() {
         this.search.value = this.search.value
         savedStateHandle.set(searchKey, this.search.value)
     }

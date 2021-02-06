@@ -49,7 +49,7 @@ import javax.inject.Inject
 
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
-    PokemonAdapterClickListener, FilterChipClickListener, SwipeRefreshLayout.OnRefreshListener {
+        PokemonAdapterClickListener, FilterChipClickListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var glide: RequestManager
@@ -76,8 +76,8 @@ class PokemonListFragment : Fragment(),
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
@@ -141,8 +141,8 @@ class PokemonListFragment : Fragment(),
     private fun showFiltersAnimation() {
         viewLifecycleOwner.lifecycleScope.launch {
             binding.pokemonListFilter.filterFab.arcAnimateFilterFabIn(
-                binding.pokemonListFilter.filterHolder,
-                null
+                    binding.pokemonListFilter.filterHolder,
+                    null
             ).run {
                 start()
                 awaitEnd()
@@ -160,19 +160,19 @@ class PokemonListFragment : Fragment(),
     private fun setUpFilterView(selections: MutableSet<String>) {
         lifecycleScope.launch {
             FilterGroupHelper(
-                chipGroup = binding.pokemonListFilter.filterGroupLayout.root,
-                clickListener = this@PokemonListFragment,
-                selections = selections
+                    chipGroup = binding.pokemonListFilter.filterGroupLayout.root,
+                    clickListener = this@PokemonListFragment,
+                    selections = selections
             ).bindChips()
         }
     }
 
     private fun addScrollAwarenessForFilterFab() {
         ScrollAwareFilerFab(
-            circleCardView = binding.pokemonListFilter.filterFab,
-            recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView,
-            circleCardViewParent = binding.listFragmentContainer,
-            scrollAwareFilterFabAnimationListener = null
+                circleCardView = binding.pokemonListFilter.filterFab,
+                recyclerView = binding.pokemonListFragmentContent.pokemonListRecyclerView,
+                circleCardViewParent = binding.listFragmentContainer,
+                scrollAwareFilterFabAnimationListener = null
         ).start()
     }
 
@@ -194,12 +194,12 @@ class PokemonListFragment : Fragment(),
                             observePokemonList()
                         } else {
                             binding.setError(
-                                ErrorCodes.NO_CONNECTION.message
+                                    ErrorCodes.NO_CONNECTION.message
                             ) { remotePokemonViewModel.fetchAllPokemon() }
                         }
                     } else {
                         binding.setError(
-                            allPokemon.message ?: getString(R.string.error_text)
+                                allPokemon.message ?: getString(R.string.error_text)
                         ) { remotePokemonViewModel.fetchAllPokemon() }
                     }
                 }
@@ -210,18 +210,18 @@ class PokemonListFragment : Fragment(),
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
-            viewLifecycleOwner, Observer { pokemonData ->
-                if (pokemonData != null) {
-                    if (pokemonData.isEmpty()) {
-                        binding.setEmpty()
-                    } else {
-                        binding.setNotEmpty()
-                    }
-                    pokemonAdapter.submitList(pokemonData)
+                viewLifecycleOwner, Observer { pokemonData ->
+            if (pokemonData != null) {
+                if (pokemonData.isEmpty()) {
+                    binding.setEmpty()
                 } else {
-                    binding.setLoading()
+                    binding.setNotEmpty()
                 }
-            })
+                pokemonAdapter.submitList(pokemonData)
+            } else {
+                binding.setLoading()
+            }
+        })
     }
 
     private fun observeSearch() {
@@ -242,14 +242,14 @@ class PokemonListFragment : Fragment(),
 
     private fun observeAnimationState() {
         pokemonListViewModel.isFiltersLayoutExpanded.observe(
-            viewLifecycleOwner, Observer { filterIsExpanded ->
-                if (filterIsExpanded && this.filterIsExpanded) {
-                    binding.root.post {
-                        showFiltersAnimation()
-                    }
+                viewLifecycleOwner, Observer { filterIsExpanded ->
+            if (filterIsExpanded && this.filterIsExpanded) {
+                binding.root.post {
+                    showFiltersAnimation()
                 }
-                this.filterIsExpanded = filterIsExpanded
-            })
+            }
+            this.filterIsExpanded = filterIsExpanded
+        })
     }
 
     private fun setUpPokemonRecyclerView(context: Context) {
@@ -265,15 +265,15 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun addRecyclerViewDecoration(
-        recyclerView: RecyclerView,
-        context: Context
+            recyclerView: RecyclerView,
+            context: Context
     ) {
         recyclerView.addItemDecoration(
-            PokemonListDecoration(
-                context.resources.getDimensionPixelSize(
-                    R.dimen.qualified_small_margin_8dp
+                PokemonListDecoration(
+                        context.resources.getDimensionPixelSize(
+                                R.dimen.qualified_small_margin_8dp
+                        )
                 )
-            )
         )
     }
 
@@ -281,7 +281,7 @@ class PokemonListFragment : Fragment(),
         val topLevelDestinations: MutableSet<Int> = HashSet()
         topLevelDestinations.add(R.id.PokemonListFragment)
         val appBarConfiguration = AppBarConfiguration.Builder(topLevelDestinations)
-            .build()
+                .build()
         val toolbar = binding.pokemonListFragmentCollapsingAppBar.toolbar
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
@@ -290,24 +290,24 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun setupActionBarWithNavController(
-        mainActivity: AppCompatActivity,
-        appBarConfiguration: AppBarConfiguration
+            mainActivity: AppCompatActivity,
+            appBarConfiguration: AppBarConfiguration
     ) {
         NavigationUI.setupActionBarWithNavController(
-            mainActivity,
-            findNavController(this@PokemonListFragment),
-            appBarConfiguration
+                mainActivity,
+                findNavController(this@PokemonListFragment),
+                appBarConfiguration
         )
     }
 
     private fun setToolbarTitleExpandedColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
-            .setExpandedTitleColor(
-                ContextCompat.getColor(
-                    context,
-                    android.R.color.transparent
+                .setExpandedTitleColor(
+                        ContextCompat.getColor(
+                                context,
+                                android.R.color.transparent
+                        )
                 )
-            )
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {
@@ -323,7 +323,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setQueryListener(searchView: SearchView) {
         searchView.setOnQueryTextListener(object :
-            SearchView.OnQueryTextListener {
+                SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return false
             }
@@ -340,14 +340,14 @@ class PokemonListFragment : Fragment(),
     private fun navigateToDetailFragment(name: String, view: View) {
         view as MaterialCardView
         val action = actionPokemonListFragmentToPokemonDetailFragment(
-            pokemonName = name,
-            transitionName = view.transitionName,
-            dominantSwatchRgb = view.cardBackgroundColor.defaultColor,
-            lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor
-                ?: ContextCompat.getColor(view.context, R.color.white)
+                pokemonName = name,
+                transitionName = view.transitionName,
+                dominantSwatchRgb = view.cardBackgroundColor.defaultColor,
+                lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor
+                        ?: ContextCompat.getColor(view.context, R.color.white)
         )
         val extras = FragmentNavigatorExtras(
-            view to view.transitionName
+                view to view.transitionName
         )
         if (filterIsExpanded) {
             hideFiltersAnimation()
@@ -356,10 +356,10 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun navigate(destination: NavDirections, extraInfo: FragmentNavigator.Extras) =
-        with(findNavController()) {
-            currentDestination?.getAction(destination.actionId)
-                ?.let { navigate(destination, extraInfo) }
-        }
+            with(findNavController()) {
+                currentDestination?.getAction(destination.actionId)
+                        ?.let { navigate(destination, extraInfo) }
+            }
 
     override fun onItemSelected(pokemon: PokemonForList, view: View) {
         navigateToDetailFragment(pokemon.name, view)
@@ -392,10 +392,6 @@ class PokemonListFragment : Fragment(),
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-    }
-
-    companion object {
-        private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
     }
 
     override fun onRefresh() {
@@ -448,6 +444,10 @@ class PokemonListFragment : Fragment(),
         hideEmptyLayout()
         hideErrorLayout()
         hideLoadingLayout()
+    }
+
+    companion object {
+        private const val isFiltersLayoutExpandedKey: String = "isFiltersLayoutExpanded"
     }
 
 }

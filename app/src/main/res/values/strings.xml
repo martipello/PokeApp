@@ -77,4 +77,7 @@
     <string name="hidden_ability">Hidden Ability : %s</string>
     <string name="main_series_label">Main series :</string>
     <string name="effect_change_label">Effect change :</string>
+
+    <string name="AD_MOB_AD_UNIT_ID">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="AD_MOB_SAMPLE_AD_UNIT_ID">ca-app-pub-3940256099942544/2247696110</string>
 </resources>

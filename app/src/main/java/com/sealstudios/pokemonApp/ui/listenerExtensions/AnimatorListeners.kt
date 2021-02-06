@@ -8,7 +8,6 @@ import kotlin.coroutines.resume
 
 
 suspend fun Animator.startAndWait() = suspendCancellableCoroutine<Unit> { continuation ->
-    continuation.invokeOnCancellation { cancel() }
 
     this.addListener(object : AnimatorListenerAdapter() {
 
@@ -33,35 +32,12 @@ suspend fun Animator.startAndWait() = suspendCancellableCoroutine<Unit> { contin
                 }
             }
         }
+
     })
     start()
+
+    continuation.invokeOnCancellation { cancel() }
 }
-
-
-//private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener? {
-//    return object : Animator.AnimatorListener,
-//        com.nineoldandroids.animation.Animator.AnimatorListener {
-//        override fun onAnimationRepeat(animation: Animator?) {}
-//        override fun onAnimationEnd(animation: Animator?) {
-//            listener?.onArcAnimationFinished()
-//        }
-//
-//        override fun onAnimationCancel(animation: Animator?) {}
-//        override fun onAnimationStart(animation: Animator?) {
-//            listener?.onArcAnimationStarted()
-//        }
-//
-//        override fun onAnimationRepeat(animation: com.nineoldandroids.animation.Animator?) {}
-//        override fun onAnimationEnd(animation: com.nineoldandroids.animation.Animator?) {
-//            listener?.onArcAnimationFinished()
-//        }
-//
-//        override fun onAnimationCancel(animation: com.nineoldandroids.animation.Animator?) {}
-//        override fun onAnimationStart(animation: com.nineoldandroids.animation.Animator?) {
-//            listener?.onArcAnimationStarted()
-//        }
-//    }
-//}
 
 suspend fun ArcAnimator.awaitEnd() = suspendCancellableCoroutine<Unit> { continuation ->
 

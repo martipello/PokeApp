@@ -65,7 +65,6 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
                             }.flatten()
                             setPokemonAbilities(abilitiesWithMetaDataList)
                         } else {
-                            Log.d("PAVM", "data is null ")
                             binding.setEmpty()
                         }
                     }

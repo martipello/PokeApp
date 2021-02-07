@@ -66,10 +66,10 @@
         android:paddingTop="?attr/actionBarSize">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/image_and_card_holder"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:id="@+id/image_and_card_holder"
             android:clipToPadding="false"
             android:paddingTop="24dp"
             android:paddingBottom="24dp">
@@ -127,8 +127,8 @@
                     layout="@layout/pokemon_error_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                    android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -137,9 +137,9 @@
                 <include
                     android:id="@+id/main_progress"
                     layout="@layout/pokemon_loading_layout"
-                    android:src="@drawable/colored_pokeball_anim_faster"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:src="@drawable/colored_pokeball_anim_faster"
                     android:visibility="gone"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -300,26 +300,34 @@
                         android:layout_height="1dp"
                         android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                         android:background="@color/light_grey"
-                        app:layout_constraintTop_toBottomOf="@id/height_label"
-                        app:layout_constraintBottom_toTopOf="@id/species_fragment" />
-
+                        app:layout_constraintBottom_toTopOf="@id/species_fragment"
+                        app:layout_constraintTop_toBottomOf="@id/height_label" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/species_fragment"
                         android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@id/pokemon_base_stats_fragment"
                         app:layout_constraintTop_toBottomOf="@id/info_divider"
-                        app:layout_constraintBottom_toTopOf="@id/ability_fragment"
                         tools:layout="@layout/pokemon_species_fragment" />
+
+                    <androidx.fragment.app.FragmentContainerView
+                        android:id="@+id/pokemon_base_stats_fragment"
+                        android:name="com.sealstudios.pokemonApp.ui.PokemonBaseStatsFragment"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintBottom_toTopOf="@id/ability_fragment"
+                        app:layout_constraintTop_toBottomOf="@id/species_fragment"
+                        tools:layout="@layout/pokemon_base_stats_fragment" />
 
                     <androidx.fragment.app.FragmentContainerView
                         android:id="@+id/ability_fragment"
                         android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintTop_toBottomOf="@id/species_fragment"
                         app:layout_constraintBottom_toTopOf="@id/movesFragment"
+                        app:layout_constraintTop_toBottomOf="@id/pokemon_base_stats_fragment"
                         tools:layout="@layout/pokemon_ability_fragment" />
 
                     <androidx.fragment.app.FragmentContainerView
@@ -327,9 +335,9 @@
                         android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        tools:layout="@layout/pokemon_moves_fragment"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/ability_fragment"
-                        app:layout_constraintBottom_toBottomOf="parent" />
+                        tools:layout="@layout/pokemon_moves_fragment" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 

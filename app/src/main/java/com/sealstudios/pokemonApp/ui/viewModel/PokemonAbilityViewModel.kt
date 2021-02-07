@@ -33,6 +33,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
             }
 
             if (pokemon.abilityIds.size != pokemonWithAbilitiesAndMetaData.abilities.size) {
+                Log.d("PAVM", "emit database")
                 emitSource(
                     fetchPokemonAbilities(
                         pokemon,
@@ -55,11 +56,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
                         fetchAndSavePokemonAbility(it, pokemon)
                     }
                 }.awaitAll()
-
-                //TODO logs indicate that everything here is correct, all inserts are waited on
-                // but querying the database without the below delay omits the meta data
-                roomDatabaseHotFix()
-
+                Log.d("PAVM", "emit network")
                 emit(
                     Resource.success(
                         pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
@@ -68,18 +65,16 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
             }
         }
 
-    private suspend fun roomDatabaseHotFix() {
-        delay(1000)
-    }
-
     private suspend fun fetchAndSavePokemonAbility(
         abilityId: Int,
         pokemon: Pokemon,
     ) {
         withContext(Dispatchers.IO) {
+            Log.d("PAVM", "fetchAndSavePokemonAbility")
             val abilityRequest = remotePokemonRepository.abilityForId(abilityId)
             when (abilityRequest.status) {
                 Status.SUCCESS -> {
+                    Log.d("PAVM", "fetchAndSavePokemonAbility SUCCESS")
                     abilityRequest.data?.let {
                         insertPokemonAbility(
                             pokemon.id,
@@ -116,6 +111,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
         pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData,
         pokemon: Pokemon
     ) {
+        Log.d("PAVM", "joinMetaDataToAbilities")
         withContext(Dispatchers.IO) {
             val idsOfAbilitiesNotJoined = pokemonWithAbilitiesAndMetaData.abilities.filterNot { pokemonAbility ->
                 pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.any { metaData -> pokemonAbility.name == metaData.abilityName }
@@ -130,6 +126,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
 
     private suspend fun insertPokemonAbilityMetaDataJoin(remotePokemonId: Int, pokemonAbilityId: Int) {
         withContext(Dispatchers.IO) {
+            Log.d("PAVM", "insertPokemonAbilityMetaDataJoin")
             pokemonAbilityMetaDataRepository.insertAbilityMetaDataJoin(
                 PokemonAbilityMetaDataJoin(
                     remotePokemonId,
@@ -140,12 +137,10 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     }
 
     fun setPokemon(pokemon: Pokemon) {
-        Log.d("PAVM", "SET POKEMON $pokemon")
         this.pokemon.value = pokemon
     }
 
     fun retry() {
-        Log.d("PAVM", "RETRY")
         this.pokemon.value = this.pokemon.value
     }
 

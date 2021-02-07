@@ -28,12 +28,10 @@ class PokemonFiltersViewModel @ViewModelInject constructor(
     }
 
     fun addScrollAwareFilerFab(view: RecyclerView) {
-        Log.d("PFFVM", "addScrollAwareFilerFab")
         this.onAddScrollAwareFilerFab.value = view
     }
 
     fun closeFiltersLayout() {
-        Log.d("PFFVM", "closeFiltersLayout")
         onCloseFiltersLayout.call()
     }
 

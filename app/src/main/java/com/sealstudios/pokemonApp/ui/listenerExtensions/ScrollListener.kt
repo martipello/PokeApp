@@ -59,7 +59,6 @@ suspend fun RecyclerView.whileScrolling() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                Log.d("onScrolled", "SCROLL")
             }
         })
     }

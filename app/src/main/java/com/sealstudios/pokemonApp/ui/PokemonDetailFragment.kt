@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +36,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTy
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
+import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
 
@@ -52,14 +52,15 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
     private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
+    private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
     private var hasExpanded: Boolean = false
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
@@ -90,7 +91,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setNameAndIDViews(context: Context) {
-        binding.title.text = pokemonName.capitalize()
+        binding.title.text = pokemonName.capitalize(Locale.ROOT)
         binding.idLabel.text = context.getString(R.string.pokemonId, pokemonId)
     }
 
@@ -98,18 +99,18 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         pokemonId = PokemonViewHolder.pokemonIdFromTransitionName(args.transitionName).toInt()
         pokemonName = args.pokemonName
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.transitionName =
-            args.transitionName
+                args.transitionName
     }
 
     private fun setViewModelProperties() {
         setPokemonIdForViewModels(pokemonId)
         pokemonDetailViewModel.setViewColors(
-            args.dominantSwatchRgb,
-            args.lightVibrantSwatchRgb
+                args.dominantSwatchRgb,
+                args.lightVibrantSwatchRgb
         )
     }
 
-    private fun setPokemonIdForViewModels(pokemonId: Int){
+    private fun setPokemonIdForViewModels(pokemonId: Int) {
         pokemonDetailViewModel.setPokemonId(pokemonId)
         pokemonSpeciesViewModel.setPokemonId(pokemonId)
     }
@@ -122,13 +123,15 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                         populatePokemonDetailViews(it)
                         pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
                         pokemonAbilityViewModel.setPokemon(pokemon = it.pokemon)
+                        pokemonBaseStatsViewModel.setPokemonId(pokemonId = it.pokemon.id)
                         binding.setNotEmpty()
                     }
                 }
                 Status.ERROR -> {
                     binding.setError(
-                        errorMessage = pokemonWithTypes.message ?: "Oops, Something went wrong.",
-                        fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
+                            errorMessage = pokemonWithTypes.message
+                                    ?: "Oops, Something went wrong.",
+                            fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
                     )
                 }
                 Status.LOADING -> {
@@ -156,50 +159,50 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun observeHasExpandedState() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
-            viewLifecycleOwner, Observer { hasExpanded ->
-                this.hasExpanded = hasExpanded
-                if (hasExpanded) {
-                    restoreUIState()
-                }
+                viewLifecycleOwner, Observer { hasExpanded ->
+            this.hasExpanded = hasExpanded
+            if (hasExpanded) {
+                restoreUIState()
             }
+        }
         )
     }
 
     private fun observeUIColor() {
         pokemonDetailViewModel.dominantAndLightVibrantColors.observe(
-            viewLifecycleOwner, Observer { viewColors ->
-                setColoredElements(
+                viewLifecycleOwner, Observer { viewColors ->
+            setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
-                )
-            })
+            )
+        })
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
         if (!hasExpanded) {
             binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
-                dominantColor
+                    dominantColor
             )
         }
         binding.splash.setCardBackgroundColor(dominantColor)
         binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
-            dominantColor
+                dominantColor
         )
     }
 
     private fun restoreUIState() {
         binding.splash.visibility = View.VISIBLE
         binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-            R.id.large_image
+                R.id.large_image
         )
         binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-            .setCardBackgroundColor(
-                ContextCompat.getColor(
-                    binding.root.context,
-                    android.R.color.transparent
+                .setCardBackgroundColor(
+                        ContextCompat.getColor(
+                                binding.root.context,
+                                android.R.color.transparent
+                        )
                 )
-            )
     }
 
     @SuppressLint("DefaultLocale")
@@ -214,49 +217,49 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     @SuppressLint("DefaultLocale")
     private fun populatePokemonDetailViews(pokemon: PokemonWithTypes) =
-        lifecycleScope.launch(Dispatchers.Main) {
-            setPokemonTypes(pokemon.types)
-            setPokemonFormData(pokemon)
-        }
+            lifecycleScope.launch(Dispatchers.Main) {
+                setPokemonTypes(pokemon.types)
+                setPokemonFormData(pokemon)
+            }
 
     @SuppressLint("DefaultLocale")
     private fun populatePokemonSpeciesViews(pokemonSpecies: PokemonSpecies) =
-        lifecycleScope.launch(Dispatchers.Main) {
-            setPokemonSpeciesFormData(pokemonSpecies)
-        }
+            lifecycleScope.launch(Dispatchers.Main) {
+                setPokemonSpeciesFormData(pokemonSpecies)
+            }
 
     private suspend fun setPokemonImageView(imageUrl: String): Boolean =
-        suspendCancellableCoroutine { continuation ->
-            val requestOptions =
-                RequestOptions.noTransformation()
-            glide.asBitmap()
-                .load(imageUrl)
-                .dontAnimate()
-                .diskCacheStrategy(DiskCacheStrategy.DATA)
-                .apply(requestOptions)
-                .placeholder(R.drawable.pokeball_vector)
-                .addListener(imageRequestListener(continuation))
-                .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-        }
+            suspendCancellableCoroutine { continuation ->
+                val requestOptions =
+                        RequestOptions.noTransformation()
+                glide.asBitmap()
+                        .load(imageUrl)
+                        .dontAnimate()
+                        .diskCacheStrategy(DiskCacheStrategy.DATA)
+                        .apply(requestOptions)
+                        .placeholder(R.drawable.pokeball_vector)
+                        .addListener(imageRequestListener(continuation))
+                        .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
+            }
 
     private fun imageRequestListener(continuation: CancellableContinuation<Boolean>): RequestListener<Bitmap?> {
         return object : RequestListener<Bitmap?> {
             override fun onLoadFailed(
-                e: GlideException?,
-                model: Any,
-                target: Target<Bitmap?>,
-                isFirstResource: Boolean
+                    e: GlideException?,
+                    model: Any,
+                    target: Target<Bitmap?>,
+                    isFirstResource: Boolean
             ): Boolean {
                 if (continuation.isActive) continuation.resume(false)
                 return false
             }
 
             override fun onResourceReady(
-                resource: Bitmap?,
-                model: Any,
-                target: Target<Bitmap?>,
-                dataSource: DataSource,
-                isFirstResource: Boolean
+                    resource: Bitmap?,
+                    model: Any,
+                    target: Target<Bitmap?>,
+                    dataSource: DataSource,
+                    isFirstResource: Boolean
             ): Boolean {
                 if (continuation.isActive) continuation.resume(true)
                 return false
@@ -266,23 +269,23 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
 
     private fun setPokemonTypes(
-        pokemonTypes: List<PokemonType>
+            pokemonTypes: List<PokemonType>
     ) {
         binding.pokemonTypesChipGroup.removeAllViews()
         val types = getPokemonEnumTypesForPokemonTypes(
-            PokemonType.getTypesInOrder(types = pokemonTypes)
+                PokemonType.getTypesInOrder(types = pokemonTypes)
         )
 
         for (type in types) {
             binding.pokemonTypesChipGroup.addView(
-                createPokemonTypeChip(type, binding.root.context)
+                    createPokemonTypeChip(type, binding.root.context)
             )
         }
     }
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(
-        pokemonWithTypes: PokemonWithTypes
+            pokemonWithTypes: PokemonWithTypes
     ) {
         val context = binding.root.context
         binding.title.text = pokemonWithTypes.pokemon.name.capitalize()
@@ -297,14 +300,14 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonSpeciesFormData(
-        species: PokemonSpecies
+            species: PokemonSpecies
     ) {
         val context = binding.root.context
         binding.subtitle.text = species.species.capitalize()
         binding.genTextView.text = context.getString(R.string.generation_label)
 
         binding.genTextView.text = PokemonGeneration.formatGenerationName(
-            PokemonGeneration.getGeneration(species.generation ?: "")
+                PokemonGeneration.getGeneration(species.generation ?: "")
         )
     }
 

@@ -75,7 +75,6 @@ class PokemonAdapter(
     }
 
     fun submitList(list: List<PokemonAdapterListItem>) {
-        Log.d("ADAPTER", "called submit list")
         differ.submitList(list)
     }
 

@@ -1,20 +1,21 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.*
+import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
+import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
+import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats.Companion.getPokemonStatIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
-import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -25,6 +26,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private val repository: PokemonWithTypesAndSpeciesRepository,
     private val remotePokemonRepository: RemotePokemonRepository,
     private val pokemonTypeRepository: PokemonTypeRepository,
+    private val pokemonBaseStatsRepository: PokemonBaseStatsRepository,
     private val pokemonWithTypesRepository: PokemonWithTypesRepository,
     private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
     private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
@@ -64,11 +66,17 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                 if (pokemonRequest.data != null) {
                     val pokemonRequestData = pokemonRequest.data
                     val pokemon = mapDbPokemonFromPokemonResponse(pokemonRequestData)
+                    Log.d("PDVM",  "launch coroutines and wait")
                     viewModelScope.launch {
-                        repository.updatePokemon(pokemon)
-                        insertPokemonTypes(pokemonRequestData)
-                        pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
-                        pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemon.id) }
+                        val updateDatabase = async {
+                            repository.updatePokemon(pokemon)
+                            insertPokemonTypes(pokemonRequestData)
+                            pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemon.id) }
+                            pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
+                            pokemonRequestData.stats?.let { insertPokemonStats(it, pokemon.id) }
+                        }
+                        updateDatabase.await()
+                        Log.d("PDVM",  "waited")
                     }
                     emit(
                         Resource.success(
@@ -96,17 +104,28 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             mapDbPokemonTypesFromPokemonResponse(
                 remotePokemon
             )?.let {
-                pokemonTypeRepository.insertPokemonTypes(
-                    it
-                )
+                pokemonTypeRepository.insertPokemonTypes(it)
             }
             mapTypeJoinsFromPokemonResponse(
                 remotePokemon
             )?.let {
-                pokemonTypeRepository.insertPokemonTypeJoins(
-                    it
-                )
+                pokemonTypeRepository.insertPokemonTypeJoins(it)
             }
+        }
+    }
+
+    private suspend fun insertPokemonStats(
+            stats: List<PokemonStat>,
+            remotePokemonId: Int
+    ) {
+        withContext(Dispatchers.IO) {
+            val pokemonBaseStats = PokemonBaseStats.mapRemoteStatToPokemonBaseStat(
+                    pokemonId = remotePokemonId,
+                    pokemonStats = stats
+            )
+            val pokemonBaseStatsJoin = PokemonBaseStatsJoin(remotePokemonId, pokemonBaseStats.id)
+            pokemonBaseStatsRepository.insertPokemonBaseStats(pokemonBaseStats)
+            pokemonBaseStatsRepository.insertPokemonBaseStatsJoin(pokemonBaseStatsJoin)
         }
     }
 
@@ -122,22 +141,27 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                 )
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
             }
+            Log.d("PDVM",  "insertPokemonAbilityMetaData")
         }
     }
 
     private suspend fun insertPokemonAbilityMetaData(abilities: List<PokemonAbility>, pokemonId: Int) {
-        for (abilityResponse in abilities) {
-            val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
-            withContext(Dispatchers.IO) {
-                val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
-                    abilityId,
-                    pokemonId,
-                    abilityResponse.ability.name,
-                    abilityResponse.isHidden
-                )
-                pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
+        withContext(Dispatchers.IO){
+            for (abilityResponse in abilities) {
+                val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
+                withContext(Dispatchers.IO) {
+                    val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
+                            abilityId,
+                            pokemonId,
+                            abilityResponse.ability.name,
+                            abilityResponse.isHidden
+                    )
+                    pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
+                }
+                Log.d("PDVM",  "insertPokemonAbilityMetaData")
             }
         }
+
     }
 
     fun setPokemonId(pokemonId: Int) {

@@ -80,4 +80,6 @@
 
     <string name="AD_MOB_AD_UNIT_ID">ca-app-pub-3940256099942544~3347511713</string>
     <string name="AD_MOB_SAMPLE_AD_UNIT_ID">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="base_stats">Base Stats</string>
+    <string name="total_stats">Total : %s</string>
 </resources>

@@ -45,6 +45,9 @@ constructor(
         showMoreLessToggle.setOnClickListener {
             clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
         }
+        showMoreLessToggleButton.setOnClickListener {
+            clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
+        }
 
         CoroutineScope(Dispatchers.Default).launch {
             val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMoveWithMetaData.pokemonMove)

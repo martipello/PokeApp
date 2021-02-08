@@ -40,7 +40,6 @@ class PokemonBaseStatsFragment : Fragment() {
         pokemonBaseStatsViewModel.pokemonWithStats.observe(
                 viewLifecycleOwner,
                 Observer { pokemonWithStats ->
-                    Log.d("PBSVM", "observer fired $pokemonWithStats")
                     when (pokemonWithStats.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithStats.data != null) {

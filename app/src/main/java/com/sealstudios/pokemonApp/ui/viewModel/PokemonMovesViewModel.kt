@@ -11,28 +11,28 @@ import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.*
 
 class PokemonMovesViewModel @ViewModelInject constructor(
-    private val moveRepository: PokemonMoveRepository,
-    private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
-    private val remotePokemonRepository: RemotePokemonRepository,
+        private val moveRepository: PokemonMoveRepository,
+        private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
+        private val remotePokemonRepository: RemotePokemonRepository,
 ) : ViewModel() {
 
-    private var pokemon: MutableLiveData<Pokemon> = MutableLiveData()
+    private var pokemonId: MutableLiveData<Int> = MutableLiveData()
 
     // Doesn't handle errors as there isn't a way to emit them from the for loop in fetchPokemonMoves
     // and meta data comes from the pokemon and not the move meaning we would double the calls to the API
 
-    val pokemonMoves: LiveData<Resource<PokemonWithMovesAndMetaData>> = pokemon.switchMap { pokemon ->
+    val pokemonMoves: LiveData<Resource<PokemonWithMovesAndMetaData>> = pokemonId.switchMap { pokemonId ->
         liveData {
             emit(Resource.loading(null))
-            val pokemonWithMovesAndMetaData = moveRepository.getPokemonMovesAndMetaDataByIdAsync(pokemon.id)
-            if (pokemonWithMovesAndMetaData.moves.size != pokemon.move_ids.size) {
-                emitSource(fetchPokemonMoves(pokemon, pokemonWithMovesAndMetaData.moves))
+            val pokemonWithMovesAndMetaData = moveRepository.getPokemonMovesAndMetaDataByIdAsync(pokemonId)
+            if (pokemonWithMovesAndMetaData.moves.size != pokemonWithMovesAndMetaData.pokemon.move_ids.size) {
+                emitSource(fetchPokemonMoves(pokemonWithMovesAndMetaData.pokemon, pokemonWithMovesAndMetaData.moves))
             } else {
                 emit(Resource.success(pokemonWithMovesAndMetaData))
             }
 
             if (pokemonWithMovesAndMetaData.moves.size > pokemonWithMovesAndMetaData.pokemonMoveMetaData.size) {
-                joinMetaDataToMoves(pokemonWithMovesAndMetaData, pokemon)
+                joinMetaDataToMoves(pokemonWithMovesAndMetaData, pokemonWithMovesAndMetaData.pokemon)
             }
         }
     }
@@ -52,8 +52,8 @@ class PokemonMovesViewModel @ViewModelInject constructor(
     }
 
     private suspend fun fetchAndSavePokemonMove(
-        moveId: Int,
-        pokemon: Pokemon,
+            moveId: Int,
+            pokemon: Pokemon,
     ) {
         withContext(Dispatchers.IO) {
             val moveRequest = remotePokemonRepository.moveForId(moveId)
@@ -61,8 +61,8 @@ class PokemonMovesViewModel @ViewModelInject constructor(
                 Status.SUCCESS -> {
                     moveRequest.data?.let {
                         insertPokemonMove(
-                            pokemon.id,
-                            PokemonMove.mapRemotePokemonMoveToDatabasePokemonMove(it)
+                                pokemon.id,
+                                PokemonMove.mapRemotePokemonMoveToDatabasePokemonMove(it)
                         )
                         insertPokemonMoveMetaDataJoin(pokemon.id, it.id)
                     }
@@ -77,17 +77,17 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         withContext(Dispatchers.IO) {
             moveRepository.insertPokemonMove(pokemonMove)
             moveRepository.insertPokemonMovesJoin(
-                PokemonMovesJoin(
-                    remotePokemonId,
-                    pokemonMove.id
-                )
+                    PokemonMovesJoin(
+                            remotePokemonId,
+                            pokemonMove.id
+                    )
             )
         }
     }
 
     private suspend fun joinMetaDataToMoves(
-        pokemonWithMovesAndMetaData: PokemonWithMovesAndMetaData,
-        pokemon: Pokemon
+            pokemonWithMovesAndMetaData: PokemonWithMovesAndMetaData,
+            pokemon: Pokemon
     ) {
         val idsOfMovesNotJoined = pokemonWithMovesAndMetaData.moves.filterNot { pokemonMove ->
             pokemonWithMovesAndMetaData.pokemonMoveMetaData.any { metaData -> pokemonMove.name == metaData.moveName }
@@ -103,20 +103,20 @@ class PokemonMovesViewModel @ViewModelInject constructor(
     private suspend fun insertPokemonMoveMetaDataJoin(remotePokemonId: Int, pokemonMoveId: Int) {
         withContext(Dispatchers.IO) {
             pokemonMoveMetaDataRepository.insertMoveMetaDataJoin(
-                PokemonMoveMetaDataJoin(
-                    remotePokemonId,
-                    PokemonMoveMetaData.createMetaMoveId(remotePokemonId, pokemonMoveId)
-                )
+                    PokemonMoveMetaDataJoin.createMoveMetaDataJoin(
+                            remotePokemonId,
+                            pokemonMoveId
+                    )
             )
         }
     }
 
-    fun setPokemon(pokemon: Pokemon) {
-        this.pokemon.value = pokemon
+    fun setPokemon(pokemonId: Int) {
+        this.pokemonId.value = pokemonId
     }
 
     fun retry() {
-        this.pokemon.value = this.pokemon.value
+        this.pokemonId.value = this.pokemonId.value
     }
 
 }

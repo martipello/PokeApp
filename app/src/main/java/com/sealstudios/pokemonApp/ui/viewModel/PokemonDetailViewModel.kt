@@ -9,7 +9,6 @@ import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
 import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
-import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats.Companion.getPokemonStatIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
@@ -40,6 +39,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 
     val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
 
+    val onFinishedSavingPokemonAbilities: SingleLiveEvent<Int> = SingleLiveEvent()
+    val onFinishedSavingPokemonBaseStats: SingleLiveEvent<Int> = SingleLiveEvent()
+    val onFinishedSavingPokemonMoves: SingleLiveEvent<Int> = SingleLiveEvent()
+
     private fun pokemonDetails() = pokemonId.switchMap { id ->
         liveData {
             emit(Resource.loading(null))
@@ -66,18 +69,8 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                 if (pokemonRequest.data != null) {
                     val pokemonRequestData = pokemonRequest.data
                     val pokemon = mapDbPokemonFromPokemonResponse(pokemonRequestData)
-                    Log.d("PDVM",  "launch coroutines and wait")
-                    viewModelScope.launch {
-                        val updateDatabase = async {
-                            repository.updatePokemon(pokemon)
-                            insertPokemonTypes(pokemonRequestData)
-                            pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemon.id) }
-                            pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
-                            pokemonRequestData.stats?.let { insertPokemonStats(it, pokemon.id) }
-                        }
-                        updateDatabase.await()
-                        Log.d("PDVM",  "waited")
-                    }
+                    repository.updatePokemon(pokemon)
+                    insertPokemonTypes(pokemonRequestData)
                     emit(
                         Resource.success(
                             mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
@@ -88,12 +81,47 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                             }
                         )
                     )
+
+                    onFinishedSavingPokemonBaseStats(pokemon.id, pokemonRequestData)
+                    onFinishedSavingPokemonAbilities(pokemon.id, pokemonRequestData)
+                    onFinishedSavingPokemonMoves(pokemon.id, pokemonRequestData)
+
                 } else {
                     emit(Resource.error(pokemonRequest.message ?: "Data is empty", null, pokemonRequest.code))
                 }
             }
             Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null, pokemonRequest.code))
             Status.LOADING -> emit(Resource.loading(null))
+        }
+    }
+
+    private suspend fun onFinishedSavingPokemonAbilities(pokemonId: Int, pokemonRequestData: ApiPokemon){
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonAbilities.value = pokemonId
+        }
+    }
+
+    private suspend fun onFinishedSavingPokemonBaseStats(pokemonId: Int, pokemonRequestData: ApiPokemon){
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.stats?.let { insertPokemonStats(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonBaseStats.value = pokemonId
+        }
+    }
+
+    private suspend fun onFinishedSavingPokemonMoves(pokemonId: Int, pokemonRequestData: ApiPokemon){
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonMoves.value = pokemonId
         }
     }
 
@@ -141,7 +169,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                 )
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
             }
-            Log.d("PDVM",  "insertPokemonAbilityMetaData")
         }
     }
 
@@ -158,7 +185,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     )
                     pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
                 }
-                Log.d("PDVM",  "insertPokemonAbilityMetaData")
             }
         }
 
@@ -201,7 +227,6 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         private const val hasExpandedKey: String = "hasExpanded"
         private const val lightVibrantColorKey: String = "lightVibrantColor"
         private const val dominantColorKey: String = "dominantColor"
-        private const val TAG: String = "PDVM"
     }
 
 }

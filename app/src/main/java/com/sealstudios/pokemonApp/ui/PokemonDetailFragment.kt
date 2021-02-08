@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -87,6 +88,9 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             }
             observePokemonDetails()
             observePokemonSpecies()
+            onFinishedSavingPokemonAbilities()
+            onFinishedSavingPokemonBaseStats()
+            onFinishedSavingPokemonMoves()
         }
     }
 
@@ -121,9 +125,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 Status.SUCCESS -> {
                     pokemonWithTypes.data?.let {
                         populatePokemonDetailViews(it)
-                        pokemonMovesViewModel.setPokemon(pokemon = it.pokemon)
-                        pokemonAbilityViewModel.setPokemon(pokemon = it.pokemon)
-                        pokemonBaseStatsViewModel.setPokemonId(pokemonId = it.pokemon.id)
                         binding.setNotEmpty()
                     }
                 }
@@ -138,6 +139,24 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     binding.setLoading()
                 }
             }
+        })
+    }
+
+    private fun onFinishedSavingPokemonAbilities(){
+        pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, Observer {
+            pokemonAbilityViewModel.setPokemonId(it)
+        })
+    }
+
+    private fun onFinishedSavingPokemonBaseStats(){
+        pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, Observer {
+            pokemonBaseStatsViewModel.setPokemonId(it)
+        })
+    }
+
+    private fun onFinishedSavingPokemonMoves(){
+        pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, Observer {
+            pokemonMovesViewModel.setPokemon(it)
         })
     }
 

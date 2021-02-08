@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,6 +12,7 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData.Companion.createAbilityMetaDataId
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
@@ -49,40 +49,45 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
 
     private fun observePokemonAbilities() {
         pokemonAbilityViewModel.pokemonAbilities.observe(
-            viewLifecycleOwner,
-            Observer { pokemonWithAbilitiesAndMetaDataResource ->
-                when (pokemonWithAbilitiesAndMetaDataResource.status) {
-                    Status.SUCCESS -> {
-                        if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
-                            val pokemonWithAbilitiesAndMetaData = pokemonWithAbilitiesAndMetaDataResource.data
-                            val abilitiesWithMetaDataList = pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
-                                pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
-                                    it.id == createAbilityMetaDataId(
-                                        pokemonWithAbilitiesAndMetaData.pokemon.id,
-                                        ability.id
-                                    )
-                                }.map { PokemonAbilityWithMetaData(ability, it) }
-                            }.flatten()
-                            setPokemonAbilities(abilitiesWithMetaDataList)
-                        } else {
-                            binding.setEmpty()
+                viewLifecycleOwner,
+                Observer { pokemonWithAbilitiesAndMetaDataResource ->
+                    when (pokemonWithAbilitiesAndMetaDataResource.status) {
+                        Status.SUCCESS -> {
+                            if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
+                                val pokemonWithAbilitiesAndMetaData = pokemonWithAbilitiesAndMetaDataResource.data
+                                val abilitiesWithMetaDataList = mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData)
+                                setPokemonAbilities(abilitiesWithMetaDataList)
+                            } else {
+                                binding.setEmpty()
+                            }
+                        }
+                        Status.ERROR -> {
+                            binding.setError(
+                                    pokemonWithAbilitiesAndMetaDataResource.message
+                                            ?: "Oops, something went wrong..."
+                            )
+                            { pokemonAbilityViewModel.retry() }
+                        }
+                        Status.LOADING -> {
+                            binding.setLoading()
                         }
                     }
-                    Status.ERROR -> {
-                        binding.setError(
-                            pokemonWithAbilitiesAndMetaDataResource.message ?: "Oops, something went wrong..."
-                        )
-                        { pokemonAbilityViewModel.retry() }
-                    }
-                    Status.LOADING -> {
-                        binding.setLoading()
-                    }
-                }
-            })
+                })
+    }
+
+    private fun mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData): List<PokemonAbilityWithMetaData> {
+        return pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
+            pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
+                it.id == createAbilityMetaDataId(
+                        pokemonWithAbilitiesAndMetaData.pokemon.id,
+                        ability.id
+                )
+            }.map { PokemonAbilityWithMetaData(ability, it) }
+        }.flatten()
     }
 
     private fun setPokemonAbilities(
-        pokemonAbilities: List<PokemonAbilityWithMetaData>
+            pokemonAbilities: List<PokemonAbilityWithMetaData>
     ) {
         if (pokemonAbilities.isEmpty()) {
             binding.setEmpty()
@@ -99,14 +104,14 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
     }
 
     private fun addPokemonAdapterRecyclerViewDecoration(
-        recyclerView: RecyclerView
+            recyclerView: RecyclerView
     ) {
         recyclerView.addItemDecoration(
-            PokemonAbilityListDecoration(
-                recyclerView.context.resources.getDimensionPixelSize(
-                    R.dimen.qualified_small_margin_8dp
-                ),
-            )
+                PokemonAbilityListDecoration(
+                        recyclerView.context.resources.getDimensionPixelSize(
+                                R.dimen.qualified_small_margin_8dp
+                        ),
+                )
         )
     }
 

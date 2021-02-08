@@ -17,29 +17,28 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     private val remotePokemonRepository: RemotePokemonRepository,
 ) : ViewModel() {
 
-    private var pokemon: MutableLiveData<Pokemon> = MutableLiveData()
+    private var pokemonId: MutableLiveData<Int> = MutableLiveData()
 
     // Doesn't handle errors as there isn't a way to emit them from the for loop in fetchPokemonAbilities
     // and meta data comes from the pokemon and not the move meaning we would double the calls to the API
 
-    val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemon.switchMap { pokemon ->
+    val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemonId.switchMap { pokemonId ->
         liveData {
             emit(Resource.loading(null))
-
             val pokemonWithAbilitiesAndMetaData =
-                pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
+                pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemonId)
             if (pokemonWithAbilitiesAndMetaData.abilities.size > pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.size) {
-                joinMetaDataToAbilities(pokemonWithAbilitiesAndMetaData, pokemon)
+                joinMetaDataToAbilities(pokemonWithAbilitiesAndMetaData, pokemonWithAbilitiesAndMetaData.pokemon)
             }
 
-            if (pokemon.abilityIds.size != pokemonWithAbilitiesAndMetaData.abilities.size) {
-                Log.d("PAVM", "emit database")
+            if (pokemonWithAbilitiesAndMetaData.pokemon.abilityIds.size != pokemonWithAbilitiesAndMetaData.abilities.size) {
                 emitSource(
                     fetchPokemonAbilities(
-                        pokemon,
+                            pokemonWithAbilitiesAndMetaData.pokemon,
                         pokemonWithAbilitiesAndMetaData.abilities.map { it.id })
                 )
             } else {
+                Log.d("PAVM", "emit database")
                 emit(Resource.success(pokemonWithAbilitiesAndMetaData))
             }
         }
@@ -126,22 +125,18 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
 
     private suspend fun insertPokemonAbilityMetaDataJoin(remotePokemonId: Int, pokemonAbilityId: Int) {
         withContext(Dispatchers.IO) {
-            Log.d("PAVM", "insertPokemonAbilityMetaDataJoin")
             pokemonAbilityMetaDataRepository.insertAbilityMetaDataJoin(
-                PokemonAbilityMetaDataJoin(
-                    remotePokemonId,
-                    PokemonMoveMetaData.createMetaMoveId(remotePokemonId, pokemonAbilityId)
-                )
+                PokemonAbilityMetaDataJoin.createPokemonAbilityMetaDataJoin(remotePokemonId = remotePokemonId, pokemonAbilityId = pokemonAbilityId)
             )
         }
     }
 
-    fun setPokemon(pokemon: Pokemon) {
-        this.pokemon.value = pokemon
+    fun setPokemonId(pokemonId: Int) {
+        this.pokemonId.value = pokemonId
     }
 
     fun retry() {
-        this.pokemon.value = this.pokemon.value
+        this.pokemonId.value = this.pokemonId.value
     }
 
 }

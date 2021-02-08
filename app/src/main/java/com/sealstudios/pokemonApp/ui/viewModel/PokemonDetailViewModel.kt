@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -22,14 +21,14 @@ val <A, B> Pair<A, B>.dominantColor: A get() = this.first
 val <A, B> Pair<A, B>.lightVibrantColor: B get() = this.second
 
 class PokemonDetailViewModel @ViewModelInject constructor(
-    private val repository: PokemonWithTypesAndSpeciesRepository,
-    private val remotePokemonRepository: RemotePokemonRepository,
-    private val pokemonTypeRepository: PokemonTypeRepository,
-    private val pokemonBaseStatsRepository: PokemonBaseStatsRepository,
-    private val pokemonWithTypesRepository: PokemonWithTypesRepository,
-    private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
-    private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
+        private val repository: PokemonWithTypesAndSpeciesRepository,
+        private val remotePokemonRepository: RemotePokemonRepository,
+        private val pokemonTypeRepository: PokemonTypeRepository,
+        private val pokemonBaseStatsRepository: PokemonBaseStatsRepository,
+        private val pokemonWithTypesRepository: PokemonWithTypesRepository,
+        private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
+        private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
@@ -50,15 +49,28 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             if (pokemonWithTypes.pokemon.isDefault()) {
                 emitSource(fetchPokemonDetails(pokemonWithTypes))
             } else {
+                onFinish(id, null)
                 emit(
-                    Resource.success(
-                        PokemonWithTypes(
-                            pokemon = pokemonWithTypes.pokemon,
-                            types = pokemonWithTypes.types
+                        Resource.success(
+                                PokemonWithTypes(
+                                        pokemon = pokemonWithTypes.pokemon,
+                                        types = pokemonWithTypes.types
+                                )
                         )
-                    )
                 )
             }
+        }
+    }
+
+    private suspend fun onFinish(pokemonId: Int, pokemonRequestData: ApiPokemon?) {
+        if (pokemonRequestData != null) {
+            onFinishedSavingPokemonBaseStats(pokemonId, pokemonRequestData)
+            onFinishedSavingPokemonAbilities(pokemonId, pokemonRequestData)
+            onFinishedSavingPokemonMoves(pokemonId, pokemonRequestData)
+        } else {
+            onFinishedSavingPokemonAbilities.value = pokemonId
+            onFinishedSavingPokemonBaseStats.value = pokemonId
+            onFinishedSavingPokemonMoves.value = pokemonId
         }
     }
 
@@ -72,30 +84,25 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     repository.updatePokemon(pokemon)
                     insertPokemonTypes(pokemonRequestData)
                     emit(
-                        Resource.success(
-                            mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
-                                PokemonWithTypes(
-                                    pokemon = pokemon,
-                                    types = it
-                                )
-                            }
-                        )
+                            Resource.success(
+                                    mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
+                                        PokemonWithTypes(pokemon = pokemon, types = it)
+                                    }
+                            )
                     )
-
-                    onFinishedSavingPokemonBaseStats(pokemon.id, pokemonRequestData)
-                    onFinishedSavingPokemonAbilities(pokemon.id, pokemonRequestData)
-                    onFinishedSavingPokemonMoves(pokemon.id, pokemonRequestData)
-
+                    onFinish(pokemon.id, pokemonRequestData)
                 } else {
-                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null, pokemonRequest.code))
+                    emit(Resource.error(pokemonRequest.message
+                            ?: "Data is empty", null, pokemonRequest.code))
                 }
             }
-            Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null, pokemonRequest.code))
+            Status.ERROR -> emit(Resource.error(pokemonRequest.message
+                    ?: "General error", null, pokemonRequest.code))
             Status.LOADING -> emit(Resource.loading(null))
         }
     }
 
-    private suspend fun onFinishedSavingPokemonAbilities(pokemonId: Int, pokemonRequestData: ApiPokemon){
+    private suspend fun onFinishedSavingPokemonAbilities(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
                 pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemonId) }
@@ -105,7 +112,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun onFinishedSavingPokemonBaseStats(pokemonId: Int, pokemonRequestData: ApiPokemon){
+    private suspend fun onFinishedSavingPokemonBaseStats(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
                 pokemonRequestData.stats?.let { insertPokemonStats(it, pokemonId) }
@@ -115,7 +122,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun onFinishedSavingPokemonMoves(pokemonId: Int, pokemonRequestData: ApiPokemon){
+    private suspend fun onFinishedSavingPokemonMoves(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
                 pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemonId) }
@@ -126,16 +133,16 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun insertPokemonTypes(
-        remotePokemon: ApiPokemon
+            remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
             mapDbPokemonTypesFromPokemonResponse(
-                remotePokemon
+                    remotePokemon
             )?.let {
                 pokemonTypeRepository.insertPokemonTypes(it)
             }
             mapTypeJoinsFromPokemonResponse(
-                remotePokemon
+                    remotePokemon
             )?.let {
                 pokemonTypeRepository.insertPokemonTypeJoins(it)
             }
@@ -162,10 +169,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             val moveId = getPokemonMoveIdFromUrl(moveResponse.move.url)
             withContext(Dispatchers.IO) {
                 val moveMetaData = PokemonMoveMetaData.mapRemotePokemonToMoveMetaData(
-                    moveId,
-                    pokemonId,
-                    moveResponse.move.name,
-                    moveResponse.version_group_details
+                        moveId,
+                        pokemonId,
+                        moveResponse.move.name,
+                        moveResponse.version_group_details
                 )
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
             }
@@ -173,7 +180,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun insertPokemonAbilityMetaData(abilities: List<PokemonAbility>, pokemonId: Int) {
-        withContext(Dispatchers.IO){
+        withContext(Dispatchers.IO) {
             for (abilityResponse in abilities) {
                 val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
                 withContext(Dispatchers.IO) {

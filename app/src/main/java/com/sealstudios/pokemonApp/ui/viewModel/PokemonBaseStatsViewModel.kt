@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -12,7 +13,7 @@ class PokemonBaseStatsViewModel @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var pokemonId: MutableLiveData<Int> = MutableLiveData()
+    private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
 
     val pokemonWithStats: LiveData<Resource<PokemonWithBaseStats>> = pokemonId.switchMap { id ->
         liveData {

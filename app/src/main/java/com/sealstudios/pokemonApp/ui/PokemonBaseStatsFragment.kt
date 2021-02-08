@@ -39,11 +39,12 @@ class PokemonBaseStatsFragment : Fragment() {
     private fun observePokemonBaseStats() {
         pokemonBaseStatsViewModel.pokemonWithStats.observe(
                 viewLifecycleOwner,
-                Observer { pokemonWithAbilitiesAndMetaDataResource ->
-                    when (pokemonWithAbilitiesAndMetaDataResource.status) {
+                Observer { pokemonWithStats ->
+                    Log.d("PBSVM", "observer fired $pokemonWithStats")
+                    when (pokemonWithStats.status) {
                         Status.SUCCESS -> {
-                            if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
-                                populateBaseStats(pokemonWithAbilitiesAndMetaDataResource.data)
+                            if (pokemonWithStats.data != null) {
+                                populateBaseStats(pokemonWithStats.data)
                                 binding.setNotEmpty()
                             } else {
                                 binding.setEmpty()
@@ -51,7 +52,7 @@ class PokemonBaseStatsFragment : Fragment() {
                         }
                         Status.ERROR -> {
                             binding.setError(
-                                    pokemonWithAbilitiesAndMetaDataResource.message
+                                    pokemonWithStats.message
                                             ?: "Oops, something went wrong..."
                             )
                             { pokemonBaseStatsViewModel.retry() }

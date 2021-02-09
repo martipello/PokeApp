@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,6 +65,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     ): View {
         setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
+        binding.setLoading()
         setPokemonDetailFragmentBinding(binding)
         postponeEnterTransition()
         observeHasExpandedState()
@@ -124,9 +124,15 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, Observer { pokemonWithTypes ->
             when (pokemonWithTypes.status) {
                 Status.SUCCESS -> {
-                    pokemonWithTypes.data?.let {
-                        populatePokemonDetailViews(it)
+                    if (pokemonWithTypes.data != null) {
+                        populatePokemonDetailViews(pokemonWithTypes.data)
                         binding.setNotEmpty()
+                    } else {
+                        binding.setError(
+                                errorMessage = pokemonWithTypes.message
+                                        ?: "Oops, Something went wrong.",
+                                fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
+                        )
                     }
                 }
                 Status.ERROR -> {
@@ -143,19 +149,19 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         })
     }
 
-    private fun onFinishedSavingPokemonAbilities(){
+    private fun onFinishedSavingPokemonAbilities() {
         pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, Observer {
             pokemonAbilityViewModel.setPokemonId(it)
         })
     }
 
-    private fun onFinishedSavingPokemonBaseStats(){
+    private fun onFinishedSavingPokemonBaseStats() {
         pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, Observer {
             pokemonBaseStatsViewModel.setPokemonId(it)
         })
     }
 
-    private fun onFinishedSavingPokemonMoves(){
+    private fun onFinishedSavingPokemonMoves() {
         pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, Observer {
             pokemonMovesViewModel.setPokemon(it)
         })
@@ -166,8 +172,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {
-                        binding.setSpeciesNotEmpty()
                         populatePokemonSpeciesViews(it)
+                        binding.setSpeciesNotEmpty()
                     }
                 }
                 else -> {
@@ -336,11 +342,17 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         _binding = null
     }
 
+    private fun PokemonDetailFragmentBinding.setNotEmpty() {
+        mainProgress.root.visibility = View.GONE
+        errorLayout.root.visibility = View.GONE
+        content.visibility = View.VISIBLE
+    }
+
     private fun PokemonDetailFragmentBinding.setLoading() {
+        mainProgress.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        mainProgress.root.visibility = View.VISIBLE
         content.visibility = View.GONE
         errorLayout.root.visibility = View.GONE
-        mainProgress.root.visibility = View.VISIBLE
-        mainProgress.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
     }
 
     private fun PokemonDetailFragmentBinding.setError(errorMessage: String, fetchPokemon: () -> Unit) {
@@ -352,12 +364,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         errorLayout.retryButton.setOnClickListener {
             fetchPokemon()
         }
-    }
-
-    private fun PokemonDetailFragmentBinding.setNotEmpty() {
-        mainProgress.root.visibility = View.GONE
-        errorLayout.root.visibility = View.GONE
-        content.visibility = View.VISIBLE
     }
 
     private fun PokemonDetailFragmentBinding.setSpeciesEmpty() {

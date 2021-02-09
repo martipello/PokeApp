@@ -13,8 +13,9 @@
 
     <dimen name="qualified_view_holder_image">120dp</dimen>
     <dimen name="qualified_view_holder_image_corner_radius">60dp</dimen>
-    <dimen name="qualified_large_margin_128dp">128dp</dimen>
+    <dimen name="qualified_large_margin_128dp">132dp</dimen>
     <dimen name="qualified_large_margin_64dp">96dp</dimen>
+    <dimen name="qualified_large_margin_48dp">72dp</dimen>
     <dimen name="qualified_large_margin_32dp">64dp</dimen>
     <dimen name="qualified_medium_margin_16dp">32dp</dimen>
     <dimen name="qualified_medium_margin_12dp">24dp</dimen>

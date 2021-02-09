@@ -1,10 +1,12 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -131,20 +133,19 @@ class PokemonBaseStatsFragment : Fragment() {
     }
 
     private fun setStatBar(bar: TextRoundCornerProgressBar) {
-        bar.enableAnimation()
-        bar.progressColor = dominantAndLightVibrantColors.lightVibrantColor
-        bar.progressBackgroundColor = dominantAndLightVibrantColors.dominantColor
-        bar.animationSpeedScale = 5f
-    }
-
-    private fun setStatBarProgress(bar: TextRoundCornerProgressBar, value: Float) {
-        bar.enableAnimation()
         bar.progressBackgroundColor =
                 if (dominantAndLightVibrantColors.dominantColor != dominantAndLightVibrantColors.lightVibrantColor)
                     dominantAndLightVibrantColors.dominantColor
                 else ContextCompat.getColor(binding.root.context, R.color.light_grey)
-        bar.progressColor = dominantAndLightVibrantColors.lightVibrantColor
-        bar.animationSpeedScale = 5f
+        bar.progressColors = intArrayOf(
+                ColorUtils.blendARGB(
+                        dominantAndLightVibrantColors.lightVibrantColor,
+                        Color.WHITE, 0.5f),
+                dominantAndLightVibrantColors.lightVibrantColor
+        )
+    }
+
+    private fun setStatBarProgress(bar: TextRoundCornerProgressBar, value: Float) {
         lifecycleScope.launch {
             delay(200)
             withContext(Dispatchers.Main) {

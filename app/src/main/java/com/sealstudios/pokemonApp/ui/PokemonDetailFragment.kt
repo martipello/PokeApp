@@ -50,6 +50,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private var pokemonId: Int = -1
     private val args: PokemonDetailFragmentArgs by navArgs()
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
+    private val colorViewModel: ColorViewModel by viewModels()
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
     private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
@@ -108,7 +109,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun setViewModelProperties() {
         setPokemonIdForViewModels(pokemonId)
-        pokemonDetailViewModel.setViewColors(
+        colorViewModel.setViewColors(
                 args.dominantSwatchRgb,
                 args.lightVibrantSwatchRgb
         )
@@ -188,7 +189,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun observeUIColor() {
-        pokemonDetailViewModel.dominantAndLightVibrantColors.observe(
+        colorViewModel.dominantAndLightVibrantColors.observe(
                 viewLifecycleOwner, Observer { viewColors ->
             setColoredElements(
                     viewColors.dominantColor,

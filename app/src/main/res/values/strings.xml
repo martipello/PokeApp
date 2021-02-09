@@ -80,4 +80,13 @@
 
     <string name="AD_MOB_AD_UNIT_ID">ca-app-pub-3940256099942544~3347511713</string>
     <string name="AD_MOB_SAMPLE_AD_UNIT_ID">ca-app-pub-3940256099942544/2247696110</string>
+    <string name="base_stats">Base Stats</string>
+    <string name="total_stats">Total : %s</string>
+    <string name="hp">HP</string>
+    <string name="attack_text">Att</string>
+    <string name="defence_text">Def</string>
+    <string name="speed_text">Spd</string>
+    <string name="special_attack_text">Sp-Att</string>
+    <string name="special_defence_text">Sp-Def</string>
+    <string name="base_stats_total">Total : %d</string>
 </resources>

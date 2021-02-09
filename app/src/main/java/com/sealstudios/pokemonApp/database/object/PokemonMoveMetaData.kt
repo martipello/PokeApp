@@ -46,7 +46,7 @@ open class PokemonMoveMetaData constructor(
         const val VERSIONS_LEARNT: String = "versions_learnt"
 
         fun createMetaMoveId(pokemonId: Int, moveId: Int): Int {
-            return "$pokemonId$moveId".toInt()
+            return "$pokemonId$uniqueMoveConstant$moveId".toInt()
         }
 
         fun mapRemotePokemonToMoveMetaData(
@@ -64,6 +64,8 @@ open class PokemonMoveMetaData constructor(
                 learnMethods = pokemonMoveVersions.map { it.move_learn_method.name }
             )
         }
+
+        private const val uniqueMoveConstant = 101
 
     }
 

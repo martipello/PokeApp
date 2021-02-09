@@ -41,6 +41,9 @@ constructor(
         binding.showMoreLessToggle.setOnClickListener {
             clickListener?.onItemSelected(bindingAdapterPosition)
         }
+        binding.showMoreLessToggleButton.setOnClickListener {
+            clickListener?.onItemSelected(bindingAdapterPosition)
+        }
 
     }
 

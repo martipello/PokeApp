@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/base_stats_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment">
+
+    <include layout="@layout/pokemon_loading_layout"
+        android:id="@+id/base_stats_loading"
+        android:layout_margin="@dimen/qualified_large_margin_32dp"
+        android:layout_height="50dp"
+        android:layout_width="50dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <include layout="@layout/pokemon_error_layout"
+        android:id="@+id/base_stats_error"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/qualified_large_margin_32dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    android:id="@+id/base_stats_content">
+
+    <TextView
+        android:id="@+id/pokemon_about_label"
+        style="@style/ThemeOverlay.MySubTitleTextBold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+        android:text="@string/base_stats"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/text_barrier"
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:barrierDirection="right"
+        app:constraint_referenced_ids="hp_text,
+                attack_text, defence_text,
+                speed_text,special_attack_text,special_defence_text" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hp_text"
+        android:text="@string/hp"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/pokemon_about_label"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/hp_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/hp_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/hp_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/attack_text"
+        android:text="@string/attack_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/hp_text"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/attack_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/attack_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/attack_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/defence_text"
+        android:text="@string/defence_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/attack_text"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/defence_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/defence_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/defence_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/speed_text"
+        android:text="@string/speed_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/defence_text"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/speed_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/speed_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/speed_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/special_attack_text"
+        android:text="@string/special_attack_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/speed_text"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/special_attack_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/special_attack_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/special_attack_text"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/special_defence_text"
+        android:text="@string/special_defence_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintTop_toBottomOf="@id/special_attack_text"/>
+
+    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/special_defence_value"
+        app:rcRadius="@dimen/qualified_large_margin_32dp"
+        app:rcMax="255"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        app:rcProgress="0"
+        app:layout_constraintTop_toTopOf="@id/special_defence_text"
+        app:layout_constraintStart_toEndOf="@id/text_barrier"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/special_defence_text"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/total_label"
+        style="@style/ThemeOverlay.MyBodyTextBold"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/total_stats"
+        app:layout_constraintTop_toBottomOf="@id/special_defence_text"/>
+
+    <View
+        android:id="@+id/base_stats_divider"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+        android:background="@color/light_grey"
+        app:layout_constraintTop_toBottomOf="@id/total_label" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

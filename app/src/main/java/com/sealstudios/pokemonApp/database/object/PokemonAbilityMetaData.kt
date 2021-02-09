@@ -34,8 +34,10 @@ open class PokemonAbilityMetaData constructor(
         const val IS_HIDDEN: String = "is_hidden"
 
         fun createAbilityMetaDataId(pokemonId: Int, abilityId: Int): Int {
-            return "$pokemonId$abilityId".toInt()
+            return "$pokemonId$uniqueAbilityMetaDataConstant$abilityId".toInt()
         }
+
+        private const val uniqueAbilityMetaDataConstant = 1001
 
         fun mapRemotePokemonToAbilityMetaData(
             pokemonAbilityId: Int,

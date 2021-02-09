@@ -43,7 +43,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                         PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
                     )
                 }
-                else -> Log.d("RP2RPR", "fetch species failed")
+                else -> {}
             }
         }
     }
@@ -60,7 +60,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                         insertPokemonTypes(it)
                     }
                 }
-                else -> Log.d("RP2RPR", "fetch pokemon failed")
+                else -> {}
             }
 
         }

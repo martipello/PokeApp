@@ -15,23 +15,25 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Database(
-    entities = [
-        Pokemon::class,
-        PokemonType::class,
-        PokemonTypesJoin::class,
-        PokemonMove::class,
-        PokemonMovesJoin::class,
-        PokemonSpecies::class,
-        PokemonSpeciesJoin::class,
-        PokemonMoveMetaData::class,
-        PokemonMoveMetaDataJoin::class,
-        PokemonAbility::class,
-        PokemonAbilityJoin::class,
-        PokemonAbilityMetaData::class,
-        PokemonAbilityMetaDataJoin::class,
-    ],
-    version = DATABASE_VERSION,
-    exportSchema = false
+        entities = [
+            Pokemon::class,
+            PokemonType::class,
+            PokemonTypesJoin::class,
+            PokemonMove::class,
+            PokemonMovesJoin::class,
+            PokemonSpecies::class,
+            PokemonSpeciesJoin::class,
+            PokemonMoveMetaData::class,
+            PokemonMoveMetaDataJoin::class,
+            PokemonAbility::class,
+            PokemonAbilityJoin::class,
+            PokemonAbilityMetaData::class,
+            PokemonAbilityMetaDataJoin::class,
+            PokemonBaseStats::class,
+            PokemonBaseStatsJoin::class,
+        ],
+        version = DATABASE_VERSION,
+        exportSchema = false
 )
 @TypeConverters(RoomStringListConverter::class, RoomIntListConverter::class)
 abstract class PokemonRoomDatabase : RoomDatabase() {
@@ -49,9 +51,11 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
     abstract fun pokemonAbilityJoinDao(): PokemonAbilityJoinDao
     abstract fun pokemonAbilityMetaDataDao(): PokemonAbilityMetaDataDao
     abstract fun pokemonAbilityMetaDataJoinDao(): PokemonAbilityMetaDataJoinDao
+    abstract fun pokemonBaseStatsDao(): PokemonBaseStatsDao
+    abstract fun pokemonBaseStatsJoinDao(): PokemonBaseStatsJoinDao
 
     private class PokemonRoomDatabaseCallback(
-        private val scope: CoroutineScope
+            private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
         override fun onCreate(db: SupportSQLiteDatabase) {
@@ -59,34 +63,38 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             INSTANCE?.let { database ->
                 scope.launch {
                     populateDatabase(
-                        database.pokemonDao(),
-                        database.pokemonTypeDao(),
-                        database.pokemonTypeJoinDao(),
-                        database.pokemonMoveDao(),
-                        database.pokemonMoveJoinDao(),
-                        database.pokemonMoveMetaDataDao(),
-                        database.pokemonMoveMetaDataJoinDao(),
-                        database.pokemonAbilityDao(),
-                        database.pokemonAbilityJoinDao(),
-                        database.pokemonAbilityMetaDataDao(),
-                        database.pokemonAbilityMetaDataJoinDao(),
+                            database.pokemonDao(),
+                            database.pokemonTypeDao(),
+                            database.pokemonTypeJoinDao(),
+                            database.pokemonMoveDao(),
+                            database.pokemonMoveJoinDao(),
+                            database.pokemonMoveMetaDataDao(),
+                            database.pokemonMoveMetaDataJoinDao(),
+                            database.pokemonAbilityDao(),
+                            database.pokemonAbilityJoinDao(),
+                            database.pokemonAbilityMetaDataDao(),
+                            database.pokemonAbilityMetaDataJoinDao(),
+                            database.pokemonBaseStatsDao(),
+                            database.pokemonBaseStatsJoinDao(),
                     )
                 }
             }
         }
 
         suspend fun populateDatabase(
-            pokemonDao: PokemonDao,
-            pokemonTypeDao: PokemonTypeDao,
-            pokemonTypeJoinDao: PokemonTypeJoinDao,
-            pokemonMoveDao: PokemonMoveDao,
-            pokemonMoveJoinDao: PokemonMoveJoinDao,
-            pokemonMoveMetaDataDao: PokemonMoveMetaDataDao,
-            pokemonMoveMetaDataJoinDao: PokemonMoveMetaDataJoinDao,
-            pokemonAbilityDao: PokemonAbilityDao,
-            pokemonAbilityJoinDao: PokemonAbilityJoinDao,
-            pokemonAbilityMetaDataDao: PokemonAbilityMetaDataDao,
-            pokemonAbilityMetaDataJoinDao: PokemonAbilityMetaDataJoinDao,
+                pokemonDao: PokemonDao,
+                pokemonTypeDao: PokemonTypeDao,
+                pokemonTypeJoinDao: PokemonTypeJoinDao,
+                pokemonMoveDao: PokemonMoveDao,
+                pokemonMoveJoinDao: PokemonMoveJoinDao,
+                pokemonMoveMetaDataDao: PokemonMoveMetaDataDao,
+                pokemonMoveMetaDataJoinDao: PokemonMoveMetaDataJoinDao,
+                pokemonAbilityDao: PokemonAbilityDao,
+                pokemonAbilityJoinDao: PokemonAbilityJoinDao,
+                pokemonAbilityMetaDataDao: PokemonAbilityMetaDataDao,
+                pokemonAbilityMetaDataJoinDao: PokemonAbilityMetaDataJoinDao,
+                pokemonBaseStatsDao: PokemonBaseStatsDao,
+                pokemonBaseStatsJoinDao: PokemonBaseStatsJoinDao,
         ) {
             // Delete all content here.
             pokemonDao.deleteAll()
@@ -100,6 +108,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             pokemonAbilityJoinDao.deleteAll()
             pokemonAbilityMetaDataDao.deleteAll()
             pokemonAbilityMetaDataJoinDao.deleteAll()
+            pokemonBaseStatsDao.deleteAll()
+            pokemonBaseStatsJoinDao.deleteAll()
         }
     }
 
@@ -118,9 +128,9 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             }
             synchronized(this) {
                 val instance = Room.databaseBuilder(
-                    context.applicationContext,
-                    PokemonRoomDatabase::class.java,
-                    DATABASE_NAME
+                        context.applicationContext,
+                        PokemonRoomDatabase::class.java,
+                        DATABASE_NAME
                 ).addCallback(PokemonRoomDatabaseCallback(scope)).build()
                 INSTANCE = instance
                 return instance

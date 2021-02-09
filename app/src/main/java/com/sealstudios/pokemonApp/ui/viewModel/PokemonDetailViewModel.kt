@@ -4,39 +4,39 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.*
+import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
+import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
-import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
-import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-val <A, B> Pair<A, B>.dominantColor: A get() = this.first
-val <A, B> Pair<A, B>.lightVibrantColor: B get() = this.second
-
 class PokemonDetailViewModel @ViewModelInject constructor(
-    private val repository: PokemonWithTypesAndSpeciesRepository,
-    private val remotePokemonRepository: RemotePokemonRepository,
-    private val pokemonTypeRepository: PokemonTypeRepository,
-    private val pokemonWithTypesRepository: PokemonWithTypesRepository,
-    private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
-    private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
+        private val repository: PokemonWithTypesAndSpeciesRepository,
+        private val remotePokemonRepository: RemotePokemonRepository,
+        private val pokemonTypeRepository: PokemonTypeRepository,
+        private val pokemonBaseStatsRepository: PokemonBaseStatsRepository,
+        private val pokemonWithTypesRepository: PokemonWithTypesRepository,
+        private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
+        private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    var dominantAndLightVibrantColors: MutableLiveData<Pair<Int, Int>> = getViewColors()
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
 
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
 
     val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
+
+    val onFinishedSavingPokemonAbilities: SingleLiveEvent<Int> = SingleLiveEvent()
+    val onFinishedSavingPokemonBaseStats: SingleLiveEvent<Int> = SingleLiveEvent()
+    val onFinishedSavingPokemonMoves: SingleLiveEvent<Int> = SingleLiveEvent()
 
     private fun pokemonDetails() = pokemonId.switchMap { id ->
         liveData {
@@ -45,15 +45,28 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             if (pokemonWithTypes.pokemon.isDefault()) {
                 emitSource(fetchPokemonDetails(pokemonWithTypes))
             } else {
+                onFinish(id, null)
                 emit(
-                    Resource.success(
-                        PokemonWithTypes(
-                            pokemon = pokemonWithTypes.pokemon,
-                            types = pokemonWithTypes.types
+                        Resource.success(
+                                PokemonWithTypes(
+                                        pokemon = pokemonWithTypes.pokemon,
+                                        types = pokemonWithTypes.types
+                                )
                         )
-                    )
                 )
             }
+        }
+    }
+
+    private suspend fun onFinish(pokemonId: Int, pokemonRequestData: ApiPokemon?) {
+        if (pokemonRequestData != null) {
+            onFinishedSavingPokemonBaseStats(pokemonId, pokemonRequestData)
+            onFinishedSavingPokemonAbilities(pokemonId, pokemonRequestData)
+            onFinishedSavingPokemonMoves(pokemonId, pokemonRequestData)
+        } else {
+            onFinishedSavingPokemonAbilities.value = pokemonId
+            onFinishedSavingPokemonBaseStats.value = pokemonId
+            onFinishedSavingPokemonMoves.value = pokemonId
         }
     }
 
@@ -64,49 +77,86 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                 if (pokemonRequest.data != null) {
                     val pokemonRequestData = pokemonRequest.data
                     val pokemon = mapDbPokemonFromPokemonResponse(pokemonRequestData)
-                    viewModelScope.launch {
-                        repository.updatePokemon(pokemon)
-                        insertPokemonTypes(pokemonRequestData)
-                        pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemon.id) }
-                        pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemon.id) }
-                    }
+                    repository.updatePokemon(pokemon)
+                    insertPokemonTypes(pokemonRequestData)
                     emit(
-                        Resource.success(
-                            mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
-                                PokemonWithTypes(
-                                    pokemon = pokemon,
-                                    types = it
-                                )
-                            }
-                        )
+                            Resource.success(
+                                    mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
+                                        PokemonWithTypes(pokemon = pokemon, types = it)
+                                    }
+                            )
                     )
+                    onFinish(pokemon.id, pokemonRequestData)
                 } else {
-                    emit(Resource.error(pokemonRequest.message ?: "Data is empty", null, pokemonRequest.code))
+                    emit(Resource.error(pokemonRequest.message
+                            ?: "Data is empty", null, pokemonRequest.code))
                 }
             }
-            Status.ERROR -> emit(Resource.error(pokemonRequest.message ?: "General error", null, pokemonRequest.code))
+            Status.ERROR -> emit(Resource.error(pokemonRequest.message
+                    ?: "General error", null, pokemonRequest.code))
             Status.LOADING -> emit(Resource.loading(null))
         }
     }
 
+    private suspend fun onFinishedSavingPokemonAbilities(pokemonId: Int, pokemonRequestData: ApiPokemon) {
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonAbilities.value = pokemonId
+        }
+    }
+
+    private suspend fun onFinishedSavingPokemonBaseStats(pokemonId: Int, pokemonRequestData: ApiPokemon) {
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.stats?.let { insertPokemonStats(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonBaseStats.value = pokemonId
+        }
+    }
+
+    private suspend fun onFinishedSavingPokemonMoves(pokemonId: Int, pokemonRequestData: ApiPokemon) {
+        viewModelScope.launch {
+            val updateDatabase = async {
+                pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemonId) }
+            }
+            updateDatabase.await()
+            onFinishedSavingPokemonMoves.value = pokemonId
+        }
+    }
+
     private suspend fun insertPokemonTypes(
-        remotePokemon: ApiPokemon
+            remotePokemon: ApiPokemon
     ) {
         withContext(Dispatchers.IO) {
             mapDbPokemonTypesFromPokemonResponse(
-                remotePokemon
+                    remotePokemon
             )?.let {
-                pokemonTypeRepository.insertPokemonTypes(
-                    it
-                )
+                pokemonTypeRepository.insertPokemonTypes(it)
             }
             mapTypeJoinsFromPokemonResponse(
-                remotePokemon
+                    remotePokemon
             )?.let {
-                pokemonTypeRepository.insertPokemonTypeJoins(
-                    it
-                )
+                pokemonTypeRepository.insertPokemonTypeJoins(it)
             }
+        }
+    }
+
+    private suspend fun insertPokemonStats(
+            stats: List<PokemonStat>,
+            remotePokemonId: Int
+    ) {
+        withContext(Dispatchers.IO) {
+            val pokemonBaseStats = PokemonBaseStats.mapRemoteStatToPokemonBaseStat(
+                    pokemonId = remotePokemonId,
+                    pokemonStats = stats
+            )
+            val pokemonBaseStatsJoin = PokemonBaseStatsJoin(remotePokemonId, pokemonBaseStats.id)
+            pokemonBaseStatsRepository.insertPokemonBaseStats(pokemonBaseStats)
+            pokemonBaseStatsRepository.insertPokemonBaseStatsJoin(pokemonBaseStatsJoin)
         }
     }
 
@@ -115,10 +165,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             val moveId = getPokemonMoveIdFromUrl(moveResponse.move.url)
             withContext(Dispatchers.IO) {
                 val moveMetaData = PokemonMoveMetaData.mapRemotePokemonToMoveMetaData(
-                    moveId,
-                    pokemonId,
-                    moveResponse.move.name,
-                    moveResponse.version_group_details
+                        moveId,
+                        pokemonId,
+                        moveResponse.move.name,
+                        moveResponse.version_group_details
                 )
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
             }
@@ -126,18 +176,21 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     }
 
     private suspend fun insertPokemonAbilityMetaData(abilities: List<PokemonAbility>, pokemonId: Int) {
-        for (abilityResponse in abilities) {
-            val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
-            withContext(Dispatchers.IO) {
-                val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
-                    abilityId,
-                    pokemonId,
-                    abilityResponse.ability.name,
-                    abilityResponse.isHidden
-                )
-                pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
+        withContext(Dispatchers.IO) {
+            for (abilityResponse in abilities) {
+                val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
+                withContext(Dispatchers.IO) {
+                    val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
+                            abilityId,
+                            pokemonId,
+                            abilityResponse.ability.name,
+                            abilityResponse.isHidden
+                    )
+                    pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
+                }
             }
         }
+
     }
 
     fun setPokemonId(pokemonId: Int) {
@@ -160,24 +213,9 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         return MutableLiveData(hasExpanded)
     }
 
-    private fun getViewColors(): MutableLiveData<Pair<Int, Int>> {
-        val dominantColor = savedStateHandle.get<Int>(dominantColorKey) ?: 0
-        val lightVibrantColor = savedStateHandle.get<Int>(lightVibrantColorKey) ?: 0
-        return MutableLiveData(dominantColor to lightVibrantColor)
-    }
-
-    fun setViewColors(dominantColor: Int, lightVibrantColor: Int) {
-        dominantAndLightVibrantColors.value = dominantColor to lightVibrantColor
-        savedStateHandle.set(lightVibrantColorKey, lightVibrantColor)
-        savedStateHandle.set(dominantColorKey, dominantColor)
-    }
-
     companion object {
         private const val pokemonId: String = "pokemonId"
         private const val hasExpandedKey: String = "hasExpanded"
-        private const val lightVibrantColorKey: String = "lightVibrantColor"
-        private const val dominantColorKey: String = "dominantColor"
-        private const val TAG: String = "PDVM"
     }
 
 }

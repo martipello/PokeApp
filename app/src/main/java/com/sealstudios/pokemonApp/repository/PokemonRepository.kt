@@ -36,7 +36,6 @@ class PokemonRepository @Inject constructor(
         search: String,
         filters: List<String>
     ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        Log.d("REPO", filters.toString())
         return pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
     }
 

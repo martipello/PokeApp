@@ -17,7 +17,6 @@
             android:scaleType="fitXY"
             android:src="@drawable/ic_category_ribbon"
             android:visibility="gone"
-            app:tint="@color/colorAccent"
             android:contentDescription="@string/move_category" />
 
         <ImageView
@@ -104,7 +103,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                android:background="@color/colorAccent"
+                android:background="@color/light_grey"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

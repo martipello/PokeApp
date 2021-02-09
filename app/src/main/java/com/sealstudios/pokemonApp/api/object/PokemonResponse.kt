@@ -138,7 +138,7 @@ data class ApiPokemon(
     val moves: List<PokemonMoveResponse>?,
     val stats: List<PokemonStat>?,
     val types: List<ApiPokemonType>?,
-    val sprites: PokemonSprites?
+    val sprites: PokemonSprites?,
 )
 
 data class PokemonSprites(
@@ -225,7 +225,7 @@ data class PokemonMoveVersion(
 data class PokemonStat(
     val stat: NamedApiResource,
     val effort: Int,
-    val baseStat: Int
+    val base_stat: Int
 )
 
 data class ApiPokemonType(

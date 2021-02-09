@@ -17,4 +17,13 @@ class PokemonMoveMetaDataJoin(
     @ColumnInfo(name = META_MOVE_ID, index = true)
     val meta_move_id: Int
 
-)
+){
+    companion object {
+        fun createMoveMetaDataJoin(remotePokemonId: Int, pokemonMoveId: Int): PokemonMoveMetaDataJoin{
+            return PokemonMoveMetaDataJoin(
+                    remotePokemonId,
+                    PokemonMoveMetaData.createMetaMoveId(remotePokemonId, pokemonMoveId)
+            )
+        }
+    }
+}

@@ -182,6 +182,8 @@ dependencies {
 
     implementation project(':nativetemplates')
 
+    implementation 'com.akexorcist:round-corner-progress-bar:2.1.1'
+
     //LEAKS
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 

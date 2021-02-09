@@ -9,7 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
-import com.akexorcist.roundcornerprogressbar.common.AnimatedRoundCornerProgressBar
+import com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats.Companion.baseStatsTotal
@@ -25,6 +25,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.DecimalFormat
 
 @AndroidEntryPoint
 class PokemonBaseStatsFragment : Fragment() {
@@ -98,7 +99,6 @@ class PokemonBaseStatsFragment : Fragment() {
 
     private fun animateBaseStatBars(data: PokemonWithBaseStats) {
         lifecycleScope.launch {
-            delay(200)
             withContext(Dispatchers.Main) {
                 setStatBarProgress(binding.hpValue, data.pokemonBaseStats?.hp?.toFloat() ?: 0f)
             }
@@ -130,14 +130,14 @@ class PokemonBaseStatsFragment : Fragment() {
         }
     }
 
-    private fun setStatBar(bar: AnimatedRoundCornerProgressBar) {
+    private fun setStatBar(bar: TextRoundCornerProgressBar) {
         bar.enableAnimation()
         bar.progressColor = dominantAndLightVibrantColors.lightVibrantColor
         bar.progressBackgroundColor = dominantAndLightVibrantColors.dominantColor
         bar.animationSpeedScale = 5f
     }
 
-    private fun setStatBarProgress(bar: AnimatedRoundCornerProgressBar, value: Float) {
+    private fun setStatBarProgress(bar: TextRoundCornerProgressBar, value: Float) {
         bar.enableAnimation()
         bar.progressBackgroundColor =
                 if (dominantAndLightVibrantColors.dominantColor != dominantAndLightVibrantColors.lightVibrantColor)
@@ -146,9 +146,13 @@ class PokemonBaseStatsFragment : Fragment() {
         bar.progressColor = dominantAndLightVibrantColors.lightVibrantColor
         bar.animationSpeedScale = 5f
         lifecycleScope.launch {
-            delay(500)
+            delay(200)
             withContext(Dispatchers.Main) {
+                val format = DecimalFormat()
+                format.isDecimalSeparatorAlwaysShown = false
                 bar.progress = value
+                bar.progressText = format.format(value)
+                bar.textProgressSize = 32
             }
         }
     }

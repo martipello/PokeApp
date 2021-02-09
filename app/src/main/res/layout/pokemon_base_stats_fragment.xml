@@ -63,7 +63,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/pokemon_about_label"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/hp_value"
@@ -85,7 +85,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/hp_text"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/attack_value"
@@ -107,7 +107,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/attack_text"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/defence_value"
@@ -129,7 +129,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/defence_text"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/speed_value"
@@ -151,7 +151,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/speed_text"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/special_attack_value"
@@ -173,7 +173,7 @@
         android:layout_marginTop="@dimen/qualified_small_margin_8dp"
         app:layout_constraintTop_toBottomOf="@id/special_attack_text"/>
 
-    <com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar
+    <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:id="@+id/special_defence_value"

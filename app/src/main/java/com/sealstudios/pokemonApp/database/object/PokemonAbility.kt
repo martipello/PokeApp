@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.database.`object`
 
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -12,36 +11,36 @@ import java.util.*
 @Entity
 data class PokemonAbility @JvmOverloads constructor(
 
-    @NotNull
-    @PrimaryKey
-    @ColumnInfo(name = ABILITY_ID)
-    var id: Int,
+        @NotNull
+        @PrimaryKey
+        @ColumnInfo(name = ABILITY_ID)
+        var id: Int,
 
-    @ColumnInfo(name = ABILITY_NAME)
-    var name: String = "",
+        @ColumnInfo(name = ABILITY_NAME)
+        var name: String = "",
 
-    @ColumnInfo(name = ABILITY_GENERATION)
-    var generation: String = "",
+        @ColumnInfo(name = ABILITY_GENERATION)
+        var generation: String = "",
 
-    @ColumnInfo(name = ABILITY_EFFECT_CHANGE)
-    var abilityEffectChange: String = "",
+        @ColumnInfo(name = ABILITY_EFFECT_CHANGE)
+        var abilityEffectChange: String = "",
 
-    @ColumnInfo(name = ABILITY_EFFECT_CHANGE_VERSION_GROUP)
-    var abilityEffectChangeVersionGroup: String = "",
+        @ColumnInfo(name = ABILITY_EFFECT_CHANGE_VERSION_GROUP)
+        var abilityEffectChangeVersionGroup: String = "",
 
-    @ColumnInfo(name = ABILITY_EFFECT_ENTRY)
-    var abilityEffectEntry: String = "",
+        @ColumnInfo(name = ABILITY_EFFECT_ENTRY)
+        var abilityEffectEntry: String = "",
 
-    @ColumnInfo(name = ABILITY_EFFECT_ENTRY_SHORT_EFFECT)
-    var abilityEffectEntryShortEffect: String = "",
+        @ColumnInfo(name = ABILITY_EFFECT_ENTRY_SHORT_EFFECT)
+        var abilityEffectEntryShortEffect: String = "",
 
-    @ColumnInfo(name = ABILITY_FLAVOR_TEXT)
-    var flavorText: String = "",
+        @ColumnInfo(name = ABILITY_FLAVOR_TEXT)
+        var flavorText: String = "",
 
-    @ColumnInfo(name = ABILITY_IS_MAIN_SERIES)
-    var isMainSeries: Boolean = false,
+        @ColumnInfo(name = ABILITY_IS_MAIN_SERIES)
+        var isMainSeries: Boolean = false,
 
-    ) {
+        ) {
 
     override fun toString(): String {
         return "PokemonAbility(id=$id, name='$name', generation='$generation', effectChange='$abilityEffectChange', abilityEffectChangeVersionGroup='$abilityEffectChangeVersionGroup', abilityEffectEntry='$abilityEffectEntry', isMainSeries=$isMainSeries)"
@@ -50,26 +49,26 @@ data class PokemonAbility @JvmOverloads constructor(
     companion object {
         fun mapRemotePokemonAbilityToDatabasePokemonAbility(ability: Ability): PokemonAbility {
             return PokemonAbility(
-                id = ability.id,
-                name = ability.name ?: "",
-                generation = ability.generation?.name ?: "",
-                abilityEffectChange = ability.effect_changes?.map { abilityEffectChange ->
-                    abilityEffectChange.effect_entries
-                        ?.firstOrNull { effect -> effect.language?.name == "en" }
-                }
-                    ?.map { it?.effect }?.getOrElse(0) { "" } ?: "",
-                abilityEffectChangeVersionGroup = PokemonGeneration.getVersionForGeneration(
-                    PokemonGeneration.getGeneration(
-                        ability.generation?.name ?: ""
-                    )
-                ),
-                abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
-                    ?: "",
-                abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.short_effect
-                    ?: "",
-                flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text
-                    ?: "",
-                isMainSeries = ability.is_main_series ?: false
+                    id = ability.id,
+                    name = ability.name ?: "",
+                    generation = ability.generation?.name ?: "",
+                    abilityEffectChange = ability.effect_changes?.map { abilityEffectChange ->
+                        abilityEffectChange.effect_entries
+                                ?.firstOrNull { effect -> effect.language?.name == "en" }
+                    }
+                            ?.map { it?.effect }?.getOrElse(0) { "" } ?: "",
+                    abilityEffectChangeVersionGroup = PokemonGeneration.getVersionForGeneration(
+                            PokemonGeneration.getGeneration(
+                                    ability.generation?.name ?: ""
+                            )
+                    ),
+                    abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
+                            ?: "",
+                    abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.short_effect
+                            ?: "",
+                    flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text
+                            ?: "",
+                    isMainSeries = ability.is_main_series ?: false
             )
         }
 

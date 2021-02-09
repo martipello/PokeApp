@@ -26,9 +26,6 @@ interface PokemonMoveDao {
     @Query("SELECT * FROM PokemonMove WHERE move_id IN (:ids)")
     fun getMovesByIds(ids: List<Int>): LiveData<List<PokemonMove>>
 
-    @Query("SELECT * FROM PokemonMove WHERE move_id IN (:ids)")
-    suspend fun getMovesByIdsAsync(ids: List<Int>): List<PokemonMove>
-
     @Query("SELECT EXISTS (SELECT * FROM PokemonMove WHERE move_id =:id)")
     suspend fun moveExists(id: Int): Boolean
 

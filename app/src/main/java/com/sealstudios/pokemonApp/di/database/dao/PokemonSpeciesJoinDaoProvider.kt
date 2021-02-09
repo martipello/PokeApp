@@ -3,9 +3,7 @@ package com.sealstudios.pokemonApp.di.database.dao
 
 import android.app.Application
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
-import com.sealstudios.pokemonApp.database.dao.PokemonMoveJoinDao
 import com.sealstudios.pokemonApp.database.dao.PokemonSpeciesJoinDao
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

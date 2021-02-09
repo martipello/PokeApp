@@ -49,7 +49,8 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingStart="@dimen/qualified_medium_margin_16dp"
-            android:paddingTop="@dimen/qualified_small_margin_8dp">
+            android:paddingTop="@dimen/qualified_small_margin_8dp"
+            tools:ignore="RtlSymmetry">
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -17,38 +17,14 @@ class PokemonBaseStatsRepository @Inject constructor(
         pokemonBaseStatsDao.insertPokemonBaseStats(pokemonBaseStats)
     }
 
-    suspend fun insertPokemonBaseStats(pokemonBaseStats: List<PokemonBaseStats>) {
-        pokemonBaseStatsDao.insertPokemonBaseStatsList(pokemonBaseStats)
-    }
-
-    suspend fun updatePokemonBaseStats(pokemonBaseStats: PokemonBaseStats) {
-        pokemonBaseStatsDao.updatePokemonBaseStats(pokemonBaseStats)
-    }
-
     suspend fun getPokemonWithStatsByIdAsync(pokemonId: Int): PokemonWithBaseStats {
         return pokemonBaseStatsDao.getPokemonWithStatsByIdAsync(pokemonId)
-    }
-
-    suspend fun deletePokemonBaseStats(pokemonBaseStats: PokemonBaseStats) {
-        pokemonBaseStatsDao.deletePokemonBaseStats(pokemonBaseStats)
     }
 
     //BASE STATS JOIN
 
     suspend fun insertPokemonBaseStatsJoin(pokemonBaseStatsJoin: PokemonBaseStatsJoin) {
         pokemonBaseStatsJoinDao.insertPokemonBaseStatsJoin(pokemonBaseStatsJoin)
-    }
-
-    suspend fun insertPokemonBaseStatsJoins(pokemonBaseStatsJoin: List<PokemonBaseStatsJoin>) {
-        pokemonBaseStatsJoinDao.insertPokemonBaseStatsJoinsList(pokemonBaseStatsJoin)
-    }
-
-    suspend fun updatePokemonBaseStatsJoin(pokemonBaseStatsJoin: PokemonBaseStatsJoin) {
-        pokemonBaseStatsJoinDao.updatePokemonBaseStatsJoin(pokemonBaseStatsJoin)
-    }
-
-    suspend fun deletePokemonBaseStatsJoin(pokemonBaseStatsJoin: PokemonBaseStatsJoin) {
-        pokemonBaseStatsJoinDao.deletePokemonBaseStatsJoin(pokemonBaseStatsJoin)
     }
 
 }

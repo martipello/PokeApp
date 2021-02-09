@@ -67,7 +67,8 @@
                 android:layout_marginEnd="@dimen/medium_margin_16dp"
                 app:layout_constraintTop_toTopOf="@id/filter_pokemon_label"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:src="@drawable/ic_close_white_24dp"/>
+                android:src="@drawable/ic_close_white_24dp"
+                android:contentDescription="@string/close_filters" />
 
             <ScrollView
                 android:layout_width="match_parent"

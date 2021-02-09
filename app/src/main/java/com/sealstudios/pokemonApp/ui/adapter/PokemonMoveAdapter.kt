@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
-import android.util.Log
 import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 import android.view.ViewGroup

@@ -1,13 +1,13 @@
 package com.sealstudios.pokemonApp.api
 
-import android.util.Log
 import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sealstudios.pokemonApp.api.`object`.*
-import com.sealstudios.pokemonApp.api.`object`.Resource
-import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
-import com.sealstudios.pokemonApp.repository.*
+import com.sealstudios.pokemonApp.repository.PokemonRepository
+import com.sealstudios.pokemonApp.repository.PokemonSpeciesRepository
+import com.sealstudios.pokemonApp.repository.PokemonTypeRepository
+import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject

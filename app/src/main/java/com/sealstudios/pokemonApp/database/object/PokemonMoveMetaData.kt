@@ -4,9 +4,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
-import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
-import com.sealstudios.pokemonApp.api.`object`.ApiPokemonMove
-import com.sealstudios.pokemonApp.api.`object`.PokemonMoveResponse
 import com.sealstudios.pokemonApp.api.`object`.PokemonMoveVersion
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import org.jetbrains.annotations.NotNull

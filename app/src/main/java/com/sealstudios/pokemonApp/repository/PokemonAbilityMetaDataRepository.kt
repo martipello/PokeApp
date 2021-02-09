@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.repository
 
-import androidx.lifecycle.LiveData
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaDataJoin
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
@@ -18,42 +17,14 @@ class PokemonAbilityMetaDataRepository @Inject constructor(
         pokemonAbilityMetaDataDao.insertAbilityMetaData(pokemonAbilityMetaData)
     }
 
-    suspend fun insertAbilityMetaDataList(pokemonAbilityMetaData: List<PokemonAbilityMetaData>) {
-        pokemonAbilityMetaDataDao.insertAbilityMetaDataList(pokemonAbilityMetaData)
-    }
-
-    fun getPokemonWithAbilitiesAndMetaDataById(id: Int): LiveData<PokemonWithAbilitiesAndMetaData> {
-        return pokemonAbilityMetaDataDao.getPokemonWithAbilitiesAndMetaDataById(id)
-    }
-
     suspend fun getPokemonWithAbilitiesAndMetaDataByIdAsync(id: Int): PokemonWithAbilitiesAndMetaData {
         return pokemonAbilityMetaDataDao.getPokemonWithAbilitiesAndMetaDataByIdAsync(id)
-    }
-
-    suspend fun updateAbilityMetaData(pokemonAbilityMetaData: PokemonAbilityMetaData) {
-        pokemonAbilityMetaDataDao.updateAbilityMetaData(pokemonAbilityMetaData)
-    }
-
-    suspend fun deleteAbilityMetaData(pokemonAbilityMetaData: PokemonAbilityMetaData) {
-        pokemonAbilityMetaDataDao.deleteAbilityMetaData(pokemonAbilityMetaData)
     }
 
     // ABILITY META DATA JOINS
 
     suspend fun insertAbilityMetaDataJoin(pokemonAbilityMetaDataJoin: PokemonAbilityMetaDataJoin) {
         pokemonAbilityMetaDataJoinDao.insertAbilityMetaDataJoin(pokemonAbilityMetaDataJoin)
-    }
-
-    suspend fun insertAbilityMetaDataJoins(pokemonAbilityMetaDataJoin: List<PokemonAbilityMetaDataJoin>) {
-        pokemonAbilityMetaDataJoinDao.insertAbilityMetaDataJoins(pokemonAbilityMetaDataJoin)
-    }
-
-    suspend fun updateAbilityMetaDataJoin(pokemonAbilityMetaDataJoin: PokemonAbilityMetaDataJoin) {
-        pokemonAbilityMetaDataJoinDao.updateAbilityMetaDataJoin(pokemonAbilityMetaDataJoin)
-    }
-
-    suspend fun deleteAbilityMetaDataJoin(pokemonAbilityMetaDataJoin: PokemonAbilityMetaDataJoin) {
-        pokemonAbilityMetaDataJoinDao.deleteAbilityMetaDataJoin(pokemonAbilityMetaDataJoin)
     }
 
 }

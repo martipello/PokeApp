@@ -69,8 +69,6 @@ constructor(
         binding.showMoreLessToggleButton.animate().setDuration(200).rotation(0f)
     }
 
-    companion object {
-        const val layoutType = 1002
-    }
+    companion object
 
 }

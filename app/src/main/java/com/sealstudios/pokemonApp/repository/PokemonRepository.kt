@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.repository
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.paging.PagingSource
 import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
@@ -26,17 +25,6 @@ class PokemonRepository @Inject constructor(
         filters: List<String>
     ): LiveData<List<PokemonWithTypesAndSpeciesForList>?> {
         return pokemonDao.searchAndFilterPokemonWithTypesAndSpecies(search, filters)
-    }
-
-    fun searchPokemonWithTypesAndSpeciesForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return pokemonDao.searchPokemonWithTypesAndSpeciesForPaging(search)
-    }
-
-    fun searchAndFilterPokemonWithTypesAndSpeciesForPaging(
-        search: String,
-        filters: List<String>
-    ): PagingSource<Int, PokemonWithTypesAndSpeciesForList> {
-        return pokemonDao.searchAndFilterPokemonWithTypesAndSpeciesForPaging(search, filters)
     }
 
 }

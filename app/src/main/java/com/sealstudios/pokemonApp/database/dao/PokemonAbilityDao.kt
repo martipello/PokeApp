@@ -25,9 +25,6 @@ interface PokemonAbilityDao {
     @Query("SELECT * FROM PokemonAbility WHERE ability_id == :id LIMIT 1")
     suspend fun getPokemonAbilityByIdAsync(id: Int): PokemonAbility
 
-    @Query("SELECT * FROM PokemonAbility WHERE ability_id == :id LIMIT 1")
-    suspend fun getPokemonAbilitiesByIdsAsync(id: List<Int>): List<PokemonAbility>
-
     @Update
     suspend fun updatePokemonAbility(pokemonAbilities: PokemonAbility)
 

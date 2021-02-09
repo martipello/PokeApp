@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.database.`object`
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.POKEMON_ID
-import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.MOVE_ID
 import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData.Companion.META_MOVE_ID
 import org.jetbrains.annotations.NotNull
 

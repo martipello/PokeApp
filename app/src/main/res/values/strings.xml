@@ -89,4 +89,7 @@
     <string name="special_attack_text">Sp-Att</string>
     <string name="special_defence_text">Sp-Def</string>
     <string name="base_stats_total">Total : %d</string>
+    <string name="splash_anim">Splash animation image</string>
+    <string name="close_filters">Close filters</string>
+    <string name="loading_image">Image loading</string>
 </resources>

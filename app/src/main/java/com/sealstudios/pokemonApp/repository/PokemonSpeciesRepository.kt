@@ -18,36 +18,16 @@ class PokemonSpeciesRepository @Inject constructor(
         pokemonSpeciesDao.insertSpecies(pokemonSpecies)
     }
 
-    suspend fun insertPokemonSpecies(pokemonSpecies: List<PokemonSpecies>) {
-        pokemonSpeciesDao.insertSpecies(pokemonSpecies)
-    }
-
     suspend fun getSinglePokemonSpeciesByIdAsync(id: Int): PokemonSpecies? {
         return withContext(Dispatchers.IO) {
             return@withContext pokemonSpeciesDao.getSinglePokemonWithSpeciesByIdAsync(id)
         }
     }
 
-    suspend fun updatePokemonSpecies(pokemonSpecies: PokemonSpecies) {
-        pokemonSpeciesDao.updateSpecies(pokemonSpecies)
-    }
-
-    suspend fun deletePokemonSpecies(pokemonSpecies: PokemonSpecies) {
-        pokemonSpeciesDao.deleteSpecies(pokemonSpecies)
-    }
-
     // SPECIES JOIN
 
     suspend fun insertPokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
         pokemonSpeciesJoinDao.insertPokemonSpeciesJoin(pokemonSpeciesJoin)
-    }
-
-    suspend fun updatePokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
-        pokemonSpeciesJoinDao.updatePokemonSpeciesJoin(pokemonSpeciesJoin)
-    }
-
-    suspend fun deletePokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
-        pokemonSpeciesJoinDao.deletePokemonSpeciesJoin(pokemonSpeciesJoin)
     }
 
 }

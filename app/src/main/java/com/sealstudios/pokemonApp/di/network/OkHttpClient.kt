@@ -2,7 +2,6 @@ package com.sealstudios.pokemonApp.di.network
 
 import android.content.Context
 import com.sealstudios.pokemonApp.BuildConfig
-import dagger.hilt.android.qualifiers.ApplicationContext
 import okhttp3.logging.HttpLoggingInterceptor
 import java.util.concurrent.TimeUnit
 

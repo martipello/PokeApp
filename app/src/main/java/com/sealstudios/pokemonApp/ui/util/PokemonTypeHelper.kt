@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.ui.util
 import android.annotation.SuppressLint
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
@@ -74,22 +73,8 @@ enum class PokemonType(val color: Int, val icon: Int) {
             }
         }
 
-        @SuppressLint("DefaultLocale")
-        fun getAllPokemonTypesNames(): List<String> {
-            return enumValues<PokemonType>().map { it.name.toLowerCase() }
-        }
-
         fun getAllPokemonTypes(): List<PokemonType> {
             return enumValues<PokemonType>().asList()
-        }
-
-        fun initializePokemonTypeFilters(): MutableMap<String, Boolean> {
-            val keys = getAllPokemonTypes()
-            val allFilters = mutableMapOf<String, Boolean>()
-            for (key in keys) {
-                allFilters[key.name] = false
-            }
-            return allFilters
         }
 
         @SuppressLint("DefaultLocale")
@@ -103,17 +88,6 @@ enum class PokemonType(val color: Int, val icon: Int) {
             chip.isClickable = false
             chip.rippleColor = null
             return chip
-        }
-
-        @SuppressLint("DefaultLocale", "InflateParams")
-        fun setPokemonTypeChip(pokemonType: PokemonType, context: Context, chip: Chip) {
-            chip.text = pokemonType.name.capitalize()
-            chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
-            chip.setChipBackgroundColorResource(pokemonType.color)
-            chip.isCheckable = false
-            chip.isClickable = false
-            chip.rippleColor = null
-            chip.visibility = View.VISIBLE
         }
 
     }

@@ -1,22 +1,16 @@
 package com.sealstudios.pokemonApp.ui.adapter
 
-import android.util.Log
-import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
-import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.databinding.ActivityMainBinding.inflate
+import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.MoveLearningViewHolderBinding
-import com.sealstudios.pokemonApp.databinding.PokemonMoveViewHolderBinding
-import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.MoveLearningViewHolder
 
 class MoveLearningAdapter :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val diffCallback = diffCallback()
     private val differ = AsyncListDiffer(this, diffCallback)
@@ -24,9 +18,9 @@ class MoveLearningAdapter :
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val binding =
-            MoveLearningViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                MoveLearningViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MoveLearningViewHolder(
-            binding
+                binding
         )
     }
 

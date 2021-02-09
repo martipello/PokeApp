@@ -50,16 +50,6 @@ data class PokemonBaseStats(
         private const val POKEMON_STAT_SPEED: String = "speed"
 
 
-        fun getPokemonStatIdFromUrl(pokemonUrl: String?): Int {
-            if (pokemonUrl != null) {
-                val pokemonIndex = pokemonUrl.split('/')
-                if (pokemonIndex.size >= 2) {
-                    return pokemonIndex[pokemonIndex.size - 2].toInt()
-                }
-            }
-            return -1
-        }
-
         private fun createBaseStatId(pokemonId: Int, baseStatTotal: Int): Int {
             return "$pokemonId$uniqueBaseStatConstant$baseStatTotal".toInt()
         }

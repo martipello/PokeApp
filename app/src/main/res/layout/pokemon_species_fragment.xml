@@ -64,7 +64,8 @@
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/pokedex_subtitle_label"
-        app:layout_constraintBottom_toBottomOf="@id/pokedex_subtitle_label" />
+        app:layout_constraintBottom_toBottomOf="@id/pokedex_subtitle_label"
+        tools:ignore="RtlSymmetry" />
 
     <TextView
         android:id="@+id/pokedex_entry_text"

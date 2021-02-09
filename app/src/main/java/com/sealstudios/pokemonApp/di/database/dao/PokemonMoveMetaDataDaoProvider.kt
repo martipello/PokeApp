@@ -3,7 +3,6 @@ package com.sealstudios.pokemonApp.di.database.dao
 
 import android.app.Application
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
-import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import com.sealstudios.pokemonApp.database.dao.PokemonMoveMetaDataDao
 import dagger.Module
 import dagger.Provides

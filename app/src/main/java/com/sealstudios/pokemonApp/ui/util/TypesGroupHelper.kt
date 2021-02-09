@@ -4,6 +4,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
+import java.util.*
 
 class TypesGroupHelper(
     private val chipGroup: ChipGroup,
@@ -14,7 +15,7 @@ class TypesGroupHelper(
             val pokemonType = pokemonTypes[x]
             chipGroup.getChildAt(x).apply {
                 this as Chip
-                text = pokemonType.name.capitalize()
+                text = pokemonType.name.capitalize(Locale.ROOT)
                 chipIcon = ContextCompat.getDrawable(
                     context,
                     pokemonType.icon

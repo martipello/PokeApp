@@ -1,9 +1,6 @@
 package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.ads.nativetemplates.NativeTemplateStyle
 import com.google.android.ads.nativetemplates.TemplateView
 import com.google.android.gms.ads.formats.UnifiedNativeAd
 import com.sealstudios.pokemonApp.databinding.AdLayoutBinding

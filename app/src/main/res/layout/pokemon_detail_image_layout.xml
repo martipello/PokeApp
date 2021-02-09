@@ -44,7 +44,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:scaleType="fitCenter" />
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/splash_anim" />
 
     </com.google.android.material.card.MaterialCardView>
 

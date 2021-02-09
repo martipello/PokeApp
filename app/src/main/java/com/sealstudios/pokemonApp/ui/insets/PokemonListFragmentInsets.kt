@@ -1,7 +1,6 @@
 package com.sealstudios.pokemonApp.ui.insets
 
 import androidx.core.view.updatePadding
-import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding

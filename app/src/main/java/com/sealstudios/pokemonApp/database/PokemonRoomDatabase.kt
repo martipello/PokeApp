@@ -32,6 +32,8 @@ import kotlinx.coroutines.launch
             PokemonAbilityMetaDataJoin::class,
             PokemonBaseStats::class,
             PokemonBaseStatsJoin::class,
+            PokemonTypeMetaData::class,
+            PokemonTypeMetaDataJoin::class,
         ],
         version = DATABASE_VERSION,
         exportSchema = false
@@ -54,6 +56,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
     abstract fun pokemonAbilityMetaDataJoinDao(): PokemonAbilityMetaDataJoinDao
     abstract fun pokemonBaseStatsDao(): PokemonBaseStatsDao
     abstract fun pokemonBaseStatsJoinDao(): PokemonBaseStatsJoinDao
+    abstract fun pokemonTypeMetaDataDao(): PokemonTypeMetaDataDao
+    abstract fun pokemonTypeMetaDataJoinDao(): PokemonTypeMetaDataJoinDao
 
     private class PokemonRoomDatabaseCallback(
             private val scope: CoroutineScope
@@ -77,6 +81,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
                             database.pokemonAbilityMetaDataJoinDao(),
                             database.pokemonBaseStatsDao(),
                             database.pokemonBaseStatsJoinDao(),
+                            database.pokemonTypeMetaDataDao(),
+                            database.pokemonTypeMetaDataJoinDao()
                     )
                 }
             }
@@ -96,6 +102,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
                 pokemonAbilityMetaDataJoinDao: PokemonAbilityMetaDataJoinDao,
                 pokemonBaseStatsDao: PokemonBaseStatsDao,
                 pokemonBaseStatsJoinDao: PokemonBaseStatsJoinDao,
+                pokemonTypeMetaDataDao: PokemonTypeMetaDataDao,
+                pokemonTypeMetaDataJoinDao: PokemonTypeMetaDataJoinDao,
         ) {
             // Delete all content here.
             pokemonDao.deleteAll()
@@ -111,6 +119,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
             pokemonAbilityMetaDataJoinDao.deleteAll()
             pokemonBaseStatsDao.deleteAll()
             pokemonBaseStatsJoinDao.deleteAll()
+            pokemonTypeMetaDataDao.deleteAll()
+            pokemonTypeMetaDataJoinDao.deleteAll()
         }
     }
 

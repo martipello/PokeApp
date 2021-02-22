@@ -20,8 +20,15 @@ class PokemonTypesJoin(
 ) {
     companion object {
 
-        fun mapTypeJoinsFromPokemonResponse(apiPokemon: ApiPokemon): List<PokemonTypesJoin>? {
-            return apiPokemon.types?.map { apiType ->
+        fun mapTypeJoinsFromPokemonResponse(apiPokemon: Int, apiTypeUrl: String): PokemonTypesJoin {
+            return PokemonTypesJoin(
+                    pokemon_id = apiPokemon,
+                    type_id = Pokemon.getPokemonIdFromUrl(apiTypeUrl),
+            )
+        }
+
+        fun mapTypeJoinsFromPokemonResponse(apiPokemon: ApiPokemon): List<PokemonTypesJoin> {
+            return apiPokemon.types.map { apiType ->
                 PokemonTypesJoin(
                     pokemon_id = apiPokemon.id,
                     type_id = Pokemon.getPokemonIdFromUrl(apiType.type.url),

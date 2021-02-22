@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.palette.graphics.Palette

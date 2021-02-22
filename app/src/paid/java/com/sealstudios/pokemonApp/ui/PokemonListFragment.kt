@@ -273,6 +273,7 @@ class PokemonListFragment : Fragment(),
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         hideEmptyLayout()
         hideLoadingLayout()
+        errorPokemonList.root.visibility = View.VISIBLE
         errorPokemonList.errorImage.visibility = View.VISIBLE
         errorPokemonList.errorText.text = errorMessage
         errorPokemonList.retryButton.setOnClickListener {

@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithBaseStats
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithBaseStats
 
 @Dao
 interface PokemonBaseStatsDao {

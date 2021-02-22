@@ -1,8 +1,8 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats
-import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStatsJoin
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithBaseStats
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonBaseStatsJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithBaseStats
 import com.sealstudios.pokemonApp.database.dao.PokemonBaseStatsDao
 import com.sealstudios.pokemonApp.database.dao.PokemonBaseStatsJoinDao
 import javax.inject.Inject

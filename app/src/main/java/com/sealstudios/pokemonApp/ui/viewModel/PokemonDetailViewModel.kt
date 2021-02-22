@@ -10,7 +10,9 @@ import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokem
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonBaseStatsJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async

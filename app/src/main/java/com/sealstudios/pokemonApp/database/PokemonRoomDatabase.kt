@@ -8,6 +8,7 @@ import androidx.room.TypeConverters
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase.Companion.DATABASE_VERSION
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.joins.*
 import com.sealstudios.pokemonApp.database.dao.*
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
 import com.sealstudios.pokemonApp.util.RoomStringListConverter

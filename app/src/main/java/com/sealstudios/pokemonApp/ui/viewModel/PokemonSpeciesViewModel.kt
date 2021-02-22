@@ -6,7 +6,7 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.repository.PokemonSpeciesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers

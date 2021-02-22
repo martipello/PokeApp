@@ -4,6 +4,8 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
 import com.sealstudios.pokemonApp.repository.PokemonRepository
 import com.sealstudios.pokemonApp.repository.PokemonSpeciesRepository
 import com.sealstudios.pokemonApp.repository.PokemonTypeRepository

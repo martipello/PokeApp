@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.database.dao.PokemonSpeciesDao
 import com.sealstudios.pokemonApp.database.dao.PokemonSpeciesJoinDao
 import kotlinx.coroutines.Dispatchers

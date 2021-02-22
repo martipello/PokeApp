@@ -5,6 +5,9 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityMetaDataJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.repository.PokemonAbilityMetaDataRepository
 import com.sealstudios.pokemonApp.repository.PokemonAbilityRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository

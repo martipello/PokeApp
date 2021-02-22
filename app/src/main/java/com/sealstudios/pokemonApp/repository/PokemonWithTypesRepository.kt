@@ -1,6 +1,6 @@
 package com.sealstudios.pokemonApp.repository
 
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext

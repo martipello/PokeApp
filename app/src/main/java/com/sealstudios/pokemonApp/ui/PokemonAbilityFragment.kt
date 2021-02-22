@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData.Companion.createAbilityMetaDataId
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener

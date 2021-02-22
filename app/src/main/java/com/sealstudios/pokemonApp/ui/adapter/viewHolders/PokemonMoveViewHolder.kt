@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonMoveWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonMoveViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.MoveLearningAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
@@ -109,8 +109,8 @@ constructor(
 
     @SuppressLint("StringFormatInvalid")
     private fun PokemonMoveViewHolderBinding.populateTextViews(
-        pokemonMoveWithMetaData: PokemonMoveWithMetaData,
-        generation: PokemonGeneration
+            pokemonMoveWithMetaData: PokemonMoveWithMetaData,
+            generation: PokemonGeneration
     ) {
         description.text = pokemonMoveWithMetaData.pokemonMove.description.replace("\\s".toRegex(), " ")
         pokemonMoveNameTextView.text = pokemonMoveWithMetaData.pokemonMove.name.capitalize(Locale.ROOT)

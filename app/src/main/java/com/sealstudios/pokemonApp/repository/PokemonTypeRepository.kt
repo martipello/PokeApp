@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonTypesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
 import javax.inject.Inject

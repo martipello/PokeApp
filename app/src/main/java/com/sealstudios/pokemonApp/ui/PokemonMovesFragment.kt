@@ -12,8 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData
-import com.sealstudios.pokemonApp.database.`object`.PokemonMoveWithMetaData.Companion.separateByGeneration
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonMoveWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonMoveWithMetaData.Companion.separateByGeneration
 import com.sealstudios.pokemonApp.databinding.PokemonMovesFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonMoveAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener

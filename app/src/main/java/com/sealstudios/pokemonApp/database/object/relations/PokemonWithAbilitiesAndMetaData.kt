@@ -1,15 +1,19 @@
-package com.sealstudios.pokemonApp.database.`object`
+package com.sealstudios.pokemonApp.database.`object`.relations
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityMetaDataJoin
 
 data class PokemonWithAbilitiesAndMetaData(
 
-    @Embedded
+        @Embedded
     val pokemon: Pokemon,
-    @Relation(
+        @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonAbility::class,
         entityColumn = PokemonAbility.ABILITY_ID,
@@ -21,7 +25,7 @@ data class PokemonWithAbilitiesAndMetaData(
     )
     val abilities: List<PokemonAbility>,
 
-    @Relation(
+        @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonAbilityMetaData::class,
         entityColumn = PokemonAbilityMetaData.ABILITY_META_DATA_ID,

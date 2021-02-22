@@ -15,7 +15,7 @@ import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper

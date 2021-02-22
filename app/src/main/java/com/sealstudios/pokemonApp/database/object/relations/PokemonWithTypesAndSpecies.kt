@@ -1,14 +1,19 @@
-package com.sealstudios.pokemonApp.database.`object`
+package com.sealstudios.pokemonApp.database.`object`.relations
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
+import com.sealstudios.pokemonApp.database.`object`.PokemonType
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
 
 data class PokemonWithTypesAndSpecies constructor(
 
-    @Embedded
+        @Embedded
     val pokemon: Pokemon,
-    @Relation(
+        @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonType::class,
         entityColumn = PokemonType.TYPE_ID,
@@ -19,7 +24,7 @@ data class PokemonWithTypesAndSpecies constructor(
         )
     )
     val types: List<PokemonType>,
-    @Relation(
+        @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonSpecies::class,
         entityColumn = PokemonSpecies.SPECIES_ID,

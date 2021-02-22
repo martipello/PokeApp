@@ -15,7 +15,7 @@ import com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats.Companion.baseStatsTotal
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithBaseStats
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithBaseStats
 import com.sealstudios.pokemonApp.databinding.PokemonBaseStatsFragmentBinding
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.viewModel.ColorViewModel

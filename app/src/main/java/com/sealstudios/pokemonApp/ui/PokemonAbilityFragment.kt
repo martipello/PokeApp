@@ -50,7 +50,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
     private fun observePokemonAbilities() {
         pokemonAbilityViewModel.pokemonAbilities.observe(
                 viewLifecycleOwner,
-                Observer { pokemonWithAbilitiesAndMetaDataResource ->
+                { pokemonWithAbilitiesAndMetaDataResource ->
                     when (pokemonWithAbilitiesAndMetaDataResource.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithAbilitiesAndMetaDataResource.data != null) {

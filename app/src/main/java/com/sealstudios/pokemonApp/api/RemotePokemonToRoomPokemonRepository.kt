@@ -4,9 +4,6 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.WorkManager
 import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.*
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypeMetaDataJoin
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -39,7 +36,7 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                     remotePokemonRepository.speciesForId(remotePokemonId)
             when (pokemonSpeciesRequest.status) {
                 Status.SUCCESS -> pokemonSpeciesRequest.data?.let {
-                    insertPokemonSpecies(
+                    pokemonSpeciesRepository.insertPokemonSpecies(
                             remotePokemonId,
                             PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
                     )
@@ -59,26 +56,13 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
             when (pokemonRequest.status) {
                 Status.SUCCESS -> {
                     pokemonRequest.data?.let {
-                        insertPokemonTypes(it)
-                        insertPokemonTypeMetaData(it)
+                        pokemonTypeRepository.insertPokemonTypes(it)
+                        pokemonTypeMetaDataRepository.insertPokemonTypeMetaData(it)
                     }
                 }
                 else -> {
                 }
             }
-
-        }
-    }
-
-    private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        withContext(Dispatchers.IO) {
-            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
-                    PokemonSpeciesJoin(
-                            remotePokemonId,
-                            pokemonSpecies.id
-                    )
-            )
         }
     }
 
@@ -97,36 +81,4 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
         }
     }
 
-    private suspend fun insertPokemonTypes(
-            remotePokemon: ApiPokemon
-    ) {
-        withContext(Dispatchers.IO) {
-            remotePokemon.types.map {
-
-                val pokemonType = PokemonType.mapDbPokemonTypeFromPokemonResponse(it)
-                val pokemonTypeJoin = PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon.id, it.type.url)
-
-                pokemonTypeRepository.insertPokemonType(pokemonType)
-                pokemonTypeRepository.insertPokemonTypeJoin(pokemonTypeJoin)
-            }
-        }
-    }
-
-    private suspend fun insertPokemonTypeMetaData(
-            remotePokemon: ApiPokemon
-    ) {
-        withContext(Dispatchers.IO) {
-
-            val pokemonTypeMetaData = PokemonTypeMetaData.mapRemotePokemonToPokemonTypeMetaData(remotePokemon.id, remotePokemon.types)
-            val pokemonTypesMetaDataJoin = PokemonTypeMetaDataJoin.mapTypeMetaDataJoinFromPokemonResponse(remotePokemon.id, remotePokemon.types)
-
-            pokemonTypeMetaDataRepository.insertPokemonTypeMetaData(
-                    pokemonTypeMetaData
-            )
-            pokemonTypeMetaDataRepository.insertPokemonTypeMetaDataJoin(
-                    pokemonTypesMetaDataJoin
-            )
-
-        }
-    }
 }

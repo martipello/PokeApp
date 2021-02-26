@@ -26,6 +26,14 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
+    suspend fun pokemonTypeForId(id: Int): Resource<Type> {
+        return try {
+            responseHandler.handleSuccess(pokemonService.getPokemonTypeForId(id))
+        } catch (e: Exception) {
+            responseHandler.handleException(e)
+        }
+    }
+
     suspend fun speciesForId(id: Int): Resource<ApiPokemonSpecies> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonSpeciesForId(id))

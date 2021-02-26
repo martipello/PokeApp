@@ -4,14 +4,13 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.*
-import com.sealstudios.pokemonApp.api.`object`.PokemonAbility
-import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
+import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
+import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin.Companion.mapTypeJoinsFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonBaseStatsJoin
+import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.repository.*
 import kotlinx.coroutines.Dispatchers
@@ -25,6 +24,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
         private val pokemonTypeRepository: PokemonTypeRepository,
         private val pokemonBaseStatsRepository: PokemonBaseStatsRepository,
         private val pokemonWithTypesRepository: PokemonWithTypesRepository,
+        private val pokemonTypeMetaDataRepository: PokemonTypeMetaDataRepository,
         private val pokemonMoveMetaDataRepository: PokemonMoveMetaDataRepository,
         private val pokemonAbilityMetaDataRepository: PokemonAbilityMetaDataRepository,
         @Assisted private val savedStateHandle: SavedStateHandle
@@ -80,12 +80,13 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                     val pokemonRequestData = pokemonRequest.data
                     val pokemon = mapDbPokemonFromPokemonResponse(pokemonRequestData)
                     repository.updatePokemon(pokemon)
-                    insertPokemonTypes(pokemonRequestData)
+                    pokemonTypeRepository.insertPokemonTypes(pokemonRequestData)
+                    pokemonTypeMetaDataRepository.insertPokemonTypeMetaData(pokemonRequestData)
                     emit(
                             Resource.success(
-                                    mapDbPokemonTypesFromPokemonResponse(pokemonRequestData)?.let {
-                                        PokemonWithTypes(pokemon = pokemon, types = it)
-                                    }
+                                    PokemonWithTypes(
+                                            pokemon = pokemon,
+                                            types = mapDbPokemonTypesFromPokemonResponse(pokemonRequestData))
                             )
                     )
                     onFinish(pokemon.id, pokemonRequestData)
@@ -103,7 +104,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private suspend fun onFinishedSavingPokemonAbilities(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
-                pokemonRequestData.abilities?.let { insertPokemonAbilityMetaData(it, pokemonId) }
+                insertPokemonAbilityMetaData(pokemonRequestData.abilities, pokemonId)
             }
             updateDatabase.await()
             onFinishedSavingPokemonAbilities.value = pokemonId
@@ -113,7 +114,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private suspend fun onFinishedSavingPokemonBaseStats(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
-                pokemonRequestData.stats?.let { insertPokemonStats(it, pokemonId) }
+                pokemonBaseStatsRepository.insertPokemonStats(pokemonRequestData.stats, pokemonId)
             }
             updateDatabase.await()
             onFinishedSavingPokemonBaseStats.value = pokemonId
@@ -123,42 +124,10 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private suspend fun onFinishedSavingPokemonMoves(pokemonId: Int, pokemonRequestData: ApiPokemon) {
         viewModelScope.launch {
             val updateDatabase = async {
-                pokemonRequestData.moves?.let { insertPokemonMoveMetaData(it, pokemonId) }
+                insertPokemonMoveMetaData(pokemonRequestData.moves, pokemonId)
             }
             updateDatabase.await()
             onFinishedSavingPokemonMoves.value = pokemonId
-        }
-    }
-
-    private suspend fun insertPokemonTypes(
-            remotePokemon: ApiPokemon
-    ) {
-        withContext(Dispatchers.IO) {
-            mapDbPokemonTypesFromPokemonResponse(
-                    remotePokemon
-            )?.let {
-                pokemonTypeRepository.insertPokemonTypes(it)
-            }
-            mapTypeJoinsFromPokemonResponse(
-                    remotePokemon
-            )?.let {
-                pokemonTypeRepository.insertPokemonTypeJoins(it)
-            }
-        }
-    }
-
-    private suspend fun insertPokemonStats(
-            stats: List<PokemonStat>,
-            remotePokemonId: Int
-    ) {
-        withContext(Dispatchers.IO) {
-            val pokemonBaseStats = PokemonBaseStats.mapRemoteStatToPokemonBaseStat(
-                    pokemonId = remotePokemonId,
-                    pokemonStats = stats
-            )
-            val pokemonBaseStatsJoin = PokemonBaseStatsJoin(remotePokemonId, pokemonBaseStats.id)
-            pokemonBaseStatsRepository.insertPokemonBaseStats(pokemonBaseStats)
-            pokemonBaseStatsRepository.insertPokemonBaseStatsJoin(pokemonBaseStatsJoin)
         }
     }
 

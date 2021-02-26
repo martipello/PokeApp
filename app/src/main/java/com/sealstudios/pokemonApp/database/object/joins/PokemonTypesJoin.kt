@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.database.`object`.joins
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
+import com.sealstudios.pokemonApp.api.`object`.Type
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.POKEMON_ID
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.TYPE_ID
@@ -19,6 +20,13 @@ class PokemonTypesJoin(
     val type_id: Int
 ) {
     companion object {
+
+        fun mapTypeJoinFromTypeResponse(apiPokemonId: Int, type: Type): PokemonTypesJoin {
+            return PokemonTypesJoin(
+                    pokemon_id = apiPokemonId,
+                    type_id = type.id,
+            )
+        }
 
         fun mapTypeJoinsFromPokemonResponse(apiPokemon: Int, apiTypeUrl: String): PokemonTypesJoin {
             return PokemonTypesJoin(

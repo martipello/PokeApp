@@ -71,7 +71,7 @@ data class PokemonType(
                     name = apiPokemonType.type.name,
             )
         }
-        fun mapDbPokemonTypeFromPokemonResponse(type: Type): PokemonType {
+        fun mapDbPokemonTypeFromTypeResponse(type: Type): PokemonType {
             return PokemonType(
                     id = type.id,
                     name = type.name,

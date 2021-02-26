@@ -14,7 +14,7 @@ class PokemonSpeciesRepository @Inject constructor(
     private val pokemonSpeciesJoinDao: PokemonSpeciesJoinDao
 ) {
 
-    suspend fun insertPokemonSpecies(pokemonSpecies: PokemonSpecies) {
+    private suspend fun insertPokemonSpecies(pokemonSpecies: PokemonSpecies) {
         pokemonSpeciesDao.insertSpecies(pokemonSpecies)
     }
 
@@ -26,8 +26,20 @@ class PokemonSpeciesRepository @Inject constructor(
 
     // SPECIES JOIN
 
-    suspend fun insertPokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
+    private suspend fun insertPokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
         pokemonSpeciesJoinDao.insertPokemonSpeciesJoin(pokemonSpeciesJoin)
+    }
+
+    suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
+        withContext(Dispatchers.IO) {
+            insertPokemonSpecies(pokemonSpecies)
+            insertPokemonSpeciesJoin(
+                    PokemonSpeciesJoin(
+                            remotePokemonId,
+                            pokemonSpecies.id
+                    )
+            )
+        }
     }
 
 }

@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
@@ -21,11 +20,11 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class PokemonSpeciesFragment : Fragment() {
-    private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels({requireParentFragment()})
+    private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels({ requireParentFragment() })
     private var _binding: PokemonSpeciesFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = PokemonSpeciesFragmentBinding.inflate(inflater, container, false)
         _binding = binding
         observePokemonSpecies()
@@ -34,7 +33,7 @@ class PokemonSpeciesFragment : Fragment() {
 
 
     private fun observePokemonSpecies() {
-        pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, Observer { pokemonSpecies ->
+        pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, { pokemonSpecies ->
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {
@@ -56,13 +55,13 @@ class PokemonSpeciesFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun populatePokemonSpeciesViews(pokemonSpecies: PokemonSpecies) =
-        lifecycleScope.launch(Dispatchers.Main) {
-            setPokemonSpeciesFormData(pokemonSpecies)
-        }
+            lifecycleScope.launch(Dispatchers.Main) {
+                setPokemonSpeciesFormData(pokemonSpecies)
+            }
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonSpeciesFormData(
-        species: PokemonSpecies
+            species: PokemonSpecies
     ) {
         val context = binding.root.context
         binding.pokedexSubtitleText.text = species.pokedex?.capitalize() ?: "N/A"
@@ -71,11 +70,11 @@ class PokemonSpeciesFragment : Fragment() {
             binding.pokedexEntryText.text = it
         }
         binding.shapeText.text =
-            context.getString(R.string.shape_text, species.shape?.capitalize() ?: "N/A")
+                context.getString(R.string.shape_text, species.shape?.capitalize() ?: "N/A")
         binding.formDescriptionText.text =
-            context.getString(R.string.form_text, species.formDescription)
+                context.getString(R.string.form_text, species.formDescription)
         binding.habitatText.text =
-            context.getString(R.string.habitat, species.habitat?.capitalize() ?: "N/A")
+                context.getString(R.string.habitat, species.habitat?.capitalize() ?: "N/A")
     }
 
     private fun PokemonSpeciesFragmentBinding.setLoading() {

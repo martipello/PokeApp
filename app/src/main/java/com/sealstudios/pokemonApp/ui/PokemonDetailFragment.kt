@@ -27,12 +27,14 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
+import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
+import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -244,7 +246,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     @SuppressLint("DefaultLocale")
     private fun populatePokemonDetailViews(pokemon: PokemonWithTypes) =
             lifecycleScope.launch(Dispatchers.Main) {
-                setPokemonTypes(pokemon.types)
+                buildPokemonTypes(pokemon.types)
                 setPokemonFormData(pokemon)
             }
 
@@ -293,21 +295,26 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         }
     }
 
-
-    private fun setPokemonTypes(
-            pokemonTypes: List<PokemonType>
+    private fun buildPokemonTypes(
+            types: List<PokemonType>
     ) {
-        binding.pokemonTypesChipGroup.removeAllViews()
-        val types = getPokemonEnumTypesForPokemonTypes(
-                PokemonType.getTypesInOrder(types = pokemonTypes)
-        )
 
-        for (type in types) {
-            binding.pokemonTypesChipGroup.addView(
-                    createPokemonTypeChip(type, binding.root.context)
+        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
+        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
+        CoroutineScope(Dispatchers.Default).launch {
+            val enumTypes = getPokemonEnumTypesForPokemonTypes(
+                    types
             )
+            withContext(Dispatchers.Main) {
+                TypesGroupHelper(
+                        binding.dualTypeChipLayout.pokemonTypesChipGroup,
+                        enumTypes
+                ).bindChips()
+            }
         }
     }
+
+
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(

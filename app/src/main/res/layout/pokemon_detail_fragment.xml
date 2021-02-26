@@ -120,6 +120,7 @@
                     android:layout_marginStart="@dimen/qualified_large_margin_24dp"
                     android:layout_marginEnd="@dimen/qualified_large_margin_24dp"
                     android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
+                    android:minHeight="350dp"
                     android:clipToPadding="false"
                     android:elevation="@dimen/qualified_large_margin_32dp"
                     android:paddingBottom="@dimen/qualified_medium_margin_16dp"
@@ -145,7 +146,7 @@
                         android:layout_width="0dp"
                         android:layout_height="300dp"
                         android:src="@drawable/colored_pokeball_anim_faster"
-                        android:visibility="visible"
+                        android:visibility="gone"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -188,8 +189,8 @@
                         android:id="@+id/content"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
+                        android:visibility="visible"
+                        android:paddingBottom="@dimen/qualified_large_margin_32dp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/title">
@@ -201,41 +202,33 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                             android:text="@string/subtitle"
-                            app:layout_constraintBottom_toTopOf="@id/pokemon_types_chip_group_container"
+                            app:layout_constraintBottom_toTopOf="@id/dual_type_chip_layout"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <com.google.android.flexbox.FlexboxLayout
-                            android:id="@+id/pokemon_types_chip_group_container"
-                            android:layout_width="0dp"
+                        <include
+                            android:id="@+id/dual_type_chip_layout"
+                            layout="@layout/dual_type_chip_layout"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="end"
-                            android:orientation="horizontal"
-                            app:flexWrap="wrap"
-                            app:justifyContent="flex_end"
+                            android:layout_gravity="end"
+                            app:layout_constraintTop_toBottomOf="@id/subtitle"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/subtitle">
-
-                            <com.google.android.material.chip.ChipGroup
-                                android:id="@+id/pokemon_types_chip_group"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-
-                        </com.google.android.flexbox.FlexboxLayout>
+                            android:layout_marginTop="@dimen/qualified_small_margin_4dp"/>
 
                         <androidx.constraintlayout.widget.Barrier
                             android:id="@+id/types_barrier"
                             android:layout_width="match_parent"
                             android:layout_height="1dp"
                             app:barrierDirection="bottom"
-                            app:constraint_referenced_ids="subtitle,pokemon_types_chip_group_container" />
+                            app:constraint_referenced_ids="subtitle, dual_type_chip_layout" />
 
                         <TextView
                             android:id="@+id/gen_text_label"
                             style="@style/ThemeOverlay.MyBodyTextBold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/small_margin_8dp"
                             android:text="@string/generation_label"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/types_barrier" />
@@ -245,11 +238,12 @@
                             style="@style/ThemeOverlay.MyBodyText"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/small_margin_8dp"
                             android:paddingStart="@dimen/qualified_small_margin_8dp"
                             android:text="@string/generation_label"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toEndOf="@id/gen_text_label"
-                            app:layout_constraintTop_toBottomOf="@id/types_barrier"
+                            app:layout_constraintBaseline_toBaselineOf="@id/gen_text_label"
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
@@ -271,7 +265,7 @@
                             android:paddingStart="@dimen/qualified_small_margin_8dp"
                             android:text="@string/height_label"
                             app:layout_constraintStart_toEndOf="@id/height_label"
-                            app:layout_constraintTop_toBottomOf="@id/gen_text_label"
+                            app:layout_constraintBaseline_toBaselineOf="@id/height_label"
                             tools:ignore="RtlSymmetry" />
 
                         <TextView
@@ -297,7 +291,7 @@
                             android:paddingEnd="@dimen/qualified_small_margin_8dp"
                             android:text="@string/weight_label"
                             app:layout_constraintStart_toEndOf="@id/weight_label"
-                            app:layout_constraintTop_toBottomOf="@id/gen_text_label" />
+                            app:layout_constraintBaseline_toBaselineOf="@id/weight_label"/>
 
                         <View
                             android:id="@+id/info_divider"
@@ -305,7 +299,6 @@
                             android:layout_height="1dp"
                             android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                             android:background="@color/light_grey"
-                            app:layout_constraintBottom_toTopOf="@id/species_fragment"
                             app:layout_constraintTop_toBottomOf="@id/height_label" />
 
                         <androidx.fragment.app.FragmentContainerView
@@ -313,7 +306,6 @@
                             android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toTopOf="@id/pokemon_base_stats_fragment"
                             app:layout_constraintTop_toBottomOf="@id/info_divider"
                             tools:layout="@layout/pokemon_species_fragment" />
 
@@ -322,7 +314,6 @@
                             android:name="com.sealstudios.pokemonApp.ui.PokemonBaseStatsFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toTopOf="@id/ability_fragment"
                             app:layout_constraintTop_toBottomOf="@id/species_fragment"
                             tools:layout="@layout/pokemon_base_stats_fragment" />
 
@@ -330,8 +321,7 @@
                             android:id="@+id/weakness_resistance_fragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:name="com.sealstudios.pokemonApp.ui.WeaknessResistanceFragment"
-                            app:layout_constraintBottom_toTopOf="@id/ability_fragment"
+                            android:name="com.sealstudios.pokemonApp.ui.PokemonWeaknessResistanceFragment"
                             app:layout_constraintTop_toBottomOf="@id/pokemon_base_stats_fragment"
                             tools:layout="@layout/pokemon_weakness_resistance_fragment"/>
 
@@ -340,7 +330,6 @@
                             android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toTopOf="@id/movesFragment"
                             app:layout_constraintTop_toBottomOf="@id/weakness_resistance_fragment"
                             tools:layout="@layout/pokemon_ability_fragment" />
 
@@ -349,10 +338,8 @@
                             android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/ability_fragment"
-                            tools:layout="@layout/pokemon_moves_fragment"
-                            android:layout_marginBottom="@dimen/qualified_large_margin_32dp"/>
+                            tools:layout="@layout/pokemon_moves_fragment"/>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 

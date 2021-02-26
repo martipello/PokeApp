@@ -13,7 +13,7 @@ class PokemonWithTypesRepository @Inject constructor(
 
     suspend fun getSinglePokemonWithTypesByIdAsync(id: Int): PokemonWithTypes {
         return withContext(Dispatchers.IO) {
-            return@withContext pokemonTypeDao.getSinglePokemonWithTypesByIdAsync(id)
+            return@withContext pokemonTypeDao.getPokemonWithTypesById(id)
         }
     }
 

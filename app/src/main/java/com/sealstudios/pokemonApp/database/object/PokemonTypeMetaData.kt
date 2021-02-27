@@ -28,7 +28,7 @@ open class PokemonTypeMetaData constructor(
     companion object {
 
         const val TYPE_META_DATA_ID: String = "type_meta_data_id"
-        const val SLOT: String = "is_hidden"
+        const val SLOT: String = "slot"
 
         fun createTypeMetaDataId(pokemonId: Int, typeId: Int): Int {
             return "$pokemonId$uniqueTypeMetaDataConstant$typeId".toInt()

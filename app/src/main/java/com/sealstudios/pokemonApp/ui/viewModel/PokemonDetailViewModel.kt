@@ -155,7 +155,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
                             abilityId,
                             pokemonId,
                             abilityResponse.ability.name,
-                            abilityResponse.isHidden
+                            abilityResponse.is_hidden
                     )
                     pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)
                 }

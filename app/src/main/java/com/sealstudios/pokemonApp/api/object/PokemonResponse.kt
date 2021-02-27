@@ -154,7 +154,7 @@ data class PokemonSprites(
 )
 
 data class PokemonAbility(
-    val isHidden: Boolean,
+    val is_hidden: Boolean,
     val slot: Int,
     val ability: NamedApiResource,
 )

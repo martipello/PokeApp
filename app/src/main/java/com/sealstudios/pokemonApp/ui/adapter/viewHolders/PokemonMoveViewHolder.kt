@@ -19,7 +19,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
 import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
-import com.sealstudios.pokemonApp.ui.util.decorators.MoveLearningDecoration
+import com.sealstudios.pokemonApp.ui.util.decorators.JustBottomDecoration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ constructor(
         binding.levelLearnedAtTable.apply {
             adapter = learningAdapter
             addItemDecoration(
-                MoveLearningDecoration(
+                JustBottomDecoration(
                     context.resources.getDimensionPixelSize(
                         R.dimen.qualified_small_margin_8dp
                     )

@@ -114,7 +114,7 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun setPokemon(pokemonId: Int) {
+    fun setPokemonId(pokemonId: Int) {
         this.pokemonId.value = pokemonId
     }
 

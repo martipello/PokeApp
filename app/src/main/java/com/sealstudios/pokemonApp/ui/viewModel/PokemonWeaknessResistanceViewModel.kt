@@ -26,7 +26,7 @@ class PokemonWeaknessResistanceViewModel @ViewModelInject constructor(
             if (pokemonWithTypes.types.any { it.doubleDamageFrom.isEmpty() }) {
                 pokemonWithTypes.types.map { pokemonType ->
                     if (pokemonType.doubleDamageFrom.isEmpty()) {
-                        fetchPokemonType(pokemon = pokemonWithTypes.pokemon, typeId = pokemonType.id)
+                        emitSource(fetchPokemonType(pokemon = pokemonWithTypes.pokemon, typeId = pokemonType.id))
                     }
                 }
             } else {

@@ -1,11 +1,9 @@
 package com.sealstudios.pokemonApp.ui.util
 
 import android.annotation.SuppressLint
-import android.content.Context
-import android.view.LayoutInflater
-import androidx.core.content.ContextCompat
-import com.google.android.material.chip.Chip
 import com.sealstudios.pokemonApp.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import com.sealstudios.pokemonApp.database.`object`.PokemonType as pokemonType
 
 enum class PokemonType(val color: Int, val icon: Int) {
@@ -77,21 +75,77 @@ enum class PokemonType(val color: Int, val icon: Int) {
             return enumValues<PokemonType>().asList()
         }
 
-        @SuppressLint("DefaultLocale")
-        fun createPokemonTypeChip(pokemonType: PokemonType, context: Context): Chip? {
-            val chip =
-                LayoutInflater.from(context).inflate(R.layout.pokemon_type_chip, null) as Chip
-            chip.text = pokemonType.name.capitalize()
-            chip.chipIcon = ContextCompat.getDrawable(context, pokemonType.icon)
-            chip.setChipBackgroundColorResource(pokemonType.color)
-            chip.isCheckable = false
-            chip.isClickable = false
-            chip.rippleColor = null
-            return chip
+        suspend fun getWeaknessWithMultipliers(types: List<pokemonType>): List<Pair<PokemonType, Double>> {
+            return withContext(Dispatchers.Default) {
+
+                fun addToMultiplier(typeName: String, doubleDamageFromMultipliersMap: MutableMap<String, Pair<PokemonType, Double>>) {
+                    val typeEnum = getPokemonEnumTypeForPokemonType(typeName)
+                    val entry = doubleDamageFromMultipliersMap.getOrPut(typeEnum.name, { Pair(typeEnum, 1.0) })
+                    doubleDamageFromMultipliersMap[typeEnum.name] = Pair(entry.pokemonType, entry.weaknessResistanceMultiplier * 2)
+                }
+
+                val doubleDamageFromMultipliersMap = mutableMapOf<String, Pair<PokemonType, Double>>()
+
+                types.forEach { type ->
+                    type.doubleDamageFrom.forEach {
+                        addToMultiplier(it, doubleDamageFromMultipliersMap)
+                    }
+                }
+
+                return@withContext doubleDamageFromMultipliersMap.values.toList()
+
+            }
+
         }
 
+        suspend fun getResistanceWithMultipliers(types: List<pokemonType>): List<Pair<PokemonType, Double>> {
+
+            return withContext(Dispatchers.Default) {
+                fun minusFromMultiplier(typeName: String, resistanceMultipliersMap: MutableMap<String, Pair<PokemonType, Double>>) {
+                    val typeEnum = getPokemonEnumTypeForPokemonType(typeName)
+                    val entry = resistanceMultipliersMap.getOrPut(typeEnum.name, { Pair(typeEnum, 1.0) })
+                    resistanceMultipliersMap[typeEnum.name] = Pair(entry.pokemonType, entry.weaknessResistanceMultiplier / 2)
+                }
+
+                val resistanceMultipliersMap = mutableMapOf<String, Pair<PokemonType, Double>>()
+
+                types.forEach { type ->
+                    type.halfDamageFrom.forEach {
+                        minusFromMultiplier(it, resistanceMultipliersMap)
+                    }
+                }
+
+                return@withContext resistanceMultipliersMap.values.toList()
+
+            }
+
+        }
+
+        suspend fun getZeroMultipliers(types: List<pokemonType>): List<Pair<PokemonType, Double>> {
+
+            return withContext(Dispatchers.Default){
+
+                fun zeroMultiplier(typeName: String, zeroMultipliersMap: MutableMap<String, Pair<PokemonType, Double>>) {
+                    val typeEnum = getPokemonEnumTypeForPokemonType(typeName)
+                    zeroMultipliersMap[typeEnum.name] = Pair(typeEnum, 0.0)
+                }
+
+                val zeroMultipliersMap = mutableMapOf<String, Pair<PokemonType, Double>>()
+
+                types.forEach { type ->
+                    type.noDamageFrom.forEach {
+                        zeroMultiplier(it, zeroMultipliersMap)
+                    }
+                }
+
+                return@withContext zeroMultipliersMap.values.toList()
+            }
+        }
     }
 
 }
+
+val <A, B> Pair<A, B>.pokemonType: A get() = this.first
+val <A, B> Pair<A, B>.weaknessResistanceMultiplier: B get() = this.second
 
 

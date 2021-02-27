@@ -147,13 +147,15 @@ class PokemonBaseStatsFragment : Fragment() {
 
     private fun setStatBarProgress(bar: TextRoundCornerProgressBar, value: Float) {
         lifecycleScope.launch {
-            delay(200)
-            withContext(Dispatchers.Main) {
+            withContext(Dispatchers.Default){
                 val format = DecimalFormat()
                 format.isDecimalSeparatorAlwaysShown = false
-                bar.progress = value
-                bar.progressText = format.format(value)
-                bar.textProgressSize = 32
+                delay(200)
+                withContext(Dispatchers.Main) {
+                    bar.progress = value
+                    bar.progressText = format.format(value)
+                    bar.textProgressSize = 32
+                }
             }
         }
     }

@@ -6,10 +6,9 @@ import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
-import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.databinding.PokemonWeaknessResistanceViewHolderBinding
-import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonWeaknessResistanceViewHolder
+import com.sealstudios.pokemonApp.ui.util.PokemonType
 
 class PokemonWeaknessResistanceAdapter(
         private val glide: RequestManager
@@ -30,8 +29,8 @@ class PokemonWeaknessResistanceAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is PokemonViewHolder -> {
-                holder.bind(differ.currentList[position] as PokemonWithTypesAndSpeciesForList)
+            is PokemonWeaknessResistanceViewHolder -> {
+                holder.bind(differ.currentList[position])
             }
         }
     }
@@ -40,23 +39,23 @@ class PokemonWeaknessResistanceAdapter(
         return differ.currentList.size
     }
 
-    fun submitList(list: List<Pair<String, String>>) {
+    fun submitList(list: List<Pair<PokemonType, Double>>) {
         differ.submitList(list)
     }
 
     companion object {
 
-        private fun diffCallback(): DiffUtil.ItemCallback<Pair<String, String>> {
-            return object : DiffUtil.ItemCallback<Pair<String, String>>() {
+        private fun diffCallback(): DiffUtil.ItemCallback<Pair<PokemonType, Double>> {
+            return object : DiffUtil.ItemCallback<Pair<PokemonType, Double>>() {
 
                 override fun areItemsTheSame(
-                        oldItem: Pair<String, String>,
-                        newItem: Pair<String, String>
+                        oldItem: Pair<PokemonType, Double>,
+                        newItem: Pair<PokemonType, Double>
                 ): Boolean = oldItem.first == newItem.first
 
                 override fun areContentsTheSame(
-                        oldItem: Pair<String, String>,
-                        newItem: Pair<String, String>
+                        oldItem: Pair<PokemonType, Double>,
+                        newItem: Pair<PokemonType, Double>
                 ): Boolean = oldItem.first == newItem.first
 
             }

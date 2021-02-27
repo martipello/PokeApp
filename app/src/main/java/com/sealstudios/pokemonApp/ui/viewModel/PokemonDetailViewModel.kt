@@ -31,14 +31,13 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     var revealAnimationExpanded: MutableLiveData<Boolean> = getRevealAnimationExpandedState()
-
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
-
     val pokemonDetail: LiveData<Resource<PokemonWithTypes>> = pokemonDetails()
 
     val onFinishedSavingPokemonAbilities: SingleLiveEvent<Int> = SingleLiveEvent()
     val onFinishedSavingPokemonBaseStats: SingleLiveEvent<Int> = SingleLiveEvent()
     val onFinishedSavingPokemonMoves: SingleLiveEvent<Int> = SingleLiveEvent()
+    val onFinishedSavingPokemonTypes: SingleLiveEvent<Int> = SingleLiveEvent()
 
     private fun pokemonDetails() = pokemonId.switchMap { id ->
         liveData {
@@ -70,6 +69,7 @@ class PokemonDetailViewModel @ViewModelInject constructor(
             onFinishedSavingPokemonBaseStats.value = pokemonId
             onFinishedSavingPokemonMoves.value = pokemonId
         }
+        onFinishedSavingPokemonTypes.value = pokemonId
     }
 
     private fun fetchPokemonDetails(pokemonWithTypes: PokemonWithTypes) = liveData {

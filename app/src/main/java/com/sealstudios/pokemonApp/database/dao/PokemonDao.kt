@@ -5,6 +5,10 @@ import androidx.paging.PagingSource
 import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteQuery
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithSpecies
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpecies
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesAndMoves
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 
 
 @Dao

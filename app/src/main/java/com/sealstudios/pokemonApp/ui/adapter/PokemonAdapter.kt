@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.database.`object`.MyNativeAd
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 import com.sealstudios.pokemonApp.databinding.AdLayoutBinding
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding

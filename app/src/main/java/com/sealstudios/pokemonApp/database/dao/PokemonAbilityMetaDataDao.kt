@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 
 @Dao
 interface PokemonAbilityMetaDataDao {

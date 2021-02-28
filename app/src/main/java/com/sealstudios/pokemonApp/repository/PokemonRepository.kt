@@ -1,8 +1,7 @@
 package com.sealstudios.pokemonApp.repository
 
 import androidx.lifecycle.LiveData
-import androidx.paging.PagingSource
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypesAndSpeciesForList
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.database.dao.PokemonDao
 import javax.inject.Inject
 import com.sealstudios.pokemonApp.database.`object`.Pokemon as dbPokemon

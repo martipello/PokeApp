@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityJoin
 import com.sealstudios.pokemonApp.database.dao.PokemonAbilityDao
 import com.sealstudios.pokemonApp.database.dao.PokemonAbilityJoinDao
 import javax.inject.Inject

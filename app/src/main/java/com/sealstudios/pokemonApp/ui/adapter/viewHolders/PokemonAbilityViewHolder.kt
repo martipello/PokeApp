@@ -4,7 +4,7 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.formatAbilityName
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration

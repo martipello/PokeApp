@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.database.dao.PokemonSpeciesDao
 import com.sealstudios.pokemonApp.database.dao.PokemonSpeciesJoinDao
 import kotlinx.coroutines.Dispatchers
@@ -14,7 +14,7 @@ class PokemonSpeciesRepository @Inject constructor(
     private val pokemonSpeciesJoinDao: PokemonSpeciesJoinDao
 ) {
 
-    suspend fun insertPokemonSpecies(pokemonSpecies: PokemonSpecies) {
+    private suspend fun insertPokemonSpecies(pokemonSpecies: PokemonSpecies) {
         pokemonSpeciesDao.insertSpecies(pokemonSpecies)
     }
 
@@ -26,8 +26,20 @@ class PokemonSpeciesRepository @Inject constructor(
 
     // SPECIES JOIN
 
-    suspend fun insertPokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
+    private suspend fun insertPokemonSpeciesJoin(pokemonSpeciesJoin: PokemonSpeciesJoin) {
         pokemonSpeciesJoinDao.insertPokemonSpeciesJoin(pokemonSpeciesJoin)
+    }
+
+    suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
+        withContext(Dispatchers.IO) {
+            insertPokemonSpecies(pokemonSpecies)
+            insertPokemonSpeciesJoin(
+                    PokemonSpeciesJoin(
+                            remotePokemonId,
+                            pokemonSpecies.id
+                    )
+            )
+        }
     }
 
 }

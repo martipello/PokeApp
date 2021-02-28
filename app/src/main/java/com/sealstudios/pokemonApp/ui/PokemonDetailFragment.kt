@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.bumptech.glide.RequestManager
@@ -25,14 +24,14 @@ import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithTypes
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
-import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.createPokemonTypeChip
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
+import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -52,6 +51,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val colorViewModel: ColorViewModel by viewModels()
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
+    private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
     private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
     private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
     private var _binding: PokemonDetailFragmentBinding? = null
@@ -92,6 +92,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
+            onFinishedSavingPokemonTypes()
         }
     }
 
@@ -121,7 +122,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun observePokemonDetails() {
-        pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, Observer { pokemonWithTypes ->
+        pokemonDetailViewModel.pokemonDetail.observe(viewLifecycleOwner, { pokemonWithTypes ->
             when (pokemonWithTypes.status) {
                 Status.SUCCESS -> {
                     if (pokemonWithTypes.data != null) {
@@ -150,25 +151,31 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun onFinishedSavingPokemonAbilities() {
-        pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, Observer {
+        pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
             pokemonAbilityViewModel.setPokemonId(it)
         })
     }
 
     private fun onFinishedSavingPokemonBaseStats() {
-        pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, Observer {
+        pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, {
             pokemonBaseStatsViewModel.setPokemonId(it)
         })
     }
 
     private fun onFinishedSavingPokemonMoves() {
-        pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, Observer {
-            pokemonMovesViewModel.setPokemon(it)
+        pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, {
+            pokemonMovesViewModel.setPokemonId(it)
+        })
+    }
+
+    private fun onFinishedSavingPokemonTypes() {
+        pokemonDetailViewModel.onFinishedSavingPokemonTypes.observe(viewLifecycleOwner, {
+            pokemonWeaknessResistanceViewModel.setPokemonId(it)
         })
     }
 
     private fun observePokemonSpecies() {
-        pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, Observer { pokemonSpecies ->
+        pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, { pokemonSpecies ->
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {
@@ -185,7 +192,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun observeHasExpandedState() {
         pokemonDetailViewModel.revealAnimationExpanded.observe(
-                viewLifecycleOwner, Observer { hasExpanded ->
+                viewLifecycleOwner, { hasExpanded ->
             this.hasExpanded = hasExpanded
             if (hasExpanded) {
                 restoreUIState()
@@ -196,7 +203,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun observeUIColor() {
         colorViewModel.dominantAndLightVibrantColors.observe(
-                viewLifecycleOwner, Observer { viewColors ->
+                viewLifecycleOwner, { viewColors ->
             setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
@@ -244,7 +251,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     @SuppressLint("DefaultLocale")
     private fun populatePokemonDetailViews(pokemon: PokemonWithTypes) =
             lifecycleScope.launch(Dispatchers.Main) {
-                setPokemonTypes(pokemon.types)
+                buildPokemonTypes(pokemon.types)
                 setPokemonFormData(pokemon)
             }
 
@@ -293,21 +300,25 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         }
     }
 
-
-    private fun setPokemonTypes(
-            pokemonTypes: List<PokemonType>
+    private fun buildPokemonTypes(
+            types: List<PokemonType>
     ) {
-        binding.pokemonTypesChipGroup.removeAllViews()
-        val types = getPokemonEnumTypesForPokemonTypes(
-                PokemonType.getTypesInOrder(types = pokemonTypes)
-        )
 
-        for (type in types) {
-            binding.pokemonTypesChipGroup.addView(
-                    createPokemonTypeChip(type, binding.root.context)
+        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
+        binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
+        CoroutineScope(Dispatchers.Default).launch {
+            val enumTypes = getPokemonEnumTypesForPokemonTypes(
+                    types
             )
+            withContext(Dispatchers.Main) {
+                TypesGroupHelper(
+                        binding.dualTypeChipLayout.pokemonTypesChipGroup,
+                        enumTypes
+                ).bindChips()
+            }
         }
     }
+
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(
@@ -331,7 +342,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         val context = binding.root.context
         binding.subtitle.text = species.species.capitalize()
         binding.genTextView.text = context.getString(R.string.generation_label)
-
         binding.genTextView.text = PokemonGeneration.formatGenerationName(
                 PokemonGeneration.getGeneration(species.generation ?: "")
         )

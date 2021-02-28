@@ -15,7 +15,7 @@ import com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats.Companion.baseStatsTotal
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithBaseStats
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithBaseStats
 import com.sealstudios.pokemonApp.databinding.PokemonBaseStatsFragmentBinding
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.viewModel.ColorViewModel
@@ -147,13 +147,15 @@ class PokemonBaseStatsFragment : Fragment() {
 
     private fun setStatBarProgress(bar: TextRoundCornerProgressBar, value: Float) {
         lifecycleScope.launch {
-            delay(200)
-            withContext(Dispatchers.Main) {
+            withContext(Dispatchers.Default){
                 val format = DecimalFormat()
                 format.isDecimalSeparatorAlwaysShown = false
-                bar.progress = value
-                bar.progressText = format.format(value)
-                bar.textProgressSize = 32
+                delay(200)
+                withContext(Dispatchers.Main) {
+                    bar.progress = value
+                    bar.progressText = format.format(value)
+                    bar.textProgressSize = 32
+                }
             }
         }
     }

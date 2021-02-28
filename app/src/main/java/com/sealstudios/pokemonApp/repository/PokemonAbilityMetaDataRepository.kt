@@ -1,8 +1,8 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaDataJoin
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithAbilitiesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityMetaDataJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.database.dao.PokemonAbilityMetaDataDao
 import com.sealstudios.pokemonApp.database.dao.PokemonAbilityMetaDataJoinDao
 import javax.inject.Inject

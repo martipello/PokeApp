@@ -1,4 +1,4 @@
-package com.sealstudios.pokemonApp.database.`object`
+package com.sealstudios.pokemonApp.database.`object`.joins
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

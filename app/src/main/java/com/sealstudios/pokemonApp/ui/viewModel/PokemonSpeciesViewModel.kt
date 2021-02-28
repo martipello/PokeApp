@@ -6,16 +6,14 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
 import com.sealstudios.pokemonApp.repository.PokemonSpeciesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class PokemonSpeciesViewModel @ViewModelInject constructor(
-    private val remotePokemonRepository: RemotePokemonRepository,
-    private val pokemonSpeciesRepository: PokemonSpeciesRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
+        private val remotePokemonRepository: RemotePokemonRepository,
+        private val pokemonSpeciesRepository: PokemonSpeciesRepository,
+        @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
@@ -30,9 +28,9 @@ class PokemonSpeciesViewModel @ViewModelInject constructor(
                 emitSource(fetchPokemonSpecies(id))
             } else {
                 emit(
-                    Resource.success(
-                        pokemonSpecies
-                    )
+                        Resource.success(
+                                pokemonSpecies
+                        )
                 )
             }
         }
@@ -44,35 +42,24 @@ class PokemonSpeciesViewModel @ViewModelInject constructor(
             Status.SUCCESS -> {
                 if (pokemonSpeciesRequest.data != null) {
                     val species = PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
-                        pokemonSpeciesRequest.data
+                            pokemonSpeciesRequest.data
                     )
-                    insertPokemonSpecies(pokemonId, species)
+                    pokemonSpeciesRepository.insertPokemonSpecies(pokemonId, species)
                     emit(Resource.success(species))
                 } else {
-                    emit(Resource.error(pokemonSpeciesRequest.message ?: "Data is empty", null, pokemonSpeciesRequest.code))
+                    emit(Resource.error(pokemonSpeciesRequest.message
+                            ?: "Data is empty", null, pokemonSpeciesRequest.code))
                 }
             }
             Status.ERROR -> emit(
-                Resource.error(
-                    pokemonSpeciesRequest.message ?: "General error",
-                    null, pokemonSpeciesRequest.code
-                )
+                    Resource.error(
+                            pokemonSpeciesRequest.message ?: "General error",
+                            null, pokemonSpeciesRequest.code
+                    )
             )
             Status.LOADING -> emit(Resource.loading(null))
         }
 
-    }
-
-    private suspend fun insertPokemonSpecies(remotePokemonId: Int, pokemonSpecies: PokemonSpecies) {
-        withContext(Dispatchers.IO) {
-            pokemonSpeciesRepository.insertPokemonSpecies(pokemonSpecies)
-            pokemonSpeciesRepository.insertPokemonSpeciesJoin(
-                PokemonSpeciesJoin(
-                    remotePokemonId,
-                    pokemonSpecies.id
-                )
-            )
-        }
     }
 
     fun setPokemonId(pokemonId: Int) {

@@ -5,6 +5,9 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonMoveMetaDataJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonMovesJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithMovesAndMetaData
 import com.sealstudios.pokemonApp.repository.PokemonMoveMetaDataRepository
 import com.sealstudios.pokemonApp.repository.PokemonMoveRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
@@ -111,7 +114,7 @@ class PokemonMovesViewModel @ViewModelInject constructor(
         }
     }
 
-    fun setPokemon(pokemonId: Int) {
+    fun setPokemonId(pokemonId: Int) {
         this.pokemonId.value = pokemonId
     }
 

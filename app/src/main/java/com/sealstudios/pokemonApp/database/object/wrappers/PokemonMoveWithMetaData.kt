@@ -1,11 +1,13 @@
-package com.sealstudios.pokemonApp.database.`object`
+package com.sealstudios.pokemonApp.database.`object`.wrappers
 
+import com.sealstudios.pokemonApp.database.`object`.PokemonMove
+import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 
 data class PokemonMoveWithMetaData(
-    val pokemonMove: PokemonMove,
-    val pokemonMoveMetaData: PokemonMoveMetaData
+        val pokemonMove: PokemonMove,
+        val pokemonMoveMetaData: PokemonMoveMetaData
 ) {
     companion object {
 

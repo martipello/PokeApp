@@ -1,7 +1,7 @@
 package com.sealstudios.pokemonApp.database.dao
 
 import androidx.room.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
 
 @Dao
 interface PokemonSpeciesJoinDao {

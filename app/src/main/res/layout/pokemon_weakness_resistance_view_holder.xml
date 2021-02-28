@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/PokemonViewHolderMaterialCardStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:id="@+id/weakness_resistance_type"
+        android:layout_weight="1"
+        android:layout_gravity="end"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="@string/type_resistance" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/weakness_resistance_multiplier"
+        android:layout_weight="1"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="@dimen/qualified_small_margin_8dp"
+        style="@style/ThemeOverlay.MyBodyText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</LinearLayout>

@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.database.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithMovesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithMovesAndMetaData
 
 @Dao
 interface PokemonMoveDao {

@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityWithMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonAbilityViewHolder
@@ -74,15 +74,15 @@ class PokemonAbilityAdapter(private val clickListener: AdapterClickListener? = n
         return object : DiffUtil.ItemCallback<PokemonAbilityWithMetaData>() {
 
             override fun areItemsTheSame(
-                oldItem: PokemonAbilityWithMetaData,
-                newItem: PokemonAbilityWithMetaData
+                    oldItem: PokemonAbilityWithMetaData,
+                    newItem: PokemonAbilityWithMetaData
             ): Boolean {
                 return oldItem.pokemonAbility.id == newItem.pokemonAbility.id
             }
 
             override fun areContentsTheSame(
-                oldItem: PokemonAbilityWithMetaData,
-                newItem: PokemonAbilityWithMetaData
+                    oldItem: PokemonAbilityWithMetaData,
+                    newItem: PokemonAbilityWithMetaData
             ): Boolean {
                 return oldItem.pokemonAbility.id == newItem.pokemonAbility.id
                         && oldItem.pokemonAbility.name == newItem.pokemonAbility.name

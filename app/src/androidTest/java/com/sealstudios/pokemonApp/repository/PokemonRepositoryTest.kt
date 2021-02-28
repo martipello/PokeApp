@@ -8,6 +8,9 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
 import com.sealstudios.pokemonApp.database.`object`.*
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpecies
 import com.sealstudios.pokemonApp.database.dao.*
 import kotlinx.coroutines.*
 import org.hamcrest.CoreMatchers.equalTo

@@ -1,13 +1,16 @@
-package com.sealstudios.pokemonApp.database.`object`
+package com.sealstudios.pokemonApp.database.`object`.relations
 
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.PokemonType
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
 
 data class PokemonWithTypes(
-    @Embedded
+        @Embedded
     val pokemon: Pokemon,
-    @Relation(
+        @Relation(
         parentColumn = Pokemon.POKEMON_ID,
         entity = PokemonType::class,
         entityColumn = PokemonType.TYPE_ID,

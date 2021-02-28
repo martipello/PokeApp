@@ -1,8 +1,8 @@
 package com.sealstudios.pokemonApp.repository
 
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonMovesJoin
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithMovesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.joins.PokemonMovesJoin
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithMovesAndMetaData
 import com.sealstudios.pokemonApp.database.dao.PokemonMoveDao
 import com.sealstudios.pokemonApp.database.dao.PokemonMoveJoinDao
 import javax.inject.Inject

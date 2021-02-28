@@ -92,4 +92,7 @@
     <string name="splash_anim">Splash animation image</string>
     <string name="close_filters">Close filters</string>
     <string name="loading_image">Image loading</string>
+    <string name="weakness_resistance">Weakness And Resistance</string>
+    <string name="type_resistance">type resistance</string>
+    <string name="multiplier">%sx</string>
 </resources>

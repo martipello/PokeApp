@@ -4,7 +4,7 @@ import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
-import com.sealstudios.pokemonApp.database.`object`.PokemonWithBaseStats
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithBaseStats
 import com.sealstudios.pokemonApp.repository.PokemonBaseStatsRepository
 
 class PokemonBaseStatsViewModel @ViewModelInject constructor(

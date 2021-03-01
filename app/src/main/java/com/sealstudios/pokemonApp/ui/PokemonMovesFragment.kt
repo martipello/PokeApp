@@ -43,7 +43,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = PokemonMovesFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -60,7 +60,7 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     }
 
     private fun observeMoves() {
-        pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, Observer { pokemonWithMovesAndMetaDataResource ->
+        pokemonMovesViewModel.pokemonMoves.observe(viewLifecycleOwner, { pokemonWithMovesAndMetaDataResource ->
             when (pokemonWithMovesAndMetaDataResource.status) {
                 Status.SUCCESS -> {
                     if (pokemonWithMovesAndMetaDataResource.data != null) {

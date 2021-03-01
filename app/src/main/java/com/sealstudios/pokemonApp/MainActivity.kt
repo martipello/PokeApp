@@ -58,7 +58,7 @@ class MainActivity : AppCompatActivity() {
         _binding = null
     }
 
-    override fun getTheme(): Resources.Theme? {
+    override fun getTheme(): Resources.Theme {
         val theme: Resources.Theme = super.getTheme()
         theme.applyStyle(R.style.AppTheme, true)
         return theme

@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import java.lang.StringBuilder
 import java.util.*
 
-enum class PokemonGeneration() {
+enum class PokemonGeneration {
     GENERATION_I,
     GENERATION_II,
     GENERATION_III,

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_root"
@@ -34,312 +35,247 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
+            app:titleEnabled="false"
+            app:title=""
+            app:titleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:background="@drawable/squareangle"
+                app:titleTextColor="@android:color/transparent"
+                app:title=""
                 android:elevation="@dimen/large_margin_32dp"
+                android:layout_gravity="top"
                 android:minHeight="?attr/actionBarSize"
                 app:elevation="@dimen/large_margin_32dp"
                 app:layout_collapseMode="pin" />
 
-            <ImageView
-                android:id="@+id/squareangle_mask"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_gravity="top"
-                android:scaleType="fitXY"
-                android:src="@drawable/squareangle"
-                tools:ignore="ContentDescription" />
-
-        </com.google.android.material.appbar.CollapsingToolbarLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingTop="?attr/actionBarSize">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/image_and_card_holder"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintWidth_max="500dp"
-                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                android:clipToPadding="false"
-                android:paddingTop="24dp"
-                android:paddingBottom="24dp">
-
-                <include
-                    android:id="@+id/pokemonImageViewHolderLayout"
-                    layout="@layout/pokemon_detail_image_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintDimensionRatio="16:9"
-                    app:layout_constraintEnd_toEndOf="@id/backing_card"
-                    app:layout_constraintStart_toStartOf="@id/backing_card"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <View
-                    android:id="@+id/card_top_guide"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/qualified_medium_margin_12dp"
-                    android:orientation="horizontal"
-                    app:layout_constraintBottom_toBottomOf="@id/pokemonImageViewHolderLayout"
-                    app:layout_constraintTop_toTopOf="@id/pokemonImageViewHolderLayout" />
-
-                <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/backing_card"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:elevation="@dimen/qualified_medium_margin_16dp"
-                    app:cardCornerRadius="@dimen/qualified_large_margin_48dp"
-                    app:cardElevation="@dimen/qualified_medium_margin_16dp"
-                    app:layout_constraintBottom_toBottomOf="@id/content_holder"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/card_top_guide" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
-                    android:id="@+id/content_holder"
-                    android:layout_width="match_parent"
+                    android:id="@+id/image_and_card_holder"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/qualified_large_margin_24dp"
-                    android:layout_marginEnd="@dimen/qualified_large_margin_24dp"
-                    android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
-                    android:minHeight="350dp"
+                    android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                     android:clipToPadding="false"
-                    android:elevation="@dimen/qualified_large_margin_32dp"
-                    android:paddingBottom="@dimen/qualified_medium_margin_16dp"
+                    android:paddingTop="24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/pokemonImageViewHolderLayout">
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_max="500dp">
 
                     <include
-                        android:id="@+id/error_layout"
-                        layout="@layout/pokemon_error_layout"
+                        android:id="@+id/pokemonImageViewHolderLayout"
+                        layout="@layout/pokemon_detail_image_layout"
                         android:layout_width="0dp"
-                        android:layout_height="300dp"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title" />
-
-                    <include
-                        android:id="@+id/main_progress"
-                        layout="@layout/pokemon_loading_layout"
-                        android:layout_width="0dp"
-                        android:layout_height="300dp"
-                        android:src="@drawable/colored_pokeball_anim_faster"
-                        android:visibility="gone"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title" />
-
-
-                    <TextView
-                        android:id="@+id/title"
-                        style="@style/ThemeOverlay.MyLargeTitleTextBold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                        android:text="@string/title"
-                        app:layout_constraintEnd_toStartOf="@id/id_label"
-                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_height="0dp"
+                        app:layout_constraintDimensionRatio="16:9"
+                        app:layout_constraintEnd_toEndOf="@id/backing_card"
+                        app:layout_constraintStart_toStartOf="@id/backing_card"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/id_hash_label"
-                        style="@style/ThemeOverlay.MyCaptionTextBold"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:paddingEnd="1dp"
-                        android:text="@string/pokemon_id_label"
-                        app:layout_constraintEnd_toStartOf="@id/id_label"
-                        app:layout_constraintTop_toTopOf="@id/title"
-                        tools:ignore="RtlSymmetry" />
+                    <View
+                        android:id="@+id/card_top_guide"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/qualified_medium_margin_12dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintBottom_toBottomOf="@id/pokemonImageViewHolderLayout"
+                        app:layout_constraintTop_toTopOf="@id/pokemonImageViewHolderLayout" />
 
-                    <TextView
-                        android:id="@+id/id_label"
-                        style="@style/ThemeOverlay.MyBodyText"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:text="@string/pokemon_id_label"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@id/title" />
-
-
-                    <androidx.constraintlayout.widget.ConstraintLayout
-                        android:id="@+id/content"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:visibility="visible"
-                        android:paddingBottom="@dimen/qualified_large_margin_32dp"
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/backing_card"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        app:shapeAppearance="@style/ShapeAppearanceOverlay_card_custom_corners_large"
+                        app:layout_constraintBottom_toBottomOf="@id/content_holder"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/title">
+                        app:layout_constraintTop_toBottomOf="@id/card_top_guide" />
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:id="@+id/content_holder"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/qualified_large_margin_24dp"
+                        android:layout_marginEnd="@dimen/qualified_large_margin_24dp"
+                        android:clipToPadding="false"
+                        android:elevation="@dimen/qualified_large_margin_32dp"
+                        android:paddingBottom="@dimen/qualified_medium_margin_16dp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@id/pokemonImageViewHolderLayout">
+
+                        <include
+                            android:id="@+id/error_layout"
+                            layout="@layout/pokemon_error_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="300dp"
+                            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/title" />
+
+                        <include
+                            android:id="@+id/main_progress"
+                            layout="@layout/pokemon_loading_layout"
+                            android:layout_width="0dp"
+                            android:layout_height="300dp"
+                            android:src="@drawable/colored_pokeball_anim_faster"
+                            android:visibility="gone"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/title" />
+
 
                         <TextView
-                            android:id="@+id/subtitle"
-                            style="@style/ThemeOverlay.MySubTitleText"
+                            android:id="@+id/title"
+                            style="@style/ThemeOverlay.MyLargeTitleTextBold"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/subtitle"
-                            app:layout_constraintBottom_toTopOf="@id/dual_type_chip_layout"
+                            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                            android:text="@string/title"
+                            app:layout_constraintEnd_toStartOf="@id/id_label"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <include
-                            android:id="@+id/dual_type_chip_layout"
-                            layout="@layout/dual_type_chip_layout"
-                            android:layout_width="wrap_content"
+                        <TextView
+                            android:id="@+id/id_hash_label"
+                            style="@style/ThemeOverlay.MyCaptionTextBold"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="end"
-                            app:layout_constraintTop_toBottomOf="@id/subtitle"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:layout_marginTop="@dimen/qualified_small_margin_4dp"/>
-
-                        <androidx.constraintlayout.widget.Barrier
-                            android:id="@+id/types_barrier"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            app:barrierDirection="bottom"
-                            app:constraint_referenced_ids="subtitle, dual_type_chip_layout" />
+                            android:paddingEnd="1dp"
+                            android:text="@string/pokemon_id_label"
+                            app:layout_constraintEnd_toStartOf="@id/id_label"
+                            app:layout_constraintTop_toTopOf="@id/title"
+                            tools:ignore="RtlSymmetry" />
 
                         <TextView
-                            android:id="@+id/gen_text_label"
-                            style="@style/ThemeOverlay.MyBodyTextBold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/small_margin_8dp"
-                            android:text="@string/generation_label"
-                            app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/types_barrier" />
-
-                        <TextView
-                            android:id="@+id/gen_text_view"
+                            android:id="@+id/id_label"
                             style="@style/ThemeOverlay.MyBodyText"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/small_margin_8dp"
-                            android:paddingStart="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/generation_label"
+                            android:text="@string/pokemon_id_label"
                             app:layout_constraintEnd_toEndOf="parent"
-                            app:layout_constraintStart_toEndOf="@id/gen_text_label"
-                            app:layout_constraintBaseline_toBaselineOf="@id/gen_text_label"
-                            tools:ignore="RtlSymmetry" />
+                            app:layout_constraintTop_toTopOf="@id/title" />
 
-                        <TextView
-                            android:id="@+id/height_label"
-                            style="@style/ThemeOverlay.MySmallBodyTextBold"
-                            android:layout_width="wrap_content"
+
+                        <androidx.constraintlayout.widget.ConstraintLayout
+                            android:id="@+id/content"
+                            android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/height_label"
+                            android:visibility="visible"
+                            app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintTop_toBottomOf="@id/gen_text_label" />
+                            app:layout_constraintTop_toBottomOf="@id/title">
 
-                        <TextView
-                            android:id="@+id/height_text_view"
-                            style="@style/ThemeOverlay.MySmallBodyText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                            android:paddingStart="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/height_label"
-                            app:layout_constraintStart_toEndOf="@id/height_label"
-                            app:layout_constraintBaseline_toBaselineOf="@id/height_label"
-                            tools:ignore="RtlSymmetry" />
+                            <TextView
+                                android:id="@+id/subtitle"
+                                style="@style/ThemeOverlay.MySubTitleText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/subtitle"
+                                app:layout_constraintBottom_toTopOf="@id/dual_type_chip_layout"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/weight_label"
-                            style="@style/ThemeOverlay.MySmallBodyTextBold"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                            android:paddingStart="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/weight_label"
-                            app:layout_constraintStart_toEndOf="@id/height_text_view"
-                            app:layout_constraintTop_toBottomOf="@id/gen_text_label"
-                            tools:ignore="RtlSymmetry" />
+                            <include
+                                android:id="@+id/dual_type_chip_layout"
+                                layout="@layout/dual_type_chip_layout"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="end"
+                                android:layout_marginTop="@dimen/qualified_small_margin_4dp"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/subtitle" />
 
-                        <TextView
-                            android:id="@+id/weight_text_view"
-                            style="@style/ThemeOverlay.MySmallBodyText"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-                            android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
-                            android:paddingStart="@dimen/qualified_small_margin_8dp"
-                            android:paddingEnd="@dimen/qualified_small_margin_8dp"
-                            android:text="@string/weight_label"
-                            app:layout_constraintStart_toEndOf="@id/weight_label"
-                            app:layout_constraintBaseline_toBaselineOf="@id/weight_label"/>
+                            <androidx.constraintlayout.widget.Barrier
+                                android:id="@+id/types_barrier"
+                                android:layout_width="match_parent"
+                                android:layout_height="1dp"
+                                app:barrierDirection="bottom"
+                                app:constraint_referenced_ids="subtitle, dual_type_chip_layout" />
 
-                        <View
-                            android:id="@+id/info_divider"
-                            android:layout_width="match_parent"
-                            android:layout_height="1dp"
-                            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-                            android:background="@color/light_grey"
-                            app:layout_constraintTop_toBottomOf="@id/height_label" />
+                            <TextView
+                                android:id="@+id/gen_text_label"
+                                style="@style/ThemeOverlay.MyBodyTextBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/small_margin_8dp"
+                                android:text="@string/generation_label"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/types_barrier" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/species_fragment"
-                            android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@id/info_divider"
-                            tools:layout="@layout/pokemon_species_fragment" />
+                            <TextView
+                                android:id="@+id/gen_text_view"
+                                style="@style/ThemeOverlay.MyBodyText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/small_margin_8dp"
+                                android:paddingStart="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/generation_label"
+                                app:layout_constraintBaseline_toBaselineOf="@id/gen_text_label"
+                                app:layout_constraintEnd_toEndOf="parent"
+                                app:layout_constraintStart_toEndOf="@id/gen_text_label"
+                                tools:ignore="RtlSymmetry" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/pokemon_base_stats_fragment"
-                            android:name="com.sealstudios.pokemonApp.ui.PokemonBaseStatsFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@id/species_fragment"
-                            tools:layout="@layout/pokemon_base_stats_fragment" />
+                            <TextView
+                                android:id="@+id/height_label"
+                                style="@style/ThemeOverlay.MySmallBodyTextBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/height_label"
+                                app:layout_constraintStart_toStartOf="parent"
+                                app:layout_constraintTop_toBottomOf="@id/gen_text_label" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/weakness_resistance_fragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:name="com.sealstudios.pokemonApp.ui.PokemonWeaknessResistanceFragment"
-                            app:layout_constraintTop_toBottomOf="@id/pokemon_base_stats_fragment"
-                            tools:layout="@layout/pokemon_weakness_resistance_fragment"/>
+                            <TextView
+                                android:id="@+id/height_text_view"
+                                style="@style/ThemeOverlay.MySmallBodyText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                                android:paddingStart="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/height_label"
+                                app:layout_constraintBaseline_toBaselineOf="@id/height_label"
+                                app:layout_constraintStart_toEndOf="@id/height_label"
+                                tools:ignore="RtlSymmetry" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/ability_fragment"
-                            android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@id/weakness_resistance_fragment"
-                            tools:layout="@layout/pokemon_ability_fragment" />
+                            <TextView
+                                android:id="@+id/weight_label"
+                                style="@style/ThemeOverlay.MySmallBodyTextBold"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                                android:paddingStart="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/weight_label"
+                                app:layout_constraintStart_toEndOf="@id/height_text_view"
+                                app:layout_constraintTop_toBottomOf="@id/gen_text_label"
+                                tools:ignore="RtlSymmetry" />
 
-                        <androidx.fragment.app.FragmentContainerView
-                            android:id="@+id/movesFragment"
-                            android:name="com.sealstudios.pokemonApp.ui.PokemonMovesFragment"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintTop_toBottomOf="@id/ability_fragment"
-                            tools:layout="@layout/pokemon_moves_fragment"/>
+                            <TextView
+                                android:id="@+id/weight_text_view"
+                                style="@style/ThemeOverlay.MySmallBodyText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                                android:layout_marginEnd="@dimen/qualified_small_margin_8dp"
+                                android:paddingStart="@dimen/qualified_small_margin_8dp"
+                                android:paddingEnd="@dimen/qualified_small_margin_8dp"
+                                android:text="@string/weight_label"
+                                app:layout_constraintBaseline_toBaselineOf="@id/weight_label"
+                                app:layout_constraintStart_toEndOf="@id/weight_label" />
+
+                        </androidx.constraintlayout.widget.ConstraintLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -347,9 +283,36 @@
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
+        <com.google.android.material.tabs.TabLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    </androidx.core.widget.NestedScrollView>
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAB 1"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAB 2"/>
+
+            <com.google.android.material.tabs.TabItem
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TAB 3"/>
+
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

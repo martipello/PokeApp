@@ -148,7 +148,7 @@ class CircleCardView @JvmOverloads constructor(
         return arcAnimator
     }
 
-    private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener? {
+    private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener {
         return object : Animator.AnimatorListener,
             com.nineoldandroids.animation.Animator.AnimatorListener {
             override fun onAnimationRepeat(animation: Animator?) {}

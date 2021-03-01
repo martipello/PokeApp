@@ -57,7 +57,7 @@ class PokemonListFragment : Fragment(),
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
         return binding.root
@@ -79,7 +79,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeFetchAllPokemonResponse() {
-        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
+        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, { allPokemon ->
             when (allPokemon.status) {
                 Status.SUCCESS -> {
                     binding.setNotEmpty()
@@ -108,7 +108,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
-                viewLifecycleOwner, Observer { pokemonData ->
+                viewLifecycleOwner, { pokemonData ->
             if (pokemonData != null) {
                 if (pokemonData.isEmpty()) {
                     binding.setEmpty()
@@ -123,7 +123,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
+        pokemonListViewModel.search.observe(viewLifecycleOwner, {
             if (it != null) {
                 search = it.replace("%", "")
             }

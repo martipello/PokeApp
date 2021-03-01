@@ -3,8 +3,6 @@ package com.sealstudios.pokemonApp.repository
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.database.`object`.PokemonTypeMetaData
 import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypeMetaDataJoin
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeMetaDataDao
 import com.sealstudios.pokemonApp.database.dao.PokemonTypeMetaDataJoinDao
 import kotlinx.coroutines.Dispatchers

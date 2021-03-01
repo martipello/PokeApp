@@ -359,8 +359,8 @@ class PokemonSearchAndFilterTests {
             pokedexEntry = "There is a plant seed on its back right from the day this Pokémon is born. The seed slowly grows larger."
         ),
         types = listOf(
-            PokemonType(id = poisonTypeID, name = "poison", slot = 1),
-            PokemonType(id = grassTypeID, name = "grass", slot = 2)
+            PokemonType(id = poisonTypeID, name = "poison"),
+            PokemonType(id = grassTypeID, name = "grass")
         )
     )
 
@@ -371,7 +371,7 @@ class PokemonSearchAndFilterTests {
             species = "Turtle pokemon",
             pokedexEntry = "Small shell pokemon"
         ),
-        types = listOf(PokemonType(id = waterTypeID, name = "water", slot = 1))
+        types = listOf(PokemonType(id = waterTypeID, name = "water"))
     )
 
     private fun charmander(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
@@ -381,7 +381,7 @@ class PokemonSearchAndFilterTests {
             species = "Fire lizard pokemon",
             pokedexEntry = "If the flame on this pokemon's tail goes out it will die"
         ),
-        types = listOf(PokemonType(id = fireTypeID, name = "fire", slot = 1))
+        types = listOf(PokemonType(id = fireTypeID, name = "fire"))
     )
 
     private fun charizard(): PokemonWithTypesAndSpecies = PokemonWithTypesAndSpecies(
@@ -392,8 +392,8 @@ class PokemonSearchAndFilterTests {
             pokedexEntry = "Spits fire that is hot enough to melt boulders. Known to cause forest fires unintentionally"
         ),
         types = listOf(
-            PokemonType(id = fireTypeID, name = "fire", slot = 1),
-            PokemonType(id = flyingTypeID, name = "flying", slot = 2)
+            PokemonType(id = fireTypeID, name = "fire"),
+            PokemonType(id = flyingTypeID, name = "flying")
         )
     )
 
@@ -405,8 +405,8 @@ class PokemonSearchAndFilterTests {
             pokedexEntry = "Known as the legendary bird of fire. Every flap of its wings creates a dazzling flash of flames"
         ),
         types = listOf(
-            PokemonType(id = fireTypeID, name = "fire", slot = 1),
-            PokemonType(id = flyingTypeID, name = "flying", slot = 2)
+            PokemonType(id = fireTypeID, name = "fire"),
+            PokemonType(id = flyingTypeID, name = "flying")
         )
     )
 
@@ -417,7 +417,7 @@ class PokemonSearchAndFilterTests {
             species = "Bird pokemon",
             pokedexEntry = "Pidgey is a Flying Pokémon. Among all the Flying Pokémon, it is the gentlest and easiest to capture. A perfect target for the beginning Pokémon Trainer to test his Pokémon's skills."
         ),
-        types = listOf(PokemonType(id = flyingTypeID, name = "flying", slot = 1))
+        types = listOf(PokemonType(id = flyingTypeID, name = "flying"))
     )
 
 }

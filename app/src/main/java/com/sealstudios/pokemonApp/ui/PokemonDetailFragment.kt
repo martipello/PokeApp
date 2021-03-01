@@ -218,7 +218,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             )
         }
         binding.splash.setCardBackgroundColor(dominantColor)
-        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
+//        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
                 dominantColor
         )

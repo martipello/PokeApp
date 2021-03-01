@@ -41,7 +41,7 @@ class PokemonBaseStatsFragment : Fragment() {
 
     private var dominantAndLightVibrantColors: Pair<Int, Int> = 0 to 0
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = PokemonBaseStatsFragmentBinding.inflate(inflater, container, false)
         _binding = binding
         return binding.root
@@ -56,7 +56,7 @@ class PokemonBaseStatsFragment : Fragment() {
     private fun observePokemonBaseStats() {
         pokemonBaseStatsViewModel.pokemonWithStats.observe(
                 viewLifecycleOwner,
-                Observer { pokemonWithStats ->
+                { pokemonWithStats ->
                     when (pokemonWithStats.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithStats.data != null) {
@@ -82,7 +82,7 @@ class PokemonBaseStatsFragment : Fragment() {
     }
 
     private fun observeColor() {
-        colorViewModel.dominantAndLightVibrantColors.observe(viewLifecycleOwner, Observer {
+        colorViewModel.dominantAndLightVibrantColors.observe(viewLifecycleOwner, {
             dominantAndLightVibrantColors = it
         })
     }

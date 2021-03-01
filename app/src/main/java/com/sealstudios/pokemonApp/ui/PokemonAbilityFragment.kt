@@ -6,13 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData.Companion.createAbilityMetaDataId
-import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
@@ -30,7 +29,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
     private var _binding: PokemonAbilityFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = PokemonAbilityFragmentBinding.inflate(inflater, container, false)
         _binding = binding
         return binding.root

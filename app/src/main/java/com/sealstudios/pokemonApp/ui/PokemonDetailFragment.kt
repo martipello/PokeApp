@@ -3,12 +3,15 @@ package com.sealstudios.pokemonApp.ui
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
+import android.graphics.Color
+import android.graphics.PorterDuff
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
@@ -218,7 +221,13 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             )
         }
         binding.splash.setCardBackgroundColor(dominantColor)
-//        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
+        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
+            DrawableCompat.setTint(
+                    DrawableCompat.wrap(it),
+                    lightVibrantSwatchRgb
+            )
+            binding.toolbar.background = it
+        }
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
                 dominantColor
         )

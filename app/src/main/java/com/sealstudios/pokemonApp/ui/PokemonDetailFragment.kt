@@ -62,8 +62,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val colorViewModel: ColorViewModel by viewModels()
 
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
-//    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
-    private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
+    private val pokemonIdViewModel: PokemonIdViewModel by viewModels()
 
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
     private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
@@ -183,7 +182,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun onFinishedSavingPokemonAbilities() {
         pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
-            pokemonInfoViewModel.setPokemonId(it)
+            pokemonIdViewModel.setPokemonId(it)
 //            pokemonAbilityViewModel.setPokemonId(it)
         })
     }

@@ -6,25 +6,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
+import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.PokemonInfoFragmentBinding
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonIdViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonSpeciesViewModel
-import dagger.hilt.android.AndroidEntryPoint
+import com.sealstudios.pokemonApp.databinding.PokemonStatsFragmentBinding
+import com.sealstudios.pokemonApp.ui.viewModel.*
 
-@AndroidEntryPoint
-class PokemonInfoFragment : Fragment() {
+class PokemonStatsFragment : Fragment() {
 
-    private var _binding: PokemonInfoFragmentBinding? = null
+    private var _binding: PokemonStatsFragmentBinding? = null
     private val binding get() = _binding!!
 
     private val idViewModel: PokemonIdViewModel by viewModels({ requireParentFragment() })
-    private val speciesViewModel: PokemonSpeciesViewModel by viewModels()
-    private val abilityViewModel: PokemonAbilityViewModel by viewModels()
+
+    private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
+    private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = PokemonInfoFragmentBinding.inflate(inflater, container, false)
+        _binding = PokemonStatsFragmentBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -35,8 +34,9 @@ class PokemonInfoFragment : Fragment() {
 
     private fun observePokemonId() {
         idViewModel.pokemonId.observe(viewLifecycleOwner, { id ->
-            speciesViewModel.setPokemonId(id)
-            abilityViewModel.setPokemonId(id)
+            pokemonBaseStatsViewModel.setPokemonId(id)
+            pokemonWeaknessResistanceViewModel.setPokemonId(id)
         })
     }
+
 }

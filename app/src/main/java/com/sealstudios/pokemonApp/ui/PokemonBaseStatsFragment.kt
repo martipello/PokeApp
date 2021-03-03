@@ -33,7 +33,7 @@ import java.text.DecimalFormat
 class PokemonBaseStatsFragment : Fragment() {
 
     private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels({ requireParentFragment() })
-    private val colorViewModel: ColorViewModel by viewModels({ requireParentFragment() })
+    private val colorViewModel: ColorViewModel by viewModels({ requireParentFragment().requireParentFragment() })
 
     private var _binding: PokemonBaseStatsFragmentBinding? = null
     private val binding get() = _binding!!

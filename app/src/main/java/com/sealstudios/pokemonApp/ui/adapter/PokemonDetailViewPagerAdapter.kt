@@ -2,9 +2,9 @@ package com.sealstudios.pokemonApp.ui.adapter
 
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.sealstudios.pokemonApp.ui.PokemonBaseStatsFragment
 import com.sealstudios.pokemonApp.ui.PokemonInfoFragment
 import com.sealstudios.pokemonApp.ui.PokemonMovesFragment
+import com.sealstudios.pokemonApp.ui.PokemonStatsFragment
 
 class PokemonDetailViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(fragment) {
 
@@ -17,7 +17,7 @@ class PokemonDetailViewPagerAdapter(fragment: Fragment) : FragmentStateAdapter(f
     override fun createFragment(position: Int): Fragment {
         return when (fragmentList[position]) {
             Fragments.INFO -> PokemonInfoFragment()
-            Fragments.STATS -> PokemonBaseStatsFragment()
+            Fragments.STATS -> PokemonStatsFragment()
             Fragments.MOVES -> PokemonMovesFragment()
         }
     }

@@ -7,7 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
 
-class PokemonInfoViewModel @ViewModelInject constructor(
+class PokemonIdViewModel @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle) : ViewModel() {
 
     var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()

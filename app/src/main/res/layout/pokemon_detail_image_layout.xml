@@ -33,7 +33,7 @@
         android:outlineProvider="none"
         app:cardCornerRadius="45dp"
         app:cardElevation="@dimen/large_margin_32dp"
-        app:cardBackgroundColor="@color/colorAccent"
+        app:cardBackgroundColor="@color/secondaryColor"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

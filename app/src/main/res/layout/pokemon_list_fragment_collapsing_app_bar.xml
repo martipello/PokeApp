@@ -5,20 +5,20 @@
     android:layout_width="match_parent"
     android:layout_height="250dp"
     android:clipToPadding="false"
-    android:background="@color/colorPrimary"
-    android:theme="@style/AppTheme.AppBarOverlay">
+    android:background="@color/primaryColor"
+    android:theme="@style/Theme.PokemonAppTheme.AppBarOverlay">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:theme="@style/AppTheme.DarkAppBarOverlay"
-        app:contentScrim="@color/colorPrimary"
+        android:theme="@style/Theme.PokemonAppTheme.DarkAppBarOverlay"
+        app:contentScrim="@color/primaryColor"
         app:expandedTitleMarginEnd="64dp"
         app:expandedTitleMarginStart="48dp"
         app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap"
-        app:statusBarScrim="@color/colorPrimary">
+        app:statusBarScrim="@color/primaryColor">
 
         <ImageView
             android:id="@+id/toolbar_image"

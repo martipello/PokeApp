@@ -1,0 +1,31 @@
+<resources>
+
+    <style name="Theme.PokemonAppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/primaryTextColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/primaryTextColor</item>
+
+        <item name="colorPrimaryDark">@color/secondaryTextColor</item>
+
+        <item name="android:windowBackground">@color/primaryLightColor</item>
+        <item name="materialCardViewStyle">@style/MyDarkMaterialCardStyle</item>
+        <item name="android:navigationBarColor">
+            #B3000000
+        </item>
+        <item name="android:statusBarColor">
+            @color/primaryColor
+        </item>
+    </style>
+
+    <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="SplashTheme" parent="Theme.PokemonAppTheme">
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
+
+</resources>

@@ -16,6 +16,7 @@
         <item name="android:statusBarColor">
             @color/primaryColor
         </item>
+        <item name="tabStyle">@style/Widget.App.TabLayout</item>
     </style>
 
     <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

@@ -4,6 +4,17 @@
         <item name="colorControlActivated">@color/secondaryColor</item>
     </style>
 
+    <style name="Widget.App.TabLayout" parent="Widget.MaterialComponents.TabLayout">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.TabLayout</item>
+        <item name="tabTextAppearance">@style/ThemeOverlay.MyBodyText</item>
+    </style>
+
+    <style name="ThemeOverlay.App.TabLayout" parent="Theme.PokemonAppTheme">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnSurface">@color/primaryColor</item>
+    </style>
+
     <style name="CustomCardViewStyle" parent="@style/Widget.MaterialComponents.CardView">
         <item name="cardBackgroundColor">@color/secondaryColor</item>
         <item name="colorSurface">@color/secondaryColor</item>

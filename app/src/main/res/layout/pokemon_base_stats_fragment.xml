@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/base_stats_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment">
 
     <include layout="@layout/pokemon_loading_layout"

@@ -13,6 +13,8 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -20,6 +22,7 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
@@ -27,12 +30,15 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
+import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPager
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
+import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
+import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -45,9 +51,13 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     @Inject
     lateinit var glide: RequestManager
+
     private lateinit var pokemonName: String
     private var pokemonId: Int = -1
+    private var hasExpanded: Boolean = false
+
     private val args: PokemonDetailFragmentArgs by navArgs()
+
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private val colorViewModel: ColorViewModel by viewModels()
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
@@ -55,10 +65,11 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
     private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
     private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
+
+    private lateinit var viewPagerAdapter: PokemonDetailViewPager
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var hasExpanded: Boolean = false
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -84,6 +95,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         lifecycleScope.launch(context = Dispatchers.Main) {
             setNameAndIDViews(view.context)
             setPokemonImageView(highResPokemonUrl(pokemonId))
+            setUpViewPagerAdapter()
+            setUpViewPager()
             if (!hasExpanded) {
                 handleEnterAnimation()
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
@@ -95,6 +108,20 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             onFinishedSavingPokemonMoves()
             onFinishedSavingPokemonTypes()
         }
+    }
+
+    private fun setUpViewPagerAdapter(){
+        viewPagerAdapter = PokemonDetailViewPager(this)
+    }
+
+    private fun setUpViewPager(){
+        binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        binding.viewPager.setPageTransformer(MarginPageTransformer(150))
+        binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = "Fragment ${(position + 1)}"
+        }.attach()
     }
 
     private fun setNameAndIDViews(context: Context) {

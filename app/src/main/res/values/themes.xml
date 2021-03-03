@@ -18,7 +18,11 @@
         </item>
     </style>
 
-    <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
+        <item name="colorControlNormal">@color/primaryTextColor</item>
+    </style>
 
     <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 

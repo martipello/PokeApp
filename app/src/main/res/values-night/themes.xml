@@ -24,6 +24,10 @@
 
     <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
+    <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
+        <item name="colorControlNormal">@color/primaryColor</item>
+    </style>
+
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>

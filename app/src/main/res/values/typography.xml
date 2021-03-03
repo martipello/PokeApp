@@ -1,0 +1,102 @@
+<resources>
+
+    <style name="ThemeOverlay.MyLargeTitleText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_large_title</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyLargeTitleTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_large_title</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTitleText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyTitleTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MySubTitleText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_subtitle</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MySubTitleTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_subtitle</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyBodyText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyBodyTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MySmallBodyText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_small_body</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MySmallBodyTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_small_body</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyCaptionText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyCaptionTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteTitleText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteTitleTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_title</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteBodyText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteBodyTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteCaptionText" parent="Theme.PokemonAppTheme">
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+    <style name="ThemeOverlay.MyWhiteCaptionTextBold" parent="Theme.PokemonAppTheme">
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/qualified_text_size_caption</item>
+        <item name="android:textColorPrimary">@color/primaryTextColor</item>
+    </style>
+
+</resources>

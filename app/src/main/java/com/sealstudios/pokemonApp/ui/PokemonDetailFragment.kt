@@ -30,7 +30,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
-import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPager
+import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
@@ -60,13 +60,16 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private val colorViewModel: ColorViewModel by viewModels()
+
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
+//    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
+    private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
+
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
     private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
-    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
     private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
 
-    private lateinit var viewPagerAdapter: PokemonDetailViewPager
+    private lateinit var viewPagerAdapterAdapter: PokemonDetailViewPagerAdapter
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
@@ -111,11 +114,11 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setUpViewPagerAdapter(){
-        viewPagerAdapter = PokemonDetailViewPager(this)
+        viewPagerAdapterAdapter = PokemonDetailViewPagerAdapter(this)
     }
 
     private fun setUpViewPager(){
-        binding.viewPager.adapter = viewPagerAdapter
+        binding.viewPager.adapter = viewPagerAdapterAdapter
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.setPageTransformer(MarginPageTransformer(150))
         binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
@@ -180,7 +183,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun onFinishedSavingPokemonAbilities() {
         pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
-            pokemonAbilityViewModel.setPokemonId(it)
+            pokemonInfoViewModel.setPokemonId(it)
+//            pokemonAbilityViewModel.setPokemonId(it)
         })
     }
 

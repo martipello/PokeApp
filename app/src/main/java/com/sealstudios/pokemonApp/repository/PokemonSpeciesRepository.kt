@@ -18,7 +18,7 @@ class PokemonSpeciesRepository @Inject constructor(
         pokemonSpeciesDao.insertSpecies(pokemonSpecies)
     }
 
-    suspend fun getSinglePokemonSpeciesByIdAsync(id: Int): PokemonSpecies {
+    suspend fun getSinglePokemonSpeciesByIdAsync(id: Int): PokemonSpecies? {
         return withContext(Dispatchers.IO) {
             return@withContext pokemonSpeciesDao.getSinglePokemonWithSpeciesByIdAsync(id)
         }

@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,8 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData.Companion.createAbilityMetaDataId
-import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
@@ -53,9 +52,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
                     when (pokemonWithAbilitiesAndMetaDataResource.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
-                                val pokemonWithAbilitiesAndMetaData = pokemonWithAbilitiesAndMetaDataResource.data
-                                val abilitiesWithMetaDataList = mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData)
-                                setPokemonAbilities(abilitiesWithMetaDataList)
+                                setPokemonAbilities(pokemonWithAbilitiesAndMetaDataResource.data)
                             } else {
                                 binding.setEmpty()
                             }
@@ -72,17 +69,6 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
                         }
                     }
                 })
-    }
-
-    private fun mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData): List<PokemonAbilityWithMetaData> {
-        return pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
-            pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
-                it.id == createAbilityMetaDataId(
-                        pokemonWithAbilitiesAndMetaData.pokemon.id,
-                        ability.id
-                )
-            }.map { PokemonAbilityWithMetaData(ability, it) }
-        }.flatten()
     }
 
     private fun setPokemonAbilities(
@@ -106,12 +92,14 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
             recyclerView: RecyclerView
     ) {
         recyclerView.addItemDecoration(
-                PokemonAbilityListDecoration(
-                        recyclerView.context.resources.getDimensionPixelSize(
+                PokemonAbilityListDecoration(recyclerView.context.resources.getDimensionPixelSize(
                                 R.dimen.qualified_small_margin_8dp
-                        ),
-                )
+                        ))
         )
+    }
+
+    override fun onItemSelected(position: Int) {
+        pokemonAbilityAdapter?.selectItem(position)
     }
 
     private fun PokemonAbilityFragmentBinding.setLoading() {
@@ -140,10 +128,6 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
 
     private fun PokemonAbilityFragmentBinding.setEmpty() {
         root.visibility = View.GONE
-    }
-
-    override fun onItemSelected(position: Int) {
-        pokemonAbilityAdapter?.selectItem(position)
     }
 
 }

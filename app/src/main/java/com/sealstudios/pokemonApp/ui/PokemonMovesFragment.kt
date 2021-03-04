@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
+import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithMovesAndMetaData
 import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonMoveWithMetaData
 import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonMoveWithMetaData.Companion.separateByGeneration
 import com.sealstudios.pokemonApp.databinding.PokemonMovesFragmentBinding
@@ -26,10 +27,7 @@ import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonMoveListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonMovesViewModel
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 @AndroidEntryPoint
 class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
@@ -64,14 +62,9 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
             when (pokemonWithMovesAndMetaDataResource.status) {
                 Status.SUCCESS -> {
                     if (pokemonWithMovesAndMetaDataResource.data != null) {
-                        val pokemonWithMovesAndMetaData = pokemonWithMovesAndMetaDataResource.data
                         lifecycleScope.launch(Dispatchers.IO) {
-                            val movesWithMetaDataList = pokemonWithMovesAndMetaData.moves.map { move ->
-                                pokemonWithMovesAndMetaData.pokemonMoveMetaData.filter {
-                                    it.moveName == move.name
-                                }.map { PokemonMoveWithMetaData(move, it) }
-                            }.flatten()
-                            setPokemonMoves(movesWithMetaDataList.separateByGeneration())
+                            //val movesWithMetaDataList = mapPokemonWithMovesAndMetaDataToMovesWithMetaDataAsync(pokemonWithMovesAndMetaData)
+                            setPokemonMoves(pokemonWithMovesAndMetaDataResource.data)
                         }
                     } else {
                         binding.setEmpty()
@@ -89,62 +82,17 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
     }
 
     private suspend fun setPokemonMoves(
-        pokemonMoves: Map<String, List<PokemonMoveWithMetaData>?>
+        pokemonMoves: MutableList<PokemonMoveAdapterItem>
     ) {
         withContext(context = Dispatchers.IO) {
-            val pokemonMoveList = mapMovesToHeadersAsync(pokemonMoves = pokemonMoves).await()
+//            pokemonMoveAdapter?.submitList(pokemonMoves)
             lifecycleScope.launch(Dispatchers.Main) {
-                pokemonMoveAdapter?.submitList(pokemonMoveList)
-            }
-            withContext(Dispatchers.Main) {
-                if (pokemonMoveList.isEmpty()) {
+                if (pokemonMoves.isEmpty()) {
                     binding.setEmpty()
                 } else {
                     binding.setNotEmpty()
                 }
             }
-        }
-    }
-
-    private suspend fun mapMovesToHeadersAsync(pokemonMoves: Map<String, List<PokemonMoveWithMetaData>?>) =
-        withContext(Dispatchers.IO) {
-            return@withContext async {
-                val pokemonMoveList = mutableListOf<PokemonMoveAdapterItem>()
-                for (moveEntry in pokemonMoves.entries) {
-                    pokemonMoveList.add(
-                        createPokemonMoveAdapterHeaderItem(moveEntry.key)
-                    )
-                    if (!moveEntry.value.isNullOrEmpty()) {
-                        pokemonMoveList.addAll(moveEntry.value!!.map {
-                            createPokemonMoveAdapterListItem(it)
-                        })
-                    }
-                }
-                pokemonMoveList
-            }
-        }
-
-    private suspend fun createPokemonMoveAdapterListItem(pokemonMoveWithMetaData: PokemonMoveWithMetaData): PokemonMoveAdapterItem {
-        return withContext(Dispatchers.IO) {
-            return@withContext PokemonMoveAdapterItem(
-                moveWithMetaData = pokemonMoveWithMetaData,
-                header = null,
-                itemType = PokemonMoveViewHolder.layoutType
-            )
-        }
-    }
-
-    private suspend fun createPokemonMoveAdapterHeaderItem(headerName: String): PokemonMoveAdapterItem {
-        return withContext(Dispatchers.IO) {
-            return@withContext PokemonMoveAdapterItem(
-                moveWithMetaData = null,
-                header = GenerationHeader(
-                    headerName = PokemonGeneration.formatGenerationName(
-                        PokemonGeneration.getGeneration(headerName)
-                    )
-                ),
-                itemType = GenerationHeaderViewHolder.layoutType
-            )
         }
     }
 

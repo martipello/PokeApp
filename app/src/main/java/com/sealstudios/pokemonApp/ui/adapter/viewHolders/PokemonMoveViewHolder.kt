@@ -53,8 +53,8 @@ constructor(
             val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMoveWithMetaData.pokemonMove)
             withContext(Dispatchers.Main) {
                 buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
-                buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
             }
+            buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
         }
     }
 
@@ -144,6 +144,8 @@ constructor(
         }
     }
 
+    //TODO work on this so its not always animating check before hand
+
     private fun rotateToggleOpen() {
         binding.showMoreLessToggleButton.animate().setDuration(200).rotation(180f)
     }
@@ -185,47 +187,53 @@ constructor(
         ).bindChips()
     }
 
-    private fun buildPokemonMoveTypeAndCategoryRibbons(
+    private suspend fun buildPokemonMoveTypeAndCategoryRibbons(
         pokemonMoveTypeOrCategory: List<PokemonMoveTypeOrCategory>,
         binding: PokemonMoveViewHolderBinding
     ) {
-
-        for (x in pokemonMoveTypeOrCategory.indices) {
-            val pokemonTypeOrCategory = pokemonMoveTypeOrCategory[x]
-            if (pokemonTypeOrCategory.itemType == PokemonType.itemType) {
-                pokemonMoveTypeOrCategory[x].type?.let {
-                    setPokemonMoveTypeRibbon(binding, it)
-                }
-            } else {
-                pokemonMoveTypeOrCategory[x].category?.let {
-                    setPokemonMoveCategoryRibbon(binding, it)
+        withContext(Dispatchers.Default){
+            for (x in pokemonMoveTypeOrCategory.indices) {
+                val pokemonTypeOrCategory = pokemonMoveTypeOrCategory[x]
+                if (pokemonTypeOrCategory.itemType == PokemonType.itemType) {
+                    pokemonMoveTypeOrCategory[x].type?.let {
+                        setPokemonMoveTypeRibbon(binding, it)
+                    }
+                } else {
+                    pokemonMoveTypeOrCategory[x].category?.let {
+                        setPokemonMoveCategoryRibbon(binding, it)
+                    }
                 }
             }
         }
+
     }
 
-    private fun setPokemonMoveCategoryRibbon(
+    private suspend fun setPokemonMoveCategoryRibbon(
         binding: PokemonMoveViewHolderBinding,
         it: PokemonCategory
     ) {
-        binding.categoryRibbon.colorFilter = null
-        binding.categoryRibbon.setColorFilter(
-            ContextCompat.getColor(binding.root.context, it.color),
-            PorterDuff.Mode.SRC_IN
-        )
-        binding.categoryRibbon.visibility = View.VISIBLE
+        withContext(Dispatchers.Main){
+            binding.categoryRibbon.colorFilter = null
+            binding.categoryRibbon.setColorFilter(
+                    ContextCompat.getColor(binding.root.context, it.color),
+                    PorterDuff.Mode.SRC_IN
+            )
+            binding.categoryRibbon.visibility = View.VISIBLE
+        }
     }
 
-    private fun setPokemonMoveTypeRibbon(
+    private suspend fun setPokemonMoveTypeRibbon(
         binding: PokemonMoveViewHolderBinding,
         it: PokemonType
     ) {
-        binding.typeRibbon.colorFilter = null
-        binding.typeRibbon.setColorFilter(
-            ContextCompat.getColor(binding.root.context, it.color),
-            PorterDuff.Mode.SRC_IN
-        )
-        binding.typeRibbon.visibility = View.VISIBLE
+        withContext(Dispatchers.Main){
+            binding.typeRibbon.colorFilter = null
+            binding.typeRibbon.setColorFilter(
+                    ContextCompat.getColor(binding.root.context, it.color),
+                    PorterDuff.Mode.SRC_IN
+            )
+            binding.typeRibbon.visibility = View.VISIBLE
+        }
     }
 
     companion object {

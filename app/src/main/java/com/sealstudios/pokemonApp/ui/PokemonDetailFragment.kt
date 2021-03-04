@@ -62,11 +62,10 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val colorViewModel: ColorViewModel by viewModels()
 
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
-    private val pokemonIdViewModel: PokemonIdViewModel by viewModels()
+    private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
+    private val pokemonStatsViewModel: PokemonStatsViewModel by viewModels()
 
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
-    private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
-    private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
 
     private lateinit var viewPagerAdapterAdapter: PokemonDetailViewPagerAdapter
     private var _binding: PokemonDetailFragmentBinding? = null
@@ -182,14 +181,13 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun onFinishedSavingPokemonAbilities() {
         pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
-            pokemonIdViewModel.setPokemonId(it)
-//            pokemonAbilityViewModel.setPokemonId(it)
+            pokemonInfoViewModel.setPokemonId(it)
         })
     }
 
     private fun onFinishedSavingPokemonBaseStats() {
         pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, {
-            pokemonBaseStatsViewModel.setPokemonId(it)
+            pokemonStatsViewModel.setPokemonId(it)
         })
     }
 
@@ -201,7 +199,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun onFinishedSavingPokemonTypes() {
         pokemonDetailViewModel.onFinishedSavingPokemonTypes.observe(viewLifecycleOwner, {
-            pokemonWeaknessResistanceViewModel.setPokemonId(it)
+//            pokemonWeaknessResistanceViewModel.setPokemonId(it)
         })
     }
 

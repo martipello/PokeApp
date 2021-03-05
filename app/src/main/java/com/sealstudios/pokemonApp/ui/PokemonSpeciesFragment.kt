@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,14 +27,18 @@ class PokemonSpeciesFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = PokemonSpeciesFragmentBinding.inflate(inflater, container, false)
-        _binding = binding
-        observePokemonSpecies()
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.setLoading()
+        observePokemonSpecies()
+    }
 
     private fun observePokemonSpecies() {
         pokemonSpeciesViewModel.pokemonSpecies.observe(viewLifecycleOwner, { pokemonSpecies ->
+            Log.d("SPECIES_FRAG", "pokemon species status ${pokemonSpecies.status}")
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {

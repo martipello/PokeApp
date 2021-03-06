@@ -6,6 +6,7 @@
     android:id="@+id/detail_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context="com.sealstudios.pokemonApp.ui.PokemonDetailFragment">
 
@@ -16,6 +17,7 @@
         android:background="@color/secondaryColor"
         android:elevation="@dimen/zero"
         android:visibility="invisible"
+        android:clipToPadding="false"
         app:cardElevation="@dimen/zero" />
 
 
@@ -324,15 +326,17 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/view_pager_holder"
+        android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/viewPager"
-            android:clipToPadding="false"
             android:paddingStart="@dimen/qualified_medium_margin_16dp"
             android:paddingEnd="@dimen/qualified_medium_margin_16dp"
+            android:clipToPadding="false"
             app:layout_constraintWidth_max="500dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="@color/white"/>

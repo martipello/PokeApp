@@ -32,13 +32,14 @@ class PokemonDetailFragmentInsets {
 //            view.updatePadding(
 //                bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
 //            )
+//        }
+
+        binding.viewPager.doOnApplyWindowInsetPadding { view, windowInsets, marginLayoutParams ->
+            view.updatePadding(
+                    bottom = windowInsets.systemWindowInsetBottom + marginLayoutParams.bottom
+            )
         }
 
-//        binding.scrollView.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
-//            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
-//            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
-//            view.layoutParams = marginLayoutParams
-//        }
-    //}
+    }
 
 }

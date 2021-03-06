@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +24,8 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
@@ -45,6 +49,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class PokemonDetailFragment : PokemonDetailAnimationManager() {
@@ -95,6 +100,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch(context = Dispatchers.Main) {
             setNameAndIDViews(view.context)
+            handleAppBarSnapFlag()
             setPokemonImageView(highResPokemonUrl(pokemonId))
             setUpViewPagerAdapter()
             setUpViewPager()
@@ -111,11 +117,32 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         }
     }
 
-    private fun setUpViewPagerAdapter(){
+    private fun handleAppBarSnapFlag() {
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (abs(verticalOffset) >= appBarLayout.totalScrollRange - getToolbarHeight()) {
+                val toolbarParams = binding.collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
+                toolbarParams.scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED or SCROLL_FLAG_SNAP
+            } else {
+                val toolbarParams = binding.collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
+                toolbarParams.scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+            }
+        })
+    }
+
+    private fun getToolbarHeight(): Int {
+        context?.let { context ->
+            return with(TypedValue().also { context.theme.resolveAttribute(android.R.attr.actionBarSize, it, true) }) {
+                TypedValue.complexToDimensionPixelSize(this.data, resources.displayMetrics)
+            }
+        }
+        return 0
+    }
+
+    private fun setUpViewPagerAdapter() {
         viewPagerAdapterAdapter = PokemonDetailViewPagerAdapter(this)
     }
 
-    private fun setUpViewPager(){
+    private fun setUpViewPager() {
         binding.viewPager.adapter = viewPagerAdapterAdapter
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.setPageTransformer(MarginPageTransformer(150))

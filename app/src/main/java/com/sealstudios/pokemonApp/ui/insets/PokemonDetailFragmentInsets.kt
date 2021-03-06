@@ -20,7 +20,7 @@ class PokemonDetailFragmentInsets {
 //            )
 //        }
 
-        binding.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->
+        binding.collapsingToolbar.doOnApplyWindowInsetPadding { _, _, _ ->
             //required or the views below do not get there padding updated
         }
 

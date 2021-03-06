@@ -37,6 +37,7 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
+import com.sealstudios.pokemonApp.ui.util.PaletteHelper
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
@@ -165,10 +166,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun setViewModelProperties() {
         setPokemonIdForViewModels(pokemonId)
-        colorViewModel.setViewColors(
-                args.dominantSwatchRgb,
-                args.lightVibrantSwatchRgb
-        )
     }
 
     private fun setPokemonIdForViewModels(pokemonId: Int) {
@@ -356,8 +353,18 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     isFirstResource: Boolean
             ): Boolean {
                 if (continuation.isActive) continuation.resume(true)
+                resource?.let {
+                    setColoredElementsForBitmap(it, binding.root.context)
+                }
                 return false
             }
+        }
+    }
+
+    private fun setColoredElementsForBitmap(bitmap: Bitmap, context: Context) {
+        CoroutineScope(Dispatchers.Default).launch {
+            PaletteHelper.setLightAndDarkVibrantColorForBitmap(bitmap, context)
+            { lightVibrantColor, darkVibrantColor -> colorViewModel.setViewColors(lightVibrantColor, darkVibrantColor) }
         }
     }
 

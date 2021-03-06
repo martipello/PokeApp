@@ -33,12 +33,6 @@
         <argument
             android:name="transition_name"
             app:argType="string" />
-        <argument
-            android:name="dominant_swatch_rgb"
-            app:argType="integer" />
-        <argument
-            android:name="light_vibrant_swatch_rgb"
-            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

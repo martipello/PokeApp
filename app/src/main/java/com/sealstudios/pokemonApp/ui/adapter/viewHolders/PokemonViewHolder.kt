@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.view.View
 import androidx.core.content.ContextCompat
-import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
@@ -18,11 +17,10 @@ import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypesAndSpeciesForList
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
+import com.sealstudios.pokemonApp.ui.util.PaletteHelper
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import kotlin.coroutines.resume
 import com.sealstudios.pokemonApp.database.`object`.PokemonType as dbType
 import com.sealstudios.pokemonApp.ui.util.PokemonType as networkType
 
@@ -35,8 +33,9 @@ class PokemonViewHolder constructor(
     @SuppressLint("DefaultLocale")
     fun bind(pokemonWithTypesAndSpecies: PokemonWithTypesAndSpeciesForList) = with(binding) {
         setViewHolderDefaultState()
-
-        setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
+        CoroutineScope(Dispatchers.Main).launch {
+            setPokemonImageView(pokemonWithTypesAndSpecies.pokemon.image)
+        }
 
         binding.pokemonNameTextView.text = pokemonWithTypesAndSpecies.pokemon.name.capitalize()
         binding.pokemonIdTextViewLabel.text =
@@ -88,18 +87,19 @@ class PokemonViewHolder constructor(
         }
     }
 
-    private fun setPokemonImageView(pokemonImage: String) {
-        val requestOptions =
-            RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
-        glide.asBitmap()
-            .load(pokemonImage)
-            .apply(requestOptions)
-            .format(DecodeFormat.PREFER_RGB_565)
-            .listener(requestListener())
-            .into(binding.pokemonImageView)
-    }
+    private suspend fun setPokemonImageView(pokemonImage: String): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            val requestOptions =
+                    RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
+            glide.asBitmap()
+                    .load(pokemonImage)
+                    .apply(requestOptions)
+                    .format(DecodeFormat.PREFER_RGB_565)
+                    .listener(requestListener(continuation))
+                    .into(binding.pokemonImageView)
+        }
 
-    private fun requestListener(): RequestListener<Bitmap?> {
+    private fun requestListener(continuation: CancellableContinuation<Boolean>): RequestListener<Bitmap?> {
         return object : RequestListener<Bitmap?> {
             override fun onLoadFailed(
                 e: GlideException?,
@@ -107,6 +107,7 @@ class PokemonViewHolder constructor(
                 target: Target<Bitmap?>,
                 isFirstResource: Boolean
             ): Boolean {
+                if (continuation.isActive) continuation.resume(false)
                 return false
             }
 
@@ -117,27 +118,24 @@ class PokemonViewHolder constructor(
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
+                if (continuation.isActive) continuation.resume(true)
                 resource?.let { bitmap ->
-                    setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap)
+                    setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap,binding.root.context)
                 }
                 return false
             }
         }
     }
 
-    private fun setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap: Bitmap) {
-        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+    private fun setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap: Bitmap, context: Context) {
         CoroutineScope(Dispatchers.Default).launch {
-            Palette.Builder(bitmap).generate {
-                val lightVibrantColor =
-                    it?.lightVibrantSwatch?.rgb ?: it?.dominantSwatch?.rgb ?: white
-                val darkVibrantColor =
-                    it?.darkVibrantSwatch?.rgb ?: it?.dominantSwatch?.rgb ?: white
-
-                binding.pokemonImageViewHolder.strokeColor = lightVibrantColor
-                binding.pokemonImageViewHolder.setCardBackgroundColor(darkVibrantColor)
-            }
+            PaletteHelper.setLightAndDarkVibrantColorForBitmap(bitmap, context, ::setColoredElements)
         }
+    }
+
+    private fun setColoredElements(lightVibrantColor: Int, darkVibrantColor: Int){
+        binding.pokemonImageViewHolder.strokeColor = lightVibrantColor
+        binding.pokemonImageViewHolder.setCardBackgroundColor(darkVibrantColor)
     }
 
     companion object {

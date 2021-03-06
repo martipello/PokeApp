@@ -23,7 +23,7 @@ class ColorViewModel @ViewModelInject constructor(
         return MutableLiveData(dominantColor to lightVibrantColor)
     }
 
-    fun setViewColors(dominantColor: Int, lightVibrantColor: Int) {
+    fun setViewColors(lightVibrantColor: Int, dominantColor: Int) {
         dominantAndLightVibrantColors.value = dominantColor to lightVibrantColor
         savedStateHandle.set(lightVibrantColorKey, lightVibrantColor)
         savedStateHandle.set(dominantColorKey, dominantColor)

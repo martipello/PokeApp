@@ -51,9 +51,7 @@ constructor(
 
         CoroutineScope(Dispatchers.Default).launch {
             val pokemonMoveTypeOrCategoryList = getPokemonMoveTypeOrCategoryList(pokemonMoveWithMetaData.pokemonMove)
-            withContext(Dispatchers.Main) {
-                buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
-            }
+            buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
             buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
         }
     }
@@ -177,7 +175,7 @@ constructor(
         }
     }
 
-    private fun buildPokemonMoveTypeAndCategoryChips(
+    private suspend fun buildPokemonMoveTypeAndCategoryChips(
         pokemonMoveTypeOrCategory: List<PokemonMoveTypeOrCategory>,
         binding: PokemonMoveViewHolderBinding
     ) {

@@ -364,8 +364,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private fun buildPokemonTypes(
             types: List<PokemonType>
     ) {
-
-        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
         CoroutineScope(Dispatchers.Default).launch {
             val enumTypes = getPokemonEnumTypesForPokemonTypes(

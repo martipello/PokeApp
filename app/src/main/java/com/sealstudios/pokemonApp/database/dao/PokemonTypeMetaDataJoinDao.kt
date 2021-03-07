@@ -1,11 +1,7 @@
 package com.sealstudios.pokemonApp.database.dao
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.PokemonTypeMetaData
 import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypeMetaDataJoin
-import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 
 @Dao
 interface PokemonTypeMetaDataJoinDao {

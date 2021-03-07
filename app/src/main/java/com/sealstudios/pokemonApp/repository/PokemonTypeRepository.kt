@@ -29,18 +29,10 @@ class PokemonTypeRepository @Inject constructor(
         pokemonTypeDao.updatePokemonType(pokemonType)
     }
 
-    private suspend fun insertPokemonTypes(pokemonType: List<PokemonType>) {
-        pokemonTypeDao.insertPokemonTypes(pokemonType)
-    }
-
     //TYPE JOIN
 
     private suspend fun insertPokemonTypeJoin(pokemonTypeJoin: PokemonTypesJoin) {
         pokemonTypeJoinDao.insertPokemonTypeJoin(pokemonTypeJoin)
-    }
-
-    private suspend fun insertPokemonTypeJoins(pokemonTypeJoin: List<PokemonTypesJoin>) {
-        pokemonTypeJoinDao.insertPokemonTypeJoins(pokemonTypeJoin)
     }
 
     suspend fun insertPokemonTypes(

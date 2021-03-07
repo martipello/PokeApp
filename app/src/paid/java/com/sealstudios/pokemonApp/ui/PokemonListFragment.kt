@@ -10,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -57,7 +56,7 @@ class PokemonListFragment : Fragment(),
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         _binding = PokemonListFragmentBinding.inflate(inflater, container, false)
         postponeEnterTransition()
         return binding.root
@@ -79,7 +78,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeFetchAllPokemonResponse() {
-        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, Observer { allPokemon ->
+        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, { allPokemon ->
             when (allPokemon.status) {
                 Status.SUCCESS -> {
                     binding.setNotEmpty()
@@ -108,7 +107,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
-                viewLifecycleOwner, Observer { pokemonData ->
+                viewLifecycleOwner, { pokemonData ->
             if (pokemonData != null) {
                 if (pokemonData.isEmpty()) {
                     binding.setEmpty()
@@ -123,7 +122,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, Observer {
+        pokemonListViewModel.search.observe(viewLifecycleOwner, {
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -209,9 +208,6 @@ class PokemonListFragment : Fragment(),
         val action = actionPokemonListFragmentToPokemonDetailFragment(
                 pokemonName = name,
                 transitionName = view.transitionName,
-                dominantSwatchRgb = view.cardBackgroundColor.defaultColor,
-                lightVibrantSwatchRgb = view.strokeColorStateList?.defaultColor
-                        ?: ContextCompat.getColor(view.context, R.color.white)
         )
         val extras = FragmentNavigatorExtras(view to view.transitionName)
         pokemonFiltersViewModel.closeFiltersLayout()

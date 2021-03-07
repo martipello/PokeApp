@@ -71,9 +71,8 @@ open class Pokemon constructor(
                 height = apiPokemon.height ?: 0,
                 weight = apiPokemon.weight ?: 0,
                 sprite = apiPokemon.sprites?.front_default ?: "",
-                move_ids = apiPokemon.moves?.map { getPokemonIdFromUrl(it.move.url) } ?: listOf(),
-                abilityIds = apiPokemon.abilities?.map { pokemonAbility -> getPokemonIdFromUrl(pokemonAbility.ability.url) }
-                    ?: listOf()
+                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
+                abilityIds = apiPokemon.abilities.map { pokemonAbility -> getPokemonIdFromUrl(pokemonAbility.ability.url) }
             )
         }
 

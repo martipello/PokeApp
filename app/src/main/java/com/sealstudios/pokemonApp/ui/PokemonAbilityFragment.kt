@@ -6,21 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData.Companion.createAbilityMetaDataId
 import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
-import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
 import com.sealstudios.pokemonApp.databinding.PokemonAbilityFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
-import com.sealstudios.pokemonApp.ui.util.decorators.PokemonAbilityListDecoration
+import com.sealstudios.pokemonApp.ui.util.decorators.ListDividerDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class PokemonAbilityFragment : Fragment(), AdapterClickListener {
@@ -30,7 +29,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
     private var _binding: PokemonAbilityFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = PokemonAbilityFragmentBinding.inflate(inflater, container, false)
         _binding = binding
         return binding.root
@@ -54,9 +53,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
                     when (pokemonWithAbilitiesAndMetaDataResource.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
-                                val pokemonWithAbilitiesAndMetaData = pokemonWithAbilitiesAndMetaDataResource.data
-                                val abilitiesWithMetaDataList = mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData)
-                                setPokemonAbilities(abilitiesWithMetaDataList)
+                                setPokemonAbilities(pokemonWithAbilitiesAndMetaDataResource.data)
                             } else {
                                 binding.setEmpty()
                             }
@@ -75,17 +72,6 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
                 })
     }
 
-    private fun mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData): List<PokemonAbilityWithMetaData> {
-        return pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
-            pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
-                it.id == createAbilityMetaDataId(
-                        pokemonWithAbilitiesAndMetaData.pokemon.id,
-                        ability.id
-                )
-            }.map { PokemonAbilityWithMetaData(ability, it) }
-        }.flatten()
-    }
-
     private fun setPokemonAbilities(
             pokemonAbilities: List<PokemonAbilityWithMetaData>
     ) {
@@ -99,6 +85,8 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
 
     private fun setUpPokemonAdapterRecyclerView() = binding.pokemonAbilityRecyclerView.apply {
         adapter = pokemonAbilityAdapter
+        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+//        setHasFixedSize(true)
         addPokemonAdapterRecyclerViewDecoration(this)
         layoutManager = NoScrollLayoutManager(context = this.context)
     }
@@ -107,12 +95,16 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
             recyclerView: RecyclerView
     ) {
         recyclerView.addItemDecoration(
-                PokemonAbilityListDecoration(
+                ListDividerDecoration(R.drawable.divider,
+                        binding.root.context,
                         recyclerView.context.resources.getDimensionPixelSize(
                                 R.dimen.qualified_small_margin_8dp
-                        ),
-                )
+                        ))
         )
+    }
+
+    override fun onItemSelected(position: Int) {
+        pokemonAbilityAdapter?.selectItem(position)
     }
 
     private fun PokemonAbilityFragmentBinding.setLoading() {
@@ -141,10 +133,6 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
 
     private fun PokemonAbilityFragmentBinding.setEmpty() {
         root.visibility = View.GONE
-    }
-
-    override fun onItemSelected(position: Int) {
-        pokemonAbilityAdapter?.selectItem(position)
     }
 
 }

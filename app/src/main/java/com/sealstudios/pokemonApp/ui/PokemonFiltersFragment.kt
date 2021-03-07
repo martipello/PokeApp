@@ -57,14 +57,14 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
 
     override fun onCreateView(inflater: LayoutInflater,
                               container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+                              savedInstanceState: Bundle?): View {
         setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
         _binding = PokemonListFragmentFilterHolderBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     private fun observeFilters() {
-        pokemonListViewModel.filters.observe(viewLifecycleOwner, Observer { selectionsLiveData ->
+        pokemonListViewModel.filters.observe(viewLifecycleOwner, { selectionsLiveData ->
             selectionsLiveData?.let { selections ->
                 setUpFilterView(selections)
             }
@@ -72,7 +72,7 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
     }
 
     private fun onAddScrollAwareFilerFab() {
-        pokemonFiltersViewModel.onAddScrollAwareFilerFab.observe(viewLifecycleOwner, Observer {
+        pokemonFiltersViewModel.onAddScrollAwareFilerFab.observe(viewLifecycleOwner, {
             it?.let {
                 addScrollAwarenessForFilterFab(it)
             }
@@ -80,7 +80,7 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
     }
 
     private fun onCloseFiltersLayout() {
-        pokemonFiltersViewModel.onCloseFiltersLayout.observe(viewLifecycleOwner, Observer {
+        pokemonFiltersViewModel.onCloseFiltersLayout.observe(viewLifecycleOwner, {
             if (filterIsExpanded) {
                 hideFiltersAnimation()
             }
@@ -98,7 +98,7 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
 
     private fun observeAnimationState() {
         pokemonFiltersViewModel.isFiltersLayoutExpanded.observe(
-                viewLifecycleOwner, Observer { filterIsExpanded ->
+                viewLifecycleOwner, { filterIsExpanded ->
             if (filterIsExpanded && this.filterIsExpanded) {
                 binding.root.post {
                     showFiltersAnimation()

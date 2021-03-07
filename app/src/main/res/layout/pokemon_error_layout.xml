@@ -46,7 +46,7 @@
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:cornerRadius="1000dp"
         android:layout_marginBottom="@dimen/qualified_large_margin_32dp"
-        app:strokeColor="@color/colorAccent"
+        app:strokeColor="@color/error"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

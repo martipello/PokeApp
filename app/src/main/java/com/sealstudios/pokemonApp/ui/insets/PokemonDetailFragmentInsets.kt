@@ -8,19 +8,33 @@ import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
 class PokemonDetailFragmentInsets {
 
     fun setInsets(binding: PokemonDetailFragmentBinding) {
-        binding.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
-            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
-            view.layoutParams = marginLayoutParams
-        }
 
-        binding.toolbar.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+        binding.root.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
             view.updatePadding(
-                left = windowInsets.systemWindowInsetLeft + initialPadding.left,
-                right = windowInsets.systemWindowInsetRight + initialPadding.right
+                    left = windowInsets.systemWindowInsetLeft + initialPadding.left,
+                    right = windowInsets.systemWindowInsetRight + initialPadding.right
             )
         }
 
-        binding.toolbarLayout.doOnApplyWindowInsetPadding { _, _, _ ->
+        binding.viewPagerHolder.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+            view.updatePadding(
+                    left = windowInsets.systemWindowInsetLeft + initialPadding.left,
+                    right = windowInsets.systemWindowInsetRight + initialPadding.right
+            )
+        }
+
+        binding.appBarLayout.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
+            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
+            view.layoutParams = marginLayoutParams
+        }
+
+        binding.toolbar.doOnApplyWindowInsetPadding { _, _, _ ->
+            //required or the views below do not get there padding updated
+        }
+
+        binding.collapsingToolbar.doOnApplyWindowInsetPadding { _, _, _ ->
             //required or the views below do not get there padding updated
         }
 
@@ -28,17 +42,18 @@ class PokemonDetailFragmentInsets {
             //required or the views below do not get there padding updated
         }
 
-        binding.imageAndCardHolder.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+//        binding.imageAndCardHolder.doOnApplyWindowInsetPadding { view, windowInsets, initialPadding ->
+//            view.updatePadding(
+//                bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
+//            )
+//        }
+
+        binding.viewPager.doOnApplyWindowInsetPadding { view, windowInsets, marginLayoutParams ->
             view.updatePadding(
-                bottom = windowInsets.systemWindowInsetBottom + initialPadding.bottom
+                    bottom = windowInsets.systemWindowInsetBottom + marginLayoutParams.bottom
             )
         }
 
-        binding.scrollView.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
-            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
-            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
-            view.layoutParams = marginLayoutParams
-        }
     }
 
 }

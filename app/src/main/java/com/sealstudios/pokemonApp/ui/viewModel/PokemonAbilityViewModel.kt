@@ -8,13 +8,11 @@ import com.sealstudios.pokemonApp.database.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityJoin
 import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityMetaDataJoin
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithAbilitiesAndMetaData
+import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
 import com.sealstudios.pokemonApp.repository.PokemonAbilityMetaDataRepository
 import com.sealstudios.pokemonApp.repository.PokemonAbilityRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 class PokemonAbilityViewModel @ViewModelInject constructor(
         private val pokemonAbilityRepository: PokemonAbilityRepository,
@@ -27,7 +25,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
     // Doesn't handle errors as there isn't a way to emit them from the for loop in fetchPokemonAbilities
     // and meta data comes from the pokemon and not the ability meaning we would double the calls to the API
 
-    val pokemonAbilities: LiveData<Resource<PokemonWithAbilitiesAndMetaData>> = pokemonId.switchMap { pokemonId ->
+    val pokemonAbilities: LiveData<Resource<List<PokemonAbilityWithMetaData>>> = pokemonId.switchMap { pokemonId ->
         liveData {
             emit(Resource.loading(null))
             val pokemonWithAbilitiesAndMetaData =
@@ -37,16 +35,16 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
             }
 
             if (pokemonWithAbilitiesAndMetaData.pokemon.abilityIds.size != pokemonWithAbilitiesAndMetaData.abilities.size) {
-                emitSource(
-                        fetchPokemonAbilities(
-                                pokemonWithAbilitiesAndMetaData.pokemon,
-                                pokemonWithAbilitiesAndMetaData.abilities.map { it.id })
-                )
+                emitSource(fetchPokemonAbilities(
+                        pokemonWithAbilitiesAndMetaData.pokemon,
+                        pokemonWithAbilitiesAndMetaData.abilities.map { it.id }))
             } else {
-                emit(Resource.success(pokemonWithAbilitiesAndMetaData))
+                val mappedPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData = mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData)
+                emit(Resource.success(mappedPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData))
             }
         }
     }
+
 
     private suspend fun fetchPokemonAbilities(pokemon: Pokemon, abilityIds: List<Int>) =
             liveData(Dispatchers.IO) {
@@ -61,7 +59,7 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
                     }.awaitAll()
                     emit(
                             Resource.success(
-                                    pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id)
+                                    mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonAbilityMetaDataRepository.getPokemonWithAbilitiesAndMetaDataByIdAsync(pokemon.id))
                             )
                     )
                 }
@@ -131,12 +129,32 @@ class PokemonAbilityViewModel @ViewModelInject constructor(
         }
     }
 
+
+    private suspend fun mapPokemonWithAbilitiesAndMetaDataToAbilitiesWithMetaData(pokemonWithAbilitiesAndMetaData: PokemonWithAbilitiesAndMetaData): List<PokemonAbilityWithMetaData> {
+        return withContext(Dispatchers.Default) {
+            return@withContext pokemonWithAbilitiesAndMetaData.abilities.map { ability ->
+                pokemonWithAbilitiesAndMetaData.pokemonAbilityMetaData.filter {
+                    it.id == PokemonAbilityMetaData.createAbilityMetaDataId(
+                            pokemonWithAbilitiesAndMetaData.pokemon.id,
+                            ability.id
+                    )
+                }.map { PokemonAbilityWithMetaData(ability, it) }
+            }.flatten()
+        }
+
+    }
+
+
     fun setPokemonId(pokemonId: Int) {
         this.pokemonId.value = pokemonId
     }
 
     fun retry() {
         this.pokemonId.value = this.pokemonId.value
+    }
+
+    companion object {
+        const val TAG = "ABILITY_VM"
     }
 
 }

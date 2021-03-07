@@ -12,7 +12,7 @@
         android:layout_margin="@dimen/qualified_large_margin_32dp"
         android:layout_height="50dp"
         android:layout_width="50dp"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,10 +31,10 @@
 
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
-    android:visibility="visible"
+    android:visibility="gone"
     android:id="@+id/species_content">
 
 
@@ -106,7 +106,7 @@
         app:barrierDirection="end"
         app:constraint_referenced_ids="shape_label,
                 form_description_label, habitat_label"
-        app:layout_constraintBottom_toTopOf="@id/species_divider"
+        app:layout_constraintBottom_toTopOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
 
@@ -172,15 +172,6 @@
         app:layout_constraintStart_toEndOf="@id/species_label_barrier"
         app:layout_constraintTop_toTopOf="@id/habitat_label"
         tools:ignore="RtlSymmetry" />
-
-    <View
-        android:id="@+id/species_divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-        android:background="@color/light_grey"
-        app:layout_constraintTop_toBottomOf="@id/habitat_text" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

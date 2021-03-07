@@ -63,7 +63,6 @@ class PokemonSpeciesViewModel @ViewModelInject constructor(
     }
 
     fun setPokemonId(pokemonId: Int) {
-        this.pokemonId.value = pokemonId
         savedStateHandle.set(PokemonSpeciesViewModel.pokemonId, pokemonId)
     }
 
@@ -72,8 +71,7 @@ class PokemonSpeciesViewModel @ViewModelInject constructor(
     }
 
     private fun getPokemonIdSavedState(): MutableLiveData<Int> {
-        val id = savedStateHandle.get<Int>(PokemonSpeciesViewModel.pokemonId) ?: -1
-        return MutableLiveData(id)
+        return savedStateHandle.getLiveData(PokemonSpeciesViewModel.pokemonId)
     }
 
     companion object {

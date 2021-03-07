@@ -95,4 +95,7 @@
     <string name="weakness_resistance">Weakness And Resistance</string>
     <string name="type_resistance">type resistance</string>
     <string name="multiplier">%sx</string>
+    <string name="info">INFO</string>
+    <string name="stats">STATS</string>
+    <string name="moves">MOVES</string>
 </resources>

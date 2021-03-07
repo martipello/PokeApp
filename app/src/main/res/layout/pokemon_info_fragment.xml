@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.PokemonInfoFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/species_fragment"
+        android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout="@layout/pokemon_species_fragment" />
+
+        <View
+            android:id="@+id/abilities_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+            android:background="@color/light_grey"
+            app:layout_constraintTop_toBottomOf="@id/species_fragment" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/ability_fragment"
+        android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@id/abilities_divider"
+        tools:layout="@layout/pokemon_ability_fragment" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

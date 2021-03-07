@@ -4,14 +4,19 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -19,6 +24,10 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
+import com.google.android.material.appbar.AppBarLayout
+import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
+import com.google.android.material.chip.Chip
+import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
@@ -26,38 +35,50 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.database.`object`.PokemonType
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
+import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
+import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildColorState
+import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildTextColorState
+import com.sealstudios.pokemonApp.ui.util.PaletteHelper
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
+import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.coroutines.resume
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     @Inject
     lateinit var glide: RequestManager
+
     private lateinit var pokemonName: String
     private var pokemonId: Int = -1
+    private var hasExpanded: Boolean = false
+
     private val args: PokemonDetailFragmentArgs by navArgs()
+
     private val pokemonDetailViewModel: PokemonDetailViewModel by viewModels()
     private val colorViewModel: ColorViewModel by viewModels()
+
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
+    private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
+    private val pokemonStatsViewModel: PokemonStatsViewModel by viewModels()
+
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
-    private val pokemonWeaknessResistanceViewModel: PokemonWeaknessResistanceViewModel by viewModels()
-    private val pokemonAbilityViewModel: PokemonAbilityViewModel by viewModels()
-    private val pokemonBaseStatsViewModel: PokemonBaseStatsViewModel by viewModels()
+
+    private lateinit var viewPagerAdapterAdapter: PokemonDetailViewPagerAdapter
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
-    private var hasExpanded: Boolean = false
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -82,6 +103,9 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch(context = Dispatchers.Main) {
             setNameAndIDViews(view.context)
+            handleAppBarSnapFlag()
+            setUpViewPagerAdapter()
+            setUpViewPager()
             setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
@@ -92,7 +116,59 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
-            onFinishedSavingPokemonTypes()
+        }
+    }
+
+    private fun handleAppBarSnapFlag() {
+        binding.appBarLayout.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (abs(verticalOffset) >= appBarLayout.totalScrollRange - getToolbarHeight()) {
+                val toolbarParams = binding.collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
+                toolbarParams.scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED or SCROLL_FLAG_SNAP
+            } else {
+                val toolbarParams = binding.collapsingToolbar.layoutParams as AppBarLayout.LayoutParams
+                toolbarParams.scrollFlags = SCROLL_FLAG_SCROLL or SCROLL_FLAG_ENTER_ALWAYS or SCROLL_FLAG_ENTER_ALWAYS_COLLAPSED
+            }
+        })
+    }
+
+    private fun getToolbarHeight(): Int {
+        context?.let { context ->
+            return with(TypedValue().also { context.theme.resolveAttribute(android.R.attr.actionBarSize, it, true) }) {
+                TypedValue.complexToDimensionPixelSize(this.data, resources.displayMetrics)
+            }
+        }
+        return 0
+    }
+
+    private fun setUpViewPagerAdapter() {
+        viewPagerAdapterAdapter = PokemonDetailViewPagerAdapter(this)
+    }
+
+    private fun setUpViewPager() {
+        binding.viewPager.adapter = viewPagerAdapterAdapter
+        binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
+        val recyclerViewPager2 = binding.viewPager.children.first { it is RecyclerView } as RecyclerView
+        recyclerViewPager2.clipToPadding = false
+        recyclerViewPager2.addItemDecoration(PokemonInfoDecorator(
+                binding.root.context.resources.getDimensionPixelSize(
+                        R.dimen.qualified_medium_margin_16dp
+                )))
+    }
+
+    @SuppressLint("InflateParams")
+    private fun colorTabs(lightVibrantSwatchRgb: Int) {
+        if (binding.viewPager.adapter != null) {
+            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+                val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
+                when (position) {
+                    0 -> customTab.text = getString(R.string.info)
+                    1 -> customTab.text = getString(R.string.stats)
+                    2 -> customTab.text = getString(R.string.moves)
+                }
+                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb)
+                customTab.setTextColor(buildTextColorState(binding.root.context))
+                tab.customView = customTab
+            }.attach()
         }
     }
 
@@ -110,10 +186,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun setViewModelProperties() {
         setPokemonIdForViewModels(pokemonId)
-        colorViewModel.setViewColors(
-                args.dominantSwatchRgb,
-                args.lightVibrantSwatchRgb
-        )
     }
 
     private fun setPokemonIdForViewModels(pokemonId: Int) {
@@ -152,25 +224,19 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     private fun onFinishedSavingPokemonAbilities() {
         pokemonDetailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
-            pokemonAbilityViewModel.setPokemonId(it)
+            pokemonInfoViewModel.setPokemonId(it)
         })
     }
 
     private fun onFinishedSavingPokemonBaseStats() {
         pokemonDetailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, {
-            pokemonBaseStatsViewModel.setPokemonId(it)
+            pokemonStatsViewModel.setPokemonId(it)
         })
     }
 
     private fun onFinishedSavingPokemonMoves() {
         pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, {
             pokemonMovesViewModel.setPokemonId(it)
-        })
-    }
-
-    private fun onFinishedSavingPokemonTypes() {
-        pokemonDetailViewModel.onFinishedSavingPokemonTypes.observe(viewLifecycleOwner, {
-            pokemonWeaknessResistanceViewModel.setPokemonId(it)
         })
     }
 
@@ -212,13 +278,20 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
+        colorTabs(lightVibrantSwatchRgb)
         if (!hasExpanded) {
             binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
                     dominantColor
             )
         }
         binding.splash.setCardBackgroundColor(dominantColor)
-        binding.squareangleMask.setColorFilter(lightVibrantSwatchRgb)
+        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
+            DrawableCompat.setTint(
+                    DrawableCompat.wrap(it),
+                    lightVibrantSwatchRgb
+            )
+            binding.toolbar.background = it
+        }
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
                 dominantColor
         )
@@ -295,16 +368,24 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     isFirstResource: Boolean
             ): Boolean {
                 if (continuation.isActive) continuation.resume(true)
+                resource?.let {
+                    setColoredElementsForBitmap(it, binding.root.context)
+                }
                 return false
             }
+        }
+    }
+
+    private fun setColoredElementsForBitmap(bitmap: Bitmap, context: Context) {
+        CoroutineScope(Dispatchers.Default).launch {
+            PaletteHelper.setLightAndDarkVibrantColorForBitmap(bitmap, context)
+            { lightVibrantColor, darkVibrantColor -> colorViewModel.setViewColors(lightVibrantColor, darkVibrantColor) }
         }
     }
 
     private fun buildPokemonTypes(
             types: List<PokemonType>
     ) {
-
-        binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
         CoroutineScope(Dispatchers.Default).launch {
             val enumTypes = getPokemonEnumTypesForPokemonTypes(

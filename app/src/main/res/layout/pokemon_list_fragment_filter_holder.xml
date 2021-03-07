@@ -21,7 +21,7 @@
             android:layout_width="@dimen/fab_size"
             android:layout_height="@dimen/fab_size"
             android:scaleType="fitXY"
-            android:background="@color/colorAccent"
+            android:background="@color/secondaryColor"
             android:src="@drawable/ic_poke_filter"
             android:contentDescription="@string/filter" />
 
@@ -37,7 +37,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        style="@style/MyMaterialCardStyle">
+        style="@style/FilterMaterialCardStyle">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"

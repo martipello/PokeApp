@@ -38,11 +38,14 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
-import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildColorState
 import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildTextColorState
+import com.sealstudios.pokemonApp.ui.util.PaletteHelper
+import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
+import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
+import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -149,14 +152,14 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
     }
 
-    private fun colorTabs(lightVibrantSwatchRgb: Int, darkVibrantSwatchRgb: Int){
-        if (binding.viewPager.adapter != null){
+    private fun colorTabs(lightVibrantSwatchRgb: Int) {
+        if (binding.viewPager.adapter != null) {
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
-                when(position){
-                    0 -> customTab.text = "INFO"
-                    1 -> customTab.text = "STATS"
-                    2 -> customTab.text = "MOVES"
+                when (position) {
+                    0 -> customTab.text = getString(R.string.info)
+                    1 -> customTab.text = getString(R.string.stats)
+                    2 -> customTab.text = getString(R.string.moves)
                 }
                 customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb)
                 customTab.setTextColor(buildTextColorState(binding.root.context))
@@ -277,7 +280,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
-        colorTabs(lightVibrantSwatchRgb, dominantColor)
+        colorTabs(lightVibrantSwatchRgb)
         if (!hasExpanded) {
             binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
                     dominantColor

@@ -86,7 +86,7 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
     private fun setUpPokemonAdapterRecyclerView() = binding.pokemonAbilityRecyclerView.apply {
         adapter = pokemonAbilityAdapter
         (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
-        setHasFixedSize(true)
+//        setHasFixedSize(true)
         addPokemonAdapterRecyclerViewDecoration(this)
         layoutManager = NoScrollLayoutManager(context = this.context)
     }

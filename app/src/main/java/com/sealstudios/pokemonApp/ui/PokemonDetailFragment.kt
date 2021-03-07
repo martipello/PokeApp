@@ -25,6 +25,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
+import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
@@ -37,12 +38,11 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
-import com.sealstudios.pokemonApp.ui.util.PaletteHelper
-import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
+import com.sealstudios.pokemonApp.ui.util.*
+import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildColorState
+import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildTextColorState
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
-import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
-import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -101,9 +101,9 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         lifecycleScope.launch(context = Dispatchers.Main) {
             setNameAndIDViews(view.context)
             handleAppBarSnapFlag()
-            setPokemonImageView(highResPokemonUrl(pokemonId))
             setUpViewPagerAdapter()
             setUpViewPager()
+            setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
                 pokemonDetailViewModel.setRevealAnimationExpandedState(true)
@@ -147,9 +147,22 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         binding.viewPager.setPageTransformer(MarginPageTransformer(150))
         binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
-        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-            tab.text = "Fragment ${(position + 1)}"
-        }.attach()
+    }
+
+    private fun colorTabs(lightVibrantSwatchRgb: Int, darkVibrantSwatchRgb: Int){
+        if (binding.viewPager.adapter != null){
+            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+                val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
+                when(position){
+                    0 -> customTab.text = "INFO"
+                    1 -> customTab.text = "STATS"
+                    2 -> customTab.text = "MOVES"
+                }
+                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb)
+                customTab.setTextColor(buildTextColorState(binding.root.context))
+                tab.customView = customTab
+            }.attach()
+        }
     }
 
     private fun setNameAndIDViews(context: Context) {
@@ -264,6 +277,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
+        colorTabs(lightVibrantSwatchRgb, dominantColor)
         if (!hasExpanded) {
             binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
                     dominantColor

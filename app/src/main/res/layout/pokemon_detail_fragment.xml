@@ -300,6 +300,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:tabMode="fixed"
+            app:tabIndicatorHeight="0dp"
             app:layout_constraintWidth_max="500dp">
 
             <com.google.android.material.tabs.TabItem

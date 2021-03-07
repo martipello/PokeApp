@@ -1,13 +1,13 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.wrappers.PokemonAbilityWithMetaData
@@ -16,9 +16,10 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonAbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
-import com.sealstudios.pokemonApp.ui.util.decorators.PokemonAbilityListDecoration
+import com.sealstudios.pokemonApp.ui.util.decorators.ListDividerDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
 import dagger.hilt.android.AndroidEntryPoint
+
 
 @AndroidEntryPoint
 class PokemonAbilityFragment : Fragment(), AdapterClickListener {
@@ -84,6 +85,8 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
 
     private fun setUpPokemonAdapterRecyclerView() = binding.pokemonAbilityRecyclerView.apply {
         adapter = pokemonAbilityAdapter
+        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        setHasFixedSize(true)
         addPokemonAdapterRecyclerViewDecoration(this)
         layoutManager = NoScrollLayoutManager(context = this.context)
     }
@@ -92,7 +95,9 @@ class PokemonAbilityFragment : Fragment(), AdapterClickListener {
             recyclerView: RecyclerView
     ) {
         recyclerView.addItemDecoration(
-                PokemonAbilityListDecoration(recyclerView.context.resources.getDimensionPixelSize(
+                ListDividerDecoration(R.drawable.divider,
+                        binding.root.context,
+                        recyclerView.context.resources.getDimensionPixelSize(
                                 R.dimen.qualified_small_margin_8dp
                         ))
         )

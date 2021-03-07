@@ -17,9 +17,6 @@ class PokemonAbilityListDecoration constructor(
     ) {
         super.getItemOffsets(outRect, view, parent, state)
 
-        outRect.right = margin / 2
-        outRect.left = margin / 2
-
         if (parent.getChildAdapterPosition(view) != parent.childCount) {
             outRect.bottom = margin
         }

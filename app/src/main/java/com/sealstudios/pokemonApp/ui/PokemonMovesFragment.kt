@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonMove
@@ -94,6 +95,8 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
 
     private fun setUpPokemonMovesRecyclerView() = binding.pokemonMoveRecyclerView.apply {
         adapter = pokemonMoveAdapter
+        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        setHasFixedSize(true)
         addPokemonMovesRecyclerViewDecoration(this)
     }
 

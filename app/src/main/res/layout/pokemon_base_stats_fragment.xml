@@ -65,7 +65,7 @@
                 style="@style/ThemeOverlay.MySmallBodyText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 android:text="@string/hp"
                 app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
 
@@ -209,7 +209,7 @@
                 style="@style/ThemeOverlay.MyBodyTextBold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
                 android:text="@string/total_stats"
                 app:layout_constraintTop_toBottomOf="@id/special_defence_text" />
 

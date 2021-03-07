@@ -6,6 +6,7 @@
     android:layout_height="wrap_content"
     android:textColor="@android:color/white"
     app:chipIcon="@drawable/normal_type_icon"
+    android:elevation="0dp"
     app:chipIconEnabled="true"
     app:chipStartPadding="0dp"
     app:iconEndPadding="0dp"

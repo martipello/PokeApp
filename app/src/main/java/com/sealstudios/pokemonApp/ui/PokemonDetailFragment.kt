@@ -116,7 +116,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
-            onFinishedSavingPokemonTypes()
         }
     }
 
@@ -152,6 +151,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
     }
 
+    @SuppressLint("InflateParams")
     private fun colorTabs(lightVibrantSwatchRgb: Int) {
         if (binding.viewPager.adapter != null) {
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
@@ -233,12 +233,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private fun onFinishedSavingPokemonMoves() {
         pokemonDetailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, {
             pokemonMovesViewModel.setPokemonId(it)
-        })
-    }
-
-    private fun onFinishedSavingPokemonTypes() {
-        pokemonDetailViewModel.onFinishedSavingPokemonTypes.observe(viewLifecycleOwner, {
-//            pokemonWeaknessResistanceViewModel.setPokemonId(it)
         })
     }
 

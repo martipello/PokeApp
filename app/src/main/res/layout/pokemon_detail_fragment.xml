@@ -305,18 +305,15 @@
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="INFO"/>
+                android:layout_height="wrap_content"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="STATS"/>
+                android:layout_height="wrap_content"/>
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="MOVES"/>
+                android:layout_height="wrap_content"/>
 
         </com.google.android.material.tabs.TabLayout>
 
@@ -332,12 +329,12 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="match_parent"
             android:id="@+id/viewPager"
-            android:paddingStart="@dimen/qualified_medium_margin_16dp"
-            android:paddingEnd="@dimen/qualified_medium_margin_16dp"
             android:clipToPadding="false"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_max="500dp"
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             android:background="@color/white"/>

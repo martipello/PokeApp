@@ -11,10 +11,11 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
+import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
-import androidx.viewpager2.widget.MarginPageTransformer
+import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.DataSource
@@ -45,7 +46,6 @@ import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypesForPokemonTypes
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
-import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.*
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
@@ -147,8 +147,12 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private fun setUpViewPager() {
         binding.viewPager.adapter = viewPagerAdapterAdapter
         binding.viewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
-        binding.viewPager.setPageTransformer(MarginPageTransformer(150))
-        binding.viewPager.addItemDecoration(PokemonInfoDecorator(32.dp))
+        val recyclerViewPager2 = binding.viewPager.children.first { it is RecyclerView } as RecyclerView
+        recyclerViewPager2.clipToPadding = false
+        recyclerViewPager2.addItemDecoration(PokemonInfoDecorator(
+                binding.root.context.resources.getDimensionPixelSize(
+                        R.dimen.qualified_medium_margin_16dp
+                )))
     }
 
     @SuppressLint("InflateParams")

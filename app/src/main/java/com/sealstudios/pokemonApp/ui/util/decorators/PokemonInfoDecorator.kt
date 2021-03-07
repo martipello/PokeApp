@@ -15,7 +15,6 @@ class PokemonInfoDecorator constructor(private val margin: Int) : RecyclerView.I
         super.getItemOffsets(outRect, view, parent, state)
 
         outRect.bottom = margin
-        outRect.top = margin
         outRect.left = margin
         outRect.right = margin
 

@@ -25,9 +25,9 @@
                 android:layout_width="@dimen/qualified_view_holder_image"
                 android:layout_height="@dimen/qualified_view_holder_image"
                 android:contentDescription="@string/pokemon_image"
-                app:cardBackgroundColor="@color/white"
+                app:cardBackgroundColor="@color/primaryLightColor"
                 app:cardCornerRadius="@dimen/qualified_view_holder_image_corner_radius"
-                app:strokeColor="@color/white"
+                app:strokeColor="@color/primaryLightColor"
                 app:strokeWidth="@dimen/small_margin_4dp">
 
                 <ImageView

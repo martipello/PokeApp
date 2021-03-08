@@ -20,6 +20,10 @@
         <item name="tabStyle">@style/MyDarkTabBarStyle</item>
     </style>
 
+    <style name="Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/black</item>
+    </style>
+
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>

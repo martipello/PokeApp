@@ -62,10 +62,10 @@ class PokemonViewHolder constructor(
     }
 
     private fun setViewHolderDefaultState() {
-        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+        val primaryLightColor: Int = ContextCompat.getColor(binding.root.context, R.color.primaryLightColor)
 
-        binding.pokemonImageViewHolder.strokeColor = white
-        binding.pokemonImageViewHolder.setCardBackgroundColor(white)
+        binding.pokemonImageViewHolder.strokeColor = primaryLightColor
+        binding.pokemonImageViewHolder.setCardBackgroundColor(primaryLightColor)
         binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
     }

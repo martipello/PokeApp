@@ -29,6 +29,11 @@
 
     <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
+
+    <style name="Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
     <style name="Theme.PokemonAppTheme.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
         <item name="autoCompleteTextViewStyle">@style/Widget.MyApp.AutoCompleteTextView.SearchView</item>
         <item name="colorControlNormal">@color/white</item>

@@ -29,7 +29,7 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearanceOverlay_card_custom_corners_large</item>
     </style>
 
-    <style name="MyToolbarStyle" parent="Widget.MaterialComponents.TabLayout">
+    <style name="MyTabBarStyle" parent="Widget.MaterialComponents.TabLayout">
         <item name="android:background">@color/primaryLightColor</item>
         <item name="tabSelectedTextColor">@color/primaryTextColor</item>
         <item name="tabTextColor">@color/secondaryTextColor</item>
@@ -37,7 +37,7 @@
         <item name="colorOnSurface">@color/white</item>
     </style>
 
-    <style name="MyDarkToolbarStyle" parent="Widget.MaterialComponents.TabLayout">
+    <style name="MyDarkTabBarStyle" parent="Widget.MaterialComponents.TabLayout">
         <item name="android:background">@color/primaryLightColor</item>
         <item name="tabSelectedTextColor">@color/secondaryTextColor</item>
         <item name="tabTextColor">@color/primaryTextColor</item>
@@ -129,5 +129,15 @@
         <item name="android:width">15dp</item>
         <item name="android:height">15dp</item>
     </style>
+
+    <style name="PokeApp.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Toolbar" parent="Theme.PokemonAppTheme">
+        <item name="homeAsUpIndicator">@drawable/ic_arrow_back_black_24dp</item>
+    </style>
+
+
 
 </resources>

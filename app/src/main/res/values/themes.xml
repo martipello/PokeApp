@@ -17,21 +17,23 @@
             @color/primaryColor
         </item>
 
-        <item name="tabStyle">@style/MyToolbarStyle</item>
+        <item name="tabStyle">@style/MyTabBarStyle</item>
+
     </style>
 
     <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
-        <item name="colorControlNormal">@color/primaryTextColor</item>
+        <item name="colorControlNormal">@color/black</item>
     </style>
 
-    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
     <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
+
 
 </resources>

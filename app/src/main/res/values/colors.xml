@@ -25,6 +25,7 @@
 
 
     <color name="iconColor">#FFFFFF</color>
+    <color name="darkIconColor">#000000</color>
 
 
     <color name="black">#000000</color>

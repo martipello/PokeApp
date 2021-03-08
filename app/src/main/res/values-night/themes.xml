@@ -17,18 +17,14 @@
         <item name="android:statusBarColor">
             @color/primaryColor
         </item>
-        <item name="tabStyle">@style/MyDarkToolbarStyle</item>
+        <item name="tabStyle">@style/MyDarkTabBarStyle</item>
     </style>
 
     <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
     <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
-        <item name="colorControlNormal">@color/primaryColor</item>
-    </style>
+    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>

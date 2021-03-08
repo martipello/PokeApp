@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.TypedValue
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
@@ -165,12 +167,19 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     1 -> customTab.text = getString(R.string.stats)
                     2 -> customTab.text = getString(R.string.moves)
                 }
-                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb)
-                customTab.setTextColor(buildTextColorState(binding.root.context))
+                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb, binding.root.context)
+                customTab.setTextColor(buildTextColorState(binding.root.context, isNightMode()))
                 tab.customView = customTab
             }.attach()
         }
     }
+
+    private fun isNightMode() =
+            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES ->
+                    true
+                else -> false
+            }
 
     private fun setNameAndIDViews(context: Context) {
         binding.title.text = pokemonName.capitalize(Locale.ROOT)

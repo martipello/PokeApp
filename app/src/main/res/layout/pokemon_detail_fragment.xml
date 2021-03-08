@@ -326,6 +326,7 @@
         android:layout_height="match_parent"
         android:id="@+id/view_pager_holder"
         android:clipToPadding="false"
+        android:background="@color/primaryLightColor"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
@@ -336,8 +337,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_max="500dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@color/white"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

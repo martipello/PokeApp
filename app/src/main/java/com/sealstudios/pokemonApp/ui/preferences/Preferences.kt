@@ -1,11 +1,28 @@
 package com.sealstudios.pokemonApp.ui.preferences
 
 import android.os.Bundle
+import android.view.View
+import androidx.core.view.updatePadding
 import androidx.preference.PreferenceFragmentCompat
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
+import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetPadding
 
 class Preferences : PreferenceFragmentCompat() {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.preferences, rootKey)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        view.doOnApplyWindowInsetMargin { view, windowInsets, marginLayoutParams ->
+            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
+            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
+            view.layoutParams = marginLayoutParams
+        }
+
     }
 }

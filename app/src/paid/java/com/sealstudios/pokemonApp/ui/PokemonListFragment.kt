@@ -31,7 +31,6 @@ import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
-import com.sealstudios.pokemonApp.ui.util.ThemeHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
@@ -51,8 +50,8 @@ class PokemonListFragment : Fragment(),
     private var _binding: PokemonListFragmentBinding? = null
 
     private var search: String = ""
-    private val pokemonListViewModel: PokemonListViewModel by viewModels({requireActivity()})
-    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({requireActivity()})
+    private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
+    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
     private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
 
@@ -70,7 +69,8 @@ class PokemonListFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
-        setUpPokemonRecyclerView(view.context)
+        setUpSwipeRefresh()
+        setUpPokemonRecyclerView()
         observeFetchAllPokemonResponse()
         observeSearch()
     }
@@ -131,10 +131,18 @@ class PokemonListFragment : Fragment(),
         })
     }
 
-    private fun setUpPokemonRecyclerView(context: Context) {
+    private fun setUpSwipeRefresh() {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setProgressBackgroundColorSchemeColor(
+                        ContextCompat.getColor(binding.root.context, R.color.primaryLightColor))
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setColorSchemeResources(R.color.darkIconColor)
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
+    }
+
+    private fun setUpPokemonRecyclerView() {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             this.setHasFixedSize(true)
-            binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
@@ -221,7 +229,7 @@ class PokemonListFragment : Fragment(),
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
+        when (item.itemId) {
             R.id.action_settings -> {
                 navigate(actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
                 return true

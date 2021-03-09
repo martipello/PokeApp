@@ -60,6 +60,6 @@
     </fragment>
     <fragment
         android:id="@+id/preferences"
-        android:name="com.sealstudios.pokemonApp.ui.preferences.Preferences"
+        android:name="com.sealstudios.pokemonApp.ui.preferences.PreferenceFragment"
         android:label="Preferences" />
 </navigation>

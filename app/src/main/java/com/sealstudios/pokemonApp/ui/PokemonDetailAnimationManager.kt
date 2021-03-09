@@ -121,6 +121,10 @@ abstract class PokemonDetailAnimationManager : Fragment() {
                 }
                 return true
             }
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_PokemonDetailFragment_to_preferences)
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
         }
     }

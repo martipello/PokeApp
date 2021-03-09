@@ -1,19 +1,13 @@
 package com.sealstudios.pokemonApp.ui.preferences
 
 import android.os.Bundle
-import android.view.MenuItem
 import android.view.View
-import androidx.activity.OnBackPressedCallback
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.switchUIMode
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.uiModeKey
-import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
-import kotlinx.coroutines.launch
 
 class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -22,15 +16,6 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        view.doOnApplyWindowInsetMargin { myView, windowInsets, marginLayoutParams ->
-            marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
-            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
-            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
-            marginLayoutParams.bottomMargin = windowInsets.systemWindowInsetBottom
-            myView.layoutParams = marginLayoutParams
-        }
-
         val darkModePreference = preferenceManager.findPreference(uiModeKey) as SwitchPreference?
         darkModePreference?.onPreferenceChangeListener = this
         val shareButton = preferenceManager.findPreference("share") as Preference?

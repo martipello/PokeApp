@@ -75,6 +75,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
 
     private lateinit var viewPagerAdapterAdapter: PokemonDetailViewPagerAdapter
+
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 

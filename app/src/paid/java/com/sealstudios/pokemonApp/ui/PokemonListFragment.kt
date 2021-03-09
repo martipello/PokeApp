@@ -154,7 +154,7 @@ class PokemonListFragment : Fragment(),
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
         setupActionBarWithNavController(mainActivity, appBarConfiguration)
-        setToolbarTitleExpandedColor(toolbar.context)
+        setToolbarTitleColor(toolbar.context)
     }
 
     private fun setupActionBarWithNavController(
@@ -168,7 +168,7 @@ class PokemonListFragment : Fragment(),
         )
     }
 
-    private fun setToolbarTitleExpandedColor(context: Context) {
+    private fun setToolbarTitleColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
                 .setExpandedTitleColor(
                         ContextCompat.getColor(
@@ -176,6 +176,10 @@ class PokemonListFragment : Fragment(),
                                 android.R.color.transparent
                         )
                 )
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(
+                context,
+                android.R.color.white
+        ))
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {

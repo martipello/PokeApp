@@ -21,7 +21,8 @@
             app:popUpTo="@id/PokemonListFragment" />
         <action
             android:id="@+id/action_PokemonListFragment_to_preferences"
-            app:destination="@id/preferences" />
+            app:destination="@id/preferences"
+            app:popUpTo="@id/PokemonListFragment" />
 
     </fragment>
     <fragment
@@ -38,7 +39,9 @@
             app:argType="string" />
         <action
             android:id="@+id/action_PokemonDetailFragment_to_preferences"
-            app:destination="@id/preferences" />
+            app:destination="@id/preferences"
+            app:launchSingleTop="true"
+            app:popUpTo="@id/PokemonDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"

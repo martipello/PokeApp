@@ -4,10 +4,12 @@ import android.animation.Animator
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.addCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.transition.TransitionInflater
 import androidx.transition.TransitionSet
@@ -91,12 +93,17 @@ abstract class PokemonDetailAnimationManager : Fragment() {
     }
 
     private fun addBackButtonCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
+        requireActivity().onBackPressedDispatcher.addCallback(this, backButtonCallback)
+    }
+
+    private val backButtonCallback = object: OnBackPressedCallback(true){
+        override fun handleOnBackPressed() {
             viewLifecycleOwner.lifecycleScope.launch {
                 handleExitAnimation()
             }
             this.remove()
         }
+
     }
 
     private suspend fun popDelayed() {

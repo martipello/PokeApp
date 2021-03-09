@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.ui.preferences
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
 import androidx.core.view.updatePadding
@@ -25,4 +26,11 @@ class Preferences : PreferenceFragmentCompat() {
         }
 
     }
+    private fun isNightMode() =
+            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
+                Configuration.UI_MODE_NIGHT_YES ->
+                    true
+                else -> false
+            }
+
 }

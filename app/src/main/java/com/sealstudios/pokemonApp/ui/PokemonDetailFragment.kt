@@ -1,21 +1,23 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.annotation.SuppressLint
+import android.app.SearchManager
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.FragmentNavigatorExtras
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -28,6 +30,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.bumptech.glide.request.target.Target
 import com.google.android.material.appbar.AppBarLayout
 import com.google.android.material.appbar.AppBarLayout.LayoutParams.*
+import com.google.android.material.card.MaterialCardView
 import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
@@ -435,6 +438,21 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.genTextView.text = PokemonGeneration.formatGenerationName(
                 PokemonGeneration.getGeneration(species.generation ?: "")
         )
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.menu_main, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_PokemonDetailFragment_to_preferences)
+                return true
+            }
+        }
+        return false
     }
 
     override fun onDestroyView() {

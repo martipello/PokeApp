@@ -20,6 +20,9 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
 
         view.doOnApplyWindowInsetMargin { myView, windowInsets, marginLayoutParams ->
             marginLayoutParams.topMargin = windowInsets.systemWindowInsetTop
+            marginLayoutParams.leftMargin = windowInsets.systemWindowInsetLeft
+            marginLayoutParams.rightMargin = windowInsets.systemWindowInsetRight
+            marginLayoutParams.bottomMargin = windowInsets.systemWindowInsetBottom
             myView.layoutParams = marginLayoutParams
         }
 

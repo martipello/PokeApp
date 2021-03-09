@@ -324,12 +324,13 @@
         android:layout_height="match_parent"
         android:id="@+id/view_pager_holder"
         android:clipToPadding="false"
-        android:background="@color/primaryLightColor"
+        android:background="@android:color/transparent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@color/primaryLightColor"
             android:id="@+id/viewPager"
             android:clipToPadding="false"
             app:layout_constraintStart_toStartOf="parent"

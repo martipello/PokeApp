@@ -12,18 +12,6 @@
     <color name="primaryTextColor">#ffffff</color>
     <color name="secondaryTextColor">#000000</color>
 
-<!--    night mode -->
-
-    <color name="nightPrimaryColor">#000000</color>
-    <color name="nightPrimaryLightColor">#2c2c2c</color>
-    <color name="nightPrimaryDarkColor">#000000</color>
-    <color name="nightSecondaryColor">#D32F2F</color>
-    <color name="nightSecondaryLightColor">#ff5a36</color>
-    <color name="nightSecondaryDarkColor">#c20000</color>
-    <color name="nightPrimaryTextColor">#ffffff</color>
-    <color name="nightSecondaryTextColor">#000000</color>
-
-
     <color name="iconColor">#FFFFFF</color>
     <color name="darkIconColor">#000000</color>
 

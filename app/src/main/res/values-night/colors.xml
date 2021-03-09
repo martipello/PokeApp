@@ -1,7 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <!--    night mode -->
+
+    <color name="primaryColor">#000000</color>
     <color name="primaryLightColor">#2c2c2c</color>
+    <color name="primaryDarkColor">#000000</color>
+    <color name="secondaryColor">#D32F2F</color>
+    <color name="secondaryLightColor">#ff5a36</color>
+    <color name="secondaryDarkColor">#c20000</color>
+    <color name="secondaryTextColor">#ffffff</color>
+    <color name="primaryTextColor">#000000</color>
+
     <color name="darkIconColor">#FFFFFF</color>
     <color name="iconColor">#FFFFFF</color>
 

@@ -171,18 +171,11 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     2 -> customTab.text = getString(R.string.moves)
                 }
                 customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb, binding.root.context)
-                customTab.setTextColor(buildTextColorState(binding.root.context, isNightMode()))
+                customTab.setTextColor(buildTextColorState(binding.root.context))
                 tab.customView = customTab
             }.attach()
         }
     }
-
-    private fun isNightMode() =
-            when (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) {
-                Configuration.UI_MODE_NIGHT_YES ->
-                    true
-                else -> false
-            }
 
     private fun setNameAndIDViews(context: Context) {
         binding.title.text = pokemonName.capitalize(Locale.ROOT)

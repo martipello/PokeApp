@@ -20,15 +20,15 @@ class ColorStateFactory {
             )
         }
 
-        fun buildTextColorState(context: Context, isNightMode: Boolean = false): ColorStateList {
+        fun buildTextColorState(context: Context): ColorStateList {
             return ColorStateList(
                     arrayOf(
                             intArrayOf(android.R.attr.state_selected),
                             intArrayOf(-android.R.attr.state_selected)
                     ),
                     intArrayOf(
-                            ContextCompat.getColor(context, if (isNightMode) R.color.secondaryTextColor else R.color.primaryTextColor),
-                            ContextCompat.getColor(context, if (isNightMode) R.color.primaryTextColor else R.color.secondaryTextColor),
+                            ContextCompat.getColor(context, R.color.primaryTextColor),
+                            ContextCompat.getColor(context, R.color.secondaryTextColor),
                     )
             )
         }

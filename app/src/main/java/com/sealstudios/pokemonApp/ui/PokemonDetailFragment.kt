@@ -432,16 +432,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when(item.itemId){
-            R.id.action_settings -> {
-                findNavController().navigate(R.id.action_PokemonDetailFragment_to_preferences)
-                return true
-            }
-        }
-        return false
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

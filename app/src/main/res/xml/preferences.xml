@@ -1,22 +1,26 @@
 <PreferenceScreen
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <SwitchPreferenceCompat
+
+    <SwitchPreference
         app:key="dark_theme"
         app:icon="@drawable/ic_dark_mode_black_24dp"
         app:title="Enable dark mode"/>
 
     <Preference
+        app:key="share"
         app:title="Share"
         app:icon="@drawable/ic_share_black_24dp"
         app:summary="Share this app with friends"/>
 
     <Preference
+        app:key="send"
         app:title="Send feedback"
         app:icon="@drawable/ic_send_black_24dp"
         app:summary="Report technical issues or suggest new features"/>
 
     <Preference
+        app:key="about"
         app:title="About"
         app:icon="@drawable/ic_info_black_24dp"/>
 

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -79,16 +80,18 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        postponeEnterTransition()
+    }
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
-        setHasOptionsMenu(true)
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
         binding.setLoading()
         setPokemonDetailFragmentBinding(binding)
-        postponeEnterTransition()
         observeHasExpandedState()
         handleNavigationArgs()
         observeUIColor()

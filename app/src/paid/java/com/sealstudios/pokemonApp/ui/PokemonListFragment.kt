@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -36,6 +38,7 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -110,13 +113,16 @@ class PokemonListFragment : Fragment(),
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
                 viewLifecycleOwner, { pokemonData ->
+            Log.d("MAIN", "pokemonData $pokemonData")
             if (pokemonData != null) {
                 if (pokemonData.isEmpty()) {
                     binding.setEmpty()
                 } else {
+                    lifecycleScope.launch {
+                        pokemonAdapter.submitList(pokemonData)
+                    }
                     binding.setNotEmpty()
                 }
-                pokemonAdapter.submitList(pokemonData)
             } else {
                 binding.setLoading()
             }
@@ -125,6 +131,7 @@ class PokemonListFragment : Fragment(),
 
     private fun observeSearch() {
         pokemonListViewModel.search.observe(viewLifecycleOwner, {
+            Log.d("MAIN", "observe $it")
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -184,10 +191,11 @@ class PokemonListFragment : Fragment(),
                                 android.R.color.transparent
                         )
                 )
-        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout.setCollapsedTitleTextColor(ContextCompat.getColor(
-                context,
-                android.R.color.white
-        ))
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
+                .setCollapsedTitleTextColor(ContextCompat.getColor(
+                        context,
+                        android.R.color.white
+                ))
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {
@@ -217,27 +225,6 @@ class PokemonListFragment : Fragment(),
         })
     }
 
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.search_menu, menu)
-        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
-        (menu.findItem(R.id.search).actionView as SearchView).apply {
-            this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
-            restoreSearchUIState(menu)
-            setQueryListener(searchView = this)
-        }
-        super.onCreateOptionsMenu(menu, inflater)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.action_settings -> {
-                navigate(actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
-                return true
-            }
-        }
-        return false
-    }
-
     private fun navigateToDetailFragment(name: String, view: View) {
         view as MaterialCardView
         val action = actionPokemonListFragmentToPokemonDetailFragment(
@@ -259,14 +246,35 @@ class PokemonListFragment : Fragment(),
         navigateToDetailFragment(pokemon.name, view)
     }
 
-    override fun onRefresh() {
-        remotePokemonViewModel.setFetchedPartialPokemonData(false)
-        remotePokemonViewModel.fetchAllPokemon()
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.search_menu, menu)
+        val searchManager = activity?.getSystemService(Context.SEARCH_SERVICE) as? SearchManager
+        (menu.findItem(R.id.search).actionView as SearchView).apply {
+            this.setSearchableInfo(searchManager?.getSearchableInfo(activity?.componentName))
+            restoreSearchUIState(menu)
+            setQueryListener(searchView = this)
+        }
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                navigate(actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
+                return true
+            }
+        }
+        return false
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onRefresh() {
+        remotePokemonViewModel.setFetchedPartialPokemonData(false)
+        remotePokemonViewModel.fetchAllPokemon()
     }
 
     private fun hideEmptyLayout() {

@@ -82,7 +82,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        postponeEnterTransition()
+        postponeEnterTransition()//this gets recalled if we change the theme in the settings
     }
 
     override fun onCreateView(

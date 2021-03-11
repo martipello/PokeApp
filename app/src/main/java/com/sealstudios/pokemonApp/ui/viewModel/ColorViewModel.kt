@@ -5,6 +5,10 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 
 val <A, B> Pair<A, B>.dominantColor: A get() = this.first
@@ -23,8 +27,10 @@ class ColorViewModel @ViewModelInject constructor(
         return MutableLiveData(dominantColor to lightVibrantColor)
     }
 
-    fun setViewColors(lightVibrantColor: Int, dominantColor: Int) {
-        dominantAndLightVibrantColors.value = dominantColor to lightVibrantColor
+    suspend fun setViewColors(lightVibrantColor: Int, dominantColor: Int) {
+        withContext(Dispatchers.Main){
+            dominantAndLightVibrantColors.value = dominantColor to lightVibrantColor
+        }
         savedStateHandle.set(lightVibrantColorKey, lightVibrantColor)
         savedStateHandle.set(dominantColorKey, dominantColor)
     }

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -13,7 +12,6 @@ import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.children
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -38,6 +36,7 @@ import com.sealstudios.pokemonApp.databinding.PokemonDetailFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonDetailViewPagerAdapter
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
+import com.sealstudios.pokemonApp.ui.extensions.getNavigationResult
 import com.sealstudios.pokemonApp.ui.insets.PokemonDetailFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildColorState
 import com.sealstudios.pokemonApp.ui.util.ColorStateFactory.Companion.buildTextColorState
@@ -51,7 +50,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
-import kotlin.coroutines.resume
 import kotlin.math.abs
 
 @AndroidEntryPoint
@@ -80,16 +78,12 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private var _binding: PokemonDetailFragmentBinding? = null
     private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        postponeEnterTransition()//this gets recalled if we change the theme in the settings
-    }
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View {
         _binding = PokemonDetailFragmentBinding.inflate(inflater, container, false)
+        handleFirstTimeOpened()
         binding.setLoading()
         setPokemonDetailFragmentBinding(binding)
         observeHasExpandedState()
@@ -98,6 +92,14 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         setViewModelProperties()
         PokemonDetailFragmentInsets().setInsets(binding)
         return binding.root
+    }
+
+    private fun handleFirstTimeOpened() {
+        val navigatedFromListPage = this.getNavigationResult<Boolean>(navigatedFromListPage)
+                ?: false
+        if (!navigatedFromListPage) {
+            postponeEnterTransition()
+        }
     }
 
     @ExperimentalCoroutinesApi
@@ -109,6 +111,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             handleAppBarSnapFlag()
             setUpViewPagerAdapter()
             setUpViewPager()
+            setUpTabs()
             setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
@@ -159,7 +162,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     @SuppressLint("InflateParams")
-    private fun colorTabs(lightVibrantSwatchRgb: Int) {
+    private fun setUpTabs() {
         if (binding.viewPager.adapter != null) {
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
@@ -168,8 +171,28 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     1 -> customTab.text = getString(R.string.stats)
                     2 -> customTab.text = getString(R.string.moves)
                 }
-                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb, binding.root.context)
-                customTab.setTextColor(buildTextColorState(binding.root.context))
+                val context = binding.root.context
+                customTab.chipBackgroundColor = buildColorState(ContextCompat.getColor(context, R.color.secondaryColor), context)
+                customTab.setTextColor(buildTextColorState(context))
+                tab.customView = customTab
+            }.attach()
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    private fun colorTabs(lightVibrantSwatchRgb: Int) {
+        if (binding.viewPager.adapter != null) {
+
+            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+                val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
+                when (position) {
+                    0 -> customTab.text = getString(R.string.info)
+                    1 -> customTab.text = getString(R.string.stats)
+                    2 -> customTab.text = getString(R.string.moves)
+                }
+                val context = binding.root.context
+                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb, context)
+                customTab.setTextColor(buildTextColorState(context))
                 tab.customView = customTab
             }.attach()
         }
@@ -298,6 +321,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
                 dominantColor
         )
+        colorTabs(lightVibrantSwatchRgb)
     }
 
     private fun restoreUIState() {
@@ -337,21 +361,23 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 setPokemonSpeciesFormData(pokemonSpecies)
             }
 
-    private suspend fun setPokemonImageView(imageUrl: String): Boolean =
-            suspendCancellableCoroutine { continuation ->
-                val requestOptions =
-                        RequestOptions.noTransformation()
-                glide.asBitmap()
-                        .load(imageUrl)
-                        .dontAnimate()
-                        .diskCacheStrategy(DiskCacheStrategy.DATA)
-                        .apply(requestOptions)
-                        .placeholder(R.drawable.pokeball_vector)
-                        .addListener(imageRequestListener(continuation))
-                        .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
-            }
+    private fun setPokemonImageView(imageUrl: String) {
+        lifecycleScope.launch {
+            val requestOptions =
+                    RequestOptions.noTransformation()
+            glide.asBitmap()
+                    .load(imageUrl)
+                    .dontAnimate()
+                    .diskCacheStrategy(DiskCacheStrategy.DATA)
+                    .apply(requestOptions)
+                    .placeholder(R.drawable.pokeball_vector)
+                    .addListener(imageRequestListener())
+                    .into(binding.pokemonImageViewHolderLayout.pokemonImageView)
+        }
 
-    private fun imageRequestListener(continuation: CancellableContinuation<Boolean>): RequestListener<Bitmap?> {
+    }
+
+    private fun imageRequestListener(): RequestListener<Bitmap?> {
         return object : RequestListener<Bitmap?> {
             override fun onLoadFailed(
                     e: GlideException?,
@@ -359,7 +385,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     target: Target<Bitmap?>,
                     isFirstResource: Boolean
             ): Boolean {
-                if (continuation.isActive) continuation.resume(false)
+                setColoredElementsForBitmap(null)
                 return false
             }
 
@@ -370,19 +396,29 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     dataSource: DataSource,
                     isFirstResource: Boolean
             ): Boolean {
-                if (continuation.isActive) continuation.resume(true)
                 resource?.let {
-                    setColoredElementsForBitmap(it, binding.root.context)
+                    setColoredElementsForBitmap(it)
                 }
                 return false
             }
         }
     }
 
-    private fun setColoredElementsForBitmap(bitmap: Bitmap, context: Context) {
-        CoroutineScope(Dispatchers.Default).launch {
-            PaletteHelper.setLightAndDarkVibrantColorForBitmap(bitmap, context)
-            { lightVibrantColor, darkVibrantColor -> colorViewModel.setViewColors(lightVibrantColor, darkVibrantColor) }
+    private fun setColoredElementsForBitmap(bitmap: Bitmap?) {
+        lifecycleScope.launch {
+            if (_binding != null) {
+                val context = binding.root.context
+                if (bitmap != null) {
+                    PaletteHelper.setLightAndDarkVibrantColorForBitmap(bitmap, context)
+                    { lightVibrantColor, darkVibrantColor -> colorViewModel.setViewColors(lightVibrantColor, darkVibrantColor) }
+                } else {
+                    colorViewModel.setViewColors(
+                            ContextCompat.getColor(context, R.color.secondaryColor),
+                            ContextCompat.getColor(context, R.color.primaryLightColor),
+                    )
+                }
+            }
+
         }
     }
 
@@ -402,7 +438,6 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             }
         }
     }
-
 
     @SuppressLint("DefaultLocale")
     private fun setPokemonFormData(
@@ -475,6 +510,10 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
         subtitle.visibility = View.VISIBLE
         genTextView.visibility = View.VISIBLE
         genTextLabel.visibility = View.VISIBLE
+    }
+
+    companion object {
+        const val navigatedFromListPage = "navigatedFromListPage"
     }
 
 }

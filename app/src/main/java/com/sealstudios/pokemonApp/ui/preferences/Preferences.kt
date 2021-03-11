@@ -1,11 +1,14 @@
 package com.sealstudios.pokemonApp.ui.preferences
 
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.ui.extensions.setNavigationResult
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.switchUIMode
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.uiModeKey
 
@@ -46,5 +49,6 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
         }
         return true
     }
+
 
 }

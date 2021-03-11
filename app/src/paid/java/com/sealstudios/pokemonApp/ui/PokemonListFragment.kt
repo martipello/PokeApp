@@ -131,7 +131,6 @@ class PokemonListFragment : Fragment(),
 
     private fun observeSearch() {
         pokemonListViewModel.search.observe(viewLifecycleOwner, {
-            Log.d("MAIN", "observe $it")
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -307,7 +306,6 @@ class PokemonListFragment : Fragment(),
         errorPokemonList.retryButton.setOnClickListener {
             fetchAllPokemon()
         }
-
     }
 
     private fun PokemonListFragmentBinding.setEmpty() {

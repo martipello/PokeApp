@@ -2,16 +2,15 @@ package com.sealstudios.pokemonApp.ui.preferences
 
 import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.databinding.FragmentPreferenceBinding
+import com.sealstudios.pokemonApp.ui.PokemonDetailFragment.Companion.navigatedFromListPage
+import com.sealstudios.pokemonApp.ui.extensions.setNavigationResult
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
 
 class PreferenceFragment : Fragment() {
@@ -21,8 +20,8 @@ class PreferenceFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        setHasOptionsMenu(true)
         _binding = FragmentPreferenceBinding.inflate(inflater, container, false)
+        this.setNavigationResult(true, navigatedFromListPage)
         return binding.root
     }
 

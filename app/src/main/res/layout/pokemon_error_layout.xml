@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:id="@+id/retry_button"
-        android:textColor="@color/black"
+        android:textColor="@color/darkIconColor"
         app:rippleColor="@color/light_grey"
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
         app:cornerRadius="1000dp"

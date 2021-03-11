@@ -7,18 +7,19 @@ import com.sealstudios.pokemonApp.R
 
 class ColorStateFactory {
     companion object {
-        fun buildColorState(lightVibrantColor: Int): ColorStateList {
+        fun buildColorState(lightVibrantColor: Int, context: Context): ColorStateList {
             return ColorStateList(
                     arrayOf(
                             intArrayOf(android.R.attr.state_selected),
-                            intArrayOf(-android.R.attr.state_selected)
+                            intArrayOf(-android.R.attr.state_selected),
                     ),
                     intArrayOf(
                             lightVibrantColor,
-                            android.R.color.transparent
+                            ContextCompat.getColor(context, R.color.primaryLightColor)
                     )
             )
         }
+
         fun buildTextColorState(context: Context): ColorStateList {
             return ColorStateList(
                     arrayOf(

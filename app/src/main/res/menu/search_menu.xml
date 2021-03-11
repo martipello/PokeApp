@@ -5,9 +5,14 @@
         android:id="@+id/search"
         android:icon="@drawable/ic_search_white_24dp"
         android:orderInCategory="10"
-        android:title=""
+        android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
-        app:showAsAction="always|collapseActionView">
-    </item>
+        app:showAsAction="always|collapseActionView"/>
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_more_vert_white_24dp"
+        android:title="@string/action_settings"
+        app:showAsAction="never" />
 
 </menu>

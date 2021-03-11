@@ -4,27 +4,20 @@
     android:id="@+id/app_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="250dp"
-    android:clipToPadding="false"
-    android:background="@color/primaryColor"
-    android:theme="@style/Theme.PokemonAppTheme.AppBarOverlay">
+    android:clipToPadding="false">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:theme="@style/Theme.PokemonAppTheme.DarkAppBarOverlay"
-        app:contentScrim="@color/primaryColor"
-        app:expandedTitleMarginEnd="64dp"
-        app:expandedTitleMarginStart="48dp"
-        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap"
-        app:statusBarScrim="@color/primaryColor">
+        android:theme="@style/Theme.PokemonAppTheme.CollapsingAppBarOverlay"
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap">
 
         <ImageView
             android:id="@+id/toolbar_image"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
-            android:clipToPadding="false"
+            android:layout_height="match_parent"
+            android:background="@color/black"
             android:contentDescription="@string/app_toolbar_header"
             android:scaleType="fitCenter"
             android:src="@drawable/pokemon_logo_black"
@@ -34,7 +27,8 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:layout_collapseMode="pin"/>
+            android:background="@android:color/transparent"
+            app:layout_collapseMode="pin" />
 
     </com.google.android.material.appbar.CollapsingToolbarLayout>
 

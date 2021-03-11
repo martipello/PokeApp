@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
         android:outlineProvider="none"
-        style="@style/Theme.PokemonAppTheme.AppBarOverlay"
         android:translationZ="8dp"
         app:elevation="0dp"
         app:layout_constraintTop_toTopOf="parent">
@@ -37,8 +36,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
+            android:theme="@style/Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay"
             app:titleEnabled="false"
-            style="@style/ToolbarColoredBackArrow"
             app:title=""
             app:titleTextColor="@android:color/transparent"
             app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap">
@@ -51,7 +50,6 @@
                 app:titleTextColor="@android:color/transparent"
                 app:title=""
                 android:elevation="@dimen/large_margin_32dp"
-                style="@style/ToolbarColoredBackArrow"
                 android:layout_gravity="top"
                 android:minHeight="?attr/actionBarSize"
                 app:elevation="@dimen/large_margin_32dp"
@@ -326,18 +324,19 @@
         android:layout_height="match_parent"
         android:id="@+id/view_pager_holder"
         android:clipToPadding="false"
+        android:background="@android:color/transparent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <androidx.viewpager2.widget.ViewPager2
             android:layout_width="0dp"
             android:layout_height="match_parent"
+            android:background="@color/primaryLightColor"
             android:id="@+id/viewPager"
             android:clipToPadding="false"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintWidth_max="500dp"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:background="@color/white"/>
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

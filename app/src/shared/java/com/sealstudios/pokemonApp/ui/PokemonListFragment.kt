@@ -79,6 +79,7 @@ class PokemonListFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
+        setUpSwipeRefresh()
         setUpPokemonRecyclerView(view.context)
         observeFetchAllPokemonResponse()
         observeSearch()
@@ -189,12 +190,20 @@ class PokemonListFragment : Fragment(),
         })
     }
 
+    private fun setUpSwipeRefresh() {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setProgressBackgroundColorSchemeColor(
+                        ContextCompat.getColor(binding.root.context, R.color.primaryLightColor))
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setColorSchemeResources(R.color.darkIconColor)
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
+    }
+
     private fun setUpPokemonRecyclerView(context: Context) {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
             this.setHasFixedSize(true)
-            binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
@@ -214,7 +223,7 @@ class PokemonListFragment : Fragment(),
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
         setupActionBarWithNavController(mainActivity, appBarConfiguration)
-        setToolbarTitleExpandedColor(toolbar.context)
+        setToolbarTitleColor(toolbar.context)
     }
 
     private fun setupActionBarWithNavController(
@@ -228,7 +237,7 @@ class PokemonListFragment : Fragment(),
         )
     }
 
-    private fun setToolbarTitleExpandedColor(context: Context) {
+    private fun setToolbarTitleColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
                 .setExpandedTitleColor(
                         ContextCompat.getColor(
@@ -236,6 +245,11 @@ class PokemonListFragment : Fragment(),
                                 android.R.color.transparent
                         )
                 )
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
+                .setCollapsedTitleTextColor(ContextCompat.getColor(
+                        context,
+                        android.R.color.white
+                ))
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {
@@ -296,6 +310,16 @@ class PokemonListFragment : Fragment(),
             setQueryListener(searchView = this)
         }
         super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                navigate(PokemonListFragmentDirections.actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
+                return true
+            }
+        }
+        return false
     }
 
     override fun onDestroyView() {

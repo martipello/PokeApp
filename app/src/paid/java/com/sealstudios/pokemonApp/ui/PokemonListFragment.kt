@@ -3,6 +3,7 @@ package com.sealstudios.pokemonApp.ui
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -10,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
 import androidx.navigation.fragment.FragmentNavigatorExtras
@@ -26,6 +28,7 @@ import com.sealstudios.pokemonApp.api.states.ErrorCodes
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
+import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPreferences
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
@@ -35,6 +38,7 @@ import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
@@ -49,8 +53,8 @@ class PokemonListFragment : Fragment(),
     private var _binding: PokemonListFragmentBinding? = null
 
     private var search: String = ""
-    private val pokemonListViewModel: PokemonListViewModel by viewModels({requireActivity()})
-    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({requireActivity()})
+    private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
+    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
     private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
 
@@ -68,7 +72,8 @@ class PokemonListFragment : Fragment(),
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
-        setUpPokemonRecyclerView(view.context)
+        setUpSwipeRefresh()
+        setUpPokemonRecyclerView()
         observeFetchAllPokemonResponse()
         observeSearch()
     }
@@ -108,13 +113,16 @@ class PokemonListFragment : Fragment(),
     private fun observePokemonList() {
         pokemonListViewModel.searchPokemon.observe(
                 viewLifecycleOwner, { pokemonData ->
+            Log.d("MAIN", "pokemonData $pokemonData")
             if (pokemonData != null) {
                 if (pokemonData.isEmpty()) {
                     binding.setEmpty()
                 } else {
+                    lifecycleScope.launch {
+                        pokemonAdapter.submitList(pokemonData)
+                    }
                     binding.setNotEmpty()
                 }
-                pokemonAdapter.submitList(pokemonData)
             } else {
                 binding.setLoading()
             }
@@ -129,10 +137,18 @@ class PokemonListFragment : Fragment(),
         })
     }
 
-    private fun setUpPokemonRecyclerView(context: Context) {
+    private fun setUpSwipeRefresh() {
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setProgressBackgroundColorSchemeColor(
+                        ContextCompat.getColor(binding.root.context, R.color.primaryLightColor))
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList
+                .setColorSchemeResources(R.color.darkIconColor)
+        binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
+    }
+
+    private fun setUpPokemonRecyclerView() {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
             this.setHasFixedSize(true)
-            binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
@@ -152,7 +168,7 @@ class PokemonListFragment : Fragment(),
         val mainActivity = (activity as AppCompatActivity)
         mainActivity.setSupportActionBar(toolbar)
         setupActionBarWithNavController(mainActivity, appBarConfiguration)
-        setToolbarTitleExpandedColor(toolbar.context)
+        setToolbarTitleColor(toolbar.context)
     }
 
     private fun setupActionBarWithNavController(
@@ -166,7 +182,7 @@ class PokemonListFragment : Fragment(),
         )
     }
 
-    private fun setToolbarTitleExpandedColor(context: Context) {
+    private fun setToolbarTitleColor(context: Context) {
         binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
                 .setExpandedTitleColor(
                         ContextCompat.getColor(
@@ -174,6 +190,11 @@ class PokemonListFragment : Fragment(),
                                 android.R.color.transparent
                         )
                 )
+        binding.pokemonListFragmentCollapsingAppBar.toolbarLayout
+                .setCollapsedTitleTextColor(ContextCompat.getColor(
+                        context,
+                        android.R.color.white
+                ))
     }
 
     private fun SearchView.restoreSearchUIState(menu: Menu) {
@@ -235,6 +256,16 @@ class PokemonListFragment : Fragment(),
         super.onCreateOptionsMenu(menu, inflater)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_settings -> {
+                navigate(actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
+                return true
+            }
+        }
+        return false
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
@@ -275,7 +306,6 @@ class PokemonListFragment : Fragment(),
         errorPokemonList.retryButton.setOnClickListener {
             fetchAllPokemon()
         }
-
     }
 
     private fun PokemonListFragmentBinding.setEmpty() {

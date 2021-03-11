@@ -17,21 +17,40 @@
             @color/primaryColor
         </item>
 
-        <item name="tabStyle">@style/Widget.App.TabLayout</item>
+        <item name="tabStyle">@style/MyTabBarStyle</item>
+
     </style>
 
     <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
-        <item name="colorControlNormal">@color/primaryTextColor</item>
+        <item name="colorControlNormal">@color/black</item>
     </style>
 
-    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
-    <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/white</item>
+    </style>
+
+    <style name="Theme.PokemonAppTheme.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="autoCompleteTextViewStyle">@style/Widget.MyApp.AutoCompleteTextView.SearchView</item>
+        <item name="colorControlNormal">@color/white</item>
+        <item name="scrimBackground">@color/black</item>
+        <item name="contentScrim">@color/black</item>
+        <item name="expandedTitleTextAppearance">@style/ThemeOverlay.MyTransparentBodyText</item>
+        <item name="collapsedTitleTextAppearance">@style/ThemeOverlay.MyWhiteTitleText</item>
+    </style>
+
+    <style name="Widget.MyApp.AutoCompleteTextView.SearchView" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textColorHint">@color/light_grey</item>
+    </style>
 
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
+
 
 </resources>

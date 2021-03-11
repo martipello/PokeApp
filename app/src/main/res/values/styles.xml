@@ -29,8 +29,24 @@
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearanceOverlay_card_custom_corners_large</item>
     </style>
 
+    <style name="MyTabBarStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@color/primaryLightColor</item>
+        <item name="tabSelectedTextColor">@color/primaryTextColor</item>
+        <item name="tabTextColor">@color/secondaryTextColor</item>
+        <item name="colorSurface">@color/primaryTextColor</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
+    <style name="MyDarkTabBarStyle" parent="Widget.MaterialComponents.TabLayout">
+        <item name="android:background">@color/primaryLightColor</item>
+        <item name="tabSelectedTextColor">@color/secondaryTextColor</item>
+        <item name="tabTextColor">@color/primaryTextColor</item>
+        <item name="colorSurface">@color/primaryTextColor</item>
+        <item name="colorOnSurface">@color/white</item>
+    </style>
+
     <style name="MyDarkMaterialCardStyle" parent="Widget.MaterialComponents.CardView">
-        <item name="cardBackgroundColor">@color/primaryColor</item>
+        <item name="cardBackgroundColor">@color/primaryLightColor</item>
         <item name="colorSurface">@color/primaryTextColor</item>
         <item name="colorOnSurface">@color/white</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearanceOverlay_card_custom_corners</item>
@@ -57,6 +73,19 @@
         <item name="android:spotShadowAlpha">0</item>
         <item name="android:ambientShadowAlpha">0</item>
         <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.MaterialComponents.MediumComponent</item>
+    </style>
+
+    <style name="ColoredTab.Chip" parent="Widget.MaterialComponents.Chip.Choice">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Chip</item>
+        <item name="android:textAppearance">@style/ThemeOverlay.MyBodyText</item>
+        <item name="shapeAppearance">@style/ShapeAppearance.MaterialComponents.SmallComponent</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Chip" parent="">
+        <item name="android:background">@color/primaryLightColor</item>
+        <item name="chipSurfaceColor">@color/primaryLightColor</item>
+        <item name="chipBackgroundColor">@color/primaryLightColor</item>
+        <item name="colorOnSurface">@color/primaryLightColor</item>
     </style>
 
     <style name="PokemonViewHolderMaterialCardStyle" parent="Widget.MaterialComponents.CardView">
@@ -100,5 +129,15 @@
         <item name="android:width">15dp</item>
         <item name="android:height">15dp</item>
     </style>
+
+    <style name="PokeApp.Toolbar" parent="Widget.MaterialComponents.Toolbar.Primary">
+        <item name="materialThemeOverlay">@style/ThemeOverlay.App.Toolbar</item>
+    </style>
+
+    <style name="ThemeOverlay.App.Toolbar" parent="Theme.PokemonAppTheme">
+        <item name="homeAsUpIndicator">@drawable/ic_arrow_back_black_24dp</item>
+    </style>
+
+
 
 </resources>

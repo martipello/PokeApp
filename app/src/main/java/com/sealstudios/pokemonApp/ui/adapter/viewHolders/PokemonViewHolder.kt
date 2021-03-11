@@ -19,8 +19,10 @@ import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.util.PaletteHelper
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
-import kotlinx.coroutines.*
-import kotlin.coroutines.resume
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import com.sealstudios.pokemonApp.database.`object`.PokemonType as dbType
 import com.sealstudios.pokemonApp.ui.util.PokemonType as networkType
 
@@ -62,10 +64,10 @@ class PokemonViewHolder constructor(
     }
 
     private fun setViewHolderDefaultState() {
-        val white: Int = ContextCompat.getColor(binding.root.context, R.color.white)
+        val primaryLightColor: Int = ContextCompat.getColor(binding.root.context, R.color.primaryLightColor)
 
-        binding.pokemonImageViewHolder.strokeColor = white
-        binding.pokemonImageViewHolder.setCardBackgroundColor(white)
+        binding.pokemonImageViewHolder.strokeColor = primaryLightColor
+        binding.pokemonImageViewHolder.setCardBackgroundColor(primaryLightColor)
         binding.dualTypeChipLayout.typeChip1.pokemonTypeChip.visibility = View.GONE
         binding.dualTypeChipLayout.typeChip2.pokemonTypeChip.visibility = View.GONE
     }
@@ -87,27 +89,26 @@ class PokemonViewHolder constructor(
         }
     }
 
-    private suspend fun setPokemonImageView(pokemonImage: String): Boolean =
-        suspendCancellableCoroutine { continuation ->
+    private fun setPokemonImageView(pokemonImage: String) {
             val requestOptions =
                     RequestOptions.placeholderOf(R.drawable.pokeball_vector).dontTransform()
             glide.asBitmap()
                     .load(pokemonImage)
                     .apply(requestOptions)
                     .format(DecodeFormat.PREFER_RGB_565)
-                    .listener(requestListener(continuation))
+                    .listener(requestListener())
                     .into(binding.pokemonImageView)
         }
 
-    private fun requestListener(continuation: CancellableContinuation<Boolean>): RequestListener<Bitmap?> {
+    private fun requestListener(): RequestListener<Bitmap?> {
         return object : RequestListener<Bitmap?> {
+
             override fun onLoadFailed(
                 e: GlideException?,
                 model: Any,
                 target: Target<Bitmap?>,
                 isFirstResource: Boolean
             ): Boolean {
-                if (continuation.isActive) continuation.resume(false)
                 return false
             }
 
@@ -118,7 +119,6 @@ class PokemonViewHolder constructor(
                 dataSource: DataSource,
                 isFirstResource: Boolean
             ): Boolean {
-                if (continuation.isActive) continuation.resume(true)
                 resource?.let { bitmap ->
                     setBackgroundAndStrokeColorFromPaletteForBitmap(bitmap,binding.root.context)
                 }

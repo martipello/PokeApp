@@ -2,9 +2,10 @@ package com.sealstudios.pokemonApp.ui
 
 import android.animation.Animator
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.addCallback
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -30,45 +31,45 @@ abstract class PokemonDetailAnimationManager : Fragment() {
         addBackButtonCallback()
     }
 
-    fun setPokemonDetailFragmentBinding(binding: PokemonDetailFragmentBinding){
+    fun setPokemonDetailFragmentBinding(binding: PokemonDetailFragmentBinding) {
         _binding = binding
     }
 
     suspend fun handleEnterAnimation(): Boolean =
-        suspendCancellableCoroutine { continuation ->
-            lifecycleScope.launch {
-                sharedElementEnterTransition = TransitionInflater.from(context)
-                    .inflateTransition(R.transition.shared_element_transition)
-                (sharedElementEnterTransition as TransitionSet).run {
-                    awaitTransitionEnd {
-                        startPostponedEnterTransition()
+            suspendCancellableCoroutine { continuation ->
+                lifecycleScope.launch {
+                    sharedElementEnterTransition = TransitionInflater.from(context)
+                            .inflateTransition(R.transition.shared_element_transition)
+                    (sharedElementEnterTransition as TransitionSet).run {
+                        awaitTransitionEnd {
+                            startPostponedEnterTransition()
+                        }
                     }
+                    binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
+                            R.id.large_image
+                    )
+                    createCircleReveal().run {
+                        startAndWait()
+                        binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
+                                .setCardBackgroundColor(
+                                        ContextCompat.getColor(
+                                                binding.root.context,
+                                                android.R.color.transparent
+                                        )
+                                )
+                        awaitEnd()
+                    }
+                    continuation.resume(true)
                 }
-                binding.pokemonImageViewHolderLayout.pokemonImageViewSizeHolder.transitionToState(
-                    R.id.large_image
-                )
-                createCircleReveal().run {
-                    startAndWait()
-                    binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder
-                        .setCardBackgroundColor(
-                            ContextCompat.getColor(
-                                binding.root.context,
-                                android.R.color.transparent
-                            )
-                        )
-                    awaitEnd()
-                }
-                continuation.resume(true)
             }
-        }
 
     private fun createCircleReveal(): Animator {
         val x = binding.splash.right / 2
         val location = IntArray(2)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView
-            .getLocationOnScreen(location)
+                .getLocationOnScreen(location)
         val y = location[1] + binding.pokemonImageViewHolderLayout
-            .pokemonBackgroundCircleView.height / 2
+                .pokemonBackgroundCircleView.height / 2
         return binding.splash.circleReveal(null, startAtX = x, startAtY = y)
     }
 
@@ -76,10 +77,10 @@ abstract class PokemonDetailAnimationManager : Fragment() {
         val x: Int = binding.splash.right / 2
         val location = IntArray(2)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.getLocationOnScreen(
-            location
+                location
         )
         val y =
-            location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
+                location[1] + binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.height / 2
         binding.splash.circleHide(null, endAtX = x, endAtY = y).run {
             startAndWait()
             delay(150)
@@ -91,12 +92,17 @@ abstract class PokemonDetailAnimationManager : Fragment() {
     }
 
     private fun addBackButtonCallback() {
-        requireActivity().onBackPressedDispatcher.addCallback(this) {
+        requireActivity().onBackPressedDispatcher.addCallback(this, backButtonCallback)
+    }
+
+    private val backButtonCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
             viewLifecycleOwner.lifecycleScope.launch {
                 handleExitAnimation()
             }
             this.remove()
         }
+
     }
 
     private suspend fun popDelayed() {
@@ -112,6 +118,10 @@ abstract class PokemonDetailAnimationManager : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     handleExitAnimation()
                 }
+                return true
+            }
+            R.id.action_settings -> {
+                findNavController().navigate(R.id.action_PokemonDetailFragment_to_preferences)
                 return true
             }
             else -> super.onOptionsItemSelected(item)

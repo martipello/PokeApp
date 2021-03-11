@@ -8,7 +8,8 @@
 
         <item name="colorPrimaryDark">@color/secondaryTextColor</item>
 
-        <item name="android:windowBackground">@color/primaryLightColor</item>
+
+        <item name="android:windowBackground">@color/black</item>
         <item name="materialCardViewStyle">@style/MyDarkMaterialCardStyle</item>
         <item name="android:navigationBarColor">
             #B3000000
@@ -16,17 +17,11 @@
         <item name="android:statusBarColor">
             @color/primaryColor
         </item>
-        <item name="tabStyle">@style/Widget.App.TabLayout</item>
+        <item name="tabStyle">@style/MyDarkTabBarStyle</item>
     </style>
 
-    <style name="Theme.PokemonAppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.PokemonAppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
-    <style name="Theme.PokemonAppTheme.DarkAppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="ToolbarColoredBackArrow" parent="Theme.PokemonAppTheme">
-        <item name="colorControlNormal">@color/primaryColor</item>
+    <style name="Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="colorControlNormal">@color/black</item>
     </style>
 
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">

@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
@@ -23,14 +24,17 @@ class PokemonListViewModel @ViewModelInject constructor(
         val combinedValues =
             MediatorLiveData<Pair<String?, MutableSet<String>?>?>().apply {
                 addSource(search) {
+                    Log.d("MAIN", "add search")
                     value = Pair(it, filters.value)
                 }
                 addSource(filters) {
+                    Log.d("MAIN", "add filters")
                     value = Pair(search.value, it)
                 }
             }
 
         searchPokemon = combinedValues.switchMap {
+            Log.d("MAIN", "combinedValues.switchMap")
             liveData {
                 emit(null)
                 val search = it?.first ?: return@liveData
@@ -63,6 +67,7 @@ class PokemonListViewModel @ViewModelInject constructor(
     }
 
     fun setSearch(search: String) {
+        Log.d("MAIN", "set search")
         this.search.value = search
         savedStateHandle.set(searchKey, search)
     }

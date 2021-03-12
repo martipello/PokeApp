@@ -11,7 +11,7 @@ class PokemonFilterFragmentInsets {
     fun setInsets(binding: PokemonListFragmentFilterHolderBinding) {
         val context = binding.root.context
 
-        binding.filterGroupLayout.chipGroup.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
+        binding.filterGroupHolderLayout.doOnApplyWindowInsetPadding { view, windowInsets, _ ->
             view.updatePadding(
                     bottom = windowInsets.systemWindowInsetBottom,
                     right = windowInsets.systemWindowInsetRight,

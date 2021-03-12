@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentFilterHolderBinding
@@ -45,6 +44,14 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
         }
     }
 
+    override fun onCreateView(inflater: LayoutInflater,
+                              container: ViewGroup?,
+                              savedInstanceState: Bundle?): View {
+        setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
+        _binding = PokemonListFragmentFilterHolderBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         observeAnimationState()
         PokemonFilterFragmentInsets().setInsets(binding)
@@ -53,14 +60,6 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
         observeFilters()
         onAddScrollAwareFilerFab()
         onCloseFiltersLayout()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater,
-                              container: ViewGroup?,
-                              savedInstanceState: Bundle?): View {
-        setFilterIsExpandedFromSavedInstanceState(savedInstanceState)
-        _binding = PokemonListFragmentFilterHolderBinding.inflate(inflater, container, false)
-        return binding.root
     }
 
     private fun observeFilters() {
@@ -124,6 +123,9 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
             if (filterIsExpanded) {
                 hideFiltersAnimation()
             }
+        }
+        binding.clearFilters.pokemonTypeChip.setOnClickListener {
+            pokemonListViewModel.clearFilters()
         }
         binding.filterGroupLayout.root.chipSpacingHorizontal = 96.dp
         binding.filterGroupLayout.root.chipSpacingVertical = 8.dp

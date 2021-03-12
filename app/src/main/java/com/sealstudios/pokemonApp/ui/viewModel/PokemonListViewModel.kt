@@ -96,6 +96,10 @@ class PokemonListViewModel @ViewModelInject constructor(
         }
     }
 
+    fun clearFilters() {
+        filters.value = mutableSetOf()
+    }
+
     private fun getCurrentFiltersState(): MutableLiveData<MutableSet<String>> {
         val filters = savedStateHandle.get<MutableSet<String>>(filtersKey)
             ?: mutableSetOf()

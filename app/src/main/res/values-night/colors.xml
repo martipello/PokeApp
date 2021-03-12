@@ -13,6 +13,6 @@
     <color name="primaryTextColor">#000000</color>
 
     <color name="darkIconColor">#FFFFFF</color>
-    <color name="iconColor">#FFFFFF</color>
+    <color name="iconColor">#000000</color>
 
 </resources>

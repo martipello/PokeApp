@@ -47,7 +47,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="@string/filter_pokemon_label"
-                android:textColor="@color/white"
+                android:textColor="@color/primaryTextColor"
                 android:focusable="true"
                 android:clickable="true"
                 android:textSize="24sp"
@@ -78,11 +78,29 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent">
 
-                <include layout="@layout/pokemon_list_filters"
-                    android:id="@+id/filter_group_layout"
-                    android:layout_margin="@dimen/medium_margin_16dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:orientation="vertical"
+                    android:id="@+id/filter_group_holder_layout">
+
+                    <include layout="@layout/pokemon_list_filters"
+                        android:id="@+id/filter_group_layout"
+                        android:layout_marginTop="@dimen/medium_margin_16dp"
+                        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                        android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                        android:layout_marginBottom="@dimen/qualified_small_margin_8dp"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent" />
+
+                    <include layout="@layout/filter_clear_chip"
+                        android:id="@+id/clear_filters"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                        android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"/>
+
+                </LinearLayout>
 
             </ScrollView>
 

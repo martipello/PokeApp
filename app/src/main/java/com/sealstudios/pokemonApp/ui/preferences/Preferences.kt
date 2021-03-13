@@ -69,7 +69,7 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
     private fun sendEmail() {
         val email = Intent(Intent.ACTION_SEND)
         email.type = "text/email"
-        email.putExtra(Intent.EXTRA_EMAIL, getString(R.string.my_email))
+        email.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_email)) )
         email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback))
         email.putExtra(Intent.EXTRA_TEXT,
                 """
@@ -83,6 +83,7 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
                 
                 
                 Please do not delete this...
+                
                 Device : ${getDeviceName()}
                 Version : ${Build.VERSION.CODENAME}
                 API : ${Build.VERSION.SDK_INT}

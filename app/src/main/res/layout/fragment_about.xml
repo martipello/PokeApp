@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/primaryLightColor"
+    android:clipToPadding="false"
+    app:layoutDescription="@xml/fragment_about_scene"
+    tools:context=".ui.AboutFragment">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:outlineProvider="none"
+        android:translationZ="8dp"
+        app:elevation="0dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/collapsing_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:theme="@style/Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay"
+        app:titleEnabled="false"
+        android:background="@android:color/transparent"
+        app:title=""
+        app:titleTextColor="@android:color/transparent"
+        app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed|snap">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@drawable/squareangle"
+            app:titleTextColor="@android:color/transparent"
+            app:title=""
+            android:elevation="@dimen/large_margin_32dp"
+            android:layout_gravity="top"
+            android:minHeight="?attr/actionBarSize"
+            app:elevation="@dimen/large_margin_32dp"
+            app:layout_collapseMode="pin"/>
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+</com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/scroll_view"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/about_label"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/about"/>
+
+            <TextView
+                android:id="@+id/about_text"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/about_text"/>
+
+            <View
+                android:id="@+id/fair_use_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:background="@color/light_grey" />
+
+            <TextView
+                android:id="@+id/fair_use_label"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/fair_use_label" />
+
+            <TextView
+                android:id="@+id/fair_use_text"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/fair_use" />
+
+            <View
+                android:id="@+id/licence_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:background="@color/light_grey" />
+
+            <TextView
+                android:id="@+id/licence_label"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/licences" />
+
+            <TextView
+                android:id="@+id/arc_animator_title"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/arc_animator_title" />
+
+            <TextView
+                android:id="@+id/arc_animator_publisher"
+                style="@style/ThemeOverlay.MySubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/arc_animator_publisher" />
+
+            <TextView
+                android:id="@+id/arc_animator_licence"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/arc_animator_licence" />
+
+            <TextView
+                android:id="@+id/retrofit_title"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/retrofit_title" />
+
+            <TextView
+                android:id="@+id/retrofit_publisher"
+                style="@style/ThemeOverlay.MySubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/retrofit_publisher" />
+
+            <TextView
+                android:id="@+id/retrofit_licence"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/retrofit_licence" />
+
+            <TextView
+                android:id="@+id/okhttp_title"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/okhttp_title" />
+
+            <TextView
+                android:id="@+id/okhttp_publisher"
+                style="@style/ThemeOverlay.MySubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/retrofit_publisher" />
+
+            <TextView
+                android:id="@+id/okhttp_licence"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/okhttp_licence" />
+
+            <TextView
+                android:id="@+id/glide_title"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/glide_title" />
+
+            <TextView
+                android:id="@+id/glide_publisher"
+                style="@style/ThemeOverlay.MySubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/glide_publisher" />
+
+            <TextView
+                android:id="@+id/glide_licence"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/glide_licence" />
+
+            <TextView
+                android:id="@+id/round_progress_title"
+                style="@style/ThemeOverlay.MyTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/round_corner_progress_bar_title" />
+
+            <TextView
+                android:id="@+id/round_progress_publisher"
+                style="@style/ThemeOverlay.MySubTitleText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/round_corner_progress_bar_publisher" />
+
+            <TextView
+                android:id="@+id/round_progress_licence"
+                style="@style/ThemeOverlay.MyBodyText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+                android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+                android:layout_marginEnd="@dimen/qualified_medium_margin_16dp"
+                android:text="@string/round_corner_progress_bar_licence" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <androidx.constraintlayout.motion.widget.MotionLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/motion_layout"
+        app:layoutDescription="@xml/fragment_about_scene"
+        tools:context=".ui.AboutFragment"
+        app:layout_scrollFlags="scroll">
+
+        <ImageView
+            android:layout_width="@dimen/qualified_large_margin_32dp"
+            android:layout_height="@dimen/qualified_large_margin_32dp"
+            android:src="@drawable/pokeball"
+            android:id="@+id/scroll_wheel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:contentDescription="@string/scroll_bar" />
+
+    </androidx.constraintlayout.motion.widget.MotionLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

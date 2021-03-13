@@ -20,7 +20,6 @@
         android:clipToPadding="false"
         app:cardElevation="@dimen/zero" />
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/app_bar_layout"
         android:layout_width="match_parent"

@@ -27,6 +27,6 @@
             android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
             motion:layout_constraintBottom_toBottomOf="parent"
             motion:layout_constraintEnd_toEndOf="parent"
-            android:rotation="720" />
+            android:rotation="-720" />
     </ConstraintSet>
 </MotionScene>

@@ -52,6 +52,8 @@ class AboutFragment : Fragment() {
 
     @SuppressLint("DefaultLocale")
     private fun setActionBar() {
+        binding.toolbar.outlineProvider = null
+        binding.appBarLayout.outlineProvider = null
         binding.toolbar.setupWithNavController(findNavController())
         colorToolbarBackground()
     }

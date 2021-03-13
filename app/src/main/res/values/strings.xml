@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Pokemon App</string>
     <string name="action_settings">Settings</string>
-    <!-- Strings used for fragments for navigation -->
+
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
@@ -100,7 +100,13 @@
     <string name="stats">STATS</string>
     <string name="moves">MOVES</string>
     <string name="search">Search</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="clear_filters">CLEAR FILTERS</string>
+
+  <string name="play_store_link">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="share_via">Share link via</string>
+    <string name="share_title">Checkout PokeApp</string>
+    <string name="my_email">Martinseal1987@gmail.com</string>
+    <string name="feedback">Feedback</string>
+    <string name="licences">Licences</string>
+    <string name="scroll_bar">scroll bar</string>
 </resources>

@@ -102,7 +102,11 @@ abstract class PokemonDetailAnimationManager : Fragment() {
             }
             this.remove()
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     private suspend fun popDelayed() {

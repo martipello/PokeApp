@@ -111,7 +111,8 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             handleAppBarSnapFlag()
             setUpViewPagerAdapter()
             setUpViewPager()
-            setUpTabs()
+            setUpTabs(-1)
+            colorToolbarBackground(-1)
             setPokemonImageView(highResPokemonUrl(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
@@ -162,7 +163,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     @SuppressLint("InflateParams")
-    private fun setUpTabs() {
+    private fun setUpTabs(lightVibrantSwatchRgb: Int) {
         if (binding.viewPager.adapter != null) {
             TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
                 val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
@@ -172,26 +173,10 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     2 -> customTab.text = getString(R.string.moves)
                 }
                 val context = binding.root.context
-                customTab.chipBackgroundColor = buildColorState(ContextCompat.getColor(context, R.color.secondaryColor), context)
-                customTab.setTextColor(buildTextColorState(context))
-                tab.customView = customTab
-            }.attach()
-        }
-    }
-
-    @SuppressLint("InflateParams")
-    private fun colorTabs(lightVibrantSwatchRgb: Int) {
-        if (binding.viewPager.adapter != null) {
-
-            TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
-                val customTab = layoutInflater.inflate(R.layout.colored_tab, null) as Chip
-                when (position) {
-                    0 -> customTab.text = getString(R.string.info)
-                    1 -> customTab.text = getString(R.string.stats)
-                    2 -> customTab.text = getString(R.string.moves)
-                }
-                val context = binding.root.context
-                customTab.chipBackgroundColor = buildColorState(lightVibrantSwatchRgb, context)
+                customTab.chipBackgroundColor = buildColorState(
+                        if (lightVibrantSwatchRgb == -1)
+                            ContextCompat.getColor(context, R.color.secondaryColor)
+                        else lightVibrantSwatchRgb, context)
                 customTab.setTextColor(buildTextColorState(context))
                 tab.customView = customTab
             }.attach()
@@ -304,24 +289,29 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {
-        colorTabs(lightVibrantSwatchRgb)
         if (!hasExpanded) {
             binding.pokemonImageViewHolderLayout.pokemonImageDetailViewHolder.setCardBackgroundColor(
                     dominantColor
             )
         }
         binding.splash.setCardBackgroundColor(dominantColor)
-        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
-            DrawableCompat.setTint(
-                    DrawableCompat.wrap(it),
-                    lightVibrantSwatchRgb
-            )
-            binding.toolbar.background = it
-        }
+        colorToolbarBackground(lightVibrantSwatchRgb)
         binding.pokemonImageViewHolderLayout.pokemonBackgroundCircleView.setCardBackgroundColor(
                 dominantColor
         )
-        colorTabs(lightVibrantSwatchRgb)
+        setUpTabs(lightVibrantSwatchRgb)
+    }
+
+    private fun colorToolbarBackground(lightVibrantSwatchRgb: Int) {
+        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
+            DrawableCompat.setTint(
+                    DrawableCompat.wrap(it),
+                    if (lightVibrantSwatchRgb == -1)
+                        ContextCompat.getColor(binding.root.context, R.color.secondaryColor)
+                    else lightVibrantSwatchRgb
+            )
+            binding.toolbar.background = it
+        }
     }
 
     private fun restoreUIState() {

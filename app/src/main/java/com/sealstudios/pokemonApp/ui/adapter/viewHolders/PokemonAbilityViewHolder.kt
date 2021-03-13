@@ -52,12 +52,12 @@ constructor(
             rotateToggleOpen()
             binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
             binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-            binding.expandedContent.visibility = View.VISIBLE
+            binding.motionLayout.transitionToEnd()
         } else {
             rotateToggleClose()
             binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
             binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
-            binding.expandedContent.visibility = View.GONE
+            binding.motionLayout.transitionToStart()
         }
     }
 

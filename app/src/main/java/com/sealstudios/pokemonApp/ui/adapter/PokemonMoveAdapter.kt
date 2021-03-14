@@ -76,7 +76,7 @@ class PokemonMoveAdapter(private val clickListener: PokemonMoveAdapterClickListe
         } else {
             selectedItems.put(pos, true)
         }
-        notifyItemChanged(pos, expandSelected)
+//        notifyItemChanged(pos, expandSelected)
     }
 
     override fun getItemViewType(position: Int): Int {

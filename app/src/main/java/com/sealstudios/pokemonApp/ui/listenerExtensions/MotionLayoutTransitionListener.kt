@@ -6,22 +6,29 @@ import kotlin.coroutines.resume
 
 
 suspend fun MotionLayout.awaitTransitionEnd() =
-    suspendCancellableCoroutine<Unit> { continuation ->
+        suspendCancellableCoroutine<Unit> { continuation ->
 
-        this.addTransitionListener(object : MotionLayout.TransitionListener{
-            override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {}
+            val listener = object : MotionLayout.TransitionListener {
+                override fun onTransitionTrigger(p0: MotionLayout?, p1: Int, p2: Boolean, p3: Float) {
+                }
 
-            override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {}
+                override fun onTransitionStarted(p0: MotionLayout?, p1: Int, p2: Int) {
 
-            override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {}
+                }
 
-            override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
-                if (continuation.isActive) {
-                    continuation.resume(Unit)
+                override fun onTransitionChange(p0: MotionLayout?, p1: Int, p2: Int, p3: Float) {
+                }
+
+                override fun onTransitionCompleted(p0: MotionLayout?, p1: Int) {
+                    if (continuation.isActive) {
+                        continuation.resume(Unit)
+                    }
                 }
             }
+            continuation.invokeOnCancellation { this.removeTransitionListener(listener) }
+            this.addTransitionListener(listener)
 
-        })
+        }
 
-    }
+
 

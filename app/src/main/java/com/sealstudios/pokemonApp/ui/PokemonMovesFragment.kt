@@ -95,7 +95,6 @@ class PokemonMovesFragment : Fragment(), PokemonMoveAdapterClickListener {
 
     private fun setUpPokemonMovesRecyclerView() = binding.pokemonMoveRecyclerView.apply {
         adapter = pokemonMoveAdapter
-        (itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         setHasFixedSize(true)
         addPokemonMovesRecyclerViewDecoration(this)
     }

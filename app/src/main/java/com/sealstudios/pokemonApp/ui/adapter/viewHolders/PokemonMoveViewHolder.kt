@@ -1,8 +1,11 @@
 package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
 import android.annotation.SuppressLint
+import android.app.ActionBar
 import android.graphics.PorterDuff
 import android.view.View
+import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.R
@@ -13,12 +16,9 @@ import com.sealstudios.pokemonApp.ui.adapter.MoveLearningAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
-import com.sealstudios.pokemonApp.ui.util.PokemonCategory
+import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonCategory.Companion.getCategoryForDamageClass
-import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
-import com.sealstudios.pokemonApp.ui.util.PokemonType
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
-import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.JustBottomDecoration
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,6 +36,9 @@ constructor(
     private lateinit var learningAdapter : MoveLearningAdapter
 
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
+        if (!isExpanded){
+            binding.expandedContent.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT, 1.dp)
+        }
         animateToggle(isExpanded)
         showLearningTable(isExpanded, pokemonMoveWithMetaData)
         val generation = PokemonGeneration.getGeneration(pokemonMoveWithMetaData.pokemonMove.generation)
@@ -60,15 +63,14 @@ constructor(
         if (isExpanded) {
             setUpMoveLearningAdapter(pokemonMoveWithMetaData)
             setUpLearningRecyclerView()
-        } else {
-            binding.levelLearnedAtTextView.visibility = View.GONE
-            binding.levelLearnedAtTableHeader.root.visibility = View.GONE
-            binding.levelLearnedAtTable.visibility = View.GONE
         }
     }
 
     private fun setUpLearningRecyclerView() {
         binding.levelLearnedAtTable.apply {
+            while (itemDecorationCount > 0) {
+                removeItemDecorationAt(0)
+            }
             adapter = learningAdapter
             addItemDecoration(
                 JustBottomDecoration(
@@ -131,14 +133,14 @@ constructor(
     private fun animateToggle(isExpanded: Boolean) {
         if (isExpanded) {
             rotateToggleOpen()
+            binding.moveViewHolderRoot.transitionToEnd()
             binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
             binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-            binding.expandedContent.visibility = View.VISIBLE
         } else {
             rotateToggleClose()
+            binding.moveViewHolderRoot.transitionToStart()
             binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
             binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
-            binding.expandedContent.visibility = View.GONE
         }
     }
 
@@ -203,7 +205,6 @@ constructor(
                 }
             }
         }
-
     }
 
     private suspend fun setPokemonMoveCategoryRibbon(

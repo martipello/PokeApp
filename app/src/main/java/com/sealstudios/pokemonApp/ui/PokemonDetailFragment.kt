@@ -304,7 +304,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun colorToolbarBackground(lightVibrantSwatchRgb: Int) {
-        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
+        ContextCompat.getDrawable(binding.root.context, R.drawable.ic_square_angle)?.let {
             DrawableCompat.setTint(
                     DrawableCompat.wrap(it),
                     if (lightVibrantSwatchRgb == -1)

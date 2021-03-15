@@ -40,9 +40,9 @@ constructor(
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
 
         if (isExpanded) {
-            binding.setExpanded(pokemonMoveWithMetaData)
+            setExpanded()
         } else {
-            binding.setNotExpanded()
+            setNotExpanded()
         }
 
         populateTextViews(pokemonMoveWithMetaData)
@@ -61,7 +61,7 @@ constructor(
         CoroutineScope(Dispatchers.Default).launch {
             withContext(Dispatchers.Main) {
                 if (!isExpanded) {
-                    showLearningTable(pokemonMoveWithMetaData)
+                    setUpMoveLearningTable(pokemonMoveWithMetaData)
                 }
                 animateToggle(!isExpanded)
                 animateExpandedContent(isExpanded)
@@ -91,7 +91,7 @@ constructor(
         }
     }
 
-    private fun showLearningTable(pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
+    private fun setUpMoveLearningTable(pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
         setUpMoveLearningAdapter(pokemonMoveWithMetaData)
         setUpLearningRecyclerView()
     }
@@ -104,9 +104,9 @@ constructor(
             if (moveLearningList.isNotEmpty()) {
                 withContext(Dispatchers.Main) {
                     binding.showTableAndHeader()
+                    learningAdapter.submitList(moveLearningList)
                 }
             }
-            learningAdapter.submitList(moveLearningList)
         }
     }
 
@@ -207,14 +207,13 @@ constructor(
                 pokemonMoveWithMetaData.pokemonMoveMetaData.learnMethods.names())
         generationText.text = PokemonGeneration.formatGenerationName(generation)
         powerText.text = pokemonMoveWithMetaData.pokemonMove.power.toString()
-        accuracyText.text = binding.root.context.getString(R.string.move_accuracy,
+        accuracyText.text = root.context.getString(R.string.move_accuracy,
                 pokemonMoveWithMetaData.pokemonMove.accuracy)
         ppText.text = pokemonMoveWithMetaData.pokemonMove.pp.toString()
     }
 
-    private fun PokemonMoveViewHolderBinding.setExpanded(pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
-        setUpMoveLearningAdapter(pokemonMoveWithMetaData)
-        setUpLearningRecyclerView()
+    private fun PokemonMoveViewHolderBinding.setExpanded() {
+        showTableAndHeader()
         setMotionLayoutExpandedStateProgress(1f)
         showMoreLessToggleButton.rotation = 180f
         setShowMoreLessTextToLess()

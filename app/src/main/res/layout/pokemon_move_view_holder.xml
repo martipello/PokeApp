@@ -110,7 +110,7 @@
                 android:layout_marginTop="@dimen/qualified_small_margin_8dp"
                 android:text="@string/learning"
                 android:visibility="visible"
-                app:layout_constraintTop_toBottomOf="@id/description" />
+                app:layout_constraintTop_toBottomOf="@id/description_text" />
 
             <include
                 android:id="@+id/level_learned_at_table_header"

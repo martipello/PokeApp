@@ -16,6 +16,7 @@ import com.sealstudios.pokemonApp.ui.adapter.MoveLearningAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
+import com.sealstudios.pokemonApp.ui.extensions.removeItemDecorations
 import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonCategory.Companion.getCategoryForDamageClass
@@ -42,7 +43,6 @@ constructor(
 
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
 
-//        animateToggle(isExpanded)
         setToggleState(isExpanded)
         setExpandedState(isExpanded)
 
@@ -69,23 +69,23 @@ constructor(
         }
     }
 
+    private fun setToggleState(isExpanded: Boolean) {
+        if (isExpanded) {
+            binding.showMoreLessToggleButton.rotation = 180f
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
+        } else {
+            binding.showMoreLessToggleButton.rotation = 0f
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
+        }
+    }
+
     private fun setExpandedState(isExpanded: Boolean) {
         if (isExpanded) {
             setProgress(binding.moveViewHolderRoot, 1f)
         } else {
             setProgress(binding.moveViewHolderRoot, 0f)
-        }
-    }
-
-    private fun setToggleState(isExpanded: Boolean) {
-        if (isExpanded) {
-//            rotateToggleOpen()
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-        } else {
-//            rotateToggleClose()
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
         }
     }
 
@@ -100,7 +100,8 @@ constructor(
     private suspend fun showMoreLessClickAction(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
         withContext(Dispatchers.Default) {
             withContext(Dispatchers.Main) {
-                animateToggle(isExpanded)
+                showLearningTable(!isExpanded, pokemonMoveWithMetaData)
+                animateToggle(!isExpanded)
                 animateExpandedContent(isExpanded)
             }
             binding.moveViewHolderRoot.awaitTransitionEnd()
@@ -140,6 +141,7 @@ constructor(
     private fun setUpLearningRecyclerView() {
         binding.levelLearnedAtTable.apply {
             adapter = learningAdapter
+            removeItemDecorations()
             addItemDecoration(
                     JustBottomDecoration(
                             context.resources.getDimensionPixelSize(

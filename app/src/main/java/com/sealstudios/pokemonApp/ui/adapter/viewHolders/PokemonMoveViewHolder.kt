@@ -25,7 +25,7 @@ import com.sealstudios.pokemonApp.ui.util.decorators.JustBottomDecoration
 import kotlinx.coroutines.*
 import java.util.*
 
-
+//TODO clean this code seperate business logic
 class PokemonMoveViewHolder
 constructor(
         private val binding: PokemonMoveViewHolderBinding,
@@ -33,13 +33,6 @@ constructor(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private lateinit var learningAdapter: MoveLearningAdapter
-//    private var myExpanded = false
-
-    init {
-        binding.root.doOnPreDraw {
-            setProgress(binding.moveViewHolderRoot, 0f)
-        }
-    }
 
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
 

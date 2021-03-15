@@ -35,20 +35,10 @@ constructor(
 ) : RecyclerView.ViewHolder(binding.root) {
 
     private lateinit var learningAdapter : MoveLearningAdapter
-    private var myExpanded = false
 
-    init {
-        binding.root.doOnPreDraw {
-           setProgress(binding.moveViewHolderRoot, 0f)
-        }
-    }
 
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
-        myExpanded = isExpanded
         val name = pokemonMoveWithMetaData.pokemonMove.name
-        setToggleState(isExpanded)
-        setExpandedState(isExpanded)
-        Log.d("MOVE_HOLDER", "name : $name isExpanded $isExpanded motion state progress ${binding.moveViewHolderRoot.progress}")
 
         showLearningTable(isExpanded, pokemonMoveWithMetaData)
         val generation = PokemonGeneration.getGeneration(pokemonMoveWithMetaData.pokemonMove.generation)
@@ -67,39 +57,11 @@ constructor(
             buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
             buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
         }
-        setExpandedState(isExpanded)
-    }
-
-    private fun setToggleState(isExpanded: Boolean) {
-        if (isExpanded){
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-        } else {
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
-        }
-    }
-
-    private fun setExpandedState(isExpanded: Boolean) {
-        if (isExpanded){
-            setProgress(binding.moveViewHolderRoot, 1f)
-        } else {
-            setProgress(binding.moveViewHolderRoot,0f)
-        }
-    }
-
-    private fun setProgress(motionLayout: MotionLayout, progress: Float) {
-        if (ViewCompat.isLaidOut(motionLayout)) {
-            motionLayout.progress = progress
-        } else {
-            motionLayout.post { motionLayout.progress = progress }
-        }
     }
 
     private fun showMoreLessClickAction(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
-        myExpanded = !myExpanded
-        animateToggle(myExpanded)
-        animateExpandedContent(myExpanded)
+        animateToggle(isExpanded)
+        animateExpandedContent(isExpanded)
         clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
     }
 
@@ -228,10 +190,12 @@ constructor(
             pokemonMoveTypeOrCategory: List<PokemonMoveTypeOrCategory>,
             binding: PokemonMoveViewHolderBinding
     ) {
-        TypesAndCategoryGroupHelper(
-                binding.dualTypeChipLayout.pokemonTypesChipGroup,
-                pokemonMoveTypeOrCategory
-        ).bindChips()
+        withContext(Dispatchers.Default){
+            TypesAndCategoryGroupHelper(
+                    binding.dualTypeChipLayout.pokemonTypesChipGroup,
+                    pokemonMoveTypeOrCategory
+            ).bindChips()
+        }
     }
 
     private suspend fun buildPokemonMoveTypeAndCategoryRibbons(

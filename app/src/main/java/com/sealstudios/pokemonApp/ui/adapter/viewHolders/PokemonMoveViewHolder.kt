@@ -2,7 +2,6 @@ package com.sealstudios.pokemonApp.ui.adapter.viewHolders
 
 import android.annotation.SuppressLint
 import android.graphics.PorterDuff
-import android.util.Log
 import android.view.View
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.core.content.ContextCompat
@@ -17,14 +16,12 @@ import com.sealstudios.pokemonApp.ui.adapter.MoveLearningAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonMoveAdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
+import com.sealstudios.pokemonApp.ui.listenerExtensions.awaitTransitionEnd
 import com.sealstudios.pokemonApp.ui.util.*
 import com.sealstudios.pokemonApp.ui.util.PokemonCategory.Companion.getCategoryForDamageClass
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
 import com.sealstudios.pokemonApp.ui.util.decorators.JustBottomDecoration
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 import java.util.*
 
 
@@ -34,21 +31,20 @@ constructor(
         private val clickListener: PokemonMoveAdapterClickListener?,
 ) : RecyclerView.ViewHolder(binding.root) {
 
-    private lateinit var learningAdapter : MoveLearningAdapter
-    private var myExpanded = false
+    private lateinit var learningAdapter: MoveLearningAdapter
+//    private var myExpanded = false
 
     init {
         binding.root.doOnPreDraw {
-           setProgress(binding.moveViewHolderRoot, 0f)
+            setProgress(binding.moveViewHolderRoot, 0f)
         }
     }
 
     fun bind(pokemonMoveWithMetaData: PokemonMoveWithMetaData, isExpanded: Boolean = false) = with(binding) {
-        myExpanded = isExpanded
-        val name = pokemonMoveWithMetaData.pokemonMove.name
+
+//        animateToggle(isExpanded)
         setToggleState(isExpanded)
         setExpandedState(isExpanded)
-        Log.d("MOVE_HOLDER", "name : $name isExpanded $isExpanded motion state progress ${binding.moveViewHolderRoot.progress}")
 
         showLearningTable(isExpanded, pokemonMoveWithMetaData)
         val generation = PokemonGeneration.getGeneration(pokemonMoveWithMetaData.pokemonMove.generation)
@@ -56,10 +52,14 @@ constructor(
         populateTextViews(pokemonMoveWithMetaData, generation)
 
         showMoreLessToggle.setOnClickListener {
-            showMoreLessClickAction(isExpanded, pokemonMoveWithMetaData)
+            CoroutineScope(Dispatchers.Default).launch {
+                showMoreLessClickAction(isExpanded, pokemonMoveWithMetaData)
+            }
         }
         showMoreLessToggleButton.setOnClickListener {
-            showMoreLessClickAction(isExpanded, pokemonMoveWithMetaData)
+            CoroutineScope(Dispatchers.Default).launch {
+                showMoreLessClickAction(isExpanded, pokemonMoveWithMetaData)
+            }
         }
 
         CoroutineScope(Dispatchers.Default).launch {
@@ -67,24 +67,25 @@ constructor(
             buildPokemonMoveTypeAndCategoryChips(pokemonMoveTypeOrCategoryList, binding)
             buildPokemonMoveTypeAndCategoryRibbons(pokemonMoveTypeOrCategoryList, binding)
         }
-        setExpandedState(isExpanded)
-    }
-
-    private fun setToggleState(isExpanded: Boolean) {
-        if (isExpanded){
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-        } else {
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
-        }
     }
 
     private fun setExpandedState(isExpanded: Boolean) {
-        if (isExpanded){
+        if (isExpanded) {
             setProgress(binding.moveViewHolderRoot, 1f)
         } else {
-            setProgress(binding.moveViewHolderRoot,0f)
+            setProgress(binding.moveViewHolderRoot, 0f)
+        }
+    }
+
+    private fun setToggleState(isExpanded: Boolean) {
+        if (isExpanded) {
+//            rotateToggleOpen()
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
+        } else {
+//            rotateToggleClose()
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
         }
     }
 
@@ -96,14 +97,40 @@ constructor(
         }
     }
 
-    private fun showMoreLessClickAction(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
-        myExpanded = !myExpanded
-        animateToggle(myExpanded)
-        animateExpandedContent(myExpanded)
-        clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
+    private suspend fun showMoreLessClickAction(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
+        withContext(Dispatchers.Default) {
+            withContext(Dispatchers.Main) {
+                animateToggle(isExpanded)
+                animateExpandedContent(isExpanded)
+            }
+            binding.moveViewHolderRoot.awaitTransitionEnd()
+            withContext(Dispatchers.Main) {
+                clickListener?.onItemSelected(bindingAdapterPosition, pokemonMoveWithMetaData.pokemonMove)
+            }
+        }
     }
 
-    private fun showLearningTable(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData){
+    private fun animateToggle(isExpanded: Boolean) {
+        if (isExpanded) {
+            rotateToggleOpen()
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
+        } else {
+            rotateToggleClose()
+            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
+            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
+        }
+    }
+
+    private fun animateExpandedContent(isExpanded: Boolean) {
+        if (isExpanded) {
+            binding.moveViewHolderRoot.transitionToStart()
+        } else {
+            binding.moveViewHolderRoot.transitionToEnd()
+        }
+    }
+
+    private fun showLearningTable(isExpanded: Boolean, pokemonMoveWithMetaData: PokemonMoveWithMetaData) {
         if (isExpanded) {
             setUpMoveLearningAdapter(pokemonMoveWithMetaData)
             setUpLearningRecyclerView()
@@ -140,7 +167,7 @@ constructor(
                     )
             )
         }
-        if (moveLearningList.isNotEmpty()){
+        if (moveLearningList.isNotEmpty()) {
             binding.levelLearnedAtTextView.visibility = View.VISIBLE
             binding.levelLearnedAtTableHeader.root.visibility = View.VISIBLE
             binding.levelLearnedAtTable.visibility = View.VISIBLE
@@ -167,30 +194,8 @@ constructor(
         generationText.text = PokemonGeneration.formatGenerationName(generation)
         powerText.text = pokemonMoveWithMetaData.pokemonMove.power.toString()
         accuracyText.text =
-            binding.root.context.getString(R.string.move_accuracy, pokemonMoveWithMetaData.pokemonMove.accuracy)
+                binding.root.context.getString(R.string.move_accuracy, pokemonMoveWithMetaData.pokemonMove.accuracy)
         ppText.text = pokemonMoveWithMetaData.pokemonMove.pp.toString()
-    }
-
-    private fun animateToggle(isExpanded: Boolean) {
-        if (isExpanded) {
-            rotateToggleOpen()
-            binding.moveViewHolderRoot.transitionToEnd()
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_less)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_less)
-        } else {
-            rotateToggleClose()
-            binding.moveViewHolderRoot.transitionToStart()
-            binding.showMoreLessToggle.text = binding.root.context.getString(R.string.show_more)
-            binding.showMoreLessToggleButton.contentDescription = binding.root.context.getString(R.string.show_more)
-        }
-    }
-
-    private fun animateExpandedContent(isExpanded: Boolean){
-        if (isExpanded) {
-            binding.moveViewHolderRoot.transitionToEnd()
-        } else {
-            binding.moveViewHolderRoot.transitionToStart()
-        }
     }
 
     private fun rotateToggleOpen() {
@@ -228,17 +233,19 @@ constructor(
             pokemonMoveTypeOrCategory: List<PokemonMoveTypeOrCategory>,
             binding: PokemonMoveViewHolderBinding
     ) {
-        TypesAndCategoryGroupHelper(
-                binding.dualTypeChipLayout.pokemonTypesChipGroup,
-                pokemonMoveTypeOrCategory
-        ).bindChips()
+        withContext(Dispatchers.Default) {
+            TypesAndCategoryGroupHelper(
+                    binding.dualTypeChipLayout.pokemonTypesChipGroup,
+                    pokemonMoveTypeOrCategory
+            ).bindChips()
+        }
     }
 
     private suspend fun buildPokemonMoveTypeAndCategoryRibbons(
             pokemonMoveTypeOrCategory: List<PokemonMoveTypeOrCategory>,
             binding: PokemonMoveViewHolderBinding
     ) {
-        withContext(Dispatchers.Default){
+        withContext(Dispatchers.Default) {
             for (x in pokemonMoveTypeOrCategory.indices) {
                 val pokemonTypeOrCategory = pokemonMoveTypeOrCategory[x]
                 if (pokemonTypeOrCategory.itemType == PokemonType.itemType) {
@@ -258,7 +265,7 @@ constructor(
             binding: PokemonMoveViewHolderBinding,
             it: PokemonCategory
     ) {
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             binding.categoryRibbon.colorFilter = null
             binding.categoryRibbon.setColorFilter(
                     ContextCompat.getColor(binding.root.context, it.color),
@@ -272,7 +279,7 @@ constructor(
             binding: PokemonMoveViewHolderBinding,
             it: PokemonType
     ) {
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             binding.typeRibbon.colorFilter = null
             binding.typeRibbon.setColorFilter(
                     ContextCompat.getColor(binding.root.context, it.color),

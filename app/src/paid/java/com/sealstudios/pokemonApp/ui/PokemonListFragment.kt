@@ -148,7 +148,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setUpPokemonRecyclerView() {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
-            this.setHasFixedSize(true)
+            setHasFixedSize(true)
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))

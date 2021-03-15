@@ -5,8 +5,12 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.sealstudios.pokemonApp.api.`object`.PokemonMoveVersion
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.NotNull
+import java.util.*
 
 @TypeConverters(RoomIntListConverter::class)
 @Entity
@@ -60,6 +64,22 @@ open class PokemonMoveMetaData constructor(
                 levelsLearnedAt = pokemonMoveVersions.map { it.level_learned_at },
                 learnMethods = pokemonMoveVersions.map { it.move_learn_method.name }
             )
+        }
+
+        suspend fun PokemonMoveMetaData.moveLearningList(): List<MoveLearning> {
+            return withContext(Dispatchers.Default){
+                val moveLearningList = mutableListOf<MoveLearning>()
+                for (i in learnMethods.indices) {
+                    moveLearningList.add(
+                            MoveLearning(
+                                    generation = versionsLearnt.getOrElse(index = i, defaultValue = { "" }),
+                                    learntAt = levelsLearnedAt.getOrElse(index = i, defaultValue = { 0 }),
+                                    learntBy = learnMethods[i]
+                            )
+                    )
+                }
+                return@withContext moveLearningList.toSet().toList()
+            }
         }
 
         private const val uniqueMoveConstant = 101

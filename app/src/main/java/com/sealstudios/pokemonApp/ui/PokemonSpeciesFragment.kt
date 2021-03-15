@@ -15,6 +15,7 @@ import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
 import com.sealstudios.pokemonApp.databinding.PokemonSpeciesFragmentBinding
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonSpeciesViewModel
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

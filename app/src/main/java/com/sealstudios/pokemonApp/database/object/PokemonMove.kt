@@ -4,6 +4,11 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemonMove
+import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
+import com.sealstudios.pokemonApp.ui.util.PokemonCategory
+import com.sealstudios.pokemonApp.ui.util.PokemonType
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -93,6 +98,31 @@ data class PokemonMove @JvmOverloads constructor(
             }
             return -1
         }
+
+
+        suspend fun PokemonMove.typeOrCategoryList(): List<PokemonMoveTypeOrCategory> {
+            return withContext(context = Dispatchers.Default) {
+                val typesOrCategoriesList = mutableListOf<PokemonMoveTypeOrCategory>()
+                val type = PokemonType.getPokemonEnumTypeForPokemonType(type)
+                typesOrCategoriesList.add(
+                        PokemonMoveTypeOrCategory(
+                                type = type,
+                                category = null,
+                                itemType = PokemonType.itemType
+                        )
+                )
+                val category = PokemonCategory.getCategoryForDamageClass(damage_class)
+                typesOrCategoriesList.add(
+                        PokemonMoveTypeOrCategory(
+                                type = null,
+                                category = category,
+                                itemType = PokemonCategory.itemType
+                        )
+                )
+                return@withContext typesOrCategoriesList
+            }
+        }
+
 
     }
 }

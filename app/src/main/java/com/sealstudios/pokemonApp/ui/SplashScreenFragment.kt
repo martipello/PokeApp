@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.animation.Animator
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewAnimationUtils
@@ -42,7 +43,9 @@ class SplashScreenFragment : Fragment() {
     private fun handleEnterAnimation() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
             binding.splashScreen.motionRoot.run {
+                Log.d("Transition", "motionRoot.run")
                 awaitTransitionEnd()
+                Log.d("Transition", "awaited end")
                 createRevealAnimation()
             }
         }

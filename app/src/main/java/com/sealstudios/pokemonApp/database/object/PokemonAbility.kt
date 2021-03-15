@@ -5,8 +5,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.Ability
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 import org.jetbrains.annotations.NotNull
-import java.util.*
 
 @Entity
 data class PokemonAbility @JvmOverloads constructor(
@@ -98,12 +98,12 @@ data class PokemonAbility @JvmOverloads constructor(
             return if (parts.size > 1) {
                 val stringBuilder = StringBuilder()
                 for (part in parts) {
-                    stringBuilder.append(part.capitalize(Locale.ROOT))
+                    stringBuilder.append(part.capitalize())
                     stringBuilder.append(" ")
                 }
                 stringBuilder.toString()
             } else {
-                abilityName.capitalize(Locale.ROOT)
+                abilityName.capitalize()
             }
         }
 

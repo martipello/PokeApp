@@ -27,5 +27,6 @@ data class PokemonMoveWithMetaData(
                 }
                 continuation.resume(moveMap)
             }
+
     }
 }

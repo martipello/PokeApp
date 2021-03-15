@@ -2,7 +2,7 @@ package com.sealstudios.pokemonApp.ui.util
 
 import android.annotation.SuppressLint
 import java.lang.StringBuilder
-import java.util.*
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 
 enum class PokemonGeneration {
     GENERATION_I,
@@ -33,8 +33,8 @@ enum class PokemonGeneration {
         fun formatGenerationName(generation: PokemonGeneration): String {
             val splitGeneration = generation.name.split(regex = Regex("_"), limit = 2)
             return if (splitGeneration.size > 1) {
-                val genName = splitGeneration[0].toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
-                val genNumber = splitGeneration[1].replace('_', ' ').toUpperCase(Locale.ROOT)
+                val genName = splitGeneration[0].toLowerCase().capitalize()
+                val genNumber = splitGeneration[1].replace('_', ' ').toUpperCase()
                 "$genName $genNumber"
             } else {
                 "Unknown"
@@ -46,7 +46,7 @@ enum class PokemonGeneration {
             val generationStringBuilder = StringBuilder()
             for (split in splitGeneration) {
                 generationStringBuilder.append(split
-                    .toLowerCase(Locale.ROOT).capitalize(Locale.ROOT))
+                    .toLowerCase().capitalize())
                 generationStringBuilder.append(" ")
             }
             return generationStringBuilder.toString()

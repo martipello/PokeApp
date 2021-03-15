@@ -11,7 +11,7 @@ import androidx.preference.SwitchPreference
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.switchUIMode
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.uiModeKey
-import java.util.*
+import com.sealstudios.pokemonApp.util.extensions.toLowerCase
 
 class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeListener, Preference.OnPreferenceClickListener {
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
@@ -69,7 +69,7 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
     private fun sendEmail() {
         val email = Intent(Intent.ACTION_SEND)
         email.type = "text/email"
-        email.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_email)) )
+        email.putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.my_email)))
         email.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.feedback))
         email.putExtra(Intent.EXTRA_TEXT,
                 """
@@ -94,7 +94,7 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
     private fun getDeviceName(): String? {
         val manufacturer = Build.MANUFACTURER
         val model = Build.MODEL
-        return if (model.toLowerCase(Locale.ROOT).startsWith(manufacturer.toLowerCase(Locale.ROOT))) {
+        return if (model.toLowerCase().startsWith(manufacturer.toLowerCase())) {
             model
         } else {
             "$manufacturer $model"

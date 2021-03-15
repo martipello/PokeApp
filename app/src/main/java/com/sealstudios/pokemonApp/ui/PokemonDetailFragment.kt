@@ -51,6 +51,7 @@ import kotlinx.coroutines.*
 import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 
 @AndroidEntryPoint
 class PokemonDetailFragment : PokemonDetailAnimationManager() {
@@ -184,7 +185,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     }
 
     private fun setNameAndIDViews(context: Context) {
-        binding.title.text = pokemonName.capitalize(Locale.ROOT)
+        binding.title.text = pokemonName.capitalize()
         binding.idLabel.text = context.getString(R.string.pokemonId, pokemonId)
     }
 

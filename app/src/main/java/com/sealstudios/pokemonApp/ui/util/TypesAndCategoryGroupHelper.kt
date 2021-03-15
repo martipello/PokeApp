@@ -6,6 +6,7 @@ import androidx.core.content.ContextCompat
 import com.google.android.material.chip.Chip
 import com.google.android.material.chip.ChipGroup
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.PokemonMoveTypeOrCategory
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

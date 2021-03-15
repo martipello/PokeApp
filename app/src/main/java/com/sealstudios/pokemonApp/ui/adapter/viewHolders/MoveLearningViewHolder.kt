@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.MoveLearningViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.helperObjects.MoveLearning
 import com.sealstudios.pokemonApp.ui.util.PokemonGeneration.Companion.formatGenName
-import java.util.*
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 
 class MoveLearningViewHolder constructor(
         private val binding: MoveLearningViewHolderBinding
@@ -12,7 +12,7 @@ class MoveLearningViewHolder constructor(
 
     fun bind(moveLearning: MoveLearning) = with(binding) {
         binding.genCell.text = formatGenName(moveLearning.generation)
-        binding.learnMethodCell.text = moveLearning.learntBy.capitalize(Locale.ROOT)
+        binding.learnMethodCell.text = moveLearning.learntBy.capitalize()
         binding.learnedAtCell.text = "${moveLearning.learntAt}"
     }
 

@@ -59,7 +59,7 @@ class AboutFragment : Fragment() {
     }
 
     private fun colorToolbarBackground() {
-        ContextCompat.getDrawable(binding.root.context, R.drawable.squareangle)?.let {
+        ContextCompat.getDrawable(binding.root.context, R.drawable.ic_square_angle)?.let {
             DrawableCompat.setTint(
                     DrawableCompat.wrap(it),
                     ContextCompat.getColor(binding.root.context, R.color.secondaryColor)

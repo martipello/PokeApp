@@ -18,6 +18,6 @@ class PokemonTypeJoinDaoProvider {
     @Singleton
     @Provides
     fun providePokemonTypeJoinDao(application: Application): PokemonTypeJoinDao {
-        return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonTypeJoinDao()
+        return PokemonRoomDatabase.getDatabase(application).pokemonTypeJoinDao()
     }
 }

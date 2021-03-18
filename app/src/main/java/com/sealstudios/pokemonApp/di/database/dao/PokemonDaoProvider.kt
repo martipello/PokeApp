@@ -18,6 +18,6 @@ class PokemonDaoProvider {
     @Singleton
     @Provides
     fun providePokemonDao(application: Application): PokemonDao {
-        return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonDao()
+        return PokemonRoomDatabase.getDatabase(application).pokemonDao()
     }
 }

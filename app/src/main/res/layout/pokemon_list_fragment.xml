@@ -15,11 +15,12 @@
 
     <include
         android:id="@+id/empty_pokemon_list"
-        layout="@layout/pokemon_list_empty" />
+        layout="@layout/pokemon_list_empty"/>
 
     <include
         android:id="@+id/error_pokemon_list"
-        layout="@layout/pokemon_error_layout" />
+        layout="@layout/pokemon_error_layout"
+        android:visibility="gone"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/pokemon_list_filter"

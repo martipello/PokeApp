@@ -1,12 +1,14 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentFilterHolderBinding
@@ -19,6 +21,7 @@ import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -30,6 +33,7 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
     private var filterIsExpanded = false
 
     private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
+    @FlowPreview
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {

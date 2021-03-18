@@ -12,7 +12,6 @@
         android:layout_height="0dp"
         android:contentDescription="@string/no_results"
         android:scaleType="centerInside"
-        android:src="@drawable/pika_detective"
         app:layout_constraintDimensionRatio="H,1:1"
         android:visibility="gone"
         android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"

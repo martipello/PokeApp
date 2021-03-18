@@ -46,12 +46,11 @@ import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTy
 import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonInfoDecorator
 import com.sealstudios.pokemonApp.ui.viewModel.*
+import com.sealstudios.pokemonApp.util.extensions.capitalize
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import java.util.*
 import javax.inject.Inject
 import kotlin.math.abs
-import com.sealstudios.pokemonApp.util.extensions.capitalize
 
 @AndroidEntryPoint
 class PokemonDetailFragment : PokemonDetailAnimationManager() {
@@ -215,7 +214,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                     } else {
                         binding.setError(
                                 errorMessage = pokemonWithTypes.message
-                                        ?: "Oops, Something went wrong.",
+                                        ?: getString(R.string.error_text),
                                 fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
                         )
                     }
@@ -223,7 +222,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 Status.ERROR -> {
                     binding.setError(
                             errorMessage = pokemonWithTypes.message
-                                    ?: "Oops, Something went wrong.",
+                                    ?: getString(R.string.error_text),
                             fetchPokemon = { setPokemonIdForViewModels(pokemonId) }
                     )
                 }

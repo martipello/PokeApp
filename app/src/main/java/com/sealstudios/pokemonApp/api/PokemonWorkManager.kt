@@ -18,26 +18,26 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 class PokemonWorkManager @WorkerInject constructor(
-    @Assisted @NonNull context: Context,
-    @Assisted @NonNull params: WorkerParameters,
-    private val remotePokemonToRoomPokemonHelper: RemotePokemonToRoomPokemonRepository,
-    private val notificationHelper: NotificationHelper
+        @Assisted @NonNull context: Context,
+        @Assisted @NonNull params: WorkerParameters,
+        private val remotePokemonToRoomPokemonHelper: RemotePokemonToRoomPokemonRepository,
+        private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(context, params) {
 
     override suspend fun doWork(): Result = coroutineScope {
         withContext(context = Dispatchers.IO, block = {
             val progress = "Starting Download"
             setForeground(
-                notificationHelper.sendOnGoingNotification(
-                    NOTIFICATION_ID,
-                    NOTIFICATION_NAME,
-                    progress,
-                    0,
-                    100
-                )
+                    notificationHelper.sendOnGoingNotification(
+                            NOTIFICATION_ID,
+                            NOTIFICATION_NAME,
+                            progress,
+                            0,
+                            100
+                    )
             )
             handleAllPokemonResponse(
-                worker = this@PokemonWorkManager
+                    worker = this@PokemonWorkManager
             )
         })
         Result.success()
@@ -60,57 +60,57 @@ class PokemonWorkManager @WorkerInject constructor(
     }
 
     private suspend fun saveAllPokemon(
-        data: List<NamedApiResource>,
-        worker: CoroutineWorker
+            data: List<NamedApiResource>,
+            worker: CoroutineWorker
     ) =
-        withContext(Dispatchers.IO) {
-            remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
-            setForeGroundAsync(
-                worker,
-                "Downloaded partial pokedex data",
-                100,
-                100,
-                true
-            )
-        }
+            withContext(Dispatchers.IO) {
+                remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
+                setForeGroundAsync(
+                        worker,
+                        "Downloaded partial pokedex data",
+                        100,
+                        100,
+                        true
+                )
+            }
 
     private suspend fun savePokemonTypesAndSpecies(
-        data: List<NamedApiResource>,
-        worker: CoroutineWorker
+            data: List<NamedApiResource>,
+            worker: CoroutineWorker
     ) =
-        withContext(Dispatchers.IO) {
-            for (i in data.indices) {
-                data[i].let { pokemonRef ->
-                    val id = getPokemonIdFromUrl(pokemonRef.url)
-                    val fetchPokemonAsync =
-                        async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
-                    val fetchSpeciesAsync =
-                        async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
-                    fetchSpeciesAsync.await()
-                    fetchPokemonAsync.await()
-                    setForeGroundAsync(
-                        worker, "$i of ${data.size}", i + 1, data.size, false
-                    )
+            withContext(Dispatchers.IO) {
+                for (i in data.indices) {
+                    data[i].let { pokemonRef ->
+                        val id = getPokemonIdFromUrl(pokemonRef.url)
+                        val fetchPokemonAsync =
+                                async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
+                        val fetchSpeciesAsync =
+                                async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
+                        fetchSpeciesAsync.await()
+                        fetchPokemonAsync.await()
+                        setForeGroundAsync(
+                                worker, "$i of ${data.size}", i + 1, data.size, false
+                        )
+                    }
                 }
             }
-        }
 
     private fun setForeGroundAsync(
-        worker: CoroutineWorker,
-        progressText: String,
-        progress: Int,
-        max: Int,
-        indeterminate: Boolean
+            worker: CoroutineWorker,
+            progressText: String,
+            progress: Int,
+            max: Int,
+            indeterminate: Boolean
     ) {
         worker.setForegroundAsync(
-            notificationHelper.sendOnGoingNotification(
-                NOTIFICATION_ID,
-                NOTIFICATION_NAME,
-                progressText,
-                progress,
-                max,
-                indeterminate
-            )
+                notificationHelper.sendOnGoingNotification(
+                        NOTIFICATION_ID,
+                        NOTIFICATION_NAME,
+                        progressText,
+                        progress,
+                        max,
+                        indeterminate
+                )
         )
     }
 

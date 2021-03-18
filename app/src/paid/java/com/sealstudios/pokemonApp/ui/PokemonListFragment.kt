@@ -1,9 +1,9 @@
 package com.sealstudios.pokemonApp.ui
 
+import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
@@ -24,7 +25,6 @@ import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.api.states.ErrorCodes
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
@@ -34,14 +34,17 @@ import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickL
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.viewModel.PartialPokemonViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 
+@FlowPreview
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
         PokemonAdapterClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -53,9 +56,10 @@ class PokemonListFragment : Fragment(),
     private var _binding: PokemonListFragmentBinding? = null
 
     private var search: String = ""
+
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
     private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
-    private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
+    private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -74,7 +78,8 @@ class PokemonListFragment : Fragment(),
         setUpPokemonAdapter()
         setUpSwipeRefresh()
         setUpPokemonRecyclerView()
-        observeFetchAllPokemonResponse()
+        observeRequestDownloadDataPermission()
+        onFetchedPartialPokemonData()
         observeSearch()
     }
 
@@ -82,55 +87,55 @@ class PokemonListFragment : Fragment(),
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
-    private fun observeFetchAllPokemonResponse() {
-        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, { allPokemon ->
-            when (allPokemon.status) {
-                Status.SUCCESS -> {
-                    binding.setNotEmpty()
-                    observePokemonList()
-                }
+    private fun onFetchedPartialPokemonData() {
+        partialPokemonViewModel.onFetchedPartialPokemonData.observe(viewLifecycleOwner, {
+            when (it.status) {
+                Status.SUCCESS -> observePokemonList()
                 Status.ERROR -> {
-                    if (allPokemon.code == ErrorCodes.NO_CONNECTION.code) {
-                        if (remotePokemonViewModel.hasFetchedPartialPokemonData) {
-                            binding.setNotEmpty()
-                            observePokemonList()
-                        } else {
-                            binding.setError(
-                                    ErrorCodes.NO_CONNECTION.message
-                            ) { remotePokemonViewModel.fetchAllPokemon() }
-                        }
-                    } else {
-                        binding.setError(
-                                allPokemon.message ?: getString(R.string.error_text)
-                        ) { remotePokemonViewModel.fetchAllPokemon() }
+                    binding.setError(it.message ?: getString(R.string.error_text)) {
+                        partialPokemonViewModel.retryGetPartialPokemonEvent()
                     }
                 }
-                Status.LOADING -> binding.setLoading()
+                Status.LOADING -> {
+                }
             }
+        })
+    }
+
+    private fun observeRequestDownloadDataPermission() {
+        partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner, {
+            val builder = AlertDialog.Builder(binding.root.context)
+            builder.setTitle("Permission Request")
+            builder.setMessage("To get the best experience we need to download all pokemon meta data. " +
+                    "This is a large download, proceed?")
+            builder.setPositiveButton("OK, download") { dialog, _ ->
+                partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager()
+                dialog.dismiss()
+            }
+            builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+            builder.show()
         })
     }
 
     private fun observePokemonList() {
-        pokemonListViewModel.searchPokemon.observe(
-                viewLifecycleOwner, { pokemonData ->
-            Log.d("MAIN", "pokemonData $pokemonData")
-            if (pokemonData != null) {
-                if (pokemonData.isEmpty()) {
-                    binding.setEmpty()
-                } else {
-                    lifecycleScope.launch {
+        lifecycleScope.launch {
+            pokemonListViewModel.searchPokemon.collectLatest { pokemonData ->
+                if (pokemonData != null) {
+                    if (pokemonData.isEmpty()) {
+                        binding.setEmpty()
+                    } else {
                         pokemonAdapter.submitList(pokemonData)
+                        binding.setNotEmpty()
                     }
-                    binding.setNotEmpty()
+                } else {
+                    binding.setLoading()
                 }
-            } else {
-                binding.setLoading()
             }
-        })
+        }
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, {
+        pokemonListViewModel.searchState.observe(viewLifecycleOwner, {
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -169,6 +174,11 @@ class PokemonListFragment : Fragment(),
         mainActivity.setSupportActionBar(toolbar)
         setupActionBarWithNavController(mainActivity, appBarConfiguration)
         setToolbarTitleColor(toolbar.context)
+        setToolbarImage()
+    }
+
+    private fun setToolbarImage() {
+        glide.load(R.drawable.pokemon_logo_black).into(binding.pokemonListFragmentCollapsingAppBar.toolbarImage)
     }
 
     private fun setupActionBarWithNavController(
@@ -217,7 +227,7 @@ class PokemonListFragment : Fragment(),
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    pokemonListViewModel.setSearch("%$it%")
+                    pokemonListViewModel.search(it)
                 }
                 return false
             }
@@ -266,14 +276,8 @@ class PokemonListFragment : Fragment(),
         return false
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-    }
-
     override fun onRefresh() {
-        remotePokemonViewModel.setFetchedPartialPokemonData(false)
-        remotePokemonViewModel.fetchAllPokemon()
+        partialPokemonViewModel.retryGetPartialPokemonEvent()
     }
 
     private fun hideEmptyLayout() {
@@ -290,7 +294,9 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun PokemonListFragmentBinding.setLoading() {
-        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(
+                R.drawable.colored_pokeball_anim_faster,
+        )
         emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
         hideEmptyLayout()
         hideErrorLayout()
@@ -300,6 +306,8 @@ class PokemonListFragment : Fragment(),
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         hideEmptyLayout()
         hideLoadingLayout()
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
+        glide.load(R.drawable.pika_detective).into(errorPokemonList.errorImage)
         errorPokemonList.root.visibility = View.VISIBLE
         errorPokemonList.errorImage.visibility = View.VISIBLE
         errorPokemonList.errorText.text = errorMessage
@@ -310,14 +318,17 @@ class PokemonListFragment : Fragment(),
 
     private fun PokemonListFragmentBinding.setEmpty() {
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        glide.load(R.drawable.no_results_snorlax).into(emptyPokemonList.emptyResultsImage)
         hideErrorLayout()
         hideLoadingLayout()
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
         emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
     }
 
     private fun PokemonListFragmentBinding.setNotEmpty() {
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.VISIBLE
         hideEmptyLayout()
         hideErrorLayout()
         hideLoadingLayout()

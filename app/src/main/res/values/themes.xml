@@ -18,6 +18,7 @@
         </item>
 
         <item name="tabStyle">@style/MyTabBarStyle</item>
+        <item name="materialAlertDialogTheme">@style/PokeApp.MaterialAlertDialog</item>
 
     </style>
 
@@ -51,6 +52,5 @@
     <style name="SplashTheme" parent="Theme.PokemonAppTheme">
         <item name="android:windowBackground">@drawable/splash_screen</item>
     </style>
-
 
 </resources>

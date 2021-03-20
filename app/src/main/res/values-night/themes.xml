@@ -18,6 +18,7 @@
             @color/primaryColor
         </item>
         <item name="tabStyle">@style/MyDarkTabBarStyle</item>
+        <item name="materialAlertDialogTheme">@style/PokeApp.MaterialAlertDialog</item>
     </style>
 
     <style name="Theme.PokemonAppTheme.DetailView.CollapsingAppBarOverlay" parent="ThemeOverlay.AppCompat.ActionBar">

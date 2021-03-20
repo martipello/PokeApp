@@ -23,6 +23,7 @@ import androidx.navigation.ui.NavigationUI
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
@@ -104,16 +105,17 @@ class PokemonListFragment : Fragment(),
 
     private fun observeRequestDownloadDataPermission() {
         partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner, {
-            val builder = AlertDialog.Builder(binding.root.context)
-            builder.setTitle("Permission Request")
-            builder.setMessage("To get the best experience we need to download all pokemon meta data. " +
-                    "This is a large download, proceed?")
-            builder.setPositiveButton("OK, download") { dialog, _ ->
-                partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager()
-                dialog.dismiss()
-            }
-            builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-            builder.show()
+            DownloadRequestDialog().show(parentFragmentManager, DownloadRequestDialog.TAG)
+//            val builder = MaterialAlertDialogBuilder(binding.root.context)
+//            builder.setTitle("Permission Request")
+//            builder.setMessage("To get the best experience we need to download all pokemon meta data. " +
+//                    "This is a large download, proceed?")
+//            builder.setPositiveButton("OK, download") { dialog, _ ->
+//                partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager()
+//                dialog.dismiss()
+//            }
+//            builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
+//            builder.show()
         })
     }
 

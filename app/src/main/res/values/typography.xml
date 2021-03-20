@@ -71,4 +71,15 @@
         <item name="android:textColorPrimary">@color/secondaryTextColor</item>
     </style>
 
+    <style name="MaterialAlertDialog.PokeApp.DialogTitle.Text" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:textSize">@dimen/qualified_text_size_subtitle</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
+    </style>
+
+    <style name="MaterialAlertDialog.PokeApp.DialogBody.Text" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:textSize">@dimen/qualified_text_size_body</item>
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="android:layout_marginBottom">@dimen/qualified_small_margin_8dp</item>
+    </style>
+
 </resources>

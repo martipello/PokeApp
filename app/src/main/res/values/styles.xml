@@ -106,7 +106,6 @@
         <item name="android:elevation">@dimen/large_margin_32dp</item>
     </style>
 
-
     <style name="ShapeAppearanceOverlay_card_custom_corners_large" parent="ShapeAppearance.MaterialComponents.MediumComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSizeTopRight">@dimen/qualified_large_margin_48dp</item>
@@ -139,5 +138,31 @@
     </style>
 
 
+    <style name="PokeApp.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="alertDialogStyle">@style/PokeApp.App</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.PokeApp.DialogTitle.Text</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.PokeApp.DialogBody.Text</item>
+        <item name="buttonBarPositiveButtonStyle">@style/PokeApp.PositiveButton</item>
+        <item name="buttonBarNeutralButtonStyle">@style/PokeApp.PositiveButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/PokeApp.NegativeButton</item>
+    </style>
+
+    <style name="PokeApp.App" parent="MaterialAlertDialog.MaterialComponents">
+        <item name="shapeAppearance">@style/ShapeAppearance.MaterialComponents.MediumComponent</item>
+    </style>
+
+    <style name="PokeApp.PositiveButton" parent="Widget.MaterialComponents.Button">
+        <item name="colorPrimary">@color/secondaryColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:layout_marginStart">@dimen/qualified_medium_margin_16dp</item>
+        <item name="android:layout_marginTop">@dimen/qualified_medium_margin_16dp</item>
+    </style>
+
+    <style name="PokeApp.NegativeButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/secondaryColor</item>
+        <item name="android:textColor">@color/secondaryColor</item>
+        <item name="android:layout_marginTop">@dimen/qualified_medium_margin_16dp</item>
+    </style>
 
 </resources>

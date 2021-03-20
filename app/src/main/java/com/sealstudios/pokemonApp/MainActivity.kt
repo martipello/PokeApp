@@ -7,6 +7,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_CANCEL_WORK_KEY
 import com.sealstudios.pokemonApp.databinding.ActivityMainBinding
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper
 import dagger.hilt.android.AndroidEntryPoint
@@ -20,6 +21,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         ThemeHelper.setUiMode(this)
         super.onCreate(savedInstanceState)
+        if (intent.hasExtra(NOTIFICATION_CANCEL_WORK_KEY)) {
+//            callMethod();
+            Log.d("MAIN_ACT", "CANCEL WORK")
+        }
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSystemUiVisibility()

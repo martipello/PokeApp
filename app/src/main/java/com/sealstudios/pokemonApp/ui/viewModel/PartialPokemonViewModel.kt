@@ -72,6 +72,10 @@ class PartialPokemonViewModel @ViewModelInject constructor(
         remoteRepository.startFetchAllPokemonTypesAndSpecies()
     }
 
+    fun cancelFetchAllPokemonTypesAndSpeciesWorkManager() {
+        remoteRepository.cancelFetchAllPokemonTypesAndSpecies()
+    }
+
     init {
         triggerGetPartialPokemonEvent()
     }

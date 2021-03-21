@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui
 
-import android.app.AlertDialog
 import android.app.SearchManager
 import android.content.Context
 import android.os.Bundle
@@ -11,7 +10,6 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.doOnPreDraw
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDirections
 import androidx.navigation.fragment.FragmentNavigator
@@ -23,7 +21,6 @@ import androidx.navigation.ui.NavigationUI
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
-import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
@@ -106,16 +103,6 @@ class PokemonListFragment : Fragment(),
     private fun observeRequestDownloadDataPermission() {
         partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner, {
             DownloadRequestDialog().show(parentFragmentManager, DownloadRequestDialog.TAG)
-//            val builder = MaterialAlertDialogBuilder(binding.root.context)
-//            builder.setTitle("Permission Request")
-//            builder.setMessage("To get the best experience we need to download all pokemon meta data. " +
-//                    "This is a large download, proceed?")
-//            builder.setPositiveButton("OK, download") { dialog, _ ->
-//                partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager()
-//                dialog.dismiss()
-//            }
-//            builder.setNegativeButton("Cancel") { dialog, _ -> dialog.dismiss() }
-//            builder.show()
         })
     }
 
@@ -159,9 +146,6 @@ class PokemonListFragment : Fragment(),
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
-            doOnPreDraw {
-                startPostponedEnterTransition()
-            }
             pokemonFiltersViewModel.addScrollAwareFilerFab(this)
         }
     }
@@ -323,12 +307,14 @@ class PokemonListFragment : Fragment(),
         glide.load(R.drawable.no_results_snorlax).into(emptyPokemonList.emptyResultsImage)
         hideErrorLayout()
         hideLoadingLayout()
-        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
         emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
     }
 
     private fun PokemonListFragmentBinding.setNotEmpty() {
+        pokemonListFragmentContent.pokemonListRecyclerView.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.VISIBLE
         hideEmptyLayout()

@@ -2,7 +2,9 @@ package com.sealstudios.pokemonApp.ui
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -25,27 +27,30 @@ import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.ads.AdsManager
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.api.states.ErrorCodes
+import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.database.`object`.MyNativeAd
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
+import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPreferences
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.viewModel.PartialPokemonViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.RemotePokemonViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-
+@FlowPreview
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
         PokemonAdapterClickListener, SwipeRefreshLayout.OnRefreshListener {
@@ -59,9 +64,11 @@ class PokemonListFragment : Fragment(),
     private var _binding: PokemonListFragmentBinding? = null
 
     private var search: String = ""
+
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
     private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
-    private val remotePokemonViewModel: RemotePokemonViewModel by viewModels()
+    private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
+
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(
@@ -77,113 +84,62 @@ class PokemonListFragment : Fragment(),
         setActionBar()
         PokemonListFragmentInsets().setInsets(binding)
         super.onViewCreated(view, savedInstanceState)
-        setHasOptionsMenu(true)
-        setUpPokemonAdapter()
-        setUpSwipeRefresh()
-        setUpPokemonRecyclerView(view.context)
-        observeFetchAllPokemonResponse()
-        observeSearch()
         lifecycleScope.launch {
             createAds(view)
         }
-    }
-
-    private suspend fun createAds(view: View) {
-        withContext(Dispatchers.IO) {
-            val adsManager = AdsManager(view.context)
-            adsManager.createAds(listener = UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
-                ads.add(MyNativeAd(it))
-                if (!adsManager.getAdLoader().isLoading) {
-                    lifecycleScope.launch(Dispatchers.Main) {
-                        pokemonListViewModel.refresh()
-                    }
-                }
-                if (activity?.isDestroyed == true || activity?.isFinishing == true || activity?.isChangingConfigurations == true) {
-                    it.destroy()
-                    return@OnUnifiedNativeAdLoadedListener
-                }
-            })
-        }
-
+        setHasOptionsMenu(true)
+        setUpPokemonAdapter()
+        setUpSwipeRefresh()
+        setUpPokemonRecyclerView()
+        observeRequestDownloadDataPermission()
+        onFetchedPartialPokemonData()
+        observeSearch()
     }
 
     private fun setUpPokemonAdapter() {
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
     }
 
-    private fun observeFetchAllPokemonResponse() {
-        remotePokemonViewModel.allPokemonResponse.observe(viewLifecycleOwner, { allPokemon ->
-            when (allPokemon.status) {
-                Status.SUCCESS -> {
-                    binding.setNotEmpty()
-                    observePokemonList()
-                }
+    private fun onFetchedPartialPokemonData() {
+        partialPokemonViewModel.onFetchedPartialPokemonData.observe(viewLifecycleOwner, {
+            when (it.status) {
+                Status.SUCCESS -> observePokemonList()
                 Status.ERROR -> {
-                    if (allPokemon.code == ErrorCodes.NO_CONNECTION.code) {
-                        if (remotePokemonViewModel.hasFetchedPartialPokemonData) {
-                            binding.setNotEmpty()
-                            observePokemonList()
-                        } else {
-                            binding.setError(
-                                    ErrorCodes.NO_CONNECTION.message
-                            ) { remotePokemonViewModel.fetchAllPokemon() }
-                        }
-                    } else {
-                        binding.setError(
-                                allPokemon.message ?: getString(R.string.error_text)
-                        ) { remotePokemonViewModel.fetchAllPokemon() }
+                    binding.setError(it.message ?: getString(R.string.error_text)) {
+                        partialPokemonViewModel.retryGetPartialPokemonEvent()
                     }
                 }
-                Status.LOADING -> binding.setLoading()
+                Status.LOADING -> {
+                }
             }
+        })
+    }
+
+    private fun observeRequestDownloadDataPermission() {
+        partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner, {
+            DownloadRequestDialog().show(parentFragmentManager, DownloadRequestDialog.TAG)
         })
     }
 
     private fun observePokemonList() {
-        pokemonListViewModel.searchPokemon.observe(
-                viewLifecycleOwner, { pokemonData ->
-            if (pokemonData != null) {
-                if (pokemonData.isEmpty()) {
-                    binding.setEmpty()
-                } else {
-                    binding.setNotEmpty()
-                }
-                if (ads.isNotEmpty()) {
-                    lifecycleScope.launch {
+        lifecycleScope.launch {
+            pokemonListViewModel.searchPokemon.collectLatest { pokemonData ->
+                if (pokemonData != null) {
+                    if (pokemonData.isEmpty()) {
+                        binding.setEmpty()
+                    } else {
                         pokemonAdapter.submitList(mergeAds(pokemonData, ads))
+                        binding.setNotEmpty()
                     }
                 } else {
-                    pokemonAdapter.submitList(pokemonData)
-                }
-            } else {
-                binding.setLoading()
-            }
-        })
-    }
-
-    private suspend fun mergeAds(
-            pokemon: List<PokemonAdapterListItem>,
-            ads: List<PokemonAdapterListItem>
-    ): List<PokemonAdapterListItem> {
-        return withContext(Dispatchers.Default) {
-            val mergedList = mutableListOf<PokemonAdapterListItem>()
-            mergedList.addAll(pokemon)
-            val intersect = pokemon.size / ads.size
-            var counter = 0
-            for (index in pokemon.indices) {
-                if (index % intersect == 0) {
-                    counter++
-                    if (counter < ads.size) {
-                        mergedList.add(index, ads[counter])
-                    }
+                    binding.setLoading()
                 }
             }
-            return@withContext mergedList
         }
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.search.observe(viewLifecycleOwner, {
+        pokemonListViewModel.searchState.observe(viewLifecycleOwner, {
             if (it != null) {
                 search = it.replace("%", "")
             }
@@ -199,17 +155,12 @@ class PokemonListFragment : Fragment(),
         binding.pokemonListFragmentContent.swipeRefreshPokemonList.setOnRefreshListener(this@PokemonListFragment)
     }
 
-    private fun setUpPokemonRecyclerView(context: Context) {
+    private fun setUpPokemonRecyclerView() {
         binding.pokemonListFragmentContent.pokemonListRecyclerView.run {
-            addItemDecoration(PokemonListDecoration(
-                    context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
-            this.setHasFixedSize(true)
+            setHasFixedSize(true)
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
-            doOnPreDraw {
-                startPostponedEnterTransition()
-            }
             pokemonFiltersViewModel.addScrollAwareFilerFab(this)
         }
     }
@@ -224,6 +175,17 @@ class PokemonListFragment : Fragment(),
         mainActivity.setSupportActionBar(toolbar)
         setupActionBarWithNavController(mainActivity, appBarConfiguration)
         setToolbarTitleColor(toolbar.context)
+        setToolbarImage()
+    }
+
+    private fun setToolbarImage() {
+        glide.load(R.drawable.pokemon_logo_black).into(binding.pokemonListFragmentCollapsingAppBar.toolbarImage)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarImage.setOnClickListener {
+            val intent = Intent()
+            intent.action = NotificationHelper.NOTIFICATION_ACTION_KEY
+            intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+            it.context.sendBroadcast(intent)
+        }
     }
 
     private fun setupActionBarWithNavController(
@@ -272,7 +234,7 @@ class PokemonListFragment : Fragment(),
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    pokemonListViewModel.setSearch("%$it%")
+                    pokemonListViewModel.search(it)
                 }
                 return false
             }
@@ -283,9 +245,9 @@ class PokemonListFragment : Fragment(),
         view as MaterialCardView
         val action = actionPokemonListFragmentToPokemonDetailFragment(
                 pokemonName = name,
-                transitionName = view.transitionName)
-        val extras = FragmentNavigatorExtras(
-                view to view.transitionName
+                transitionName = view.transitionName
+        )
+        val extras = FragmentNavigatorExtras(view to view.transitionName
         )
         pokemonFiltersViewModel.closeFiltersLayout()
         navigate(action, extras)
@@ -315,22 +277,15 @@ class PokemonListFragment : Fragment(),
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_settings -> {
-                navigate(PokemonListFragmentDirections.actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
+                navigate(actionPokemonListFragmentToPreferences(), FragmentNavigatorExtras())
                 return true
             }
         }
         return false
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
-        ads.clear()
-    }
-
     override fun onRefresh() {
-        remotePokemonViewModel.setFetchedPartialPokemonData(false)
-        remotePokemonViewModel.fetchAllPokemon()
+        partialPokemonViewModel.retryGetPartialPokemonEvent()
     }
 
     private fun hideEmptyLayout() {
@@ -347,7 +302,9 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun PokemonListFragmentBinding.setLoading() {
-        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+        emptyPokemonList.pokemonListLoading.loading.applyLoopingAnimatedVectorDrawable(
+                R.drawable.colored_pokeball_anim_faster,
+        )
         emptyPokemonList.pokemonListLoading.root.visibility = View.VISIBLE
         hideEmptyLayout()
         hideErrorLayout()
@@ -357,27 +314,79 @@ class PokemonListFragment : Fragment(),
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
         hideEmptyLayout()
         hideLoadingLayout()
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
+        glide.load(R.drawable.pika_detective).into(errorPokemonList.errorImage)
+        errorPokemonList.root.visibility = View.VISIBLE
         errorPokemonList.errorImage.visibility = View.VISIBLE
         errorPokemonList.errorText.text = errorMessage
         errorPokemonList.retryButton.setOnClickListener {
             fetchAllPokemon()
         }
-
     }
 
     private fun PokemonListFragmentBinding.setEmpty() {
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        glide.load(R.drawable.no_results_snorlax).into(emptyPokemonList.emptyResultsImage)
         hideErrorLayout()
         hideLoadingLayout()
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
         emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
     }
 
     private fun PokemonListFragmentBinding.setNotEmpty() {
+        pokemonListFragmentContent.pokemonListRecyclerView.doOnPreDraw {
+            startPostponedEnterTransition()
+        }
         pokemonListFragmentContent.swipeRefreshPokemonList.isRefreshing = false
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.VISIBLE
         hideEmptyLayout()
         hideErrorLayout()
         hideLoadingLayout()
+    }
+
+    private suspend fun createAds(view: View) {
+        withContext(Dispatchers.IO) {
+            val adsManager = AdsManager(view.context)
+            adsManager.createAds(listener = UnifiedNativeAd.OnUnifiedNativeAdLoadedListener {
+                ads.add(MyNativeAd(it))
+                if (!adsManager.getAdLoader().isLoading) {
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        pokemonListViewModel.refresh()
+                    }
+                }
+                if (activity?.isDestroyed == true || activity?.isFinishing == true || activity?.isChangingConfigurations == true) {
+                    it.destroy()
+                    return@OnUnifiedNativeAdLoadedListener
+                }
+            })
+        }
+
+    }
+
+    private suspend fun mergeAds(
+            pokemon: List<PokemonAdapterListItem>,
+            ads: List<PokemonAdapterListItem>
+    ): List<PokemonAdapterListItem> {
+        return withContext(Dispatchers.Default) {
+            val mergedList = mutableListOf<PokemonAdapterListItem>()
+            mergedList.addAll(pokemon)
+            try {
+                val intersect = pokemon.size / ads.size
+                var counter = 0
+                for (index in pokemon.indices) {
+                    if (index % intersect == 0) {
+                        counter++
+                        if (counter < ads.size) {
+                            mergedList.add(index, ads[counter])
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                Log.d("Exception", "Exception $e")
+            }
+            return@withContext mergedList
+        }
     }
 
 }

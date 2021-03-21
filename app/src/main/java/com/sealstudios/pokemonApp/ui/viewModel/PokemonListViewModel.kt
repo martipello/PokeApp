@@ -16,13 +16,13 @@ class PokemonListViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     val searchState: MutableLiveData<String> = searchState()
-    val filters: MutableLiveData<MutableSet<String>> = filtersState()
+    val selectedFilters: MutableLiveData<MutableSet<String>> = filtersState()
     val searchPokemon: Flow<List<PokemonWithTypesAndSpeciesForList>?>
 
     init {
 
         searchPokemon = flow {
-            emitAll(combine(searchState.asFlow(), filters.asFlow()) { search, filters ->
+            emitAll(combine(searchState.asFlow(), selectedFilters.asFlow()) { search, filters ->
                 if (filters.isEmpty()) {
                     searchPokemon(search).asFlow()
                 } else {
@@ -52,14 +52,14 @@ class PokemonListViewModel @ViewModelInject constructor(
     }
 
     fun addFilter(filter: String) {
-        filters.value?.let {
+        selectedFilters.value?.let {
             it.add(filter)
             filter(it)
         }
     }
 
     fun removeFilter(filter: String) {
-        filters.value?.let {
+        selectedFilters.value?.let {
             it.remove(filter)
             filter(it)
         }

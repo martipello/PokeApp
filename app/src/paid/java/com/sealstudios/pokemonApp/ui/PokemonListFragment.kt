@@ -315,6 +315,7 @@ class PokemonListFragment : Fragment(),
         glide.load(R.drawable.no_results_snorlax).into(emptyPokemonList.emptyResultsImage)
         hideErrorLayout()
         hideLoadingLayout()
+        pokemonListFragmentContent.pokemonListRecyclerView.visibility = View.INVISIBLE
         emptyPokemonList.emptyResultsImage.visibility = View.VISIBLE
         emptyPokemonList.emptyResultsText.visibility = View.VISIBLE
     }

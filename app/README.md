@@ -1,4 +1,4 @@
-<h2>PokeApp - A reference guide for great android development</h2>
+<h2>PokeApp - A reference guide for great android design</h2>
 <p>There are some questionable architecture choices largely due to the pokeApi being free
 and limited in aspects such as not being able to get paged queries or filtered results</p>
 

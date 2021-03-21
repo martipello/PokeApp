@@ -36,20 +36,18 @@ class PokemonWorkManager @WorkerInject constructor(
                             notificationArguments
                     )
             )
-            handleAllPokemonResponse(
-                    worker = this@PokemonWorkManager
-            )
+            handleAllPokemonResponse()
         })
         Result.success()
     }
 
-    private suspend fun handleAllPokemonResponse(worker: CoroutineWorker) = withContext(context = Dispatchers.IO) {
+    private suspend fun handleAllPokemonResponse() = withContext(context = Dispatchers.IO) {
         val pokemonRefListResponse = remotePokemonToRoomPokemonHelper.getAllPokemonResponse()
         when (pokemonRefListResponse.status) {
             Status.SUCCESS -> {
                 pokemonRefListResponse.data?.let {
-                    saveAllPokemon(it.results, worker)
-                    savePokemonTypesAndSpecies(it.results, worker)
+                    saveAllPokemon(it.results)
+                    savePokemonTypesAndSpecies(it.results)
                 }
             }
             Status.ERROR -> {
@@ -60,33 +58,32 @@ class PokemonWorkManager @WorkerInject constructor(
     }
 
     private suspend fun saveAllPokemon(
-            data: List<NamedApiResource>, worker: CoroutineWorker) = withContext(Dispatchers.IO) {
-                remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
-                val notificationArguments = createNotificationArguments("Downloaded partial pokedex data", 100, 100, true)
-                setForeGroundAsync(
-                        worker,
+            data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
+        remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
+        val notificationArguments = createNotificationArguments("Downloaded partial pokedex data", 100, 100, true)
+        setForeGround(
+                notificationArguments
+        )
+    }
+
+    private suspend fun savePokemonTypesAndSpecies(
+            data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
+        for (i in data.indices) {
+            data[i].let { pokemonRef ->
+                val id = getPokemonIdFromUrl(pokemonRef.url)
+                val fetchPokemonAsync =
+                        async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
+                val fetchSpeciesAsync =
+                        async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
+                fetchSpeciesAsync.await()
+                fetchPokemonAsync.await()
+                val notificationArguments = createNotificationArguments("$i of ${data.size}", i, data.size, false)
+                setForeGround(
                         notificationArguments
                 )
             }
-
-    private suspend fun savePokemonTypesAndSpecies(
-            data: List<NamedApiResource>, worker: CoroutineWorker) = withContext(Dispatchers.IO) {
-                for (i in data.indices) {
-                    data[i].let { pokemonRef ->
-                        val id = getPokemonIdFromUrl(pokemonRef.url)
-                        val fetchPokemonAsync =
-                                async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
-                        val fetchSpeciesAsync =
-                                async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
-                        fetchSpeciesAsync.await()
-                        fetchPokemonAsync.await()
-                        val notificationArguments = createNotificationArguments("$i of ${data.size}", i, data.size, false)
-                        setForeGroundAsync(
-                                worker, notificationArguments
-                        )
-                    }
-                }
-            }
+        }
+    }
 
     private fun createNotificationArguments(progressText: String, progress: Int, progressMax: Int, isIndeterminate: Boolean): NotificationArguments {
         return NotificationArguments(
@@ -98,11 +95,10 @@ class PokemonWorkManager @WorkerInject constructor(
                 isIndeterminate)
     }
 
-    private fun setForeGroundAsync(
-            worker: CoroutineWorker,
+    private suspend fun setForeGround(
             notificationArguments: NotificationArguments
     ) {
-        worker.setForegroundAsync(
+        setForeground(
                 notificationHelper.sendFetchAllPokemonDataNotification(
                         notificationArguments
                 )

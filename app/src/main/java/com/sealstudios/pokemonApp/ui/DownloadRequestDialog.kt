@@ -19,7 +19,7 @@ class DownloadRequestDialog : DialogFragment() {
         builder.setTitle(getString(R.string.permission_request_title))
         builder.setMessage(getString(R.string.permission_request_body))
         builder.setPositiveButton(getString(R.string.permission_request_positive_button_text)) { dialog, _ ->
-            partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager()
+            activity?.let { partialPokemonViewModel.startFetchAllPokemonTypesAndSpeciesWorkManager(it) }
             dialog.dismiss()
         }
         builder.setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.dismiss() }

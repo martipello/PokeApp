@@ -31,14 +31,26 @@ class NotificationHelper constructor(
     ): ForegroundInfo {
 
         val intent = createOpenActivityIntent(notificationArguments)
-        val largeIcon = getLargeNotificationIcon()
-        val openActivityPendingIntent = getActivity(applicationContext, 0, intent, 0)
+        val cancelWorkIntent = cancelWorkIntent()
 
-        val cancelWorkIntent = cancelWorkIntent(notificationArguments)
-        val cancelWorkPendingIntent = getActivity(applicationContext, 0, cancelWorkIntent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val largeIcon = getLargeNotificationIcon()
+
+        val openActivityPendingIntent = getActivity(
+                applicationContext,
+                0,
+                intent,
+                0)
+
+        val cancelWorkPendingIntent = PendingIntent.getBroadcast(
+                applicationContext,
+                0,
+                cancelWorkIntent,
+                0)
+
 
         val notification = buildNotificationBuilder(
                 largeIcon,
+                applicationContext,
                 notificationArguments.title,
                 notificationArguments.progressText,
                 openActivityPendingIntent,
@@ -54,6 +66,7 @@ class NotificationHelper constructor(
             setContentText(notificationArguments.progressText)
             setContentTitle(notificationArguments.title)
             setTicker(notificationArguments.title)
+            setOnlyAlertOnce(true)
         }
         return ForegroundInfo(notificationArguments.id, notification.build())
 
@@ -62,13 +75,13 @@ class NotificationHelper constructor(
     private fun createOpenActivityIntent(notificationArguments: NotificationArguments): Intent {
         val intent = Intent(applicationContext, MainActivity::class.java)
         intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
-        intent.putExtra(NOTIFICATION_ID_KEY, notificationArguments.id)
+        intent.putExtra(NOTIFICATION_ACTION_KEY, notificationArguments.id)
         return intent
     }
 
-    private fun cancelWorkIntent(notificationArguments: NotificationArguments): Intent {
-        val intent = Intent(applicationContext, MainActivity::class.java)
-        intent.putExtra(NOTIFICATION_CANCEL_WORK_KEY, notificationArguments.id)
+    private fun cancelWorkIntent(): Intent {
+        val intent = Intent(NOTIFICATION_ACTION_KEY)
+        intent.putExtra(NOTIFICATION_ACTION_KEY, NOTIFICATION_CANCEL_WORK_KEY)
         return intent
     }
 
@@ -81,6 +94,7 @@ class NotificationHelper constructor(
 
     private fun buildNotificationBuilder(
             bitmap: Bitmap?,
+            context: Context,
             title: String,
             subtitle: String,
             contentIntent: PendingIntent?,
@@ -93,7 +107,7 @@ class NotificationHelper constructor(
                 .setContentText(subtitle)
                 .setSilent(true)
                 .setContentIntent(contentIntent)
-                .addAction(NotificationCompat.Action(null, "Cancel", cancelIntent))
+                .addAction(NotificationCompat.Action(null, context.getString(R.string.cancel), cancelIntent))
                 .setAutoCancel(true)
     }
 
@@ -111,22 +125,9 @@ class NotificationHelper constructor(
 
     companion object {
         const val NOTIFICATION_ID = 1001
-        const val NOTIFICATION_ID_KEY = "com.sealstudios.pokemonApp.notification_id"
+        const val NOTIFICATION_ACTION_KEY = "com.sealstudios.pokemonApp.notification_action"
         const val NOTIFICATION_CANCEL_WORK_KEY = "com.sealstudios.pokemonApp.notification_cancel_work"
         const val NOTIFICATION_NAME = "PokemonApp"
         const val NOTIFICATION_CHANNEL = "com.sealstudios.pokemonApp.download_channel"
     }
-}
-
-data class NotificationArguments(
-        val id: Int,
-        val title: String,
-        val progressText: String,
-        val progress: Int,
-        val progressMax: Int,
-        val indeterminate: Boolean = false
-)
-
-fun NotificationArguments.isPriority(): Boolean {
-    return (progress != progressMax)
 }

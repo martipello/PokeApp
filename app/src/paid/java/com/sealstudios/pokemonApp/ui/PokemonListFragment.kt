@@ -2,6 +2,7 @@ package com.sealstudios.pokemonApp.ui
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -23,6 +24,7 @@ import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
@@ -165,6 +167,12 @@ class PokemonListFragment : Fragment(),
 
     private fun setToolbarImage() {
         glide.load(R.drawable.pokemon_logo_black).into(binding.pokemonListFragmentCollapsingAppBar.toolbarImage)
+        binding.pokemonListFragmentCollapsingAppBar.toolbarImage.setOnClickListener {
+            val intent = Intent()
+            intent.action = NotificationHelper.NOTIFICATION_ACTION_KEY
+            intent.flags = Intent.FLAG_INCLUDE_STOPPED_PACKAGES
+            it.context.sendBroadcast(intent)
+        }
     }
 
     private fun setupActionBarWithNavController(

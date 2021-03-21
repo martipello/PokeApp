@@ -61,7 +61,7 @@ class PokemonWorkManager @WorkerInject constructor(
             data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
         remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
         val notificationArguments = createNotificationArguments("Downloaded partial pokedex data", 100, 100, true)
-        setForeGround(
+        setForeground(
                 notificationArguments
         )
     }
@@ -78,9 +78,9 @@ class PokemonWorkManager @WorkerInject constructor(
                 fetchSpeciesAsync.await()
                 fetchPokemonAsync.await()
                 val notificationArguments = createNotificationArguments("$i of ${data.size}", i, data.size, false)
-                setForeGround(
-                        notificationArguments
-                )
+//                setForeground(
+//                        notificationArguments
+//                )
             }
         }
     }
@@ -95,14 +95,16 @@ class PokemonWorkManager @WorkerInject constructor(
                 isIndeterminate)
     }
 
-    private suspend fun setForeGround(
+    private suspend fun setForeground(
             notificationArguments: NotificationArguments
     ) {
-        setForeground(
-                notificationHelper.sendFetchAllPokemonDataNotification(
-                        notificationArguments
-                )
-        )
+        withContext(Dispatchers.Default){
+            setForeground(
+                    notificationHelper.sendFetchAllPokemonDataNotification(
+                            notificationArguments
+                    )
+            )
+        }
     }
 
 }

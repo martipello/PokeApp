@@ -78,9 +78,9 @@ class PokemonWorkManager @WorkerInject constructor(
                 fetchSpeciesAsync.await()
                 fetchPokemonAsync.await()
                 val notificationArguments = createNotificationArguments("$i of ${data.size}", i, data.size, false)
-//                setForeground(
-//                        notificationArguments
-//                )
+                setForeground(
+                        notificationArguments
+                )
             }
         }
     }
@@ -98,7 +98,7 @@ class PokemonWorkManager @WorkerInject constructor(
     private suspend fun setForeground(
             notificationArguments: NotificationArguments
     ) {
-        withContext(Dispatchers.Default){
+        withContext(Dispatchers.Default) {
             setForeground(
                     notificationHelper.sendFetchAllPokemonDataNotification(
                             notificationArguments

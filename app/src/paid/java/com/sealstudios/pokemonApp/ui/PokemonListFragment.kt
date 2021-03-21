@@ -43,7 +43,6 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-
 @FlowPreview
 @AndroidEntryPoint
 class PokemonListFragment : Fragment(),
@@ -60,6 +59,7 @@ class PokemonListFragment : Fragment(),
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
     private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
     private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
+
     private lateinit var pokemonAdapter: PokemonAdapter
 
     override fun onCreateView(inflater: LayoutInflater,
@@ -332,5 +332,3 @@ class PokemonListFragment : Fragment(),
     }
 
 }
-
-

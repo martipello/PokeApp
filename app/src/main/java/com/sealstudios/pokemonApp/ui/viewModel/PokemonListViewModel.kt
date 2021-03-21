@@ -20,7 +20,6 @@ class PokemonListViewModel @ViewModelInject constructor(
     val searchPokemon: Flow<List<PokemonWithTypesAndSpeciesForList>?>
 
     init {
-
         searchPokemon = flow {
             emitAll(combine(searchState.asFlow(), selectedFilters.asFlow()) { search, filters ->
                 if (filters.isEmpty()) {
@@ -34,6 +33,10 @@ class PokemonListViewModel @ViewModelInject constructor(
         search("")
         clearFilters()
 
+    }
+
+    fun refresh() {
+        savedStateHandle.set(searchKey, this.searchState.value)
     }
 
     @SuppressLint("DefaultLocale")

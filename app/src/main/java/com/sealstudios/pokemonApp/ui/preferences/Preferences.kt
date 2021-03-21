@@ -1,13 +1,16 @@
 package com.sealstudios.pokemonApp.ui.preferences
 
+import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import androidx.preference.SwitchPreference
+import com.google.android.play.core.review.ReviewManagerFactory
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.switchUIMode
 import com.sealstudios.pokemonApp.ui.util.ThemeHelper.Companion.uiModeKey
@@ -25,9 +28,11 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
         val shareButton = preferenceManager.findPreference("share") as Preference?
         val sendButton = preferenceManager.findPreference("send") as Preference?
         val aboutButton = preferenceManager.findPreference("about") as Preference?
+        val reviewButton = preferenceManager.findPreference("review") as Preference?
         shareButton?.onPreferenceClickListener = this
         sendButton?.onPreferenceClickListener = this
         aboutButton?.onPreferenceClickListener = this
+        reviewButton?.onPreferenceClickListener = this
     }
 
     override fun onPreferenceChange(preference: Preference?, newValue: Any?): Boolean {
@@ -44,6 +49,9 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
             "about" -> {
                 findNavController().navigate(R.id.action_preferences_to_aboutFragment)
             }
+            "review" -> {
+                reviewApp(preferenceManager.context)
+            }
             "send" -> {
                 sendEmail()
             }
@@ -52,6 +60,19 @@ class Preferences : PreferenceFragmentCompat(), Preference.OnPreferenceChangeLis
             }
         }
         return true
+    }
+
+    private fun reviewApp(context: Context) {
+        val manager = ReviewManagerFactory.create(context)
+        val request = manager.requestReviewFlow()
+        request.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val reviewInfo = task.result
+                activity?.let { manager.launchReviewFlow(it, reviewInfo) }
+            } else {
+                Log.d("Error", "ErrorCode ${task.exception}")
+            }
+        }
     }
 
     private fun shareApp() {

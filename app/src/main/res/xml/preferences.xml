@@ -8,6 +8,11 @@
         app:title="Enable dark mode"/>
 
     <Preference
+        app:key="review"
+        app:title="Review"
+        app:icon="@drawable/ic_star_rate_black_24dp"/>
+
+    <Preference
         app:key="share"
         app:title="Share"
         app:icon="@drawable/ic_share_black_24dp"

@@ -186,6 +186,9 @@ dependencies {
 
     implementation 'com.akexorcist:round-corner-progress-bar:2.1.1'
 
+    implementation 'com.google.android.play:core:1.10.0'
+    implementation 'com.google.android.play:core-ktx:1.8.1'
+
     //LEAKS
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
 

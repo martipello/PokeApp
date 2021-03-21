@@ -18,6 +18,6 @@ class PokemonTypeMetaDataDaoProvider {
     @Singleton
     @Provides
     fun providePokemonDao(application: Application): PokemonTypeMetaDataDao {
-        return PokemonRoomDatabase.getDatabase(application, GlobalScope).pokemonTypeMetaDataDao()
+        return PokemonRoomDatabase.getDatabase(application).pokemonTypeMetaDataDao()
     }
 }

@@ -35,6 +35,8 @@ open class Pokemon constructor(
     @ColumnInfo(name = ABILITY_IDS)
     val abilityIds: List<Int> = emptyList(),
 
+
+
     ) {
 
     companion object {
@@ -89,6 +91,11 @@ open class Pokemon constructor(
             return -1
         }
 
+
+    }
+
+    override fun toString(): String {
+        return "Pokemon(id=$id, name='$name', image='$image', sprite=$sprite, weight=$weight, height=$height, move_ids=$move_ids, abilityIds=$abilityIds)"
     }
 }
 

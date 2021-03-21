@@ -19,7 +19,12 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
 ) {
 
     fun startFetchAllPokemonTypesAndSpecies() {
+        workManager.cancelAllWork()
         workManager.enqueue(OneTimeWorkRequest.from(PokemonWorkManager::class.java))
+    }
+
+    fun cancelFetchAllPokemonTypesAndSpecies() {
+        workManager.cancelAllWork()
     }
 
     suspend fun getAllPokemonResponse(): Resource<PokemonListResponse> {

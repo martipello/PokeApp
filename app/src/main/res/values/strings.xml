@@ -266,5 +266,9 @@
         See the License for the specific language governing permissions and
         limitations under the License.
     </string>
+    <string name="permission_request_title">Permission Request</string>
+    <string name="permission_request_body">To get the best experience we need to download all pokemon meta data. This is a large download, (about 50mb), proceed?</string>
+    <string name="permission_request_positive_button_text">OK, download</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

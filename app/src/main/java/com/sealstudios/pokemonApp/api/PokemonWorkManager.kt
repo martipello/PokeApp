@@ -8,48 +8,46 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.api.notification.NotificationArguments
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_ID
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_NAME
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.withContext
 
 class PokemonWorkManager @WorkerInject constructor(
-    @Assisted @NonNull context: Context,
-    @Assisted @NonNull params: WorkerParameters,
-    private val remotePokemonToRoomPokemonHelper: RemotePokemonToRoomPokemonRepository,
-    private val notificationHelper: NotificationHelper
+        @Assisted @NonNull context: Context,
+        @Assisted @NonNull params: WorkerParameters,
+        private val remotePokemonToRoomPokemonHelper: RemotePokemonToRoomPokemonRepository,
+        private val notificationHelper: NotificationHelper
 ) : CoroutineWorker(context, params) {
 
-    override suspend fun doWork(): Result = coroutineScope {
+    override suspend fun doWork(): Result = withContext(Dispatchers.Default) {
         withContext(context = Dispatchers.IO, block = {
-            val progress = "Starting Download"
-            setForeground(
-                notificationHelper.sendOnGoingNotification(
-                    NOTIFICATION_ID,
-                    NOTIFICATION_NAME,
-                    progress,
+            val notificationArguments = createNotificationArguments(
+                    "Starting Download",
                     0,
-                    100
-                )
+                    100,
+                    true)
+            setForeground(
+                    notificationHelper.sendFetchAllPokemonDataNotification(
+                            notificationArguments
+                    )
             )
-            handleAllPokemonResponse(
-                worker = this@PokemonWorkManager
-            )
+            handleAllPokemonResponse()
         })
         Result.success()
     }
 
-    private suspend fun handleAllPokemonResponse(worker: CoroutineWorker) = withContext(context = Dispatchers.IO) {
+    private suspend fun handleAllPokemonResponse() = withContext(context = Dispatchers.IO) {
         val pokemonRefListResponse = remotePokemonToRoomPokemonHelper.getAllPokemonResponse()
         when (pokemonRefListResponse.status) {
             Status.SUCCESS -> {
                 pokemonRefListResponse.data?.let {
-                    saveAllPokemon(it.results, worker)
-                    savePokemonTypesAndSpecies(it.results, worker)
+                    saveAllPokemon(it.results)
+                    savePokemonTypesAndSpecies(it.results)
                 }
             }
             Status.ERROR -> {
@@ -60,58 +58,53 @@ class PokemonWorkManager @WorkerInject constructor(
     }
 
     private suspend fun saveAllPokemon(
-        data: List<NamedApiResource>,
-        worker: CoroutineWorker
-    ) =
-        withContext(Dispatchers.IO) {
-            remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
-            setForeGroundAsync(
-                worker,
-                "Downloaded partial pokedex data",
-                100,
-                100,
-                true
-            )
-        }
+            data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
+        remotePokemonToRoomPokemonHelper.saveAllPokemon(data)
+        val notificationArguments = createNotificationArguments("Downloaded partial pokedex data", 100, 100, true)
+        setForeground(
+                notificationArguments
+        )
+    }
 
     private suspend fun savePokemonTypesAndSpecies(
-        data: List<NamedApiResource>,
-        worker: CoroutineWorker
-    ) =
-        withContext(Dispatchers.IO) {
-            for (i in data.indices) {
-                data[i].let { pokemonRef ->
-                    val id = getPokemonIdFromUrl(pokemonRef.url)
-                    val fetchPokemonAsync =
+            data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
+        for (i in data.indices) {
+            data[i].let { pokemonRef ->
+                val id = getPokemonIdFromUrl(pokemonRef.url)
+                val fetchPokemonAsync =
                         async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
-                    val fetchSpeciesAsync =
+                val fetchSpeciesAsync =
                         async { remotePokemonToRoomPokemonHelper.fetchAndSaveSpeciesForId(id) }
-                    fetchSpeciesAsync.await()
-                    fetchPokemonAsync.await()
-                    setForeGroundAsync(
-                        worker, "$i of ${data.size}", i + 1, data.size, false
-                    )
-                }
+                fetchSpeciesAsync.await()
+                fetchPokemonAsync.await()
+                val notificationArguments = createNotificationArguments("$i of ${data.size}", i, data.size, false)
+                setForeground(
+                        notificationArguments
+                )
             }
         }
+    }
 
-    private fun setForeGroundAsync(
-        worker: CoroutineWorker,
-        progressText: String,
-        progress: Int,
-        max: Int,
-        indeterminate: Boolean
-    ) {
-        worker.setForegroundAsync(
-            notificationHelper.sendOnGoingNotification(
+    private fun createNotificationArguments(progressText: String, progress: Int, progressMax: Int, isIndeterminate: Boolean): NotificationArguments {
+        return NotificationArguments(
                 NOTIFICATION_ID,
                 NOTIFICATION_NAME,
                 progressText,
-                progress,
-                max,
-                indeterminate
+                progress + 1,
+                progressMax,
+                isIndeterminate)
+    }
+
+    private suspend fun setForeground(
+            notificationArguments: NotificationArguments
+    ) {
+        withContext(Dispatchers.Default) {
+            setForeground(
+                    notificationHelper.sendFetchAllPokemonDataNotification(
+                            notificationArguments
+                    )
             )
-        )
+        }
     }
 
 }

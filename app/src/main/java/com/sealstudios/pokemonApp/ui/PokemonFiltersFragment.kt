@@ -19,8 +19,10 @@ import com.sealstudios.pokemonApp.ui.util.dp
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
+@FlowPreview
 @AndroidEntryPoint
 class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
 
@@ -30,6 +32,8 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
     private var filterIsExpanded = false
 
     private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
+
+    @FlowPreview
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,15 +61,16 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
         PokemonFilterFragmentInsets().setInsets(binding)
         super.onViewCreated(view, savedInstanceState)
         setUpViews()
-        observeFilters()
+        observeSelectedFilters()
+        setUpFilterView()
         onAddScrollAwareFilerFab()
         onCloseFiltersLayout()
     }
 
-    private fun observeFilters() {
-        pokemonListViewModel.filters.observe(viewLifecycleOwner, { selectionsLiveData ->
+    private fun observeSelectedFilters() {
+        pokemonListViewModel.selectedFilters.observe(viewLifecycleOwner, { selectionsLiveData ->
             selectionsLiveData?.let { selections ->
-                setUpFilterView(selections)
+                setFilterViewSelections(selections)
             }
         })
     }
@@ -167,13 +172,19 @@ class PokemonFiltersFragment : Fragment(), FilterChipClickListener {
         }
     }
 
-    private fun setUpFilterView(selections: MutableSet<String>) {
+    private fun setUpFilterView() {
         lifecycleScope.launch {
             FilterGroupHelper(
-                    chipGroup = binding.filterGroupLayout.root,
-                    clickListener = this@PokemonFiltersFragment,
-                    selections = selections
-            ).bindChips()
+                    chipGroup = binding.filterGroupLayout.root
+            ).bindChips(this@PokemonFiltersFragment)
+        }
+    }
+
+    private fun setFilterViewSelections(selections: MutableSet<String>) {
+        lifecycleScope.launch {
+            FilterGroupHelper(
+                    chipGroup = binding.filterGroupLayout.root
+            ).setSelections(selections)
         }
     }
 

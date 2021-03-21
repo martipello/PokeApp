@@ -51,11 +51,11 @@ class SplashScreenFragment : Fragment() {
         }
     }
 
-    private fun createRevealAnimation() {
-        val x: Int = binding.root.right / 2
-        val y: Int = binding.root.bottom - binding.root.bottom / 9
-        val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
-        viewLifecycleOwner.lifecycleScope.launch {
+    private suspend fun createRevealAnimation() {
+        withContext(Dispatchers.IO){
+            val x: Int = binding.root.right / 2
+            val y: Int = binding.root.bottom - binding.root.bottom / 9
+            val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()
             createCircleRevealAnimator(x, y, endRadius).run {
                 duration = 250
                 withContext(Dispatchers.Main){
@@ -65,6 +65,7 @@ class SplashScreenFragment : Fragment() {
                 navigateToListFragment()
             }
         }
+
     }
 
     private fun createCircleRevealAnimator(x: Int, y: Int, endRadius: Int): Animator {

@@ -1,6 +1,5 @@
 package com.sealstudios.pokemonApp.ui.viewModel
 
-import android.util.Log
 import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource

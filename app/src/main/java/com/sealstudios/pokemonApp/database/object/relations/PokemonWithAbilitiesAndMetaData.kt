@@ -12,29 +12,29 @@ import com.sealstudios.pokemonApp.database.`object`.joins.PokemonAbilityMetaData
 data class PokemonWithAbilitiesAndMetaData(
 
         @Embedded
-    val pokemon: Pokemon,
+        val pokemon: Pokemon,
         @Relation(
-        parentColumn = Pokemon.POKEMON_ID,
-        entity = PokemonAbility::class,
-        entityColumn = PokemonAbility.ABILITY_ID,
-        associateBy = Junction(
-            value = PokemonAbilityJoin::class,
-            parentColumn = Pokemon.POKEMON_ID,
-            entityColumn = PokemonAbility.ABILITY_ID
+                parentColumn = Pokemon.POKEMON_ID,
+                entity = PokemonAbility::class,
+                entityColumn = PokemonAbility.ABILITY_ID,
+                associateBy = Junction(
+                        value = PokemonAbilityJoin::class,
+                        parentColumn = Pokemon.POKEMON_ID,
+                        entityColumn = PokemonAbility.ABILITY_ID
+                )
         )
-    )
-    val abilities: List<PokemonAbility>,
+        val abilities: List<PokemonAbility>,
 
         @Relation(
-        parentColumn = Pokemon.POKEMON_ID,
-        entity = PokemonAbilityMetaData::class,
-        entityColumn = PokemonAbilityMetaData.ABILITY_META_DATA_ID,
-        associateBy = Junction(
-            value = PokemonAbilityMetaDataJoin::class,
-            parentColumn = Pokemon.POKEMON_ID,
-            entityColumn = PokemonAbilityMetaData.ABILITY_META_DATA_ID
+                parentColumn = Pokemon.POKEMON_ID,
+                entity = PokemonAbilityMetaData::class,
+                entityColumn = PokemonAbilityMetaData.ABILITY_META_DATA_ID,
+                associateBy = Junction(
+                        value = PokemonAbilityMetaDataJoin::class,
+                        parentColumn = Pokemon.POKEMON_ID,
+                        entityColumn = PokemonAbilityMetaData.ABILITY_META_DATA_ID
+                )
         )
-    )
-    val pokemonAbilityMetaData: List<PokemonAbilityMetaData>
+        val pokemonAbilityMetaData: List<PokemonAbilityMetaData>
 
 )

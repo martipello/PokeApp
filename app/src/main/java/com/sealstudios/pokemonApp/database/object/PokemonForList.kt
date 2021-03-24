@@ -19,5 +19,4 @@ open class PokemonForList(
 
         @ColumnInfo(name = POKEMON_IMAGE)
         var image: String = "",
-
-        )
+)

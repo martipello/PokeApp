@@ -13,6 +13,15 @@ fun String.capitalize(): String {
 fun String.toLowerCase(): String {
     return this.toLowerCase(Locale.ROOT)
 }
+
 fun String.toUpperCase(): String {
     return this.toUpperCase(Locale.ROOT)
+}
+
+fun String.getIdFromUrl(): Int {
+    val stringList = split('/')
+    if (stringList.size >= 2) {
+        return stringList[stringList.size - 2].toInt()
+    }
+    return -1
 }

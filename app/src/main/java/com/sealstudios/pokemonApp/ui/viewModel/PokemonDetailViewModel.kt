@@ -5,14 +5,13 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.*
 import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.mapDbPokemonFromPokemonResponse
-import com.sealstudios.pokemonApp.database.`object`.PokemonAbility.Companion.getPokemonAbilityIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonAbilityMetaData
-import com.sealstudios.pokemonApp.database.`object`.PokemonMove.Companion.getPokemonMoveIdFromUrl
 import com.sealstudios.pokemonApp.database.`object`.PokemonMoveMetaData
 import com.sealstudios.pokemonApp.database.`object`.PokemonType.Companion.mapDbPokemonTypesFromPokemonResponse
 import com.sealstudios.pokemonApp.database.`object`.isDefault
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
 import com.sealstudios.pokemonApp.repository.*
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -131,12 +130,12 @@ class PokemonDetailViewModel @ViewModelInject constructor(
 
     private suspend fun insertPokemonMoveMetaData(moves: List<PokemonMoveResponse>, pokemonId: Int) {
         for (moveResponse in moves) {
-            val moveId = getPokemonMoveIdFromUrl(moveResponse.move.url)
+            val moveId = moveResponse.move?.url?.getIdFromUrl() ?: -1
             withContext(Dispatchers.IO) {
                 val moveMetaData = PokemonMoveMetaData.mapRemotePokemonToMoveMetaData(
                         moveId,
                         pokemonId,
-                        moveResponse.move.name,
+                        moveResponse.move?.name ?: "",
                         moveResponse.version_group_details
                 )
                 pokemonMoveMetaDataRepository.insertMoveMetaData(moveMetaData)
@@ -147,12 +146,12 @@ class PokemonDetailViewModel @ViewModelInject constructor(
     private suspend fun insertPokemonAbilityMetaData(abilities: List<PokemonAbility>, pokemonId: Int) {
         withContext(Dispatchers.IO) {
             for (abilityResponse in abilities) {
-                val abilityId = getPokemonAbilityIdFromUrl(abilityResponse.ability.url)
+                val abilityId = abilityResponse.ability?.url?.getIdFromUrl() ?: -1
                 withContext(Dispatchers.IO) {
                     val abilityMetaData = PokemonAbilityMetaData.mapRemotePokemonToAbilityMetaData(
                             abilityId,
                             pokemonId,
-                            abilityResponse.ability.name,
+                            abilityResponse.ability?.name ?: "",
                             abilityResponse.is_hidden
                     )
                     pokemonAbilityMetaDataRepository.insertAbilityMetaData(abilityMetaData)

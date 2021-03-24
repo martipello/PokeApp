@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -70,6 +71,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private val pokemonSpeciesViewModel: PokemonSpeciesViewModel by viewModels()
     private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
     private val pokemonStatsViewModel: PokemonStatsViewModel by viewModels()
+    private val pokemonEvolutionViewModel: PokemonEvolutionViewModel by viewModels()
 
     private val pokemonMovesViewModel: PokemonMovesViewModel by viewModels()
 
@@ -120,6 +122,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
             }
             observePokemonDetails()
             observePokemonSpecies()
+            observePokemonEvolutionChain()
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
@@ -202,6 +205,7 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
     private fun setPokemonIdForViewModels(pokemonId: Int) {
         pokemonDetailViewModel.setPokemonId(pokemonId)
         pokemonSpeciesViewModel.setPokemonId(pokemonId)
+        pokemonEvolutionViewModel.setPokemonId(pokemonId)
     }
 
     private fun observePokemonDetails() {
@@ -229,6 +233,16 @@ class PokemonDetailFragment : PokemonDetailAnimationManager() {
                 Status.LOADING -> {
                     binding.setLoading()
                 }
+            }
+        })
+    }
+
+    private fun observePokemonEvolutionChain(){
+        pokemonEvolutionViewModel.pokemonEvolution.observe(viewLifecycleOwner, {
+            when (it.status) {
+                Status.SUCCESS -> Log.d("EVOLUTION", "SUCCESS ${it.data}")
+                Status.ERROR -> Log.d("EVOLUTION", "ERROR ${it.message}")
+                Status.LOADING -> Log.d("EVOLUTION", "LOADING")
             }
         })
     }

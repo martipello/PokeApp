@@ -9,16 +9,16 @@ import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
 
 data class PokemonWithTypes(
         @Embedded
-    val pokemon: Pokemon,
+        val pokemon: Pokemon,
         @Relation(
-        parentColumn = Pokemon.POKEMON_ID,
-        entity = PokemonType::class,
-        entityColumn = PokemonType.TYPE_ID,
-        associateBy = Junction(
-            value = PokemonTypesJoin::class,
-            parentColumn = Pokemon.POKEMON_ID,
-            entityColumn = PokemonType.TYPE_ID
+                parentColumn = Pokemon.POKEMON_ID,
+                entity = PokemonType::class,
+                entityColumn = PokemonType.TYPE_ID,
+                associateBy = Junction(
+                        value = PokemonTypesJoin::class,
+                        parentColumn = Pokemon.POKEMON_ID,
+                        entityColumn = PokemonType.TYPE_ID
+                )
         )
-    )
-    val types: List<PokemonType>
+        val types: List<PokemonType>
 )

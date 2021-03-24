@@ -62,11 +62,11 @@ data class PokemonAbility @JvmOverloads constructor(
                                     ability.generation?.name ?: ""
                             )
                     ),
-                    abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.effect
+                    abilityEffectEntry = ability.effect_entries?.firstOrNull { effect -> effect.language?.name == "en" }?.effect
                             ?: "",
-                    abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language.name == "en" }?.short_effect
+                    abilityEffectEntryShortEffect = ability.effect_entries?.firstOrNull { effect -> effect.language?.name == "en" }?.short_effect
                             ?: "",
-                    flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language.name == "en" }?.flavor_text
+                    flavorText = ability.flavor_text_entries?.firstOrNull { abilityFlavorText -> abilityFlavorText.language?.name == "en" }?.flavor_text
                             ?: "",
                     isMainSeries = ability.is_main_series ?: false
             )
@@ -81,17 +81,6 @@ data class PokemonAbility @JvmOverloads constructor(
         const val ABILITY_FLAVOR_TEXT: String = "ability_flavor_text"
         const val ABILITY_EFFECT_ENTRY_SHORT_EFFECT: String = "ability_effect_entry_short_effect"
         const val ABILITY_IS_MAIN_SERIES: String = "ability_is_main_series"
-
-
-        fun getPokemonAbilityIdFromUrl(pokemonUrl: String?): Int {
-            if (pokemonUrl != null) {
-                val pokemonIndex = pokemonUrl.split('/')
-                if (pokemonIndex.size >= 2) {
-                    return pokemonIndex[pokemonIndex.size - 2].toInt()
-                }
-            }
-            return -1
-        }
 
         fun formatAbilityName(abilityName: String): String {
             val parts = abilityName.split(regex = Regex("-"), limit = 2)

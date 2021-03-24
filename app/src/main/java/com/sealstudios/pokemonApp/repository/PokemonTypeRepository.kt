@@ -42,7 +42,7 @@ class PokemonTypeRepository @Inject constructor(
             remotePokemon.types.map {
 
                 val pokemonType = PokemonType.mapDbPokemonTypeFromPokemonResponse(it)
-                val pokemonTypeJoin = PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon.id, it.type.url)
+                val pokemonTypeJoin = PokemonTypesJoin.mapTypeJoinsFromPokemonResponse(remotePokemon.id, it.type?.url)
 
                 insertPokemonType(pokemonType)
                 insertPokemonTypeJoin(pokemonTypeJoin)

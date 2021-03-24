@@ -8,12 +8,12 @@ import org.jetbrains.annotations.NotNull
 
 @Entity(primaryKeys = [POKEMON_ID, MOVE_ID])
 class PokemonMovesJoin(
-    @NotNull
-    @ColumnInfo(name = POKEMON_ID, index = true)
-    val pokemon_id: Int,
+        @NotNull
+        @ColumnInfo(name = POKEMON_ID, index = true)
+        val pokemon_id: Int,
 
-    @NotNull
-    @ColumnInfo(name = MOVE_ID, index = true)
-    val move_id: Int
+        @NotNull
+        @ColumnInfo(name = MOVE_ID, index = true)
+        val move_id: Int
 
 )

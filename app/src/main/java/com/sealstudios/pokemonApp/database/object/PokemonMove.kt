@@ -75,30 +75,19 @@ data class PokemonMove @JvmOverloads constructor(
         ): PokemonMove {
             return PokemonMove(
                 id = apiPokemonMove.id,
-                name = apiPokemonMove.name,
+                name = apiPokemonMove.name ?: "",
                 accuracy = apiPokemonMove.accuracy ?: 0,
-                description = apiPokemonMove.flavor_text_entries?.findLast { it.language.name == "en" }?.flavor_text
+                description = apiPokemonMove.flavor_text_entries?.findLast { it.language?.name == "en" }?.flavor_text
                     ?: "",
-                pp = apiPokemonMove.pp,
+                pp = apiPokemonMove.pp ?: 0,
                 priority = apiPokemonMove.priority,
                 power = apiPokemonMove.power ?: 0,
-                generation = apiPokemonMove.generation.name,
-                damage_class = apiPokemonMove.damage_class.name,
-                type = apiPokemonMove.type.name,
+                generation = apiPokemonMove.generation?.name ?: "",
+                damage_class = apiPokemonMove.damage_class?.name ?: "",
+                type = apiPokemonMove.type?.name ?: "",
                 damage_class_effect_chance = apiPokemonMove.effect_chance,
             )
         }
-
-        fun getPokemonMoveIdFromUrl(pokemonUrl: String?): Int {
-            if (pokemonUrl != null) {
-                val pokemonIndex = pokemonUrl.split('/')
-                if (pokemonIndex.size >= 2) {
-                    return pokemonIndex[pokemonIndex.size - 2].toInt()
-                }
-            }
-            return -1
-        }
-
 
         suspend fun PokemonMove.typeOrCategoryList(): List<PokemonMoveTypeOrCategory> {
             return withContext(context = Dispatchers.Default) {

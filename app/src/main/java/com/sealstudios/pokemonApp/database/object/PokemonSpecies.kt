@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemonSpecies
 import com.sealstudios.pokemonApp.api.`object`.Description
-import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @Entity
@@ -82,26 +82,26 @@ data class PokemonSpecies(
             return PokemonSpecies(
                 id = apiPokemonSpecies.id,
                 species = getPokemonSpeciesNameFromGenus(apiPokemonSpecies),
-                pokedex = apiPokemonSpecies.pokedex_numbers.map { it.pokedex.name }.first(),
-                generation = apiPokemonSpecies.generation.name,
+                pokedex = apiPokemonSpecies.pokedex_numbers.map { it.pokedex?.name }.first(),
+                generation = apiPokemonSpecies.generation?.name ?: "",
                 pokedexEntry = pokedexEntry,
                 habitat = apiPokemonSpecies.habitat?.name ?: "Unknown",
-                shape = apiPokemonSpecies.shape.name,
+                shape = apiPokemonSpecies.shape?.name  ?: "",
                 formDescription = getFormDescription(apiFormDescription = apiPokemonSpecies.form_descriptions),
                 base_happiness = apiPokemonSpecies.base_happiness,
                 capture_rate = apiPokemonSpecies.capture_rate,
                 isBaby = apiPokemonSpecies.is_baby,
                 gender_rate = apiPokemonSpecies.gender_rate,
                 hatch_counter = apiPokemonSpecies.hatch_counter,
-                evolution_chain_id = getPokemonIdFromUrl(apiPokemonSpecies.evolution_chain.url),
+                evolution_chain_id = apiPokemonSpecies.evolution_chain.url.getIdFromUrl(),
             )
         }
 
         private fun getFormDescription(apiFormDescription: List<Description>): String {
             var formDescription = "No Form Data."
             for (entry in apiFormDescription) {
-                if (entry.language.name == "en") {
-                    formDescription = entry.description
+                if (entry.language?.name == "en") {
+                    formDescription = entry.description ?: ""
                 }
             }
             return formDescription
@@ -110,8 +110,8 @@ data class PokemonSpecies(
         private fun getPokedexEntry(apiPokemonSpecies: ApiPokemonSpecies): String {
             var pokedexEntry = "No Pokedex Data."
             for (entry in apiPokemonSpecies.flavor_text_entries) {
-                if (entry.language.name == "en") {
-                    pokedexEntry = entry.flavor_text
+                if (entry.language?.name == "en") {
+                    pokedexEntry = entry.flavor_text ?: ""
                 }
             }
             return pokedexEntry
@@ -120,8 +120,8 @@ data class PokemonSpecies(
         private fun getPokemonSpeciesNameFromGenus(apiPokemonSpecies: ApiPokemonSpecies): String {
             var pokemonSpecies = "Species Unknown."
             for (entry in apiPokemonSpecies.genera) {
-                if (entry.language.name == "en") {
-                    pokemonSpecies = entry.genus
+                if (entry.language?.name == "en") {
+                    pokemonSpecies = entry.genus ?: ""
                 }
             }
             return pokemonSpecies

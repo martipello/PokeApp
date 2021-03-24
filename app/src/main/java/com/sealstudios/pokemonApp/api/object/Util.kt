@@ -2,16 +2,16 @@ package com.sealstudios.pokemonApp.api.`object`
 
 data class Language(
     val id: Int,
-    val name: String,
+    val name: String?,
     val official: Boolean,
-    val iso639: String,
-    val iso3166: String,
+    val iso639: String?,
+    val iso3166: String?,
     val names: List<Name>
 )
 
 data class Description(
-    val description: String,
-    val language: NamedApiResource
+    val description: String?,
+    val language: NamedApiResource?
 )
 
 data class Effect(
@@ -23,50 +23,50 @@ data class Effect(
 data class Encounter(
     val minLevel: Int,
     val maxLevel: Int,
-    val conditionValues: List<NamedApiResource>,
+    val conditionValues: List<NamedApiResource?>,
     val chance: Int,
-    val method: NamedApiResource
+    val method: NamedApiResource?
 )
 
 data class FlavorText(
-    val flavor_text: String,
-    val language: NamedApiResource
+    val flavor_text: String?,
+    val language: NamedApiResource?
 )
 
 data class GenerationGameIndex(
     val gameIndex: Int,
-    val generation: NamedApiResource
+    val generation: NamedApiResource?
 )
 
 data class MachineVersionDetail(
     val machine: ApiResource,
-    val versionGroup: NamedApiResource
+    val versionGroup: NamedApiResource?
 )
 
 data class Name(
-    val name: String,
-    val language: NamedApiResource
+    val name: String?,
+    val language: NamedApiResource?
 )
 
 data class VerboseEffect(
-    val effect: String,
-    val short_effect: String,
-    val language: NamedApiResource
+    val effect: String?,
+    val short_effect: String?,
+    val language: NamedApiResource?
 )
 
 data class VersionEncounterDetail(
-    val version: NamedApiResource,
+    val version: NamedApiResource?,
     val maxChance: Int,
     val encounterDetails: List<Encounter>
 )
 
 data class VersionGameIndex(
     val gameIndex: Int,
-    val version: NamedApiResource
+    val version: NamedApiResource?
 )
 
 data class VersionGroupFlavorText(
-    val text: String,
-    val language: NamedApiResource,
-    val versionGroup: NamedApiResource
+    val text: String?,
+    val language: NamedApiResource?,
+    val versionGroup: NamedApiResource?
 )

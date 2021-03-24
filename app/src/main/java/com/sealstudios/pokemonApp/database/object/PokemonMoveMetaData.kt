@@ -60,9 +60,9 @@ open class PokemonMoveMetaData constructor(
             return PokemonMoveMetaData(
                 id = createMetaMoveId(pokemonId, pokemonMoveId),
                 moveName = moveName,
-                versionsLearnt = pokemonMoveVersions.map { it.version_group.name },
+                versionsLearnt = pokemonMoveVersions.map { it.version_group?.name ?: "" },
                 levelsLearnedAt = pokemonMoveVersions.map { it.level_learned_at },
-                learnMethods = pokemonMoveVersions.map { it.move_learn_method.name }
+                learnMethods = pokemonMoveVersions.map { it.move_learn_method?.name ?: "" }
             )
         }
 

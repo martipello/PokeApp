@@ -73,7 +73,7 @@ data class PokemonBaseStats(
         }
 
         private fun getStatForName(pokemonStats: List<PokemonStat>, statName: String): Int {
-            return pokemonStats.filter { pokemonStat -> pokemonStat.stat.name == statName }.map { it.base_stat }.getOrElse(0) { 0 }
+            return pokemonStats.filter { pokemonStat -> pokemonStat.stat?.name == statName }.map { it.base_stat }.getOrElse(0) { 0 }
         }
 
         private const val uniqueBaseStatConstant = 1001

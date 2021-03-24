@@ -43,7 +43,7 @@ interface PokemonService {
 
     @GET("evolution-chain/{id}/")
     suspend fun getPokemonEvolutionsForId(
-            @Path(value = "id") moveId: Int
+            @Path(value = "id") evolutionChainId: Int
     ): EvolutionChain
 
 }

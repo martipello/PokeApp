@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemonType
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @TypeConverters(RoomIntListConverter::class)
@@ -42,7 +43,7 @@ open class PokemonTypeMetaData constructor(
         ): PokemonTypeMetaData {
             return PokemonTypeMetaData(
                     id = createTypeMetaDataId(pokemonId, typeSlots.map { it.slot }.sum()),
-                    slots = typeSlots.map { Pokemon.getPokemonIdFromUrl(it.type.url) },
+                    slots = typeSlots.map { it.type?.url?.getIdFromUrl() ?: -1 },
             )
         }
 

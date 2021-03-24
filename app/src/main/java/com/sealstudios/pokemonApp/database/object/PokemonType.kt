@@ -8,6 +8,7 @@ import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemonType
 import com.sealstudios.pokemonApp.api.`object`.Type
 import com.sealstudios.pokemonApp.util.RoomStringListConverter
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @TypeConverters(RoomStringListConverter::class)
@@ -67,20 +68,23 @@ data class PokemonType(
 
         fun mapDbPokemonTypeFromPokemonResponse(apiPokemonType: ApiPokemonType): PokemonType {
             return PokemonType(
-                    id = Pokemon.getPokemonIdFromUrl(apiPokemonType.type.url),
-                    name = apiPokemonType.type.name,
+                    id = apiPokemonType.type?.url?.getIdFromUrl() ?: -1,
+                    name = apiPokemonType.type?.name ?: "",
             )
         }
+
         fun mapDbPokemonTypeFromTypeResponse(type: Type): PokemonType {
             return PokemonType(
                     id = type.id,
-                    name = type.name,
-                    doubleDamageFrom = type.damage_relations.double_damage_from.map { it.name },
-                    doubleDamageTo = type.damage_relations.double_damage_to.map { it.name },
-                    halfDamageFrom = type.damage_relations.half_damage_from.map { it.name },
-                    halfDamageTo = type.damage_relations.half_damage_to.map { it.name },
-                    noDamageFrom = type.damage_relations.no_damage_from.map { it.name },
-                    noDamageTo = type.damage_relations.no_damage_to.map { it.name },
+                    name = type.name ?: "",
+                    doubleDamageFrom = type.damage_relations?.double_damage_from?.map {
+                        it.name
+                    } ?: listOf(),
+                    doubleDamageTo = type.damage_relations?.double_damage_to?.map { it.name } ?: listOf(),
+                    halfDamageFrom = type.damage_relations?.half_damage_from?.map { it.name } ?: listOf(),
+                    halfDamageTo = type.damage_relations?.half_damage_to?.map { it.name } ?: listOf(),
+                    noDamageFrom = type.damage_relations?.no_damage_from?.map { it.name } ?: listOf(),
+                    noDamageTo = type.damage_relations?.no_damage_to?.map { it.name } ?: listOf(),
             )
         }
     }

@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
@@ -85,6 +86,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setUpPokemonAdapter() {
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+        pokemonAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     private fun onFetchedPartialPokemonData() {

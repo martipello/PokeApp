@@ -13,11 +13,11 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/species_fragment"
-        android:name="com.sealstudios.pokemonApp.ui.PokemonSpeciesFragment"
+        android:name="com.sealstudios.pokemonApp.ui.SpeciesFragment"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout="@layout/pokemon_species_fragment" />
+        tools:layout="@layout/species_fragment" />
 
         <View
             android:id="@+id/abilities_divider"
@@ -29,11 +29,11 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/ability_fragment"
-        android:name="com.sealstudios.pokemonApp.ui.PokemonAbilityFragment"
+        android:name="com.sealstudios.pokemonApp.ui.AbilityFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toBottomOf="@id/abilities_divider"
-        tools:layout="@layout/pokemon_ability_fragment" />
+        tools:layout="@layout/ability_fragment" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

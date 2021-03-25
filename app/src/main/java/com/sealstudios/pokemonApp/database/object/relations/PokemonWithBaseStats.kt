@@ -4,21 +4,21 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonBaseStats
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonBaseStatsJoin
+import com.sealstudios.pokemonApp.database.`object`.BaseStats
+import com.sealstudios.pokemonApp.database.`object`.joins.BaseStatsJoin
 
 data class PokemonWithBaseStats(
         @Embedded
         val pokemon: Pokemon,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonBaseStats::class,
-                entityColumn = PokemonBaseStats.POKEMON_BASE_STAT_ID,
+                entity = BaseStats::class,
+                entityColumn = BaseStats.POKEMON_BASE_STAT_ID,
                 associateBy = Junction(
-                        value = PokemonBaseStatsJoin::class,
+                        value = BaseStatsJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonBaseStats.POKEMON_BASE_STAT_ID,
+                        entityColumn = BaseStats.POKEMON_BASE_STAT_ID,
                 )
         )
-        val pokemonBaseStats: PokemonBaseStats?
+        val baseStats: BaseStats?
 )

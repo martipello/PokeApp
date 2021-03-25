@@ -13,9 +13,9 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
         private val workManager: WorkManager,
         private val remotePokemonRepository: RemotePokemonRepository,
         private val pokemonRepository: PokemonRepository,
-        private val pokemonTypeRepository: PokemonTypeRepository,
-        private val pokemonTypeMetaDataRepository: PokemonTypeMetaDataRepository,
-        private val pokemonSpeciesRepository: PokemonSpeciesRepository,
+        private val typeRepository: TypeRepository,
+        private val typeMetaDataRepository: TypeMetaDataRepository,
+        private val speciesRepository: SpeciesRepository,
 ) {
 
     fun startFetchAllPokemonTypesAndSpecies() {
@@ -41,9 +41,9 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
                     remotePokemonRepository.speciesForId(remotePokemonId)
             when (pokemonSpeciesRequest.status) {
                 Status.SUCCESS -> pokemonSpeciesRequest.data?.let {
-                    pokemonSpeciesRepository.insertPokemonSpecies(
+                    speciesRepository.insertPokemonSpecies(
                             remotePokemonId,
-                            PokemonSpecies.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
+                            Species.mapRemotePokemonSpeciesToDatabasePokemonSpecies(it)
                     )
                 }
                 else -> {
@@ -61,8 +61,8 @@ class RemotePokemonToRoomPokemonRepository @Inject constructor(
             when (pokemonRequest.status) {
                 Status.SUCCESS -> {
                     pokemonRequest.data?.let {
-                        pokemonTypeRepository.insertPokemonTypes(it)
-                        pokemonTypeMetaDataRepository.insertPokemonTypeMetaData(it)
+                        typeRepository.insertPokemonTypes(it)
+                        typeMetaDataRepository.insertPokemonTypeMetaData(it)
                     }
                 }
                 else -> {

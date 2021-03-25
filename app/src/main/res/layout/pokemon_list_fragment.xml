@@ -19,15 +19,15 @@
 
     <include
         android:id="@+id/error_pokemon_list"
-        layout="@layout/pokemon_error_layout"
+        layout="@layout/error_layout"
         android:visibility="gone"/>
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/pokemon_list_filter"
-        android:name="com.sealstudios.pokemonApp.ui.PokemonFiltersFragment"
+        android:name="com.sealstudios.pokemonApp.ui.FiltersFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout="@layout/pokemon_list_fragment_filter_holder" />
+        tools:layout="@layout/filter_holder" />
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

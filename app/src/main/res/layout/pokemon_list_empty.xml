@@ -36,7 +36,7 @@
 
     <include
         android:id="@+id/pokemon_list_loading"
-        layout="@layout/pokemon_loading_layout"
+        layout="@layout/loading_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintWidth_max="@dimen/qualified_large_margin_64dp"

@@ -24,7 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sealstudios.pokemonApp.database.`object`.PokemonType as dbType
+import com.sealstudios.pokemonApp.database.`object`.Type as dbType
 import com.sealstudios.pokemonApp.ui.util.PokemonType as networkType
 
 class PokemonViewHolder constructor(

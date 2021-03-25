@@ -270,5 +270,7 @@
     <string name="permission_request_body">To get the best experience we need to download all pokemon meta data. This is a large download, (about 50mb), proceed?</string>
     <string name="permission_request_positive_button_text">OK, download</string>
     <string name="cancel">Cancel</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

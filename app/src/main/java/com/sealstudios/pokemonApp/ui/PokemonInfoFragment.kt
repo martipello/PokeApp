@@ -8,9 +8,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.sealstudios.pokemonApp.databinding.PokemonInfoFragmentBinding
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonAbilityViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.AbilityViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonInfoViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonSpeciesViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.SpeciesViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -20,8 +20,8 @@ class PokemonInfoFragment : Fragment() {
     private val binding get() = _binding!!
 
     private val infoViewModel: PokemonInfoViewModel by viewModels({ requireParentFragment() })
-    private val speciesViewModel: PokemonSpeciesViewModel by viewModels()
-    private val abilityViewModel: PokemonAbilityViewModel by viewModels()
+    private val speciesViewModel: SpeciesViewModel by viewModels()
+    private val abilityViewModel: AbilityViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {

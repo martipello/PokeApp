@@ -4,47 +4,47 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
-import com.sealstudios.pokemonApp.database.`object`.PokemonMove
-import com.sealstudios.pokemonApp.database.`object`.PokemonSpecies
-import com.sealstudios.pokemonApp.database.`object`.PokemonType
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonMovesJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
+import com.sealstudios.pokemonApp.database.`object`.Move
+import com.sealstudios.pokemonApp.database.`object`.Species
+import com.sealstudios.pokemonApp.database.`object`.Type
+import com.sealstudios.pokemonApp.database.`object`.joins.MovesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.SpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.TypesJoin
 
 data class PokemonWithTypesAndSpeciesAndMoves(
         @Embedded
         val pokemon: Pokemon,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonType::class,
-                entityColumn = PokemonType.TYPE_ID,
+                entity = Type::class,
+                entityColumn = Type.TYPE_ID,
                 associateBy = Junction(
-                        value = PokemonTypesJoin::class,
+                        value = TypesJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonType.TYPE_ID
+                        entityColumn = Type.TYPE_ID
                 )
         )
-        val types: List<PokemonType>,
+        val types: List<Type>,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonSpecies::class,
-                entityColumn = PokemonSpecies.SPECIES_ID,
+                entity = Species::class,
+                entityColumn = Species.SPECIES_ID,
                 associateBy = Junction(
-                        value = PokemonSpeciesJoin::class,
+                        value = SpeciesJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonSpecies.SPECIES_ID
+                        entityColumn = Species.SPECIES_ID
                 )
         )
-        val species: PokemonSpecies,
+        val species: Species,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonMove::class,
-                entityColumn = PokemonMove.MOVE_ID,
+                entity = Move::class,
+                entityColumn = Move.MOVE_ID,
                 associateBy = Junction(
-                        value = PokemonMovesJoin::class,
+                        value = MovesJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonMove.MOVE_ID
+                        entityColumn = Move.MOVE_ID
                 )
         )
-        val moves: List<PokemonMove>
+        val moves: List<Move>
 )

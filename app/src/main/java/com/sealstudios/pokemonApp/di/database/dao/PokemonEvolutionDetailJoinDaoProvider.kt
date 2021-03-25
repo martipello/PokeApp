@@ -3,7 +3,7 @@ package com.sealstudios.pokemonApp.di.database.dao
 
 import android.app.Application
 import com.sealstudios.pokemonApp.database.PokemonRoomDatabase
-import com.sealstudios.pokemonApp.database.dao.PokemonEvolutionDetailJoinDao
+import com.sealstudios.pokemonApp.database.dao.EvolutionDetailJoinDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,7 +16,7 @@ class PokemonEvolutionDetailJoinDaoProvider {
 
     @Singleton
     @Provides
-    fun providePokemonDao(application: Application): PokemonEvolutionDetailJoinDao {
+    fun providePokemonDao(application: Application): EvolutionDetailJoinDao {
         return PokemonRoomDatabase.getDatabase(application).pokemonEvolutionDetailJoinDao()
     }
 }

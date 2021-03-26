@@ -5,7 +5,7 @@
     android:id="@+id/species_root"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.sealstudios.pokemonApp.ui.DetailFragment">
+    tools:context="com.sealstudios.pokemonApp.ui.SpeciesFragment">
 
     <include layout="@layout/loading_layout"
         android:id="@+id/species_loading"
@@ -36,7 +36,6 @@
     app:layout_constraintBottom_toBottomOf="parent"
     android:visibility="gone"
     android:id="@+id/species_content">
-
 
     <TextView
         android:id="@+id/pokedex_entry_label"

@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.viewModels
 import com.sealstudios.pokemonApp.databinding.PokemonInfoFragmentBinding
 import com.sealstudios.pokemonApp.ui.viewModel.AbilityViewModel
+import com.sealstudios.pokemonApp.ui.viewModel.EvolutionViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonInfoViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.SpeciesViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -22,6 +23,7 @@ class PokemonInfoFragment : Fragment() {
     private val infoViewModel: PokemonInfoViewModel by viewModels({ requireParentFragment() })
     private val speciesViewModel: SpeciesViewModel by viewModels()
     private val abilityViewModel: AbilityViewModel by viewModels()
+    private val evolutionViewModel: EvolutionViewModel by viewModels()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
@@ -36,9 +38,9 @@ class PokemonInfoFragment : Fragment() {
 
     private fun observePokemonId() {
         infoViewModel.pokemonId.observe(viewLifecycleOwner, { id ->
-            Log.d("ABILITY_VM", "observePokemonId")
             speciesViewModel.setPokemonId(id)
             abilityViewModel.setPokemonId(id)
+            evolutionViewModel.setPokemonId(id)
         })
     }
 }

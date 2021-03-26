@@ -58,7 +58,7 @@ class BaseStatsFragment : Fragment() {
                 { pokemonWithStats ->
                     when (pokemonWithStats.status) {
                         Status.SUCCESS -> {
-                            if (pokemonWithStats.data != null) {
+                            if (pokemonWithStats.data?.baseStats != null) {
                                 populateBaseStatsGraph(pokemonWithStats.data)
                                 populateBaseStats(pokemonWithStats.data)
                                 binding.setNotEmpty()

@@ -1,6 +1,7 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.wrappers.AbilityWithMetaData
@@ -19,10 +21,14 @@ import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawab
 import com.sealstudios.pokemonApp.ui.util.decorators.ListDividerDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.AbilityViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
 class AbilityFragment : Fragment(), AdapterClickListener {
+
+    @Inject
+    lateinit var glide: RequestManager
 
     private var abilityAdapter: AbilityAdapter? = null
     private val abilityViewModel: AbilityViewModel by viewModels({ requireParentFragment() })
@@ -50,6 +56,7 @@ class AbilityFragment : Fragment(), AdapterClickListener {
         abilityViewModel.abilities.observe(
                 viewLifecycleOwner,
                 { pokemonWithAbilitiesAndMetaDataResource ->
+                    Log.d("ABILITY", "ABILITY DATA ${pokemonWithAbilitiesAndMetaDataResource.data}")
                     when (pokemonWithAbilitiesAndMetaDataResource.status) {
                         Status.SUCCESS -> {
                             if (pokemonWithAbilitiesAndMetaDataResource.data != null) {
@@ -110,6 +117,7 @@ class AbilityFragment : Fragment(), AdapterClickListener {
     private fun AbilityFragmentBinding.setLoading() {
         abilityContent.visibility = View.GONE
         abilityError.root.visibility = View.GONE
+        emptyAbilitiesList.root.visibility = View.GONE
         abilityLoading.root.visibility = View.VISIBLE
         abilityLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
     }
@@ -117,8 +125,9 @@ class AbilityFragment : Fragment(), AdapterClickListener {
     private fun AbilityFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
         abilityLoading.root.visibility = View.GONE
         abilityContent.visibility = View.GONE
-        abilityError.root.visibility = View.VISIBLE
         abilityError.errorImage.visibility = View.GONE
+        emptyAbilitiesList.root.visibility = View.GONE
+        abilityError.root.visibility = View.VISIBLE
         abilityError.errorText.text = errorMessage
         abilityError.retryButton.setOnClickListener {
             retry()
@@ -128,11 +137,17 @@ class AbilityFragment : Fragment(), AdapterClickListener {
     private fun AbilityFragmentBinding.setNotEmpty() {
         abilityError.root.visibility = View.GONE
         abilityLoading.root.visibility = View.GONE
+        emptyAbilitiesList.root.visibility = View.GONE
         abilityContent.visibility = View.VISIBLE
     }
 
     private fun AbilityFragmentBinding.setEmpty() {
-        root.visibility = View.GONE
+        abilityLoading.root.visibility = View.GONE
+        abilityContent.visibility = View.GONE
+        abilityError.errorImage.visibility = View.GONE
+        emptyAbilitiesList.root.visibility = View.GONE
+        emptyAbilitiesList.root.visibility = View.VISIBLE
+        glide.load(R.drawable.no_results_snorlax).into(emptyAbilitiesList.emptyResultsImage)
     }
 
 }

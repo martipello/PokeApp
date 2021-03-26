@@ -90,10 +90,14 @@ class DetailViewModel @ViewModelInject constructor(
                 } else {
                     emit(Resource.error(pokemonRequest.message
                             ?: "Data is empty", null, pokemonRequest.code))
+                    onFinish(pokemonWithTypes.pokemon.id, null)
                 }
             }
-            Status.ERROR -> emit(Resource.error(pokemonRequest.message
-                    ?: "General error", null, pokemonRequest.code))
+            Status.ERROR -> {
+                emit(Resource.error(pokemonRequest.message
+                        ?: "General error", null, pokemonRequest.code))
+                onFinish(pokemonWithTypes.pokemon.id, null)
+            }
             Status.LOADING -> emit(Resource.loading(null))
         }
     }

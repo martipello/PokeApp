@@ -1,58 +1,72 @@
 package com.sealstudios.pokemonApp.ui
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.sealstudios.pokemonApp.R
+import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.databinding.EvolutionFragmentBinding
+import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
+import com.sealstudios.pokemonApp.ui.viewModel.EvolutionViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [EvolutionFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+@AndroidEntryPoint
 class EvolutionFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val evolutionViewModel: EvolutionViewModel by viewModels({ requireParentFragment() })
+    private var _binding: EvolutionFragmentBinding? = null
+    private val binding get() = _binding!!
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        _binding = EvolutionFragmentBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        observeEvolutionChain()
+    }
+
+    private fun observeEvolutionChain() {
+        evolutionViewModel.evolution.observe(viewLifecycleOwner, { evolution ->
+            when (evolution.status) {
+                Status.SUCCESS -> {
+                    Log.d("EVOLUTION", "SUCCESS ${evolution.data}")
+                }
+                Status.ERROR -> {
+                    binding.setError(evolution.message ?: "Oops, something went wrong...")
+                    { evolutionViewModel.retry() }
+                }
+                Status.LOADING -> binding.setLoading()
+            }
+        })
+    }
+
+    private fun EvolutionFragmentBinding.setLoading() {
+        evolutionContent.visibility = View.GONE
+        evolutionError.root.visibility = View.GONE
+        evolutionLoading.root.visibility = View.VISIBLE
+        evolutionLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
+    }
+
+    private fun EvolutionFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
+        evolutionLoading.root.visibility = View.GONE
+        evolutionContent.visibility = View.GONE
+        evolutionError.root.visibility = View.VISIBLE
+        evolutionError.errorImage.visibility = View.GONE
+        evolutionError.errorText.text = errorMessage
+        evolutionError.retryButton.setOnClickListener {
+            retry()
         }
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.evolution_fragment, container, false)
+    private fun EvolutionFragmentBinding.setNotEmpty() {
+        evolutionError.root.visibility = View.GONE
+        evolutionLoading.root.visibility = View.GONE
+        evolutionContent.visibility = View.VISIBLE
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment EvolutionFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-                EvolutionFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ARG_PARAM1, param1)
-                        putString(ARG_PARAM2, param2)
-                    }
-                }
-    }
 }

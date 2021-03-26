@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.os.Bundle
-import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import androidx.appcompat.app.AppCompatActivity
@@ -71,7 +70,6 @@ class DetailFragment : DetailAnimationManager() {
     private val speciesViewModel: SpeciesViewModel by viewModels()
     private val pokemonInfoViewModel: PokemonInfoViewModel by viewModels()
     private val statsViewModel: StatsViewModel by viewModels()
-    private val pokemonEvolutionViewModel: EvolutionViewModel by viewModels()
 
     private val movesViewModel: MovesViewModel by viewModels()
 
@@ -91,7 +89,7 @@ class DetailFragment : DetailAnimationManager() {
         observeHasExpandedState()
         handleNavigationArgs()
         observeUIColor()
-        setViewModelProperties()
+        setPokemonIdForViewModels(pokemonId)
         DetailFragmentInsets().setInsets(binding)
         return binding.root
     }
@@ -122,7 +120,6 @@ class DetailFragment : DetailAnimationManager() {
             }
             observePokemonDetails()
             observePokemonSpecies()
-            observePokemonEvolutionChain()
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
@@ -198,14 +195,9 @@ class DetailFragment : DetailAnimationManager() {
                 args.transitionName
     }
 
-    private fun setViewModelProperties() {
-        setPokemonIdForViewModels(pokemonId)
-    }
-
     private fun setPokemonIdForViewModels(pokemonId: Int) {
         detailViewModel.setPokemonId(pokemonId)
         speciesViewModel.setPokemonId(pokemonId)
-        pokemonEvolutionViewModel.setPokemonId(pokemonId)
     }
 
     private fun observePokemonDetails() {
@@ -233,16 +225,6 @@ class DetailFragment : DetailAnimationManager() {
                 Status.LOADING -> {
                     binding.setLoading()
                 }
-            }
-        })
-    }
-
-    private fun observePokemonEvolutionChain() {
-        pokemonEvolutionViewModel.evolution.observe(viewLifecycleOwner, {
-            when (it.status) {
-                Status.SUCCESS -> Log.d("EVOLUTION", "SUCCESS ${it.data}")
-                Status.ERROR -> Log.d("EVOLUTION", "ERROR ${it.message}")
-                Status.LOADING -> Log.d("EVOLUTION", "LOADING")
             }
         })
     }
@@ -496,6 +478,7 @@ class DetailFragment : DetailAnimationManager() {
     private fun DetailFragmentBinding.setError(errorMessage: String, fetchPokemon: () -> Unit) {
         mainProgress.root.visibility = View.GONE
         content.visibility = View.GONE
+        glide.load(R.drawable.pika_detective).into(errorLayout.errorImage)
         errorLayout.root.visibility = View.VISIBLE
         errorLayout.errorImage.visibility = View.VISIBLE
         errorLayout.errorText.text = errorMessage

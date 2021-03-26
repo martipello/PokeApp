@@ -71,6 +71,7 @@
     <string name="ad_attribution">Ad</string>
     <string name="ad_image">Ad image</string>
     <string name="abilities">Abilities</string>
+    <string name="abilities_empty">No abilities… 🤔</string>
     <string name="version_label">Version :</string>
     <string name="name">Name :</string>
     <string name="short_effect_label">Short effect :</string>

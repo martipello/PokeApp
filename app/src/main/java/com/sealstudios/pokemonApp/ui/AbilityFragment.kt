@@ -147,6 +147,7 @@ class AbilityFragment : Fragment(), AdapterClickListener {
         abilityError.errorImage.visibility = View.GONE
         emptyAbilitiesList.root.visibility = View.GONE
         emptyAbilitiesList.root.visibility = View.VISIBLE
+        emptyAbilitiesList.emptyResultsText.text = context?.getString(R.string.abilities_empty)
         glide.load(R.drawable.no_results_snorlax).into(emptyAbilitiesList.emptyResultsImage)
     }
 

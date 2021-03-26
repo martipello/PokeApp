@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Move
@@ -23,9 +24,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MovesFragment : Fragment(), MoveAdapterClickListener {
+
+    @Inject
+    lateinit var glide: RequestManager
 
     private var moveAdapter: MoveAdapter? = null
     private var _binding: MovesFragmentBinding? = null
@@ -122,16 +127,16 @@ class MovesFragment : Fragment(), MoveAdapterClickListener {
     private fun MovesFragmentBinding.setLoading() {
         movesContent.visibility = View.GONE
         movesError.root.visibility = View.GONE
-        binding.movesEmptyText.visibility = View.GONE
-        movesLoading.root.visibility = View.VISIBLE
+        emptyLayoutContainer.visibility = View.GONE
+        movesLoadingContainer.visibility = View.VISIBLE
         movesLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
     }
 
     private fun MovesFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
-        movesLoading.root.visibility = View.GONE
+        movesLoadingContainer.visibility = View.GONE
         movesContent.visibility = View.GONE
-        binding.movesEmptyText.visibility = View.GONE
         movesError.errorImage.visibility = View.GONE
+        emptyLayoutContainer.visibility = View.GONE
         movesError.root.visibility = View.VISIBLE
         movesError.errorText.text = errorMessage
         movesError.retryButton.setOnClickListener {
@@ -141,16 +146,18 @@ class MovesFragment : Fragment(), MoveAdapterClickListener {
 
     private fun MovesFragmentBinding.setNotEmpty() {
         movesError.root.visibility = View.GONE
-        movesLoading.root.visibility = View.GONE
-        binding.movesEmptyText.visibility = View.GONE
+        movesLoadingContainer.visibility = View.GONE
+        emptyLayoutContainer.visibility = View.GONE
         movesContent.visibility = View.VISIBLE
     }
 
     private fun MovesFragmentBinding.setEmpty() {
         movesError.root.visibility = View.GONE
-        movesLoading.root.visibility = View.GONE
+        movesLoadingContainer.visibility = View.GONE
         movesContent.visibility = View.GONE
-        movesEmptyText.visibility = View.VISIBLE
+        emptyLayoutContainer.visibility = View.VISIBLE
+        emptyAbilitiesList.emptyResultsText.text = context?.getString(R.string.no_moves)
+        glide.load(R.drawable.no_results_snorlax).into(emptyAbilitiesList.emptyResultsImage)
     }
 
 }

@@ -5,6 +5,8 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingStart="@dimen/qualified_small_margin_8dp"
+    android:paddingEnd="@dimen/qualified_small_margin_8dp"
     tools:context=".ui.StatsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout

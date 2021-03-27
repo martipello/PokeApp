@@ -38,64 +38,13 @@
         android:id="@+id/evolution_content">
 
         <TextView
-            android:id="@+id/pokedex_entry_label"
-            style="@style/ThemeOverlay.MySubTitleTextBold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-            android:text="@string/pok_dex"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <TextView
-            android:id="@+id/pokedex_subtitle_label"
-            style="@style/ThemeOverlay.MySmallBodyTextBold"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:text="@string/pok_dex_gen_label"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pokedex_entry_label"
-            app:layout_constraintBottom_toTopOf="@id/pokedex_entry_text"/>
-
-        <TextView
-            android:id="@+id/pokedex_subtitle_text"
-            style="@style/ThemeOverlay.MySmallBodyText"
-            android:paddingStart="@dimen/qualified_small_margin_8dp"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/pokedex_subtitle_label"
-            app:layout_constraintBottom_toBottomOf="@id/pokedex_subtitle_label"
-            tools:ignore="RtlSymmetry" />
-
-        <TextView
-            android:id="@+id/pokedex_entry_text"
-            style="@style/ThemeOverlay.MySmallBodyText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:text="@string/pok_dex_entry"
-            android:visibility="gone"
-            android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
-            app:layout_constraintTop_toBottomOf="@id/pokedex_subtitle_label" />
-
-        <View
-            android:id="@+id/pokedex_divider"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
-            android:background="@color/light_grey"
-            app:layout_constraintTop_toBottomOf="@id/pokedex_entry_text" />
-
-
-        <TextView
             android:id="@+id/pokemon_about_label"
             style="@style/ThemeOverlay.MySubTitleTextBold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
             android:text="@string/evolution"
-            app:layout_constraintTop_toBottomOf="@id/pokedex_divider" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
 
         <androidx.constraintlayout.widget.Barrier

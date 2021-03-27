@@ -43,6 +43,7 @@ class AbilityFragment : Fragment(), AdapterClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.setLoading()
         setUpPokemonAdapter()
         setUpPokemonAdapterRecyclerView()
         observePokemonAbilities()

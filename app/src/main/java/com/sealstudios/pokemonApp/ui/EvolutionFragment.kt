@@ -27,6 +27,7 @@ class EvolutionFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.setLoading()
         observeEvolutionChain()
     }
 
@@ -35,6 +36,7 @@ class EvolutionFragment : Fragment() {
             when (evolution.status) {
                 Status.SUCCESS -> {
                     Log.d("EVOLUTION", "SUCCESS ${evolution.data}")
+                    binding.setNotEmpty()
                 }
                 Status.ERROR -> {
                     binding.setError(evolution.message ?: "Oops, something went wrong...")

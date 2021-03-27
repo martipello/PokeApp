@@ -46,6 +46,7 @@ class WeaknessResistanceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding.setLoading()
         weaknessResistanceAdapter = WeaknessResistanceAdapter(glide)
         setUpRecyclerView()
         observePokemonTypeWeaknessResistance()

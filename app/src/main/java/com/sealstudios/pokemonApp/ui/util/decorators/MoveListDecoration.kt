@@ -28,8 +28,5 @@ class MoveListDecoration constructor(private val margin: Int) : RecyclerView.Ite
             }
         }
 
-        outRect.right = margin / 2
-        outRect.left = margin / 2
-
     }
 }

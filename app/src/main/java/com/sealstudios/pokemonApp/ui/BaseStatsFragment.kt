@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+import com.bumptech.glide.RequestManager
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.BaseStats.Companion.baseStatsTotal
@@ -27,9 +28,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.text.DecimalFormat
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class BaseStatsFragment : Fragment() {
+
+    @Inject
+    lateinit var glide: RequestManager
 
     private val baseStatsViewModel: BaseStatsViewModel by viewModels({ requireParentFragment() })
     private val colorViewModel: ColorViewModel by viewModels({ requireParentFragment().requireParentFragment() })
@@ -166,14 +171,15 @@ class BaseStatsFragment : Fragment() {
     private fun BaseStatsFragmentBinding.setLoading() {
         baseStatsContent.visibility = View.GONE
         baseStatsError.root.visibility = View.GONE
+        baseStatsEmpty.root.visibility = View.GONE
         baseStatsLoading.root.visibility = View.VISIBLE
         baseStatsLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
     }
 
     private fun BaseStatsFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
-        baseStatsLoading.root.visibility = View.GONE
         baseStatsContent.visibility = View.GONE
         baseStatsError.errorImage.visibility = View.GONE
+        baseStatsEmpty.root.visibility = View.GONE
         baseStatsError.root.visibility = View.VISIBLE
         baseStatsError.errorText.text = errorMessage
         baseStatsError.retryButton.setOnClickListener {
@@ -184,12 +190,17 @@ class BaseStatsFragment : Fragment() {
     private fun BaseStatsFragmentBinding.setNotEmpty() {
         baseStatsError.root.visibility = View.GONE
         baseStatsLoading.root.visibility = View.GONE
-        baseStatsRoot.visibility = View.VISIBLE
+        baseStatsEmpty.root.visibility = View.GONE
         baseStatsContent.visibility = View.VISIBLE
     }
 
     private fun BaseStatsFragmentBinding.setEmpty() {
-        baseStatsRoot.visibility = View.GONE
+        baseStatsError.root.visibility = View.GONE
+        baseStatsLoading.root.visibility = View.GONE
+        baseStatsContent.visibility = View.GONE
+        baseStatsEmpty.root.visibility = View.VISIBLE
+        baseStatsEmpty.emptyResultsText.text = context?.getString(R.string.no_base_stats)
+        glide.load(R.drawable.no_results_snorlax).into(baseStatsEmpty.emptyResultsImage)
     }
 
 }

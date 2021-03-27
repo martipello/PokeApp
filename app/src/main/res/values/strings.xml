@@ -52,7 +52,10 @@
     <string name="adaptive_height_scroll_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehaviour</string>
     <string name="error_text">Oops that\'s an error… 🤔</string>
     <string name="retry">Retry</string>
-    <string name="no_moves">No moves… 🤔</string>
+    <string name="no_moves">No moves data… 🤔</string>
+    <string name="no_base_stats">No base stats data… 🤔</string>
+    <string name="no_weakness_resistance">No weakness and resistance data… 🤔</string>
+    <string name="abilities_empty">No abilities data… 🤔</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="learnt_by">Learnt by: %s</string>
@@ -71,7 +74,6 @@
     <string name="ad_attribution">Ad</string>
     <string name="ad_image">Ad image</string>
     <string name="abilities">Abilities</string>
-    <string name="abilities_empty">No abilities… 🤔</string>
     <string name="version_label">Version :</string>
     <string name="name">Name :</string>
     <string name="short_effect_label">Short effect :</string>

@@ -55,7 +55,7 @@ class WeaknessResistanceFragment : Fragment() {
         weaknessResistanceViewModel.pokemonWeaknessAndResistance.observe(viewLifecycleOwner, {
             when (it.status) {
                 Status.SUCCESS -> {
-                    if (it.data != null) {
+                    if (it.data != null && it.data.types.isNotEmpty()) {
                         if (it.data.types.any { type -> type.doubleDamageFrom.isEmpty() }) {
                             //Can't be confident to have accurate data if any of these are empty
                             binding.setEmpty()
@@ -64,7 +64,7 @@ class WeaknessResistanceFragment : Fragment() {
                             binding.setNotEmpty()
                         }
                     } else {
-                        binding.setNotEmpty()
+                        binding.setEmpty()
                     }
                 }
                 Status.ERROR -> {
@@ -105,6 +105,7 @@ class WeaknessResistanceFragment : Fragment() {
     private fun WeaknessResistanceFragmentBinding.setLoading() {
         weaknessResistanceContent.visibility = View.GONE
         weaknessResistanceError.root.visibility = View.GONE
+        weaknessResistanceEmpty.root.visibility = View.GONE
         weaknessResistanceLoading.root.visibility = View.VISIBLE
         weaknessResistanceLoading.loading.applyLoopingAnimatedVectorDrawable(R.drawable.colored_pokeball_anim_faster)
     }
@@ -112,6 +113,7 @@ class WeaknessResistanceFragment : Fragment() {
     private fun WeaknessResistanceFragmentBinding.setError(errorMessage: String, retry: () -> Unit) {
         weaknessResistanceLoading.root.visibility = View.GONE
         weaknessResistanceContent.visibility = View.GONE
+        weaknessResistanceEmpty.root.visibility = View.GONE
         weaknessResistanceError.root.visibility = View.VISIBLE
         weaknessResistanceError.errorImage.visibility = View.GONE
         weaknessResistanceError.errorText.text = errorMessage
@@ -123,11 +125,17 @@ class WeaknessResistanceFragment : Fragment() {
     private fun WeaknessResistanceFragmentBinding.setNotEmpty() {
         weaknessResistanceError.root.visibility = View.GONE
         weaknessResistanceLoading.root.visibility = View.GONE
+        weaknessResistanceEmpty.root.visibility = View.GONE
         weaknessResistanceContent.visibility = View.VISIBLE
     }
 
     private fun WeaknessResistanceFragmentBinding.setEmpty() {
-        root.visibility = View.GONE
+        weaknessResistanceError.root.visibility = View.GONE
+        weaknessResistanceLoading.root.visibility = View.GONE
+        weaknessResistanceContent.visibility = View.GONE
+        weaknessResistanceEmpty.root.visibility = View.VISIBLE
+        weaknessResistanceEmpty.emptyResultsText.text = context?.getString(R.string.no_weakness_resistance)
+        glide.load(R.drawable.no_results_snorlax).into(weaknessResistanceEmpty.emptyResultsImage)
     }
 
 }

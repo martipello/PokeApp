@@ -19,29 +19,29 @@ data class EvolutionChain(
         val babyTriggerItemName: String,
         @ColumnInfo(name = BABY_TRIGGER_ITEM_ID)
         val babyTriggerItemId: Int,
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAIL_ID_LIST)
-        val evolutionDetailIdList: List<Int>,
+        @ColumnInfo(name = POKEMON_IDS_IN_EVOLUTION_CHAIN)
+        val pokemonIdsInEvolutionChain: List<Int>,
 ) {
     companion object {
 
         const val POKEMON_EVOLUTION_CHAIN_ID: String = "pokemon_evolution_chain_id"
         const val BABY_TRIGGER_ITEM_ID: String = "baby_trigger_item_id"
         const val BABY_TRIGGER_ITEM_NAME: String = "baby_trigger_item_name"
-        const val POKEMON_EVOLUTION_DETAIL_ID_LIST: String = "evolution_detail_id_list"
+        const val POKEMON_IDS_IN_EVOLUTION_CHAIN: String = "pokemon_ids_in_evolution_chain"
 
         fun mapToEvolutionChain(evolutionChain: EvolutionChain) = EvolutionChain(
                 id = evolutionChain.id,
                 babyTriggerItemName = evolutionChain.baby_trigger_item?.name ?: "",
                 babyTriggerItemId = evolutionChain.baby_trigger_item?.url?.getIdFromUrl() ?: 0,
-                evolutionDetailIdList = evolvesToChainLinkIdList(
+                pokemonIdsInEvolutionChain = pokemonIdsInEvolutionChain(
                         evolutionChain.chain,
                         mutableListOf())
         )
 
-        private fun evolvesToChainLinkIdList(chainLink: ChainLink, idList: MutableList<Int>): List<Int> {
+        private fun pokemonIdsInEvolutionChain(chainLink: ChainLink, idList: MutableList<Int>): List<Int> {
+            idList.add(chainLink.species?.url?.getIdFromUrl() ?: -1)
             while (chainLink.evolves_to.isNotEmpty()) {
-                idList.add(chainLink.evolves_to.first().species?.url?.getIdFromUrl() ?: -1)
-                return evolvesToChainLinkIdList(chainLink.evolves_to.first(), idList)
+                return pokemonIdsInEvolutionChain(chainLink.evolves_to.first(), idList)
             }
             return idList
         }

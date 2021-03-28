@@ -50,11 +50,18 @@
 
         <TextView
             style="@style/ThemeOverlay.MySmallBodyText"
+            android:id="@+id/no_evolution_label"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
             android:text="@string/does_not_evolve"
             app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/no_evolution_label">
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/evolution_label_barrier"
@@ -75,7 +82,7 @@
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
             android:text="@string/evolution_trigger_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
             android:id="@+id/evolution_trigger_text"
@@ -171,6 +178,8 @@
             app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
             app:layout_constraintBaseline_toBaselineOf="@id/affection_label"
             tools:ignore="RtlSymmetry" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

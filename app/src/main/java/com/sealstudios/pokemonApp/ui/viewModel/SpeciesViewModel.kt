@@ -6,9 +6,10 @@ import androidx.lifecycle.*
 import com.sealstudios.pokemonApp.api.`object`.Resource
 import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.Species
-import com.sealstudios.pokemonApp.repository.SpeciesRepository
 import com.sealstudios.pokemonApp.repository.RemotePokemonRepository
+import com.sealstudios.pokemonApp.repository.SpeciesRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class SpeciesViewModel @ViewModelInject constructor(
         private val remotePokemonRepository: RemotePokemonRepository,
@@ -17,8 +18,8 @@ class SpeciesViewModel @ViewModelInject constructor(
 ) : ViewModel() {
 
     private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
-
     val species: LiveData<Resource<Species>> = pokemonSpecies()
+    val evolutionChainId: SingleLiveEvent<Int> = SingleLiveEvent()
 
     private fun pokemonSpecies() = pokemonId.switchMap { id ->
         liveData {
@@ -44,19 +45,24 @@ class SpeciesViewModel @ViewModelInject constructor(
                     val species = Species.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
                             pokemonSpeciesRequest.data
                     )
+                    setEvolutionId(species.evolution_chain_id)
                     speciesRepository.insertPokemonSpecies(pokemonId, species)
                     emit(Resource.success(species))
                 } else {
+                    setEvolutionId(-1)
                     emit(Resource.error(pokemonSpeciesRequest.message
                             ?: "Data is empty", null, pokemonSpeciesRequest.code))
                 }
             }
-            Status.ERROR -> emit(
-                    Resource.error(
-                            pokemonSpeciesRequest.message ?: "General error",
-                            null, pokemonSpeciesRequest.code
-                    )
-            )
+            Status.ERROR -> {
+                setEvolutionId(-1)
+                emit(
+                        Resource.error(
+                                pokemonSpeciesRequest.message ?: "General error",
+                                null, pokemonSpeciesRequest.code
+                        )
+                )
+            }
             Status.LOADING -> emit(Resource.loading(null))
         }
 
@@ -64,6 +70,12 @@ class SpeciesViewModel @ViewModelInject constructor(
 
     fun setPokemonId(pokemonId: Int) {
         savedStateHandle.set(SpeciesViewModel.pokemonId, pokemonId)
+    }
+
+    private suspend fun setEvolutionId(evolutionId: Int) {
+        withContext(Dispatchers.Main){
+            evolutionChainId.value = evolutionId
+        }
     }
 
     fun retry() {

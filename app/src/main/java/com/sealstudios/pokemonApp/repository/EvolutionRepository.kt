@@ -23,7 +23,7 @@ class EvolutionRepository @Inject constructor(
         }
     }
 
-    private suspend fun insertPokemonEvolutionChain(evolutionChain: com.sealstudios.pokemonApp.database.`object`.EvolutionChain) {
+    private suspend fun insertPokemonEvolutionChain(evolutionChain: EvolutionChain) {
         evolutionChainDao.insertPokemonEvolutionChain(evolutionChain)
     }
 

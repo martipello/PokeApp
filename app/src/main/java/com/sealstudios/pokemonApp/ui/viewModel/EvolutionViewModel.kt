@@ -16,11 +16,11 @@ class EvolutionViewModel @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private var pokemonId: MutableLiveData<Int> = getPokemonIdSavedState()
+    private var evolutionId: MutableLiveData<Int> = getPokemonIdSavedState()
 
     val evolution: LiveData<Resource<EvolutionChainWithDetailList>> = pokemonEvolution()
 
-    private fun pokemonEvolution() = pokemonId.switchMap { id ->
+    private fun pokemonEvolution() = evolutionId.switchMap { id ->
         liveData {
             emit(Resource.loading(null))
             val pokemonEvolution = evolutionRepository.getPokemonEvolutionChainWithDetailListByIdAsync(id)
@@ -36,13 +36,13 @@ class EvolutionViewModel @ViewModelInject constructor(
         }
     }
 
-    private suspend fun fetchPokemonEvolutionChain(pokemonId: Int) = liveData(Dispatchers.IO) {
-        val evolutionChainRequest = remotePokemonRepository.evolutionChainForId(pokemonId)
+    private suspend fun fetchPokemonEvolutionChain(evolutionId: Int) = liveData(Dispatchers.IO) {
+        val evolutionChainRequest = remotePokemonRepository.evolutionChainForId(evolutionId)
         when (evolutionChainRequest.status) {
             Status.SUCCESS -> {
                 if (evolutionChainRequest.data != null) {
                     evolutionRepository.insertPokemonEvolution(evolutionChainRequest.data)
-                    val evolutionChain = evolutionRepository.getPokemonEvolutionChainWithDetailListByIdAsync(pokemonId)
+                    val evolutionChain = evolutionRepository.getPokemonEvolutionChainWithDetailListByIdAsync(evolutionId)
                     emit(Resource.success(evolutionChain))
                 } else {
                     emit(Resource.error(evolutionChainRequest.message
@@ -60,20 +60,20 @@ class EvolutionViewModel @ViewModelInject constructor(
 
     }
 
-    fun setPokemonId(pokemonId: Int) {
-        savedStateHandle.set(pokemonIdKey, pokemonId)
+    fun setEvolutionId(pokemonId: Int) {
+        savedStateHandle.set(evolutionIdKey, pokemonId)
     }
 
     fun retry() {
-        this.pokemonId.value = this.pokemonId.value
+        this.evolutionId.value = this.evolutionId.value
     }
 
     private fun getPokemonIdSavedState(): MutableLiveData<Int> {
-        return savedStateHandle.getLiveData(pokemonIdKey)
+        return savedStateHandle.getLiveData(evolutionIdKey)
     }
 
     companion object {
-        private const val pokemonIdKey: String = "pokemonId"
+        private const val evolutionIdKey: String = "evolutionId"
     }
 
 }

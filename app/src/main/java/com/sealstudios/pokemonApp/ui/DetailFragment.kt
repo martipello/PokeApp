@@ -120,6 +120,7 @@ class DetailFragment : DetailAnimationManager() {
             }
             observePokemonDetails()
             observePokemonSpecies()
+            observePokemonEvolutionChainId()
             onFinishedSavingPokemonAbilities()
             onFinishedSavingPokemonBaseStats()
             onFinishedSavingPokemonMoves()
@@ -260,6 +261,12 @@ class DetailFragment : DetailAnimationManager() {
                     binding.setSpeciesEmpty()
                 }
             }
+        })
+    }
+
+    private fun observePokemonEvolutionChainId() {
+        speciesViewModel.evolutionChainId.observe(viewLifecycleOwner, { id ->
+            pokemonInfoViewModel.setEvolutionId(id)
         })
     }
 

@@ -17,43 +17,43 @@ data class EvolutionDetail(
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ID)
         val id: Int,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ITEM_ID)
-        val itemId: Int,
+        val itemId: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRIGGER_ID)
-        val triggerId: Int,
+        val triggerId: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_GENDER)
-        val gender: Int,
+        val gender: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_HELD_ITEM_ID)
-        val heldItem: Int,
+        val heldItem: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_HELD_ITEM_NAME)
-        val heldItemName: String,
+        val heldItemName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE)
-        val knownMove: Int,
+        val knownMove: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_NAME)
-        val knownMoveName: String,
+        val knownMoveName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_TYPE)
-        val knownMoveType: Int,
+        val knownMoveType: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_LOCATION)
-        val location: Int,
+        val location: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_LEVEL)
-        val minLevel: Int,
+        val minLevel: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_HAPPINESS)
-        val minHappiness: Int,
+        val minHappiness: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_BEAUTY)
-        val minBeauty: Int,
+        val minBeauty: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_AFFECTION)
-        val minAffection: String,
+        val minAffection: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_NEEDS_OVER_WORLD_RAIN)
         val needsOverWorldRain: Boolean,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES)
-        val partySpecies: Int,
+        val partySpecies: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_TYPE)
-        val partyType: Int,
+        val partyType: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_RELATIVE_PHYSICAL_STATS)
-        val relativePhysicalStats: Int,
+        val relativePhysicalStats: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TIME_OF_DAY)
-        val timeOfDay: String,
+        val timeOfDay: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES)
-        val tradeSpecies: Int,
+        val tradeSpecies: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TURN_UPSIDE_DOWN)
         val turnUpsideDown: Boolean,
         @ColumnInfo(name = POKEMON_IS_BABY)
@@ -86,25 +86,25 @@ data class EvolutionDetail(
 
         fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, chainLink: ChainLink) = EvolutionDetail(
                 id = chainLink.species?.url?.getIdFromUrl() ?: -1,
-                itemId = evolutionDetails.item?.url?.getIdFromUrl()  ?: -1,
-                triggerId = evolutionDetails.trigger?.url?.getIdFromUrl()  ?: -1,
+                itemId = evolutionDetails.item?.url?.getIdFromUrl(),
+                triggerId = evolutionDetails.trigger?.url?.getIdFromUrl(),
                 gender = evolutionDetails.gender,
-                heldItem = evolutionDetails.held_item?.url?.getIdFromUrl() ?: -1,
-                heldItemName = evolutionDetails.held_item?.name ?: "",
-                knownMove = evolutionDetails.known_move?.url?.getIdFromUrl() ?: -1,
-                knownMoveName = evolutionDetails.known_move?.name ?: "",
-                knownMoveType = evolutionDetails.known_move_type?.url?.getIdFromUrl() ?: -1,
-                location = evolutionDetails.location?.url?.getIdFromUrl() ?: -1,
+                heldItem = evolutionDetails.held_item?.url?.getIdFromUrl(),
+                heldItemName = evolutionDetails.held_item?.name,
+                knownMove = evolutionDetails.known_move?.url?.getIdFromUrl(),
+                knownMoveName = evolutionDetails.known_move?.name,
+                knownMoveType = evolutionDetails.known_move_type?.url?.getIdFromUrl(),
+                location = evolutionDetails.location?.url?.getIdFromUrl(),
                 minLevel = evolutionDetails.min_level,
                 minHappiness = evolutionDetails.min_happiness,
                 minBeauty = evolutionDetails.min_beauty,
-                minAffection = evolutionDetails.min_affection ?: "",
+                minAffection = evolutionDetails.min_affection,
                 needsOverWorldRain = evolutionDetails.needs_overworld_rain,
-                partySpecies = evolutionDetails.party_species?.url?.getIdFromUrl() ?: -1,
-                partyType = evolutionDetails.party_type?.url?.getIdFromUrl() ?: -1,
+                partySpecies = evolutionDetails.party_species?.url?.getIdFromUrl(),
+                partyType = evolutionDetails.party_type?.url?.getIdFromUrl(),
                 relativePhysicalStats = evolutionDetails.relative_physical_stats,
-                timeOfDay = evolutionDetails.time_of_day ?: "",
-                tradeSpecies = evolutionDetails.trade_species?.url?.getIdFromUrl() ?: -1,
+                timeOfDay = evolutionDetails.time_of_day,
+                tradeSpecies = evolutionDetails.trade_species?.url?.getIdFromUrl(),
                 turnUpsideDown = evolutionDetails.turn_upside_down,
                 isBaby = chainLink.is_baby
         )

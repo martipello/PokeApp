@@ -53,7 +53,11 @@ class EvolutionFragment : Fragment() {
     }
 
     private fun showRelevantEvolutionDetails(evolutionChainWithDetailList: EvolutionChainWithDetailList){
-
+        if(evolutionChainWithDetailList.evolutionChainLinkList.isNotEmpty()){
+            binding.noEvolutionLabel.visibility = View.VISIBLE
+        } else {
+            binding.noEvolutionLabel.visibility = View.GONE
+        }
     }
 
     private fun EvolutionFragmentBinding.setLoading() {

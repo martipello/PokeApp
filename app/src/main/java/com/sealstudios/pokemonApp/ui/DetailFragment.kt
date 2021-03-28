@@ -28,7 +28,7 @@ import com.google.android.material.chip.Chip
 import com.google.android.material.tabs.TabLayoutMediator
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
-import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.highResPokemonUrl
+import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.pokemonImage
 import com.sealstudios.pokemonApp.database.`object`.Species
 import com.sealstudios.pokemonApp.database.`object`.Type
 import com.sealstudios.pokemonApp.database.`object`.relations.PokemonWithTypes
@@ -113,7 +113,7 @@ class DetailFragment : DetailAnimationManager() {
             setUpViewPager()
             setUpTabs(-1)
             colorToolbarBackground(-1)
-            setPokemonImageView(highResPokemonUrl(pokemonId))
+            setPokemonImageView(pokemonImage(pokemonId))
             if (!hasExpanded) {
                 handleEnterAnimation()
                 detailViewModel.setRevealAnimationExpandedState(true)

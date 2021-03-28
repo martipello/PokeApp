@@ -51,10 +51,11 @@ open class Pokemon constructor(
 
         fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
             val id = apiPokemon.url.getIdFromUrl()
+            val name = apiPokemon.name
             return Pokemon(
                     id = id,
-                    name = apiPokemon.name,
-                    image = highResPokemonUrl(id),
+                    name = name,
+                    image = pokemonImage(id),
                     height = 0,
                     weight = 0,
                     move_ids = listOf(),
@@ -64,11 +65,10 @@ open class Pokemon constructor(
         }
 
         fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
-
             return Pokemon(
                     id = apiPokemon.id,
                     name = apiPokemon.name ?: "",
-                    image = highResPokemonUrl(apiPokemon.id),
+                    image = pokemonImage(apiPokemon.id),
                     height = apiPokemon.height ?: 0,
                     weight = apiPokemon.weight ?: 0,
                     sprite = apiPokemon.sprites?.front_default ?: "",
@@ -77,8 +77,8 @@ open class Pokemon constructor(
             )
         }
 
-        fun highResPokemonUrl(pokemonId: Int) =
-                "https://pokeres.bastionbot.org/images/pokemon/${pokemonId}.png"
+        fun pokemonImage(id: Int) =
+                "https://firebasestorage.googleapis.com/v0/b/pokeapp-86eec.appspot.com/o/pokemon_image_$id.png?alt=media"
 
     }
 

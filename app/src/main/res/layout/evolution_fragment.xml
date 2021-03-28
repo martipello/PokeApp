@@ -7,35 +7,37 @@
     android:layout_height="wrap_content"
     tools:context="com.sealstudios.pokemonApp.ui.DetailFragment">
 
-    <include layout="@layout/loading_layout"
+    <include
         android:id="@+id/evolution_loading"
-        android:layout_margin="@dimen/qualified_large_margin_32dp"
-        android:layout_height="50dp"
+        layout="@layout/loading_layout"
         android:layout_width="50dp"
-        android:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_height="50dp"
+        android:layout_margin="@dimen/qualified_large_margin_32dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"/>
-
-    <include layout="@layout/error_layout"
-        android:id="@+id/evolution_error"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:visibility="gone"
-        android:layout_marginTop="@dimen/qualified_large_margin_32dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/evolution_error"
+        layout="@layout/error_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/qualified_large_margin_32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/evolution_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone"
-        android:id="@+id/evolution_content">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/pokemon_about_label"
@@ -44,81 +46,130 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
             android:text="@string/evolution"
-            app:layout_constraintTop_toTopOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            style="@style/ThemeOverlay.MySmallBodyText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+            android:text="@string/does_not_evolve"
+            app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/evolution_label_barrier"
             android:layout_width="1dp"
             android:layout_height="10dp"
             app:barrierDirection="end"
-            app:constraint_referenced_ids="shape_label,
-                form_description_label, habitat_label"
+            app:constraint_referenced_ids="evolution_trigger_label,
+                level_label, happiness_label"
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
 
         <TextView
-            android:id="@+id/shape_label"
+            android:id="@+id/evolution_trigger_label"
             style="@style/ThemeOverlay.MySmallBodyTextBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:text="@string/shape_label"
+            android:text="@string/evolution_trigger_label"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pokemon_about_label" />
 
         <TextView
-            android:id="@+id/shape_text"
+            android:id="@+id/evolution_trigger_text"
             style="@style/ThemeOverlay.MySmallBodyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/qualified_small_margin_8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
-            app:layout_constraintTop_toTopOf="@id/shape_label"
+            app:layout_constraintBaseline_toBaselineOf="@id/evolution_trigger_label"
             tools:ignore="RtlSymmetry" />
 
         <TextView
-            android:id="@+id/form_description_label"
+            android:id="@+id/level_label"
             style="@style/ThemeOverlay.MySmallBodyTextBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:text="@string/form_label"
+            android:text="@string/level_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/shape_text" />
+            app:layout_constraintTop_toBottomOf="@id/evolution_trigger_text" />
 
         <TextView
-            android:id="@+id/form_description_text"
+            android:id="@+id/level_text"
             style="@style/ThemeOverlay.MySmallBodyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/qualified_small_margin_8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
-            app:layout_constraintTop_toTopOf="@id/form_description_label"
+            app:layout_constraintBaseline_toBaselineOf="@id/level_label"
             tools:ignore="RtlSymmetry" />
 
         <TextView
-            android:id="@+id/habitat_label"
+            android:id="@+id/happiness_label"
             style="@style/ThemeOverlay.MySmallBodyTextBold"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/qualified_small_margin_8dp"
-            android:text="@string/habitat_label"
+            android:text="@string/happiness_label"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/form_description_text" />
+            app:layout_constraintTop_toBottomOf="@id/level_text" />
 
         <TextView
-            android:id="@+id/habitat_text"
+            android:id="@+id/happiness_text"
             style="@style/ThemeOverlay.MySmallBodyText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:paddingStart="@dimen/qualified_small_margin_8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
-            app:layout_constraintTop_toTopOf="@id/habitat_label"
+            app:layout_constraintBaseline_toBaselineOf="@id/happiness_label"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/beauty_label"
+            style="@style/ThemeOverlay.MySmallBodyTextBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+            android:text="@string/beauty_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/happiness_text" />
+
+        <TextView
+            android:id="@+id/beauty_text"
+            style="@style/ThemeOverlay.MySmallBodyText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/qualified_small_margin_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+            app:layout_constraintBaseline_toBaselineOf="@id/beauty_label"
+            tools:ignore="RtlSymmetry" />
+
+        <TextView
+            android:id="@+id/affection_label"
+            style="@style/ThemeOverlay.MySmallBodyTextBold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+            android:text="@string/affection_label"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/beauty_text" />
+
+        <TextView
+            android:id="@+id/affection_text"
+            style="@style/ThemeOverlay.MySmallBodyText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/qualified_small_margin_8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+            app:layout_constraintBaseline_toBaselineOf="@id/affection_label"
             tools:ignore="RtlSymmetry" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

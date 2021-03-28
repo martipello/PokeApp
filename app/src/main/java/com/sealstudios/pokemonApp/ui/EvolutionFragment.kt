@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.api.`object`.Status
+import com.sealstudios.pokemonApp.database.`object`.relations.EvolutionChainWithDetailList
 import com.sealstudios.pokemonApp.databinding.EvolutionFragmentBinding
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.viewModel.EvolutionViewModel
@@ -35,8 +36,12 @@ class EvolutionFragment : Fragment() {
         evolutionViewModel.evolution.observe(viewLifecycleOwner, { evolution ->
             when (evolution.status) {
                 Status.SUCCESS -> {
-                    Log.d("EVOLUTION", "SUCCESS ${evolution.data}")
-                    binding.setNotEmpty()
+                    if(evolution.data != null){
+                        showRelevantEvolutionDetails(evolution.data)
+                        binding.setNotEmpty()
+                    } else {
+                        binding.setEmpty()
+                    }
                 }
                 Status.ERROR -> {
                     binding.setError(evolution.message ?: "Oops, something went wrong...")
@@ -45,6 +50,10 @@ class EvolutionFragment : Fragment() {
                 Status.LOADING -> binding.setLoading()
             }
         })
+    }
+
+    private fun showRelevantEvolutionDetails(evolutionChainWithDetailList: EvolutionChainWithDetailList){
+
     }
 
     private fun EvolutionFragmentBinding.setLoading() {
@@ -66,6 +75,12 @@ class EvolutionFragment : Fragment() {
     }
 
     private fun EvolutionFragmentBinding.setNotEmpty() {
+        evolutionError.root.visibility = View.GONE
+        evolutionLoading.root.visibility = View.GONE
+        evolutionContent.visibility = View.VISIBLE
+    }
+
+    private fun EvolutionFragmentBinding.setEmpty() {
         evolutionError.root.visibility = View.GONE
         evolutionLoading.root.visibility = View.GONE
         evolutionContent.visibility = View.VISIBLE

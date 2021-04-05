@@ -1,8 +1,9 @@
 package com.sealstudios.pokemonApp.repository
 
-import com.sealstudios.pokemonApp.api.`object`.ChainLink
 import com.sealstudios.pokemonApp.database.`object`.EvolutionChain
+import com.sealstudios.pokemonApp.database.`object`.EvolutionChain.Companion.mapToEvolutionChain
 import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail
+import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail.Companion.getEvolutionDetailListForEvolutionChain
 import com.sealstudios.pokemonApp.database.`object`.joins.EvolutionDetailJoin
 import com.sealstudios.pokemonApp.database.`object`.relations.EvolutionChainWithDetailList
 import com.sealstudios.pokemonApp.database.dao.*
@@ -39,28 +40,16 @@ class EvolutionRepository @Inject constructor(
             evolutionChain: com.sealstudios.pokemonApp.api.`object`.EvolutionChain
     ) {
         withContext(Dispatchers.IO) {
-            val pokemonEvolutionChain = EvolutionChain.mapToEvolutionChain(evolutionChain)
-            evolutionChain.chain.evolves_to.map { chainLink ->
-                if (chainLink.evolution_details.isNotEmpty()) {
-                    val pokemonEvolutionDetailList = pokemonEvolutionDetailList(chainLink, mutableListOf())
-                    pokemonEvolutionDetailList.map {
-                        insertPokemonEvolutionDetail(it)
-                        insertPokemonEvolutionDetailJoin(EvolutionDetailJoin(pokemonEvolutionChain.id, it.id))
-                    }
-                }
+            val pokemonEvolutionChain = mapToEvolutionChain(evolutionChain)
+            val pokemonEvolutionDetails = getEvolutionDetailListForEvolutionChain(evolutionChain.chain)
+            pokemonEvolutionDetails.forEach {
+                insertPokemonEvolutionDetail(it)
+                insertPokemonEvolutionDetailJoin(EvolutionDetailJoin(pokemonEvolutionChain.id, it.id))
             }
             insertPokemonEvolutionChain(pokemonEvolutionChain)
         }
     }
 
-
-    private fun pokemonEvolutionDetailList(chainLink: ChainLink, idList: MutableList<EvolutionDetail>): List<EvolutionDetail> {
-        idList.add(EvolutionDetail.mapToPokemonEvolutionDetails(chainLink.evolution_details.first(), chainLink))
-        while (chainLink.evolves_to.isNotEmpty()) {
-            return pokemonEvolutionDetailList(chainLink.evolves_to.first(), idList)
-        }
-        return idList
-    }
 
 
 }

@@ -17,19 +17,19 @@ data class Species(
     var id: Int = 0,
 
     @ColumnInfo(name = GENDER_RATE)
-    var gender_rate: Int = 0,
+    var genderRate: Int = 0,
 
     @ColumnInfo(name = CAPTURE_RATE)
-    var capture_rate: Int = 0,
+    var captureRate: Int = 0,
 
     @ColumnInfo(name = BASE_HAPPINESS)
-    var base_happiness: Int = 0,
+    var baseHappiness: Int = 0,
 
     @ColumnInfo(name = HATCH_COUNTER)
-    var hatch_counter: Int = 0,
+    var hatchCounter: Int = 0,
 
     @ColumnInfo(name = EVOLUTION_CHAIN_ID)
-    var evolution_chain_id: Int = 0,
+    var evolutionChainId: Int = 0,
 
     @ColumnInfo(name = IS_BABY)
     var isBaby: Boolean = false,
@@ -88,12 +88,12 @@ data class Species(
                 habitat = apiPokemonSpecies.habitat?.name ?: "Unknown",
                 shape = apiPokemonSpecies.shape?.name  ?: "",
                 formDescription = getFormDescription(apiFormDescription = apiPokemonSpecies.form_descriptions),
-                base_happiness = apiPokemonSpecies.base_happiness,
-                capture_rate = apiPokemonSpecies.capture_rate,
+                baseHappiness = apiPokemonSpecies.base_happiness,
+                captureRate = apiPokemonSpecies.capture_rate,
                 isBaby = apiPokemonSpecies.is_baby,
-                gender_rate = apiPokemonSpecies.gender_rate,
-                hatch_counter = apiPokemonSpecies.hatch_counter,
-                evolution_chain_id = apiPokemonSpecies.evolution_chain.url.getIdFromUrl(),
+                genderRate = apiPokemonSpecies.gender_rate,
+                hatchCounter = apiPokemonSpecies.hatch_counter,
+                evolutionChainId = apiPokemonSpecies.evolution_chain.url.getIdFromUrl(),
             )
         }
 

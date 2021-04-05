@@ -34,9 +34,10 @@ class EvolutionFragment : Fragment() {
 
     private fun observeEvolutionChain() {
         evolutionViewModel.evolution.observe(viewLifecycleOwner, { evolution ->
+            Log.d("EVOLUTION_FRAG", "")
             when (evolution.status) {
                 Status.SUCCESS -> {
-                    if(evolution.data != null){
+                    if (evolution.data != null) {
                         showRelevantEvolutionDetails(evolution.data)
                         binding.setNotEmpty()
                     } else {
@@ -52,11 +53,11 @@ class EvolutionFragment : Fragment() {
         })
     }
 
-    private fun showRelevantEvolutionDetails(evolutionChainWithDetailList: EvolutionChainWithDetailList){
-        if(evolutionChainWithDetailList.evolutionChainLinkList.isNotEmpty()){
-            binding.noEvolutionLabel.visibility = View.VISIBLE
-        } else {
+    private fun showRelevantEvolutionDetails(evolutionChainWithDetailList: EvolutionChainWithDetailList) {
+        if (evolutionChainWithDetailList.evolutionChainLinkList.isNotEmpty()) {
             binding.noEvolutionLabel.visibility = View.GONE
+        } else {
+            binding.noEvolutionLabel.visibility = View.VISIBLE
         }
     }
 

@@ -1,5 +1,6 @@
 package com.sealstudios.pokemonApp.util.extensions
 
+import java.lang.NumberFormatException
 import java.util.*
 
 fun String.removeWhiteSpace(): String {
@@ -21,7 +22,11 @@ fun String.toUpperCase(): String {
 fun String.getIdFromUrl(): Int {
     val stringList = split('/')
     if (stringList.size >= 2) {
-        return stringList[stringList.size - 2].toInt()
+        return try {
+            stringList[stringList.size - 2].toInt()
+        } catch (e: NumberFormatException){
+            -1
+        }
     }
     return -1
 }

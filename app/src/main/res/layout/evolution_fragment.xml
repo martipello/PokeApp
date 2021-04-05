@@ -44,7 +44,6 @@
             style="@style/ThemeOverlay.MySubTitleTextBold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
             android:text="@string/evolution"
             app:layout_constraintTop_toTopOf="parent" />
 

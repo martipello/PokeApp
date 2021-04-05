@@ -16,8 +16,12 @@ data class EvolutionDetail(
         @PrimaryKey
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ID)
         val id: Int,
+        @ColumnInfo(name = POKEMON_EVOLVES_FROM)
+        val evolvesFrom: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ITEM_ID)
         val itemId: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ITEM_NAME)
+        val itemName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRIGGER_ID)
         val triggerId: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_GENDER)
@@ -41,7 +45,7 @@ data class EvolutionDetail(
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_BEAUTY)
         val minBeauty: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_AFFECTION)
-        val minAffection: String?,
+        val minAffection: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_NEEDS_OVER_WORLD_RAIN)
         val needsOverWorldRain: Boolean,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES)
@@ -59,10 +63,14 @@ data class EvolutionDetail(
         @ColumnInfo(name = POKEMON_IS_BABY)
         val isBaby: Boolean,
 ) {
+
+
     companion object {
 
         const val POKEMON_EVOLUTION_DETAILS_ID: String = "pokemon_evolution_details_id"
+        const val POKEMON_EVOLVES_FROM: String = "pokemon_evolves_from"
         const val POKEMON_EVOLUTION_DETAILS_ITEM_ID: String = "pokemon_evolution_details_item_id"
+        const val POKEMON_EVOLUTION_DETAILS_ITEM_NAME: String = "pokemon_evolution_details_item_name"
         const val POKEMON_EVOLUTION_DETAILS_TRIGGER_ID: String = "pokemon_evolution_details_trigger_id"
         const val POKEMON_EVOLUTION_DETAILS_GENDER: String = "pokemon_evolution_details_gender"
         const val POKEMON_EVOLUTION_DETAILS_HELD_ITEM_ID: String = "pokemon_evolution_details_held_item_id"
@@ -84,9 +92,11 @@ data class EvolutionDetail(
         const val POKEMON_EVOLUTION_DETAILS_TURN_UPSIDE_DOWN: String = "pokemon_evolution_details_turn_upside_down"
         const val POKEMON_IS_BABY: String = "is_baby"
 
-        fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, chainLink: ChainLink) = EvolutionDetail(
-                id = chainLink.species?.url?.getIdFromUrl() ?: -1,
+        fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, chainLink: ChainLink, evolvesToChainLink: ChainLink) = EvolutionDetail(
+                id = evolvesToChainLink.species?.url?.getIdFromUrl() ?: -1,
+                evolvesFrom = chainLink.species?.url?.getIdFromUrl() ?: -1,
                 itemId = evolutionDetails.item?.url?.getIdFromUrl(),
+                itemName = evolutionDetails.item?.name,
                 triggerId = evolutionDetails.trigger?.url?.getIdFromUrl(),
                 gender = evolutionDetails.gender,
                 heldItem = evolutionDetails.held_item?.url?.getIdFromUrl(),
@@ -108,5 +118,65 @@ data class EvolutionDetail(
                 turnUpsideDown = evolutionDetails.turn_upside_down,
                 isBaby = chainLink.is_baby
         )
+
+        fun getEvolutionDetailListForEvolutionChain(chainLink: ChainLink): List<EvolutionDetail> {
+            return createEvolutionDetailListForEvolutionChain(chainLink, mutableListOf())
+        }
+
+        private fun createEvolutionDetailListForEvolutionChain(chainLink: ChainLink, detailList: MutableList<EvolutionDetail>): List<EvolutionDetail> {
+            detailList.addAll(chainLink.evolves_to.map { thisChainLink ->
+                thisChainLink.evolution_details.map { evolutionDetails ->
+                    mapToPokemonEvolutionDetails(evolutionDetails, chainLink, thisChainLink)
+                }
+            }.flatten())
+
+            while (chainLink.evolves_to.isNotEmpty()) {
+                return chainLink.evolves_to.map {
+                    return createEvolutionDetailListForEvolutionChain(it, detailList)
+                }
+            }
+            return detailList.toSet().toList()
+        }
+
+        fun pokemonIdsInEvolutionChain(chainLink: ChainLink, idList: MutableList<Int>): List<Int> {
+            idList.add(chainLink.species?.url?.getIdFromUrl() ?: -1)
+            idList.addAll(chainLink.evolves_to.map { it.species?.url?.getIdFromUrl() ?: -1 })
+            while (chainLink.evolves_to.isNotEmpty()) {
+                return chainLink.evolves_to.map {
+                    return pokemonIdsInEvolutionChain(it, idList)
+                }
+            }
+            return idList.toSet().toList()
+        }
+
+    }
+
+    override fun toString(): String {
+        return "EvolutionDetail(" +
+                "\nid=$id, " +
+                "\nevolvesFrom=$evolvesFrom, " +
+                "\nitemId=$itemId, " +
+                "\nitemName=$itemName, " +
+                "\ntriggerId=$triggerId, " +
+                "\ngender=$gender, " +
+                "\nheldItem=$heldItem, " +
+                "\nheldItemName=$heldItemName, " +
+                "\nknownMove=$knownMove, " +
+                "\nknownMoveName=$knownMoveName, " +
+                "\nknownMoveType=$knownMoveType, " +
+                "\nlocation=$location, " +
+                "\nminLevel=$minLevel, " +
+                "\nminHappiness=$minHappiness, " +
+                "\nminBeauty=$minBeauty, " +
+                "\nminAffection=$minAffection, " +
+                "\nneedsOverWorldRain=$needsOverWorldRain, " +
+                "\npartySpecies=$partySpecies, " +
+                "\npartyType=$partyType, " +
+                "\nrelativePhysicalStats=$relativePhysicalStats, " +
+                "\ntimeOfDay=$timeOfDay, " +
+                "\ntradeSpecies=$tradeSpecies, " +
+                "\nturnUpsideDown=$turnUpsideDown, " +
+                "\nisBaby=$isBaby" +
+                "\n)"
     }
 }

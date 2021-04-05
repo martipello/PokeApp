@@ -28,6 +28,7 @@ class SpeciesViewModel @ViewModelInject constructor(
             if (pokemonSpecies == null) {
                 emitSource(fetchPokemonSpecies(id))
             } else {
+                setEvolutionId(pokemonSpecies.evolutionChainId)
                 emit(
                         Resource.success(
                                 pokemonSpecies
@@ -45,7 +46,7 @@ class SpeciesViewModel @ViewModelInject constructor(
                     val species = Species.mapRemotePokemonSpeciesToDatabasePokemonSpecies(
                             pokemonSpeciesRequest.data
                     )
-                    setEvolutionId(species.evolution_chain_id)
+                    setEvolutionId(species.evolutionChainId)
                     speciesRepository.insertPokemonSpecies(pokemonId, species)
                     emit(Resource.success(species))
                 } else {

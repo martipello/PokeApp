@@ -22,6 +22,7 @@ data class EvolutionChain(
         @ColumnInfo(name = POKEMON_IDS_IN_EVOLUTION_CHAIN)
         val pokemonIdsInEvolutionChain: List<Int>,
 ) {
+
     companion object {
 
         const val POKEMON_EVOLUTION_CHAIN_ID: String = "pokemon_evolution_chain_id"
@@ -40,11 +41,18 @@ data class EvolutionChain(
 
         private fun pokemonIdsInEvolutionChain(chainLink: ChainLink, idList: MutableList<Int>): List<Int> {
             idList.add(chainLink.species?.url?.getIdFromUrl() ?: -1)
+            chainLink.evolves_to.map { idList.add(it.species?.url?.getIdFromUrl() ?: -1) }
             while (chainLink.evolves_to.isNotEmpty()) {
-                return pokemonIdsInEvolutionChain(chainLink.evolves_to.first(), idList)
+                return chainLink.evolves_to.map {
+                    return pokemonIdsInEvolutionChain(it, idList)
+                }
             }
-            return idList
+            return idList.toSet().toList()
         }
 
+    }
+
+    override fun toString(): String {
+        return "EvolutionChain(\nid=$id, \nbabyTriggerItemName='$babyTriggerItemName', \nbabyTriggerItemId=$babyTriggerItemId, \npokemonIdsInEvolutionChain=$pokemonIdsInEvolutionChain\n)"
     }
 }

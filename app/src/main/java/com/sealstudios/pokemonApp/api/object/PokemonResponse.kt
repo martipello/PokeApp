@@ -201,7 +201,7 @@ data class EvolutionDetails(
         val min_level: Int,
         val min_happiness: Int,
         val min_beauty: Int,
-        val min_affection: String?,
+        val min_affection: Int?,
         val needs_overworld_rain: Boolean,
         val party_species: NamedApiResource?,
         val party_type: NamedApiResource?,

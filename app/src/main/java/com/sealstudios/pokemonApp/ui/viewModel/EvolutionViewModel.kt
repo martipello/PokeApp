@@ -36,6 +36,22 @@ class EvolutionViewModel @ViewModelInject constructor(
         }
     }
 
+    private fun pokemonEvolutionDetail() = evolutionId.switchMap { id ->
+        liveData {
+            emit(Resource.loading(null))
+            val pokemonEvolution = evolutionRepository.getPokemonEvolutionChainWithDetailListByIdAsync(id)
+            if (pokemonEvolution == null) {
+                emitSource(fetchPokemonEvolutionChain(id))
+            } else {
+                emit(
+                        Resource.success(
+                                pokemonEvolution
+                        )
+                )
+            }
+        }
+    }
+
     private suspend fun fetchPokemonEvolutionChain(evolutionId: Int) = liveData(Dispatchers.IO) {
         val evolutionChainRequest = remotePokemonRepository.evolutionChainForId(evolutionId)
         when (evolutionChainRequest.status) {

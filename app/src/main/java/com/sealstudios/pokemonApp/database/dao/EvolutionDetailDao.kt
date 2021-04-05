@@ -17,7 +17,7 @@ interface EvolutionDetailDao {
 
     @Transaction
     @Query("SELECT * FROM EvolutionDetail WHERE pokemon_evolution_details_id == :id LIMIT 1")
-    suspend fun getPokemonEvolutionDetailById(id: Int): EvolutionDetail
+    suspend fun getPokemonEvolutionDetailById(id: Int): EvolutionDetail?
 
     @Delete
     suspend fun deletePokemonEvolutionDetail(evolutionDetail: EvolutionDetail)

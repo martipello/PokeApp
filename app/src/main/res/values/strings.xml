@@ -276,7 +276,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="evolution">Evolution</string>
     <string name="does_not_evolve">Pokemon doesn\'t evolve.</string>
-    <string name="evolution_trigger_label">Evolution trigger :</string>
+    <string name="evolution_trigger_label">Trigger :</string>
     <string name="level_label">Level :</string>
     <string name="happiness_label">Happiness :</string>
     <string name="beauty_label">Beauty :</string>

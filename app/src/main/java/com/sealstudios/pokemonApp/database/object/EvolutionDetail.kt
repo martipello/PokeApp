@@ -16,8 +16,12 @@ data class EvolutionDetail(
         @PrimaryKey
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ID)
         val id: Int,
-        @ColumnInfo(name = POKEMON_EVOLVES_FROM)
-        val evolvesFrom: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_NAME)
+        val evolutionName: String,
+        @ColumnInfo(name = POKEMON_EVOLVES_FROM_NAME)
+        val evolvesFromName: String?,
+        @ColumnInfo(name = POKEMON_EVOLVES_FROM_ID)
+        val evolvesFromId: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ITEM_ID)
         val itemId: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ITEM_NAME)
@@ -68,7 +72,9 @@ data class EvolutionDetail(
     companion object {
 
         const val POKEMON_EVOLUTION_DETAILS_ID: String = "pokemon_evolution_details_id"
-        const val POKEMON_EVOLVES_FROM: String = "pokemon_evolves_from"
+        const val POKEMON_EVOLUTION_NAME: String = "pokemon_evolution_details_name"
+        const val POKEMON_EVOLVES_FROM_ID: String = "pokemon_evolves_from_id"
+        const val POKEMON_EVOLVES_FROM_NAME: String = "pokemon_evolves_from_name"
         const val POKEMON_EVOLUTION_DETAILS_ITEM_ID: String = "pokemon_evolution_details_item_id"
         const val POKEMON_EVOLUTION_DETAILS_ITEM_NAME: String = "pokemon_evolution_details_item_name"
         const val POKEMON_EVOLUTION_DETAILS_TRIGGER_ID: String = "pokemon_evolution_details_trigger_id"
@@ -94,7 +100,9 @@ data class EvolutionDetail(
 
         fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, chainLink: ChainLink, evolvesToChainLink: ChainLink) = EvolutionDetail(
                 id = evolvesToChainLink.species?.url?.getIdFromUrl() ?: -1,
-                evolvesFrom = chainLink.species?.url?.getIdFromUrl() ?: -1,
+                evolutionName = evolvesToChainLink.species?.name ?: "",
+                evolvesFromId = chainLink.species?.url?.getIdFromUrl() ?: -1,
+                evolvesFromName = chainLink.species?.name ?: "",
                 itemId = evolutionDetails.item?.url?.getIdFromUrl(),
                 itemName = evolutionDetails.item?.name,
                 triggerId = evolutionDetails.trigger?.url?.getIdFromUrl(),
@@ -105,14 +113,14 @@ data class EvolutionDetail(
                 knownMoveName = evolutionDetails.known_move?.name,
                 knownMoveType = evolutionDetails.known_move_type?.url?.getIdFromUrl(),
                 location = evolutionDetails.location?.url?.getIdFromUrl(),
-                minLevel = evolutionDetails.min_level,
-                minHappiness = evolutionDetails.min_happiness,
-                minBeauty = evolutionDetails.min_beauty,
-                minAffection = evolutionDetails.min_affection,
+                minLevel = evolutionDetails.min_level ?: -1,
+                minHappiness = evolutionDetails.min_happiness ?: -1,
+                minBeauty = evolutionDetails.min_beauty ?: -1,
+                minAffection = evolutionDetails.min_affection ?: -1,
                 needsOverWorldRain = evolutionDetails.needs_overworld_rain,
                 partySpecies = evolutionDetails.party_species?.url?.getIdFromUrl(),
                 partyType = evolutionDetails.party_type?.url?.getIdFromUrl(),
-                relativePhysicalStats = evolutionDetails.relative_physical_stats,
+                relativePhysicalStats = evolutionDetails.relative_physical_stats ?: -1,
                 timeOfDay = evolutionDetails.time_of_day,
                 tradeSpecies = evolutionDetails.trade_species?.url?.getIdFromUrl(),
                 turnUpsideDown = evolutionDetails.turn_upside_down,
@@ -154,7 +162,9 @@ data class EvolutionDetail(
     override fun toString(): String {
         return "EvolutionDetail(" +
                 "\nid=$id, " +
-                "\nevolvesFrom=$evolvesFrom, " +
+                "\nevolutionName=$evolutionName, " +
+                "\nevolvesFromName=$evolvesFromName, " +
+                "\nevolvesFromId=$evolvesFromId, " +
                 "\nitemId=$itemId, " +
                 "\nitemName=$itemName, " +
                 "\ntriggerId=$triggerId, " +
@@ -179,4 +189,6 @@ data class EvolutionDetail(
                 "\nisBaby=$isBaby" +
                 "\n)"
     }
+
+
 }

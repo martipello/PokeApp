@@ -18,6 +18,7 @@ import com.sealstudios.pokemonApp.ui.adapter.AbilityAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.AdapterClickListener
 import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
+import com.sealstudios.pokemonApp.ui.extensions.removeItemDecorations
 import com.sealstudios.pokemonApp.ui.util.decorators.ListDividerDecoration
 import com.sealstudios.pokemonApp.ui.viewModel.AbilityViewModel
 import dagger.hilt.android.AndroidEntryPoint
@@ -102,6 +103,7 @@ class AbilityFragment : Fragment(), AdapterClickListener {
     private fun addPokemonAdapterRecyclerViewDecoration(
             recyclerView: RecyclerView
     ) {
+        recyclerView.removeItemDecorations()
         recyclerView.addItemDecoration(
                 ListDividerDecoration(R.drawable.divider,
                         binding.root.context,

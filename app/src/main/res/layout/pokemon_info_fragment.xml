@@ -42,7 +42,6 @@
             android:id="@+id/evolution_divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
-            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
             android:background="@color/light_grey"
             app:layout_constraintTop_toBottomOf="@id/evolution_fragment" />
 
@@ -51,7 +50,6 @@
             android:name="com.sealstudios.pokemonApp.ui.AbilityFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
             app:layout_constraintTop_toBottomOf="@id/evolution_divider"
             tools:layout="@layout/ability_fragment" />
 

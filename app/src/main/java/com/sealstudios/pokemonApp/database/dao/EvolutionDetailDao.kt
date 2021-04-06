@@ -7,7 +7,7 @@ import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail
 interface EvolutionDetailDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPokemonEvolutionDetail(evolutionDetail: EvolutionDetail)
+    suspend fun insertPokemonEvolutionDetail(evolutionDetail: EvolutionDetail) : Long
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertPokemonEvolutionDetailList(evolutionDetailList: List<EvolutionDetail>)
@@ -16,7 +16,7 @@ interface EvolutionDetailDao {
     suspend fun updatePokemonEvolutionDetail(evolutionDetail: EvolutionDetail)
 
     @Transaction
-    @Query("SELECT * FROM EvolutionDetail WHERE pokemon_evolution_details_id == :id LIMIT 1")
+    @Query("SELECT * FROM EvolutionDetail WHERE pokemon_evolution_detail_id == :id LIMIT 1")
     suspend fun getPokemonEvolutionDetailById(id: Int): EvolutionDetail?
 
     @Delete

@@ -42,13 +42,13 @@ constructor(
         binding.pokemonNameTextView.text = evolutionDetail.evolutionName.capitalize()
         binding.pokemonIdTextViewLabel.text = itemView.context.getString(
                 R.string.pokemonHashId,
-                evolutionDetail.id
+                evolutionDetail.evolutionId
         )
     }
 
     private fun handlePokemonImage(evolutionDetail: EvolutionDetail) {
         CoroutineScope(Dispatchers.Main).launch {
-            setPokemonImageView(Pokemon.pokemonImage(evolutionDetail.id))
+            setPokemonImageView(Pokemon.pokemonImage(evolutionDetail.evolutionId))
         }
     }
 

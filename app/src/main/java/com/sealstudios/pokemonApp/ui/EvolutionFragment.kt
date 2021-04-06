@@ -14,6 +14,7 @@ import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.database.`object`.relations.EvolutionChainWithDetailList
 import com.sealstudios.pokemonApp.databinding.EvolutionFragmentBinding
 import com.sealstudios.pokemonApp.ui.adapter.EvolutionAdapter
+import com.sealstudios.pokemonApp.ui.adapter.layoutManagers.NoScrollLayoutManager
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.extensions.removeItemDecorations
 import com.sealstudios.pokemonApp.ui.util.decorators.ListDividerDecoration
@@ -51,7 +52,7 @@ class EvolutionFragment : Fragment() {
 
     private fun setUpEvolutionRecyclerView() = with(binding.evolutionRecyclerView) {
         adapter = evolutionAdapter
-        layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        layoutManager = NoScrollLayoutManager(context)
         removeItemDecorations()
         addItemDecoration(
                 ListDividerDecoration(R.drawable.divider,

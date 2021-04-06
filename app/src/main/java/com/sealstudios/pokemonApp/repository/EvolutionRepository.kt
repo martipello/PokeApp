@@ -28,8 +28,8 @@ class EvolutionRepository @Inject constructor(
         evolutionChainDao.insertPokemonEvolutionChain(evolutionChain)
     }
 
-    private suspend fun insertPokemonEvolutionDetail(evolutionDetail: EvolutionDetail) {
-        evolutionDetailDao.insertPokemonEvolutionDetail(evolutionDetail)
+    private suspend fun insertPokemonEvolutionDetail(evolutionDetail: EvolutionDetail): Long {
+        return evolutionDetailDao.insertPokemonEvolutionDetail(evolutionDetail)
     }
 
     private suspend fun insertPokemonEvolutionDetailJoin(evolutionDetailJoin: EvolutionDetailJoin) {
@@ -43,8 +43,8 @@ class EvolutionRepository @Inject constructor(
             val pokemonEvolutionChain = mapToEvolutionChain(evolutionChain)
             val pokemonEvolutionDetails = getEvolutionDetailListForEvolutionChain(evolutionChain.chain)
             pokemonEvolutionDetails.forEach {
-                insertPokemonEvolutionDetail(it)
-                insertPokemonEvolutionDetailJoin(EvolutionDetailJoin(pokemonEvolutionChain.id, it.id))
+                val id = insertPokemonEvolutionDetail(it)
+                insertPokemonEvolutionDetailJoin(EvolutionDetailJoin(pokemonEvolutionChain.id, id))
             }
             insertPokemonEvolutionChain(pokemonEvolutionChain)
         }

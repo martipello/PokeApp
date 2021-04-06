@@ -6,16 +6,18 @@ import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.sealstudios.pokemonApp.api.`object`.ChainLink
 import com.sealstudios.pokemonApp.api.`object`.EvolutionDetails
-import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail.Companion.POKEMON_EVOLUTION_DETAILS_ID
+import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail.Companion.POKEMON_EVOLUTION_DETAIL_ID
 import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import org.jetbrains.annotations.NotNull
 
-@Entity(indices = [Index(value = [POKEMON_EVOLUTION_DETAILS_ID])])
+@Entity(indices = [Index(value = [POKEMON_EVOLUTION_DETAIL_ID])])
 data class EvolutionDetail(
         @NotNull
-        @PrimaryKey
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_ID)
-        val id: Int,
+        @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = EVOLUTION_DETAIL_ID)
+        val id: Int = 0,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAIL_ID)
+        val evolutionId: Int,
         @ColumnInfo(name = POKEMON_EVOLUTION_NAME)
         val evolutionName: String,
         @ColumnInfo(name = POKEMON_EVOLVES_FROM_NAME)
@@ -68,10 +70,10 @@ data class EvolutionDetail(
         val isBaby: Boolean,
 ) {
 
-
     companion object {
 
-        const val POKEMON_EVOLUTION_DETAILS_ID: String = "pokemon_evolution_details_id"
+        const val EVOLUTION_DETAIL_ID: String = "evolution_detail_id"
+        const val POKEMON_EVOLUTION_DETAIL_ID: String = "pokemon_evolution_detail_id"
         const val POKEMON_EVOLUTION_NAME: String = "pokemon_evolution_details_name"
         const val POKEMON_EVOLVES_FROM_ID: String = "pokemon_evolves_from_id"
         const val POKEMON_EVOLVES_FROM_NAME: String = "pokemon_evolves_from_name"
@@ -98,11 +100,11 @@ data class EvolutionDetail(
         const val POKEMON_EVOLUTION_DETAILS_TURN_UPSIDE_DOWN: String = "pokemon_evolution_details_turn_upside_down"
         const val POKEMON_IS_BABY: String = "is_baby"
 
-        fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, chainLink: ChainLink, evolvesToChainLink: ChainLink) = EvolutionDetail(
-                id = evolvesToChainLink.species?.url?.getIdFromUrl() ?: -1,
+        fun mapToPokemonEvolutionDetails(evolutionDetails: EvolutionDetails, evolvesFromChainLink: ChainLink, evolvesToChainLink: ChainLink) = EvolutionDetail(
+                evolutionId = evolvesToChainLink.species?.url?.getIdFromUrl() ?: -1,
                 evolutionName = evolvesToChainLink.species?.name ?: "",
-                evolvesFromId = chainLink.species?.url?.getIdFromUrl() ?: -1,
-                evolvesFromName = chainLink.species?.name ?: "",
+                evolvesFromId = evolvesFromChainLink.species?.url?.getIdFromUrl() ?: -1,
+                evolvesFromName = evolvesFromChainLink.species?.name ?: "",
                 itemId = evolutionDetails.item?.url?.getIdFromUrl(),
                 itemName = evolutionDetails.item?.name,
                 triggerId = evolutionDetails.trigger?.url?.getIdFromUrl(),
@@ -124,7 +126,7 @@ data class EvolutionDetail(
                 timeOfDay = evolutionDetails.time_of_day,
                 tradeSpecies = evolutionDetails.trade_species?.url?.getIdFromUrl(),
                 turnUpsideDown = evolutionDetails.turn_upside_down,
-                isBaby = chainLink.is_baby
+                isBaby = evolvesFromChainLink.is_baby
         )
 
         fun getEvolutionDetailListForEvolutionChain(chainLink: ChainLink): List<EvolutionDetail> {
@@ -132,9 +134,9 @@ data class EvolutionDetail(
         }
 
         private fun createEvolutionDetailListForEvolutionChain(chainLink: ChainLink, detailList: MutableList<EvolutionDetail>): List<EvolutionDetail> {
-            detailList.addAll(chainLink.evolves_to.map { thisChainLink ->
-                thisChainLink.evolution_details.map { evolutionDetails ->
-                    mapToPokemonEvolutionDetails(evolutionDetails, chainLink, thisChainLink)
+            detailList.addAll(chainLink.evolves_to.map { evolvesToChainLink ->
+                evolvesToChainLink.evolution_details.map { evolutionDetails ->
+                    mapToPokemonEvolutionDetails(evolutionDetails, chainLink, evolvesToChainLink)
                 }
             }.flatten())
 

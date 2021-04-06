@@ -13,11 +13,11 @@ data class EvolutionChainWithDetailList(
         @Relation(
                 parentColumn = EvolutionChain.POKEMON_EVOLUTION_CHAIN_ID,
                 entity = EvolutionDetail::class,
-                entityColumn = EvolutionDetail.POKEMON_EVOLUTION_DETAILS_ID,
+                entityColumn = EvolutionDetail.EVOLUTION_DETAIL_ID,
                 associateBy = Junction(
                         value = EvolutionDetailJoin::class,
                         parentColumn = EvolutionChain.POKEMON_EVOLUTION_CHAIN_ID,
-                        entityColumn = EvolutionDetail.POKEMON_EVOLUTION_DETAILS_ID
+                        entityColumn = EvolutionDetail.EVOLUTION_DETAIL_ID
                 )
         )
         val evolutionChainLinkList: List<EvolutionDetail>

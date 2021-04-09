@@ -41,9 +41,11 @@ data class EvolutionDetail(
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_NAME)
         val knownMoveName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_TYPE)
-        val knownMoveType: Int?,
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_LOCATION)
-        val location: Int?,
+        val knownMoveType: String?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_LOCATION_ID)
+        val locationId: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_LOCATION_NAME)
+        val locationName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_LEVEL)
         val minLevel: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_MIN_HAPPINESS)
@@ -54,16 +56,22 @@ data class EvolutionDetail(
         val minAffection: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_NEEDS_OVER_WORLD_RAIN)
         val needsOverWorldRain: Boolean,
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES)
-        val partySpecies: Int?,
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_TYPE)
-        val partyType: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES_ID)
+        val partySpeciesId: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES_NAME)
+        val partySpeciesName: String?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_TYPE_ID)
+        val partyTypeId: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_PARTY_TYPE_NAME)
+        val partyTypeName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_RELATIVE_PHYSICAL_STATS)
         val relativePhysicalStats: Int?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TIME_OF_DAY)
         val timeOfDay: String?,
-        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES)
-        val tradeSpecies: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES_ID)
+        val tradeSpeciesId: Int?,
+        @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES_NAME)
+        val tradeSpeciesName: String?,
         @ColumnInfo(name = POKEMON_EVOLUTION_DETAILS_TURN_UPSIDE_DOWN)
         val turnUpsideDown: Boolean,
         @ColumnInfo(name = POKEMON_IS_BABY)
@@ -86,17 +94,21 @@ data class EvolutionDetail(
         const val POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE: String = "pokemon_evolution_details_known_move"
         const val POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_NAME: String = "pokemon_evolution_details_known_move_name"
         const val POKEMON_EVOLUTION_DETAILS_KNOWN_MOVE_TYPE: String = "pokemon_evolution_details_known_move_type"
-        const val POKEMON_EVOLUTION_DETAILS_LOCATION: String = "pokemon_evolution_details_location"
+        const val POKEMON_EVOLUTION_DETAILS_LOCATION_ID: String = "pokemon_evolution_details_location_id"
+        const val POKEMON_EVOLUTION_DETAILS_LOCATION_NAME: String = "pokemon_evolution_details_location_name"
         const val POKEMON_EVOLUTION_DETAILS_MIN_LEVEL: String = "pokemon_evolution_details_min_level"
         const val POKEMON_EVOLUTION_DETAILS_MIN_HAPPINESS: String = "pokemon_evolution_details_min_happiness"
         const val POKEMON_EVOLUTION_DETAILS_MIN_BEAUTY: String = "pokemon_evolution_details_min_beauty"
         const val POKEMON_EVOLUTION_DETAILS_MIN_AFFECTION: String = "pokemon_evolution_details_min_affection"
         const val POKEMON_EVOLUTION_DETAILS_NEEDS_OVER_WORLD_RAIN: String = "pokemon_evolution_details_needs_over_world_rain"
-        const val POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES: String = "pokemon_evolution_details_party_species"
-        const val POKEMON_EVOLUTION_DETAILS_PARTY_TYPE: String = "pokemon_evolution_details_party_type"
+        const val POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES_ID: String = "pokemon_evolution_details_party_species_id"
+        const val POKEMON_EVOLUTION_DETAILS_PARTY_SPECIES_NAME: String = "pokemon_evolution_details_party_species_name"
+        const val POKEMON_EVOLUTION_DETAILS_PARTY_TYPE_ID: String = "pokemon_evolution_details_party_type_id"
+        const val POKEMON_EVOLUTION_DETAILS_PARTY_TYPE_NAME: String = "pokemon_evolution_details_party_type_name"
         const val POKEMON_EVOLUTION_DETAILS_RELATIVE_PHYSICAL_STATS: String = "pokemon_evolution_details_relative_physical_stats"
         const val POKEMON_EVOLUTION_DETAILS_TIME_OF_DAY: String = "pokemon_evolution_details_time_of_day"
-        const val POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES: String = "pokemon_evolution_details_trade_species"
+        const val POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES_ID: String = "pokemon_evolution_details_trade_species_id"
+        const val POKEMON_EVOLUTION_DETAILS_TRADE_SPECIES_NAME: String = "pokemon_evolution_details_trade_species_name"
         const val POKEMON_EVOLUTION_DETAILS_TURN_UPSIDE_DOWN: String = "pokemon_evolution_details_turn_upside_down"
         const val POKEMON_IS_BABY: String = "is_baby"
 
@@ -113,18 +125,22 @@ data class EvolutionDetail(
                 heldItemName = evolutionDetails.held_item?.name,
                 knownMove = evolutionDetails.known_move?.url?.getIdFromUrl(),
                 knownMoveName = evolutionDetails.known_move?.name,
-                knownMoveType = evolutionDetails.known_move_type?.url?.getIdFromUrl(),
-                location = evolutionDetails.location?.url?.getIdFromUrl(),
+                knownMoveType = evolutionDetails.known_move_type?.name,
+                locationId = evolutionDetails.location?.url?.getIdFromUrl(),
+                locationName = evolutionDetails.location?.name,
                 minLevel = evolutionDetails.min_level ?: -1,
                 minHappiness = evolutionDetails.min_happiness ?: -1,
                 minBeauty = evolutionDetails.min_beauty ?: -1,
                 minAffection = evolutionDetails.min_affection ?: -1,
                 needsOverWorldRain = evolutionDetails.needs_overworld_rain,
-                partySpecies = evolutionDetails.party_species?.url?.getIdFromUrl(),
-                partyType = evolutionDetails.party_type?.url?.getIdFromUrl(),
+                partySpeciesId = evolutionDetails.party_species?.url?.getIdFromUrl(),
+                partySpeciesName = evolutionDetails.party_species?.name,
+                partyTypeId = evolutionDetails.party_type?.url?.getIdFromUrl(),
+                partyTypeName = evolutionDetails.party_type?.name,
                 relativePhysicalStats = evolutionDetails.relative_physical_stats ?: -1,
                 timeOfDay = evolutionDetails.time_of_day,
-                tradeSpecies = evolutionDetails.trade_species?.url?.getIdFromUrl(),
+                tradeSpeciesId = evolutionDetails.trade_species?.url?.getIdFromUrl(),
+                tradeSpeciesName = evolutionDetails.trade_species?.name,
                 turnUpsideDown = evolutionDetails.turn_upside_down,
                 isBaby = evolvesFromChainLink.is_baby
         )
@@ -176,17 +192,21 @@ data class EvolutionDetail(
                 "\nknownMove=$knownMove, " +
                 "\nknownMoveName=$knownMoveName, " +
                 "\nknownMoveType=$knownMoveType, " +
-                "\nlocation=$location, " +
+                "\nlocationId=$locationId, " +
+                "\nlocationName=$locationName, " +
                 "\nminLevel=$minLevel, " +
                 "\nminHappiness=$minHappiness, " +
                 "\nminBeauty=$minBeauty, " +
                 "\nminAffection=$minAffection, " +
                 "\nneedsOverWorldRain=$needsOverWorldRain, " +
-                "\npartySpecies=$partySpecies, " +
-                "\npartyType=$partyType, " +
+                "\npartySpeciesId=$partySpeciesId, " +
+                "\npartySpeciesName=$partySpeciesName, " +
+                "\npartyTypeId=$partyTypeId, " +
+                "\npartyTypeName=$partyTypeName, " +
                 "\nrelativePhysicalStats=$relativePhysicalStats, " +
                 "\ntimeOfDay=$timeOfDay, " +
-                "\ntradeSpecies=$tradeSpecies, " +
+                "\ntradeSpeciesId=$tradeSpeciesId, " +
+                "\ntradeSpeciesName=$tradeSpeciesName, " +
                 "\nturnUpsideDown=$turnUpsideDown, " +
                 "\nisBaby=$isBaby" +
                 "\n)"

@@ -281,5 +281,18 @@
     <string name="happiness_label">Happiness :</string>
     <string name="beauty_label">Beauty :</string>
     <string name="affection_label">Affection :</string>
+    <string name="location_label">Location :</string>
+    <string name="known_move_type_label">Known Move Type :</string>
+    <string name="item_label">Item :</string>
+    <string name="held_item_label">Held Item :</string>
+    <string name="time_of_day_label">Time of Day :</string>
+    <string name="gender_label">Gender :</string>
+    <string name="party_species_label">Party Species :</string>
+    <string name="party_type_label">Party Type :</string>
+    <string name="relative_physical_stats_label">Relative Physical Stats :</string>
+    <string name="trade_species_label">Trade Species :</string>
+    <string name="needs_over_world_rain_label">Over World Rain Required :</string>
+    <string name="turn_upside_down_label">Turn Upside Down (3DS Only) :</string>
+    <string name="is_baby_label">Is a Baby :</string>
 
 </resources>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/qualified_small_margin_8dp"
+    android:paddingEnd="@dimen/qualified_small_margin_8dp"
+    tools:context=".ui.StatsFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/base_stats_fragment"
+            android:name="com.sealstudios.pokemonApp.ui.BaseStatsFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout="@layout/base_stats_fragment" />
+
+        <View
+            android:id="@+id/base_stats_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+            android:background="@color/light_grey"
+            app:layout_constraintTop_toBottomOf="@id/base_stats_fragment" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/weakness_resistance_fragment"
+            android:name="com.sealstudios.pokemonApp.ui.WeaknessResistanceFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/base_stats_divider"
+            tools:layout="@layout/weakness_resistance_fragment" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>

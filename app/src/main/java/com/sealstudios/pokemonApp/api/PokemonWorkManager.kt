@@ -12,7 +12,7 @@ import com.sealstudios.pokemonApp.api.notification.NotificationArguments
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_ID
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper.Companion.NOTIFICATION_NAME
-import com.sealstudios.pokemonApp.database.`object`.Pokemon.Companion.getPokemonIdFromUrl
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.withContext
@@ -70,7 +70,7 @@ class PokemonWorkManager @WorkerInject constructor(
             data: List<NamedApiResource>) = withContext(Dispatchers.IO) {
         for (i in data.indices) {
             data[i].let { pokemonRef ->
-                val id = getPokemonIdFromUrl(pokemonRef.url)
+                val id = pokemonRef.url.getIdFromUrl()
                 val fetchPokemonAsync =
                         async { remotePokemonToRoomPokemonHelper.fetchAndSavePokemonForId(id) }
                 val fetchSpeciesAsync =

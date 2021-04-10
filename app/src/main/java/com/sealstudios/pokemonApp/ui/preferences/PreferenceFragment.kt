@@ -8,19 +8,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.sealstudios.pokemonApp.databinding.FragmentPreferenceBinding
-import com.sealstudios.pokemonApp.ui.PokemonDetailFragment.Companion.navigatedFromListPage
+import com.sealstudios.pokemonApp.databinding.PreferenceFragmentBinding
+import com.sealstudios.pokemonApp.ui.DetailFragment.Companion.navigatedFromListPage
 import com.sealstudios.pokemonApp.ui.extensions.setNavigationResult
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
 
 class PreferenceFragment : Fragment() {
 
-    private var _binding: FragmentPreferenceBinding? = null
+    private var _binding: PreferenceFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = FragmentPreferenceBinding.inflate(inflater, container, false)
+        _binding = PreferenceFragmentBinding.inflate(inflater, container, false)
         this.setNavigationResult(true, navigatedFromListPage)
         return binding.root
     }

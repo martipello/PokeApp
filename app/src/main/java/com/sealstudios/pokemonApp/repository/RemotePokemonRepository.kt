@@ -50,7 +50,7 @@ class RemotePokemonRepository @Inject constructor(
         }
     }
 
-    suspend fun getRemotePokemonEvolutionChainForId(id: Int): Resource<EvolutionChain> {
+    suspend fun evolutionChainForId(id: Int): Resource<EvolutionChain> {
         return try {
             responseHandler.handleSuccess(pokemonService.getPokemonEvolutionsForId(id))
         } catch (e: Exception) {

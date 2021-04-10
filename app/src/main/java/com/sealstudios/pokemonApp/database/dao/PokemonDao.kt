@@ -75,11 +75,11 @@ interface PokemonDao {
     fun searchPokemonWithTypesAndSpecies(search: String): LiveData<List<PokemonWithTypesAndSpeciesForList>?>
 
     @Query(
-        """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
-                     INNER JOIN PokemonTypesJoin 
-                     ON Pokemon.pokemon_id = PokemonTypesJoin.pokemon_id 
-                     INNER JOIN PokemonType 
-                     ON PokemonType.type_id = PokemonTypesJoin.type_id 
+            """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
+                     INNER JOIN TypesJoin 
+                     ON Pokemon.pokemon_id = TypesJoin.pokemon_id 
+                     INNER JOIN Type 
+                     ON Type.type_id = TypesJoin.type_id 
                      WHERE pokemon_name LIKE :search AND type_name IN (:filters)
                      GROUP BY Pokemon.pokemon_id, Pokemon.pokemon_name
                      ORDER BY count(*) DESC, Pokemon.pokemon_id ASC"""
@@ -104,11 +104,11 @@ interface PokemonDao {
     fun searchPokemonWithTypesAndSpeciesForPaging(search: String): PagingSource<Int, PokemonWithTypesAndSpeciesForList>
 
     @Query(
-        """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
-                     INNER JOIN PokemonTypesJoin 
-                     ON Pokemon.pokemon_id = PokemonTypesJoin.pokemon_id 
-                     INNER JOIN PokemonType 
-                     ON PokemonType.type_id = PokemonTypesJoin.type_id 
+            """SELECT Pokemon.pokemon_id, Pokemon.pokemon_name, Pokemon.pokemon_image_url, Pokemon.pokemon_sprite FROM Pokemon 
+                     INNER JOIN TypesJoin 
+                     ON Pokemon.pokemon_id = TypesJoin.pokemon_id 
+                     INNER JOIN Type 
+                     ON Type.type_id = TypesJoin.type_id 
                      WHERE pokemon_name LIKE :search AND type_name IN (:filters)
                      GROUP BY Pokemon.pokemon_id, Pokemon.pokemon_name
                      ORDER BY count(*) DESC, Pokemon.pokemon_id ASC"""
@@ -141,11 +141,11 @@ interface PokemonDao {
     fun searchPokemon(search: String): LiveData<List<PokemonWithTypesAndSpecies>>
 
     @Query(
-        """SELECT * FROM Pokemon 
-                     INNER JOIN PokemonTypesJoin 
-                     ON Pokemon.pokemon_id = PokemonTypesJoin.pokemon_id 
-                     INNER JOIN PokemonType 
-                     ON PokemonType.type_id = PokemonTypesJoin.type_id 
+            """SELECT * FROM Pokemon 
+                     INNER JOIN TypesJoin 
+                     ON Pokemon.pokemon_id = TypesJoin.pokemon_id 
+                     INNER JOIN Type 
+                     ON Type.type_id = TypesJoin.type_id 
                      WHERE pokemon_name LIKE :search AND type_name IN (:filters)
                      GROUP BY Pokemon.pokemon_id, Pokemon.pokemon_name
                      ORDER BY count(*) DESC, pokemon_id ASC"""

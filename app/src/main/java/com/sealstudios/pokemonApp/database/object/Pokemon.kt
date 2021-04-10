@@ -4,40 +4,39 @@ import androidx.room.*
 import com.sealstudios.pokemonApp.api.`object`.ApiPokemon
 import com.sealstudios.pokemonApp.api.`object`.NamedApiResource
 import com.sealstudios.pokemonApp.util.RoomIntListConverter
+import com.sealstudios.pokemonApp.util.extensions.getIdFromUrl
 import org.jetbrains.annotations.NotNull
 
 @TypeConverters(RoomIntListConverter::class)
 @Entity(indices = [Index(value = [Pokemon.POKEMON_NAME])])
 open class Pokemon constructor(
-    @NotNull
-    @PrimaryKey
-    @ColumnInfo(name = POKEMON_ID)
-    var id: Int = 0,
+        @NotNull
+        @PrimaryKey
+        @ColumnInfo(name = POKEMON_ID)
+        var id: Int = 0,
 
-    @ColumnInfo(name = POKEMON_NAME)
-    var name: String = "",
+        @ColumnInfo(name = POKEMON_NAME)
+        var name: String = "",
 
-    @ColumnInfo(name = POKEMON_IMAGE)
-    var image: String = "",
+        @ColumnInfo(name = POKEMON_IMAGE)
+        var image: String = "",
 
-    @ColumnInfo(name = POKEMON_SPRITE)
-    var sprite: String? = "",
+        @ColumnInfo(name = POKEMON_SPRITE)
+        var sprite: String? = "",
 
-    @ColumnInfo(name = POKEMON_WEIGHT)
-    val weight: Int = 0,
+        @ColumnInfo(name = POKEMON_WEIGHT)
+        val weight: Int = 0,
 
-    @ColumnInfo(name = POKEMON_HEIGHT)
-    val height: Int = 0,
+        @ColumnInfo(name = POKEMON_HEIGHT)
+        val height: Int = 0,
 
-    @ColumnInfo(name = MOVE_IDS)
-    var move_ids: List<Int> = emptyList(),
+        @ColumnInfo(name = MOVE_IDS)
+        var move_ids: List<Int> = emptyList(),
 
-    @ColumnInfo(name = ABILITY_IDS)
-    val abilityIds: List<Int> = emptyList(),
+        @ColumnInfo(name = ABILITY_IDS)
+        val abilityIds: List<Int> = emptyList(),
 
-
-
-    ) {
+        ) {
 
     companion object {
 
@@ -51,46 +50,35 @@ open class Pokemon constructor(
         const val ABILITY_IDS: String = "pokemon_ability_ids"
 
         fun defaultPokemon(apiPokemon: NamedApiResource): Pokemon {
-            val id = getPokemonIdFromUrl(apiPokemon.url)
+            val id = apiPokemon.url.getIdFromUrl()
+            val name = apiPokemon.name
             return Pokemon(
-                id = id,
-                name = apiPokemon.name,
-                image = highResPokemonUrl(id),
-                height = 0,
-                weight = 0,
-                move_ids = listOf(),
-                sprite = "",
-                abilityIds = listOf()
+                    id = id,
+                    name = name,
+                    image = pokemonImage(id),
+                    height = 0,
+                    weight = 0,
+                    move_ids = listOf(),
+                    sprite = "",
+                    abilityIds = listOf()
             )
         }
 
         fun mapDbPokemonFromPokemonResponse(apiPokemon: ApiPokemon): Pokemon {
-
             return Pokemon(
-                id = apiPokemon.id,
-                name = apiPokemon.name ?: "",
-                image = highResPokemonUrl(apiPokemon.id),
-                height = apiPokemon.height ?: 0,
-                weight = apiPokemon.weight ?: 0,
-                sprite = apiPokemon.sprites?.front_default ?: "",
-                move_ids = apiPokemon.moves.map { getPokemonIdFromUrl(it.move.url) },
-                abilityIds = apiPokemon.abilities.map { pokemonAbility -> getPokemonIdFromUrl(pokemonAbility.ability.url) }
+                    id = apiPokemon.id,
+                    name = apiPokemon.name ?: "",
+                    image = pokemonImage(apiPokemon.id),
+                    height = apiPokemon.height ?: 0,
+                    weight = apiPokemon.weight ?: 0,
+                    sprite = apiPokemon.sprites?.front_default ?: "",
+                    move_ids = apiPokemon.moves.map { it.move?.url?.getIdFromUrl() ?: -1 },
+                    abilityIds = apiPokemon.abilities.map { pokemonAbility -> pokemonAbility.ability?.url?.getIdFromUrl() ?: -1 }
             )
         }
 
-        fun highResPokemonUrl(pokemonId: Int) =
-            "https://pokeres.bastionbot.org/images/pokemon/${pokemonId}.png"
-
-        fun getPokemonIdFromUrl(pokemonUrl: String?): Int {
-            if (pokemonUrl != null) {
-                val pokemonIndex = pokemonUrl.split('/')
-                if (pokemonIndex.size >= 2) {
-                    return pokemonIndex[pokemonIndex.size - 2].toInt()
-                }
-            }
-            return -1
-        }
-
+        fun pokemonImage(id: Int) =
+                "https://firebasestorage.googleapis.com/v0/b/pokeapp-86eec.appspot.com/o/pokemon_image_$id.png?alt=media"
 
     }
 
@@ -101,12 +89,12 @@ open class Pokemon constructor(
 
 fun Pokemon.isDefault(): Boolean {
     val defaultPokemon = Pokemon.defaultPokemon(
-        NamedApiResource(
-            name = this.name,
-            id = this.id,
-            category = "",
-            url = "https://pokeapi.co/api/v2/pokemon/${this.id}/"
-        )
+            NamedApiResource(
+                    name = this.name,
+                    id = this.id,
+                    category = "",
+                    url = "https://pokeapi.co/api/v2/pokemon/${this.id}/"
+            )
     )
     return this.id == defaultPokemon.id
             && this.name == defaultPokemon.name

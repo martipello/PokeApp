@@ -19,6 +19,7 @@ import androidx.navigation.fragment.NavHostFragment.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.RequestManager
 import com.google.android.material.card.MaterialCardView
@@ -27,15 +28,15 @@ import com.sealstudios.pokemonApp.api.`object`.Status
 import com.sealstudios.pokemonApp.api.notification.NotificationHelper
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
+import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToDetailFragment
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPreferences
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.viewModel.FiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PartialPokemonViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.FlowPreview
@@ -57,7 +58,7 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
 
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
-    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
+    private val filtersViewModel: FiltersViewModel by viewModels({ requireActivity() })
     private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
 
     private lateinit var pokemonAdapter: PokemonAdapter
@@ -85,6 +86,7 @@ class PokemonListFragment : Fragment(),
 
     private fun setUpPokemonAdapter() {
         pokemonAdapter = PokemonAdapter(clickListener = this, glide = glide)
+        pokemonAdapter.stateRestorationPolicy = RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
     }
 
     private fun onFetchedPartialPokemonData() {
@@ -148,7 +150,7 @@ class PokemonListFragment : Fragment(),
             adapter = pokemonAdapter
             addItemDecoration(PokemonListDecoration(
                     context.resources.getDimensionPixelSize(R.dimen.qualified_small_margin_8dp)))
-            pokemonFiltersViewModel.addScrollAwareFilerFab(this)
+            filtersViewModel.addScrollAwareFilerFab(this)
         }
     }
 
@@ -230,12 +232,12 @@ class PokemonListFragment : Fragment(),
 
     private fun navigateToDetailFragment(name: String, view: View) {
         view as MaterialCardView
-        val action = actionPokemonListFragmentToPokemonDetailFragment(
+        val action = actionPokemonListFragmentToDetailFragment(
                 pokemonName = name,
                 transitionName = view.transitionName,
         )
         val extras = FragmentNavigatorExtras(view to view.transitionName)
-        pokemonFiltersViewModel.closeFiltersLayout()
+        filtersViewModel.closeFiltersLayout()
         navigate(action, extras)
     }
 

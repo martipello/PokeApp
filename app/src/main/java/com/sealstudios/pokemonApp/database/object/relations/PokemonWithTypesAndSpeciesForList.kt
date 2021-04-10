@@ -4,9 +4,9 @@ import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
 import com.sealstudios.pokemonApp.database.`object`.*
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonSpeciesJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypeMetaDataJoin
-import com.sealstudios.pokemonApp.database.`object`.joins.PokemonTypesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.SpeciesJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.TypeMetaDataJoin
+import com.sealstudios.pokemonApp.database.`object`.joins.TypesJoin
 import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 
 data class PokemonWithTypesAndSpeciesForList constructor(
@@ -15,38 +15,38 @@ data class PokemonWithTypesAndSpeciesForList constructor(
         val pokemon: PokemonForList,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonType::class,
-                entityColumn = PokemonType.TYPE_ID,
+                entity = Type::class,
+                entityColumn = Type.TYPE_ID,
                 associateBy = Junction(
-                        value = PokemonTypesJoin::class,
+                        value = TypesJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonType.TYPE_ID
+                        entityColumn = Type.TYPE_ID
                 )
         )
-        val types: List<PokemonType>,
+        val types: List<Type>,
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonSpecies::class,
-                entityColumn = PokemonSpecies.SPECIES_ID,
+                entity = Species::class,
+                entityColumn = Species.SPECIES_ID,
                 associateBy = Junction(
-                        value = PokemonSpeciesJoin::class,
+                        value = SpeciesJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonSpecies.SPECIES_ID
+                        entityColumn = Species.SPECIES_ID
                 )
         )
-        val species: PokemonSpecies?,
+        val species: Species?,
 
         @Relation(
                 parentColumn = Pokemon.POKEMON_ID,
-                entity = PokemonTypeMetaData::class,
-                entityColumn = PokemonTypeMetaData.TYPE_META_DATA_ID,
+                entity = TypeMetaData::class,
+                entityColumn = TypeMetaData.TYPE_META_DATA_ID,
                 associateBy = Junction(
-                        value = PokemonTypeMetaDataJoin::class,
+                        value = TypeMetaDataJoin::class,
                         parentColumn = Pokemon.POKEMON_ID,
-                        entityColumn = PokemonTypeMetaData.TYPE_META_DATA_ID
+                        entityColumn = TypeMetaData.TYPE_META_DATA_ID
                 )
         )
-        val typeMetaData: PokemonTypeMetaData?
+        val typeMetaData: TypeMetaData?
 ) : PokemonAdapterListItem
 
 

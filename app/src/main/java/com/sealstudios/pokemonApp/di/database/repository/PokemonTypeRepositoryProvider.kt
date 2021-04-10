@@ -1,8 +1,8 @@
 package com.sealstudios.pokemonApp.di.database.repository
 
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeDao
-import com.sealstudios.pokemonApp.database.dao.PokemonTypeJoinDao
-import com.sealstudios.pokemonApp.repository.PokemonTypeRepository
+import com.sealstudios.pokemonApp.database.dao.TypeDao
+import com.sealstudios.pokemonApp.database.dao.TypeJoinDao
+import com.sealstudios.pokemonApp.repository.TypeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,10 +16,10 @@ class PokemonTypeRepositoryProvider {
     @Singleton
     @Provides
     fun providePokemonTypeRepository(
-        pokemonTypeDao: PokemonTypeDao,
-        pokemonTypeJoinDao: PokemonTypeJoinDao,
-    ): PokemonTypeRepository {
-        return PokemonTypeRepository(pokemonTypeDao, pokemonTypeJoinDao)
+            typeDao: TypeDao,
+            typeJoinDao: TypeJoinDao,
+    ): TypeRepository {
+        return TypeRepository(typeDao, typeJoinDao)
     }
 
 }

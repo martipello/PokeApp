@@ -52,7 +52,10 @@
     <string name="adaptive_height_scroll_view_behavior" translatable="false">com.sealstudios.pokemonApp.ui.util.AdaptiveHeightScrollingViewBehaviour</string>
     <string name="error_text">Oops that\'s an error… 🤔</string>
     <string name="retry">Retry</string>
-    <string name="no_moves">No moves… 🤔</string>
+    <string name="no_moves">No moves data… 🤔</string>
+    <string name="no_base_stats">No base stats data… 🤔</string>
+    <string name="no_weakness_resistance">No weakness and resistance data… 🤔</string>
+    <string name="abilities_empty">No abilities data… 🤔</string>
     <string name="show_less">Show less</string>
     <string name="show_more">Show more</string>
     <string name="learnt_by">Learnt by: %s</string>
@@ -270,5 +273,26 @@
     <string name="permission_request_body">To get the best experience we need to download all pokemon meta data. This is a large download, (about 50mb), proceed?</string>
     <string name="permission_request_positive_button_text">OK, download</string>
     <string name="cancel">Cancel</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="evolution">Evolution</string>
+    <string name="does_not_evolve">Pokemon doesn\'t evolve.</string>
+    <string name="evolution_trigger_label">Trigger :</string>
+    <string name="level_label">Level :</string>
+    <string name="happiness_label">Happiness :</string>
+    <string name="beauty_label">Beauty :</string>
+    <string name="affection_label">Affection :</string>
+    <string name="location_label">Location :</string>
+    <string name="known_move_type_label">Known Move Type :</string>
+    <string name="item_label">Item :</string>
+    <string name="held_item_label">Held Item :</string>
+    <string name="time_of_day_label">Time of Day :</string>
+    <string name="gender_label">Gender :</string>
+    <string name="party_species_label">Party Species :</string>
+    <string name="party_type_label">Party Type :</string>
+    <string name="relative_physical_stats_label">Relative Physical Stats :</string>
+    <string name="trade_species_label">Trade Species :</string>
+    <string name="needs_over_world_rain_label">Over World Rain Required :</string>
+    <string name="turn_upside_down_label">Turn Upside Down (3DS Only) :</string>
+    <string name="is_baby_label">Is a Baby :</string>
 
 </resources>

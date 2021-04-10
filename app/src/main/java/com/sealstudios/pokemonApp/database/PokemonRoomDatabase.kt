@@ -15,22 +15,25 @@ import com.sealstudios.pokemonApp.util.RoomStringListConverter
 @Database(
         entities = [
             Pokemon::class,
-            PokemonType::class,
-            PokemonTypesJoin::class,
-            PokemonMove::class,
-            PokemonMovesJoin::class,
-            PokemonSpecies::class,
-            PokemonSpeciesJoin::class,
-            PokemonMoveMetaData::class,
-            PokemonMoveMetaDataJoin::class,
-            PokemonAbility::class,
-            PokemonAbilityJoin::class,
-            PokemonAbilityMetaData::class,
-            PokemonAbilityMetaDataJoin::class,
-            PokemonBaseStats::class,
-            PokemonBaseStatsJoin::class,
-            PokemonTypeMetaData::class,
-            PokemonTypeMetaDataJoin::class,
+            Type::class,
+            TypesJoin::class,
+            Move::class,
+            MovesJoin::class,
+            Species::class,
+            SpeciesJoin::class,
+            MoveMetaData::class,
+            MoveMetaDataJoin::class,
+            Ability::class,
+            AbilityJoin::class,
+            AbilityMetaData::class,
+            AbilityMetaDataJoin::class,
+            BaseStats::class,
+            BaseStatsJoin::class,
+            TypeMetaData::class,
+            TypeMetaDataJoin::class,
+            EvolutionChain::class,
+            EvolutionDetail::class,
+            EvolutionDetailJoin::class,
         ],
         version = DATABASE_VERSION,
         exportSchema = false
@@ -39,22 +42,25 @@ import com.sealstudios.pokemonApp.util.RoomStringListConverter
 abstract class PokemonRoomDatabase : RoomDatabase() {
 
     abstract fun pokemonDao(): PokemonDao
-    abstract fun pokemonTypeDao(): PokemonTypeDao
-    abstract fun pokemonTypeJoinDao(): PokemonTypeJoinDao
-    abstract fun pokemonMoveDao(): PokemonMoveDao
-    abstract fun pokemonMoveJoinDao(): PokemonMoveJoinDao
-    abstract fun pokemonMoveMetaDataDao(): PokemonMoveMetaDataDao
-    abstract fun pokemonMoveMetaDataJoinDao(): PokemonMoveMetaDataJoinDao
-    abstract fun pokemonSpeciesDao(): PokemonSpeciesDao
-    abstract fun pokemonSpeciesJoinDao(): PokemonSpeciesJoinDao
-    abstract fun pokemonAbilityDao(): PokemonAbilityDao
-    abstract fun pokemonAbilityJoinDao(): PokemonAbilityJoinDao
-    abstract fun pokemonAbilityMetaDataDao(): PokemonAbilityMetaDataDao
-    abstract fun pokemonAbilityMetaDataJoinDao(): PokemonAbilityMetaDataJoinDao
-    abstract fun pokemonBaseStatsDao(): PokemonBaseStatsDao
-    abstract fun pokemonBaseStatsJoinDao(): PokemonBaseStatsJoinDao
-    abstract fun pokemonTypeMetaDataDao(): PokemonTypeMetaDataDao
-    abstract fun pokemonTypeMetaDataJoinDao(): PokemonTypeMetaDataJoinDao
+    abstract fun pokemonTypeDao(): TypeDao
+    abstract fun pokemonTypeJoinDao(): TypeJoinDao
+    abstract fun pokemonMoveDao(): MoveDao
+    abstract fun pokemonMoveJoinDao(): MoveJoinDao
+    abstract fun pokemonMoveMetaDataDao(): MoveMetaDataDao
+    abstract fun pokemonMoveMetaDataJoinDao(): MoveMetaDataJoinDao
+    abstract fun pokemonSpeciesDao(): SpeciesDao
+    abstract fun pokemonSpeciesJoinDao(): SpeciesJoinDao
+    abstract fun pokemonAbilityDao(): AbilityDao
+    abstract fun pokemonAbilityJoinDao(): AbilityJoinDao
+    abstract fun pokemonAbilityMetaDataDao(): AbilityMetaDataDao
+    abstract fun pokemonAbilityMetaDataJoinDao(): AbilityMetaDataJoinDao
+    abstract fun pokemonBaseStatsDao(): BaseStatsDao
+    abstract fun pokemonBaseStatsJoinDao(): BaseStatsJoinDao
+    abstract fun pokemonTypeMetaDataDao(): TypeMetaDataDao
+    abstract fun pokemonTypeMetaDataJoinDao(): TypeMetaDataJoinDao
+    abstract fun pokemonEvolutionChainDao(): EvolutionChainDao
+    abstract fun pokemonEvolutionDetailDao(): EvolutionDetailDao
+    abstract fun pokemonEvolutionDetailJoinDao(): EvolutionDetailJoinDao
 
 
     companion object {

@@ -1,0 +1,507 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="@dimen/qualified_medium_margin_16dp"
+    android:layout_marginBottom="@dimen/qualified_medium_margin_16dp"
+    app:layout_constraintTop_toBottomOf="@id/no_evolution_label">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/pokemon_image_view_holder"
+        android:layout_width="@dimen/qualified_large_margin_64dp"
+        android:layout_height="@dimen/qualified_large_margin_64dp"
+        android:contentDescription="@string/pokemon_image"
+        app:cardBackgroundColor="@color/primaryLightColor"
+        app:cardCornerRadius="@dimen/qualified_view_holder_image_corner_radius"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeColor="@color/primaryLightColor"
+        app:strokeWidth="@dimen/small_margin_4dp">
+
+        <ImageView
+            android:id="@+id/pokemon_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:contentDescription="@string/pokemon_image"
+            android:padding="@dimen/small_margin_4dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/pokeball_vector" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <LinearLayout
+        android:id="@+id/evolution_title_holder"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/pokemon_name_text_view"
+            style="@style/ThemeOverlay.MyBodyText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/pokemon_id_text_view_label"
+            style="@style/ThemeOverlay.MyCaptionText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top" />
+
+    </LinearLayout>
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/evolution_label_barrier"
+        android:layout_width="1dp"
+        android:layout_height="10dp"
+        app:barrierDirection="end"
+        app:constraint_referenced_ids="evolution_trigger_label,
+                level_label, happiness_label, beauty_label,
+                affection_label, location_label, move_type_label,
+                item_label, held_item_label, time_of_day_label,
+                gender_label, party_species_label, party_type_label,
+                trade_species_label"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/evolution_trigger_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/evolution_trigger_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/evolution_title_holder" />
+
+    <TextView
+        android:id="@+id/evolution_trigger_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/evolution_trigger_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/level_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/level_label"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/evolution_trigger_text" />
+
+    <TextView
+        android:id="@+id/level_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/level_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/happiness_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/happiness_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/level_text" />
+
+    <TextView
+        android:id="@+id/happiness_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/happiness_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/beauty_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/beauty_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/happiness_text" />
+
+    <TextView
+        android:id="@+id/beauty_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/beauty_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/affection_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/affection_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/beauty_text" />
+
+    <TextView
+        android:id="@+id/affection_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/affection_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/location_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/location_label"
+        android:visibility="gone"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/affection_text" />
+
+    <TextView
+        android:id="@+id/location_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/location_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/move_type_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/known_move_type_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/location_text" />
+
+    <TextView
+        android:id="@+id/move_type_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/move_type_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/item_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/item_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/move_type_text" />
+
+    <TextView
+        android:id="@+id/item_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/item_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/held_item_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/held_item_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/item_text" />
+
+    <TextView
+        android:id="@+id/held_item_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/held_item_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/time_of_day_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/time_of_day_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/held_item_text" />
+
+    <TextView
+        android:id="@+id/time_of_day_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/time_of_day_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/gender_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:visibility="gone"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/gender_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/time_of_day_text" />
+
+    <TextView
+        android:id="@+id/gender_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/gender_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/party_species_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/party_species_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/gender_text" />
+
+    <TextView
+        android:id="@+id/party_species_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/party_species_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/party_type_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/party_type_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/party_species_text" />
+
+    <TextView
+        android:id="@+id/party_type_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/party_type_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/trade_species_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/trade_species_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/party_type_text" />
+
+    <TextView
+        android:id="@+id/trade_species_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/trade_species_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/evolution_label_barrier"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/relative_physical_stats_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/relative_physical_stats_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/trade_species_text" />
+
+    <TextView
+        android:id="@+id/relative_physical_stats_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/relative_physical_stats_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/relative_physical_stats_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/over_world_rain_needed_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/needs_over_world_rain_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/relative_physical_stats_text" />
+
+    <TextView
+        android:id="@+id/over_world_rain_needed_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:visibility="gone"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/over_world_rain_needed_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/over_world_rain_needed_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/turn_upside_down_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:text="@string/turn_upside_down_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/over_world_rain_needed_text" />
+
+    <TextView
+        android:id="@+id/turn_upside_down_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        app:layout_constraintBaseline_toBaselineOf="@id/turn_upside_down_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/turn_upside_down_label"
+        tools:ignore="RtlSymmetry" />
+
+    <TextView
+        android:id="@+id/is_baby_label"
+        style="@style/ThemeOverlay.MySmallBodyTextBold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/qualified_medium_margin_16dp"
+        android:layout_marginTop="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        android:text="@string/is_baby_label"
+        app:layout_constraintStart_toEndOf="@id/pokemon_image_view_holder"
+        app:layout_constraintTop_toBottomOf="@id/turn_upside_down_text" />
+
+    <TextView
+        android:id="@+id/is_baby_text"
+        style="@style/ThemeOverlay.MySmallBodyText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/qualified_small_margin_8dp"
+        android:visibility="gone"
+        app:layout_constraintBaseline_toBaselineOf="@id/is_baby_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/is_baby_label"
+        tools:ignore="RtlSymmetry" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

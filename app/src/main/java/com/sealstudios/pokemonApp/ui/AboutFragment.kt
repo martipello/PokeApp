@@ -12,17 +12,17 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.sealstudios.pokemonApp.R
-import com.sealstudios.pokemonApp.databinding.FragmentAboutBinding
+import com.sealstudios.pokemonApp.databinding.AboutFragmentBinding
 import com.sealstudios.pokemonApp.ui.util.doOnApplyWindowInsetMargin
 
 class AboutFragment : Fragment() {
 
-    private var _binding: FragmentAboutBinding? = null
+    private var _binding: AboutFragmentBinding? = null
     private val binding get() = _binding!!
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View {
-        _binding = FragmentAboutBinding.inflate(inflater, container, false)
+        _binding = AboutFragmentBinding.inflate(inflater, container, false)
         _binding = binding
         return binding.root
     }

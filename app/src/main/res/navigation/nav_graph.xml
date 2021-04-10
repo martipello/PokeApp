@@ -12,8 +12,8 @@
         tools:layout="@layout/pokemon_list_fragment">
 
         <action
-            android:id="@+id/action_PokemonListFragment_to_PokemonDetailFragment"
-            app:destination="@id/PokemonDetailFragment"
+            android:id="@+id/action_PokemonListFragment_to_DetailFragment"
+            app:destination="@id/DetailFragment"
             app:enterAnim="@anim/fragment_fade_enter"
             app:exitAnim="@anim/fragment_fade_exit"
             app:popEnterAnim="@anim/fragment_fade_enter"
@@ -26,10 +26,10 @@
 
     </fragment>
     <fragment
-        android:id="@+id/PokemonDetailFragment"
-        android:name="com.sealstudios.pokemonApp.ui.PokemonDetailFragment"
+        android:id="@+id/DetailFragment"
+        android:name="com.sealstudios.pokemonApp.ui.DetailFragment"
         android:label="@string/pokemon"
-        tools:layout="@layout/pokemon_detail_fragment">
+        tools:layout="@layout/detail_fragment">
         <argument
             android:name="pokemon_name"
             app:argType="string"
@@ -40,7 +40,7 @@
         <action
             android:id="@+id/action_PokemonDetailFragment_to_preferences"
             app:destination="@id/preferences"
-            app:popUpTo="@id/PokemonDetailFragment" />
+            app:popUpTo="@id/DetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/splashScreenFragment"
@@ -61,7 +61,7 @@
         android:id="@+id/preferences"
         android:name="com.sealstudios.pokemonApp.ui.preferences.PreferenceFragment"
         android:label="Settings"
-        tools:layout="@layout/fragment_preference" >
+        tools:layout="@layout/preference_fragment" >
         <action
             android:id="@+id/action_preferences_to_aboutFragment"
             app:destination="@id/aboutFragment" />
@@ -70,5 +70,5 @@
         android:id="@+id/aboutFragment"
         android:name="com.sealstudios.pokemonApp.ui.AboutFragment"
         android:label="About"
-        tools:layout="@layout/fragment_about" />
+        tools:layout="@layout/about_fragment" />
 </navigation>

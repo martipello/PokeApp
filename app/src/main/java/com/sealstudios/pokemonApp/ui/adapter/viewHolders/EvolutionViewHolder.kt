@@ -15,16 +15,15 @@ import com.bumptech.glide.request.target.Target
 import com.sealstudios.pokemonApp.R
 import com.sealstudios.pokemonApp.database.`object`.EvolutionDetail
 import com.sealstudios.pokemonApp.database.`object`.EvolutionTrigger
-import com.sealstudios.pokemonApp.database.`object`.Gender
 import com.sealstudios.pokemonApp.database.`object`.Gender.Companion.getGender
 import com.sealstudios.pokemonApp.database.`object`.Pokemon
+import com.sealstudios.pokemonApp.database.`object`.RelativePhysicalStats
 import com.sealstudios.pokemonApp.databinding.EvolutionViewHolderBinding
 import com.sealstudios.pokemonApp.ui.util.PaletteHelper
 import com.sealstudios.pokemonApp.ui.util.PokemonType.Companion.getPokemonEnumTypeForPokemonType
-import com.sealstudios.pokemonApp.ui.util.TypesAndCategoryGroupHelper
-import com.sealstudios.pokemonApp.ui.util.TypesGroupHelper
 import com.sealstudios.pokemonApp.util.extensions.capitalize
 import com.sealstudios.pokemonApp.util.extensions.isNotNullOrNegative
+import com.sealstudios.pokemonApp.util.extensions.toLowerCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -52,6 +51,11 @@ constructor(
         setPartySpecies(evolutionDetail)
         setPartyType(evolutionDetail)
         setTradeSpecies(evolutionDetail)
+        setRelativePhysicalStats(evolutionDetail)
+        setIsBaby(evolutionDetail)
+        setTimeOfDay(evolutionDetail)
+        setTurnUpsideDown(evolutionDetail)
+        setNeedsOverWorldRain(evolutionDetail)
     }
 
     private fun setEvolutionNameAndId(evolutionDetail: EvolutionDetail) {
@@ -71,7 +75,7 @@ constructor(
     private fun setTriggerView(evolutionDetail: EvolutionDetail) = with(binding) {
         val isNotNullOrNegative = evolutionDetail.triggerId.isNotNullOrNegative()
         if (isNotNullOrNegative) {
-            val evolutionDetailTriggerText = EvolutionTrigger.getEvolutionTrigger(evolutionDetail.triggerId!!).name.capitalize()
+            val evolutionDetailTriggerText = EvolutionTrigger.getEvolutionTrigger(evolutionDetail.triggerId!!).displayName
             setTextViewForEvolutionDetailAttribute(evolutionDetailTriggerText, evolutionTriggerText, evolutionTriggerLabel)
         }
     }
@@ -135,20 +139,49 @@ constructor(
         setTextViewForEvolutionDetailAttribute(evolutionDetail.tradeSpeciesName, tradeSpeciesText, tradeSpeciesLabel)
     }
 
+    private fun setRelativePhysicalStats(evolutionDetail: EvolutionDetail) = with(binding) {
+        if (evolutionDetail.relativePhysicalStats != null) {
+            val relativePhysicalStats = RelativePhysicalStats.getRelativePhysicalStats(evolutionDetail.relativePhysicalStats)
+            setTextViewForEvolutionDetailAttribute(
+                    if (relativePhysicalStats == RelativePhysicalStats.NEUTRAL) ""
+                    else relativePhysicalStats.name.toLowerCase().capitalize(),
+                    relativePhysicalStatsText, relativePhysicalStatsLabel)
+        }
+    }
+
+    private fun setIsBaby(evolutionDetail: EvolutionDetail) = with(binding) {
+        setTextViewForEvolutionDetailAttribute(evolutionDetail.isBaby, isBabyText, isBabyLabel)
+    }
+
+    private fun setTurnUpsideDown(evolutionDetail: EvolutionDetail) = with(binding) {
+        setTextViewForEvolutionDetailAttribute(evolutionDetail.turnUpsideDown, turnUpsideDownText, turnUpsideDownLabel)
+    }
+
+    private fun setNeedsOverWorldRain(evolutionDetail: EvolutionDetail) = with(binding) {
+        setTextViewForEvolutionDetailAttribute(evolutionDetail.needsOverWorldRain, overWorldRainNeededText, overWorldRainNeededLabel)
+    }
+
+    private fun setTextViewForEvolutionDetailAttribute(evolutionDetailAttribute: Boolean?, textView: TextView, textViewLabel: TextView) {
+        val attributeIsNotNull = evolutionDetailAttribute != null
+        if (attributeIsNotNull) textView.text = evolutionDetailAttribute.toString()
+        textView.visibility = if (attributeIsNotNull && evolutionDetailAttribute == true) View.VISIBLE else View.GONE
+        textViewLabel.visibility = if (attributeIsNotNull && evolutionDetailAttribute == true) View.VISIBLE else View.GONE
+    }
+
     private fun setTextViewForEvolutionDetailAttribute(evolutionDetailAttribute: String?, textView: TextView, textViewLabel: TextView) {
-        val isNotNullOrEmpty = evolutionDetailAttribute != null && evolutionDetailAttribute.isNotEmpty()
-        if (isNotNullOrEmpty) textView.text = evolutionDetailAttribute
-        textView.visibility = if (isNotNullOrEmpty) View.VISIBLE else View.GONE
-        textViewLabel.visibility = if (isNotNullOrEmpty) View.VISIBLE else View.GONE
+        val attributeIsNotNullOrEmpty = evolutionDetailAttribute != null && evolutionDetailAttribute.isNotEmpty()
+        if (attributeIsNotNullOrEmpty) textView.text = evolutionDetailAttribute!!.replace("-", " ").capitalize()
+        textView.visibility = if (attributeIsNotNullOrEmpty) View.VISIBLE else View.GONE
+        textViewLabel.visibility = if (attributeIsNotNullOrEmpty) View.VISIBLE else View.GONE
     }
 
     private fun setTextViewForEvolutionDetailAttribute(evolutionDetailAttribute: Int?, textView: TextView, textViewLabel: TextView) {
-        val isNotNullOrNegative = evolutionDetailAttribute.isNotNullOrNegative()
-        if (isNotNullOrNegative) {
+        val attributeIsNotNullOrNegative = evolutionDetailAttribute.isNotNullOrNegative()
+        if (attributeIsNotNullOrNegative) {
             textView.text = evolutionDetailAttribute.toString()
         }
-        textView.visibility = if (isNotNullOrNegative) View.VISIBLE else View.GONE
-        textViewLabel.visibility = if (isNotNullOrNegative) View.VISIBLE else View.GONE
+        textView.visibility = if (attributeIsNotNullOrNegative) View.VISIBLE else View.GONE
+        textViewLabel.visibility = if (attributeIsNotNullOrNegative) View.VISIBLE else View.GONE
     }
 
     private fun setPokemonImageView(pokemonImage: String) {

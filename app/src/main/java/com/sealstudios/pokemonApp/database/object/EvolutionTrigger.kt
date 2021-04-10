@@ -2,13 +2,13 @@ package com.sealstudios.pokemonApp.database.`object`
 
 import android.annotation.SuppressLint
 
-enum class EvolutionTrigger(val id: Int) {
+enum class EvolutionTrigger(val id: Int, val displayName: String) {
 
-    LEVEL_UP(id = 1),
-    TRADE(id = 2),
-    USE_ITEM(id = 3),
-    SHED(id = 4),
-    OTHER(id = 5);
+    LEVEL_UP(id = 1, displayName = "Level Up"),
+    TRADE(id = 2, displayName = "Trade"),
+    USE_ITEM(id = 3, displayName = "Use Item"),
+    SHED(id = 4, displayName = "Shed"),
+    OTHER(id = 5, displayName = "Other");
 
     companion object {
 

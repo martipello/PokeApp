@@ -183,7 +183,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:19.4.0'
     implementation 'com.google.android.gms:play-services-basement:17.5.0'
 
-    implementation project(':nativetemplates')
+//    implementation project(':nativetemplates')
 
     implementation 'com.akexorcist:round-corner-progress-bar:2.1.1'
 

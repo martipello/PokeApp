@@ -32,15 +32,15 @@ import com.sealstudios.pokemonApp.database.`object`.MyNativeAd
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
+import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToDetailFragment
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPreferences
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.viewModel.FiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PartialPokemonViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +66,7 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
 
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
-    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
+    private val pokemonFiltersViewModel: FiltersViewModel by viewModels({ requireActivity() })
     private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
 
     private lateinit var pokemonAdapter: PokemonAdapter
@@ -84,9 +84,9 @@ class PokemonListFragment : Fragment(),
         setActionBar()
         PokemonListFragmentInsets().setInsets(binding)
         super.onViewCreated(view, savedInstanceState)
-        lifecycleScope.launch {
-            createAds(view)
-        }
+//        lifecycleScope.launch {
+//            createAds(view)
+//        }
         setHasOptionsMenu(true)
         setUpPokemonAdapter()
         setUpSwipeRefresh()
@@ -128,7 +128,7 @@ class PokemonListFragment : Fragment(),
                     if (pokemonData.isEmpty()) {
                         binding.setEmpty()
                     } else {
-                        pokemonAdapter.submitList(mergeAds(pokemonData, ads))
+                        pokemonAdapter.submitList(pokemonData)
                         binding.setNotEmpty()
                     }
                 } else {
@@ -243,7 +243,7 @@ class PokemonListFragment : Fragment(),
 
     private fun navigateToDetailFragment(name: String, view: View) {
         view as MaterialCardView
-        val action = actionPokemonListFragmentToPokemonDetailFragment(
+        val action = actionPokemonListFragmentToDetailFragment(
                 pokemonName = name,
                 transitionName = view.transitionName
         )
@@ -364,30 +364,30 @@ class PokemonListFragment : Fragment(),
 
     }
 
-    private suspend fun mergeAds(
-            pokemon: List<PokemonAdapterListItem>,
-            ads: List<PokemonAdapterListItem>
-    ): List<PokemonAdapterListItem> {
-        return withContext(Dispatchers.Default) {
-            val mergedList = mutableListOf<PokemonAdapterListItem>()
-            mergedList.addAll(pokemon)
-            try {
-                val intersect = pokemon.size / ads.size
-                var counter = 0
-                for (index in pokemon.indices) {
-                    if (index % intersect == 0) {
-                        counter++
-                        if (counter < ads.size) {
-                            mergedList.add(index, ads[counter])
-                        }
-                    }
-                }
-            } catch (e: Exception) {
-                Log.d("Exception", "Exception $e")
-            }
-            return@withContext mergedList
-        }
-    }
+//    private suspend fun mergeAds(
+//            pokemon: List<PokemonAdapterListItem>,
+//            ads: List<PokemonAdapterListItem>
+//    ): List<PokemonAdapterListItem> {
+//        return withContext(Dispatchers.Default) {
+//            val mergedList = mutableListOf<PokemonAdapterListItem>()
+//            mergedList.addAll(pokemon)
+//            try {
+//                val intersect = pokemon.size / ads.size
+//                var counter = 0
+//                for (index in pokemon.indices) {
+//                    if (index % intersect == 0) {
+//                        counter++
+//                        if (counter < ads.size) {
+//                            mergedList.add(index, ads[counter])
+//                        }
+//                    }
+//                }
+//            } catch (e: Exception) {
+//                Log.d("Exception", "Exception $e")
+//            }
+//            return@withContext mergedList
+//        }
+//    }
 
 }
 

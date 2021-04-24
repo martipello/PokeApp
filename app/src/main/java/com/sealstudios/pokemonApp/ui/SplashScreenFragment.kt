@@ -52,7 +52,7 @@ class SplashScreenFragment : Fragment() {
     }
 
     private suspend fun createRevealAnimation() {
-        withContext(Dispatchers.IO){
+        viewLifecycleOwner.lifecycleScope.launch{
             val x: Int = binding.root.right / 2
             val y: Int = binding.root.bottom - binding.root.bottom / 9
             val endRadius = hypot(binding.root.width.toDouble(), binding.root.height.toDouble()).toInt()

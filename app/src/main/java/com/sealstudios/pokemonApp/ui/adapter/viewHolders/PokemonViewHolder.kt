@@ -134,9 +134,11 @@ class PokemonViewHolder constructor(
         }
     }
 
-    private fun setColoredElements(lightVibrantColor: Int, darkVibrantColor: Int) {
-        binding.pokemonImageViewHolder.strokeColor = lightVibrantColor
-        binding.pokemonImageViewHolder.setCardBackgroundColor(darkVibrantColor)
+    private suspend fun setColoredElements(lightVibrantColor: Int, darkVibrantColor: Int) {
+        withContext(Dispatchers.Default){
+            binding.pokemonImageViewHolder.strokeColor = lightVibrantColor
+            binding.pokemonImageViewHolder.setCardBackgroundColor(darkVibrantColor)
+        }
     }
 
     companion object {

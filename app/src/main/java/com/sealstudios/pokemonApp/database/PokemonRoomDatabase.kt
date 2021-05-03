@@ -34,6 +34,8 @@ import com.sealstudios.pokemonApp.util.RoomStringListConverter
             EvolutionChain::class,
             EvolutionDetail::class,
             EvolutionDetailJoin::class,
+            PokemonRemoteKey::class,
+            PokemonGraphQL::class,
         ],
         version = DATABASE_VERSION,
         exportSchema = false
@@ -61,6 +63,8 @@ abstract class PokemonRoomDatabase : RoomDatabase() {
     abstract fun pokemonEvolutionChainDao(): EvolutionChainDao
     abstract fun pokemonEvolutionDetailDao(): EvolutionDetailDao
     abstract fun pokemonEvolutionDetailJoinDao(): EvolutionDetailJoinDao
+    abstract fun pokemonRemoteKeyDao(): PokemonRemoteKeyDao
+    abstract fun pokemonGraphQLDao(): PokemonGraphQLDao
 
 
     companion object {

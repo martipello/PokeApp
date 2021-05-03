@@ -81,7 +81,8 @@ class SplashScreenFragment : Fragment() {
             currentDestination == graph[R.id.splashScreenFragment]
         }
         if (canNavigate) {
-            findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+//            findNavController().navigate(R.id.action_splashScreenFragment_to_PokemonListFragment)
+            findNavController().navigate(R.id.action_splashScreenFragment_to_pokemonPagedListFragment)
         }
     }
 

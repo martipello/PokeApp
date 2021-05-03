@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
 apply plugin: 'androidx.navigation.safeargs.kotlin'
+apply(plugin: "com.apollographql.apollo")
 
 android {
 
@@ -27,9 +28,12 @@ android {
     buildTypes {
         debug {
             buildConfigField "String", "BASE_URL", "\"https://pokeapi.co/api/v2/\""
+            buildConfigField "String", "GRAPH_QL_BASE_URL", "\"https://beta.pokeapi.co/graphql/v1beta\""
         }
         release {
             buildConfigField "String", "BASE_URL", "\"https://pokeapi.co/api/v2/\""
+            buildConfigField "String", "GRAPH_QL_BASE_URL", "\"https://beta.pokeapi.co/graphql/v1beta\""
+
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
@@ -79,6 +83,11 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
+    apollo {
+        // instruct the compiler to generate Kotlin models
+        generateKotlinModels.set(true)
+    }
 }
 
 dependencies {
@@ -118,7 +127,7 @@ dependencies {
     kapt "androidx.room:room-compiler:2.3.0-alpha04"
 
     //Paging
-    implementation "androidx.paging:paging-runtime-ktx:3.0.0-alpha11"
+    implementation "androidx.paging:paging-runtime-ktx:3.0.0-rc01"
 
     //WorkManager
     // Kotlin + coroutines
@@ -189,6 +198,12 @@ dependencies {
 
     implementation 'com.google.android.play:core:1.10.0'
     implementation 'com.google.android.play:core-ktx:1.8.1'
+
+    //apollo
+    implementation("com.apollographql.apollo:apollo-runtime:2.5.6")
+    implementation("com.apollographql.apollo:apollo-coroutines-support:2.5.6")
+    //apollo alternative
+    implementation 'com.github.AniTrend:retrofit-graphql:0.11.0-beta01'
 
     //LEAKS
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'

@@ -1,0 +1,19 @@
+query PokemonQuery($name: String, $limit: Int, $offset: Int, $type_names: [String!]) {
+    pokemon_v2_pokemon(limit: $limit, offset: $offset, where: {name: {_like: $name}, pokemon_v2_pokemontypes: {pokemon_v2_type: {name: {_in: $type_names}}}}) {
+        id
+        pokemon_v2_pokemontypes {
+            type_id
+            slot
+            pokemon_v2_type {
+                name
+            }
+        }
+        name
+        pokemon_species_id
+        pokemon_v2_pokemonspecy {
+            pokemon_v2_pokemonspeciesnames(where: {pokemon_v2_language: {name: {_eq: "en"}}}) {
+                genus
+            }
+        }
+    }
+}

@@ -18,10 +18,10 @@ import com.sealstudios.pokemonApp.ui.adapter.viewHolders.AdViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 
 class PokemonAdapter(
-        private val clickListener: PokemonAdapterClickListener,
-        private val glide: RequestManager
+    private val clickListener: PokemonAdapterClickListener,
+    private val glide: RequestManager
 ) :
-        RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val diffCallback = diffCallback()
     private val differ = AsyncListDiffer(this, diffCallback)
@@ -40,18 +40,22 @@ class PokemonAdapter(
         when (getPokemonAdapterListItemType(viewType)) {
             PokemonAdapterListItemType.VIEW_TYPE_AD -> {
                 val binding =
-                        AdLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    AdLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 return AdViewHolder(
-                        binding,
+                    binding,
                 )
             }
             PokemonAdapterListItemType.VIEW_TYPE_POKEMON -> {
                 val binding =
-                        PokemonViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    PokemonViewHolderBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 return PokemonViewHolder(
-                        binding,
-                        clickListener,
-                        glide,
+                    binding,
+                    clickListener,
+                    glide,
                 )
             }
         }
@@ -83,21 +87,24 @@ class PokemonAdapter(
             return object : DiffUtil.ItemCallback<PokemonAdapterListItem>() {
 
                 override fun areItemsTheSame(
-                        oldItem: PokemonAdapterListItem,
-                        newItem: PokemonAdapterListItem
+                    oldItem: PokemonAdapterListItem,
+                    newItem: PokemonAdapterListItem
                 ): Boolean = if (areTheSameType(oldItem, newItem))
                     (oldItem as PokemonWithTypesAndSpeciesForList).pokemon.id == (newItem as PokemonWithTypesAndSpeciesForList).pokemon.id
                 else true
 
                 override fun areContentsTheSame(
-                        oldItem: PokemonAdapterListItem,
-                        newItem: PokemonAdapterListItem
+                    oldItem: PokemonAdapterListItem,
+                    newItem: PokemonAdapterListItem
                 ): Boolean = if (areTheSameType(oldItem, newItem))
                     (oldItem as PokemonWithTypesAndSpeciesForList).pokemon.id == (newItem as PokemonWithTypesAndSpeciesForList).pokemon.id
                             && oldItem.types.size == newItem.types.size
                             && oldItem.species?.species == newItem.species?.species else true
 
-                fun areTheSameType(oldItem: PokemonAdapterListItem, newItem: PokemonAdapterListItem): Boolean {
+                fun areTheSameType(
+                    oldItem: PokemonAdapterListItem,
+                    newItem: PokemonAdapterListItem
+                ): Boolean {
                     return oldItem is PokemonWithTypesAndSpeciesForList && newItem is PokemonWithTypesAndSpeciesForList
                 }
             }

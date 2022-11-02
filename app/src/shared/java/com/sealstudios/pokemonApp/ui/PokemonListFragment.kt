@@ -32,15 +32,15 @@ import com.sealstudios.pokemonApp.database.`object`.MyNativeAd
 import com.sealstudios.pokemonApp.database.`object`.PokemonForList
 import com.sealstudios.pokemonApp.database.`object`.objectInterface.PokemonAdapterListItem
 import com.sealstudios.pokemonApp.databinding.PokemonListFragmentBinding
-import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
+//import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPokemonDetailFragment
 import com.sealstudios.pokemonApp.ui.PokemonListFragmentDirections.Companion.actionPokemonListFragmentToPreferences
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapter
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
 import com.sealstudios.pokemonApp.ui.extensions.applyLoopingAnimatedVectorDrawable
 import com.sealstudios.pokemonApp.ui.insets.PokemonListFragmentInsets
 import com.sealstudios.pokemonApp.ui.util.decorators.PokemonListDecoration
+import com.sealstudios.pokemonApp.ui.viewModel.FiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PartialPokemonViewModel
-import com.sealstudios.pokemonApp.ui.viewModel.PokemonFiltersViewModel
 import com.sealstudios.pokemonApp.ui.viewModel.PokemonListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
@@ -66,7 +66,7 @@ class PokemonListFragment : Fragment(),
     private var search: String = ""
 
     private val pokemonListViewModel: PokemonListViewModel by viewModels({ requireActivity() })
-    private val pokemonFiltersViewModel: PokemonFiltersViewModel by viewModels({ requireActivity() })
+    private val pokemonFiltersViewModel: FiltersViewModel by viewModels({ requireActivity() })
     private val partialPokemonViewModel: PartialPokemonViewModel by viewModels()
 
     private lateinit var pokemonAdapter: PokemonAdapter
@@ -101,7 +101,7 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun onFetchedPartialPokemonData() {
-        partialPokemonViewModel.onFetchedPartialPokemonData.observe(viewLifecycleOwner, {
+        partialPokemonViewModel.onFetchedPartialPokemonData.observe(viewLifecycleOwner) {
             when (it.status) {
                 Status.SUCCESS -> observePokemonList()
                 Status.ERROR -> {
@@ -112,13 +112,13 @@ class PokemonListFragment : Fragment(),
                 Status.LOADING -> {
                 }
             }
-        })
+        }
     }
 
     private fun observeRequestDownloadDataPermission() {
-        partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner, {
+        partialPokemonViewModel.requestDownloadPermission.observe(viewLifecycleOwner) {
             DownloadRequestDialog().show(parentFragmentManager, DownloadRequestDialog.TAG)
-        })
+        }
     }
 
     private fun observePokemonList() {
@@ -139,11 +139,11 @@ class PokemonListFragment : Fragment(),
     }
 
     private fun observeSearch() {
-        pokemonListViewModel.searchState.observe(viewLifecycleOwner, {
+        pokemonListViewModel.searchState.observe(viewLifecycleOwner) {
             if (it != null) {
                 search = it.replace("%", "")
             }
-        })
+        }
     }
 
     private fun setUpSwipeRefresh() {
@@ -243,14 +243,14 @@ class PokemonListFragment : Fragment(),
 
     private fun navigateToDetailFragment(name: String, view: View) {
         view as MaterialCardView
-        val action = actionPokemonListFragmentToPokemonDetailFragment(
-                pokemonName = name,
-                transitionName = view.transitionName
-        )
+//        val action = actionPokemonListFragmentToPokemonDetailFragment(
+//                pokemonName = name,
+//                transitionName = view.transitionName
+//        )
         val extras = FragmentNavigatorExtras(view to view.transitionName
         )
         pokemonFiltersViewModel.closeFiltersLayout()
-        navigate(action, extras)
+//        navigate(action, extras)
     }
 
     private fun navigate(destination: NavDirections, extraInfo: FragmentNavigator.Extras) =

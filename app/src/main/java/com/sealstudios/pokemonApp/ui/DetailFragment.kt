@@ -102,7 +102,6 @@ class DetailFragment : DetailAnimationManager() {
         }
     }
 
-    @ExperimentalCoroutinesApi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         setActionBar()
         super.onViewCreated(view, savedInstanceState)
@@ -202,7 +201,7 @@ class DetailFragment : DetailAnimationManager() {
     }
 
     private fun observePokemonDetails() {
-        detailViewModel.pokemonDetail.observe(viewLifecycleOwner, { pokemonWithTypes ->
+        detailViewModel.pokemonDetail.observe(viewLifecycleOwner) { pokemonWithTypes ->
             when (pokemonWithTypes.status) {
                 Status.SUCCESS -> {
                     if (pokemonWithTypes.data != null) {
@@ -227,29 +226,29 @@ class DetailFragment : DetailAnimationManager() {
                     binding.setLoading()
                 }
             }
-        })
+        }
     }
 
     private fun onFinishedSavingPokemonAbilities() {
-        detailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner, {
+        detailViewModel.onFinishedSavingPokemonAbilities.observe(viewLifecycleOwner) {
             pokemonInfoViewModel.setPokemonId(it)
-        })
+        }
     }
 
     private fun onFinishedSavingPokemonBaseStats() {
-        detailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner, {
+        detailViewModel.onFinishedSavingPokemonBaseStats.observe(viewLifecycleOwner) {
             statsViewModel.setPokemonId(it)
-        })
+        }
     }
 
     private fun onFinishedSavingPokemonMoves() {
-        detailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner, {
+        detailViewModel.onFinishedSavingPokemonMoves.observe(viewLifecycleOwner) {
             movesViewModel.setPokemonId(it)
-        })
+        }
     }
 
     private fun observePokemonSpecies() {
-        speciesViewModel.species.observe(viewLifecycleOwner, { pokemonSpecies ->
+        speciesViewModel.species.observe(viewLifecycleOwner) { pokemonSpecies ->
             when (pokemonSpecies.status) {
                 Status.SUCCESS -> {
                     pokemonSpecies.data?.let {
@@ -261,34 +260,34 @@ class DetailFragment : DetailAnimationManager() {
                     binding.setSpeciesEmpty()
                 }
             }
-        })
+        }
     }
 
     private fun observePokemonEvolutionChainId() {
-        speciesViewModel.evolutionChainId.observe(viewLifecycleOwner, { id ->
+        speciesViewModel.evolutionChainId.observe(viewLifecycleOwner) { id ->
             pokemonInfoViewModel.setEvolutionId(id)
-        })
+        }
     }
 
     private fun observeHasExpandedState() {
         detailViewModel.revealAnimationExpanded.observe(
-                viewLifecycleOwner, { hasExpanded ->
+                viewLifecycleOwner
+        ) { hasExpanded ->
             this.hasExpanded = hasExpanded
             if (hasExpanded) {
                 restoreUIState()
             }
         }
-        )
     }
 
     private fun observeUIColor() {
         colorViewModel.dominantAndLightVibrantColors.observe(
-                viewLifecycleOwner, { viewColors ->
+                viewLifecycleOwner) { viewColors ->
             setColoredElements(
                     viewColors.dominantColor,
                     viewColors.lightVibrantColor
             )
-        })
+        }
     }
 
     private fun setColoredElements(dominantColor: Int, lightVibrantSwatchRgb: Int) {

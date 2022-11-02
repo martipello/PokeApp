@@ -13,13 +13,13 @@ suspend fun Animator.startAndWait() = suspendCancellableCoroutine<Unit> { contin
 
         private var endedSuccessfully = true
 
-        override fun onAnimationCancel(animation: Animator?) {
+        override fun onAnimationCancel(animation: Animator) {
             endedSuccessfully = false
         }
 
-        override fun onAnimationStart(animation: Animator?) {
+        override fun onAnimationStart(animation: Animator) {
 
-            animation?.removeListener(this)
+            animation.removeListener(this)
 
             if (continuation.isActive) {
                 // If the coroutine is still active...

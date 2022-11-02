@@ -151,13 +151,13 @@ class CircleCardView @JvmOverloads constructor(
     private fun animatorListener(listener: FabFilterAnimationListener?): com.nineoldandroids.animation.Animator.AnimatorListener {
         return object : Animator.AnimatorListener,
             com.nineoldandroids.animation.Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {}
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {}
+            override fun onAnimationEnd(animation: Animator) {
                 listener?.onArcAnimationFinished()
             }
 
-            override fun onAnimationCancel(animation: Animator?) {}
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {}
+            override fun onAnimationStart(animation: Animator) {
                 listener?.onArcAnimationStarted()
             }
 
@@ -175,12 +175,12 @@ class CircleCardView @JvmOverloads constructor(
 
     private fun getCircleHideAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
         return object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 visibility = View.INVISIBLE
                 listener?.onCircleHideAnimationFinished()
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 listener?.onCircleHideAnimationStarted()
             }
         }
@@ -188,12 +188,12 @@ class CircleCardView @JvmOverloads constructor(
 
     private fun getCircleRevealAnimatorListener(listener: FabFilterAnimationListener?): Animator.AnimatorListener {
         return object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
                 listener?.onCircleRevealAnimationFinished()
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 super.onAnimationStart(animation)
                 listener?.onCircleRevealAnimationStarted()
             }

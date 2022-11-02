@@ -14,7 +14,7 @@ import com.sealstudios.pokemonApp.databinding.AdLayoutBinding
 import com.sealstudios.pokemonApp.databinding.PokemonViewHolderBinding
 import com.sealstudios.pokemonApp.ui.adapter.PokemonAdapterListItemType.Companion.getPokemonAdapterListItemType
 import com.sealstudios.pokemonApp.ui.adapter.clickListeners.PokemonAdapterClickListener
-import com.sealstudios.pokemonApp.ui.adapter.viewHolders.AdViewHolder
+//import com.sealstudios.pokemonApp.ui.adapter.viewHolders.AdViewHolder
 import com.sealstudios.pokemonApp.ui.adapter.viewHolders.PokemonViewHolder
 
 class PokemonAdapter(
@@ -37,24 +37,31 @@ class PokemonAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        when (getPokemonAdapterListItemType(viewType)) {
-            PokemonAdapterListItemType.VIEW_TYPE_AD -> {
+//        when (getPokemonAdapterListItemType(viewType)) {
+//            PokemonAdapterListItemType.VIEW_TYPE_AD -> {
+//                val binding =
+//                        AdLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+//                return AdViewHolder(
+//                        binding,
+//                )
+//            }
+//            PokemonAdapterListItemType.VIEW_TYPE_POKEMON -> {
+//                val binding =
+//                        PokemonViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+//                return PokemonViewHolder(
+//                        binding,
+//                        clickListener,
+//                        glide,
+//                )
+//            }
                 val binding =
-                        AdLayoutBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return AdViewHolder(
-                        binding,
-                )
-            }
-            PokemonAdapterListItemType.VIEW_TYPE_POKEMON -> {
-                val binding =
-                        PokemonViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                return PokemonViewHolder(
-                        binding,
-                        clickListener,
-                        glide,
-                )
-            }
-        }
+                    PokemonViewHolderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            return PokemonViewHolder(
+                    binding,
+                    clickListener,
+                    glide,
+            )
+//        }
 
     }
 
@@ -63,9 +70,9 @@ class PokemonAdapter(
             is PokemonViewHolder -> {
                 holder.bind(differ.currentList[position] as PokemonWithTypesAndSpeciesForList)
             }
-            is AdViewHolder -> {
-                holder.bind((differ.currentList[position] as MyNativeAd).ad)
-            }
+//            is AdViewHolder -> {
+//                holder.bind((differ.currentList[position] as MyNativeAd).ad)
+//            }
         }
     }
 

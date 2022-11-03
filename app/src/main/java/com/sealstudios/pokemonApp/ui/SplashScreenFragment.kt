@@ -41,7 +41,7 @@ class SplashScreenFragment : Fragment() {
     }
 
     private fun handleEnterAnimation() {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Default) {
+        viewLifecycleOwner.lifecycleScope.launch {
             binding.splashScreen.motionRoot.run {
                 Log.d("Transition", "motionRoot.run")
                 awaitTransitionEnd()
@@ -52,7 +52,6 @@ class SplashScreenFragment : Fragment() {
     }
 
     private suspend fun createRevealAnimation() {
-
         navigateToListFragment()
 //        withContext(Dispatchers.IO){
 //            val x: Int = binding.root.right / 2
@@ -64,7 +63,6 @@ class SplashScreenFragment : Fragment() {
 //                    binding.pokeballOpen.visibility = View.VISIBLE
 //                }
 //                startAndWait()
-//                navigateToListFragment()
 //            }
 //        }
 
